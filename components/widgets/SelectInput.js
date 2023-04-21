@@ -5,6 +5,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+// import Select from "react-select";
 import OutlinedInput from "@mui/material/OutlinedInput";
 
 const SelectInput = (props) => {
@@ -14,6 +15,38 @@ const SelectInput = (props) => {
       name={props.keyName}
       onChange={props.onChange}
       input={<OutlinedInput />}
+      MenuProps={{
+        PaperProps: {
+          sx: {
+            backgroundColor: "#452951",
+            mt: 0.5,
+            "& .MuiMenuItem-root": {
+              color: "white",
+              "&:hover": {
+                backgroundColor: "#4E2C60",
+              },
+            },
+            "& .Mui-selected": {
+              opacity: 0.4,
+              backgroundColor: "transparent",
+            },
+            "& .MuiList-root": {
+              paddingTop: 0,
+              paddingBottom: 0,
+            },
+            "& .MuiMenu-paper": {
+              marginTop: "8px",
+            },
+            "& .MuiListItem-root": {
+              paddingTop: "10px",
+              paddingBottom: "10px",
+              "&:hover": {
+                backgroundColor: "none",
+              },
+            },
+          },
+        },
+      }}
       sx={{
         "& .MuiSelect-select .notranslate::after": `${props.placeHolder}`
           ? {
@@ -21,19 +54,20 @@ const SelectInput = (props) => {
               opacity: 0.42,
             }
           : {},
-        width: props.width,
-        // width: 250,
-        height: 48,
-        borderRadius: 0,
+        minWidth: "100%",
+        height: 37,
+        borderRadius: "8px",
         color: "white",
-        backgroundColor: "#292929",
+        backgroundColor: "#452951",
         boxShadow: "none",
-        ".MuiOutlinedInput-notchedOutline": { border: 0 },
+        ".MuiOutlinedInput-notchedOutline": {
+          border: 0,
+        },
       }}
     >
-      <MenuItem disabled value="">
+      {/* <MenuItem disabled value="">
         <em>{props.placeHolder}</em>
-      </MenuItem>
+      </MenuItem> */}
       {props.options.map((item) => (
         <MenuItem key={item} value={item}>
           {item}

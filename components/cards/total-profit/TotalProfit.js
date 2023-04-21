@@ -7,22 +7,26 @@ import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import { TotalProfitYellow } from "../../../utils/icons";
+import { useSelector } from "react-redux";
 
 const TotalProfit = () => {
+  const widthAbove1600 = useSelector((state) => state.dashboardWidth.value);
   return (
     <Card
       sx={{
         minWidth: 400,
-        background: "#191919",
-        border: "1px solid #666666",
-        minHeight: 400,
+        background: "#2D1537",
+        borderRadius: "8px",
+        minHeight: widthAbove1600<1600? 340 : 357,
+        maxHeight: widthAbove1600 < 1600 ? "auto" : 357,
       }}
     >
       <CardContent>
         <Stack alignItems="center" direction="row" spacing={3}>
           <div
             style={{
-              backgroundColor: "#2C2C2C",
+              backgroundColor: "#482255",
+              borderRadius: "10px",
               padding: "15px",
             }}
           >

@@ -4,31 +4,35 @@ import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { HandShakeIcon } from "../../../utils/icons";
+import { YellowHandShakeBig } from "../../../utils/icons";
+import { useSelector } from "react-redux";
 
 const ClosedDeals = () => {
+  const widthAbove1600 = useSelector((state) => state.dashboardWidth.value);
   return (
     <Card
       sx={{
         minWidth: 200,
-        minHeight: 400,
-        background: "#191919",
-        border: "1px solid #666666",
+        minHeight: widthAbove1600 < 1600 ? 340 : 357,
+        maxHeight: widthAbove1600 < 1600 ? "auto" : 357,
+        background: "#2D1537",
+        borderRadius: "8px",
       }}
     >
-      <CardContent>
+      <CardContent sx={{ pl: 4 }}>
         <Stack alignItems="center" direction="row" spacing={3}>
           <div
             style={{
-              backgroundColor: "#2C2C2C",
+              backgroundColor: "#482255",
+              borderRadius: "10px",
               padding: "15px",
             }}
           >
-            <HandShakeIcon />
+            <YellowHandShakeBig />
           </div>
           <Stack spacing={1}>
             <Typography color="#CCCCCC">Closed Deals</Typography>
-            <Typography fontSize="24px" color="#CCCCCC">
+            <Typography fontSize="24px" fontWeight="600" color="#CCCCCC">
               1266
             </Typography>
           </Stack>

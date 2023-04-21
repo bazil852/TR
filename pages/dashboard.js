@@ -3,30 +3,55 @@ import PrivateHeader from "../components/layout/PrivateHeader";
 import React, { useEffect, useState } from "react";
 import AggregateAccountBalance from "../components/charts/AggregateAccountBalance";
 // import TileChart from "../components/charts/TileChart";
-import { Grid, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import MyExchange from "../components/cards/my-exchanges/MyExchange";
 import ExchangeTable from "../components/cards/exchange-table/ExchangeTable";
 
 import { signIn, getSession, useSession } from "next-auth/react";
-
+import CryptoRates from "../components/cards/crypto-rates/CryptoRates";
+import TotalValue from "../components/cards/total-value/TotalValue";
+import CryptocurrencyData from "../components/cards/crypto-currencies-data/CryptocurrencyData";
 const DashboardComponent = () => {
   return (
-    <>
-      <Typography
-        variant="h6"
-        color="#FFFFFF"
-        sx={{ ml: 1, mb: 3, fontWeight: 600 }}
+    <Grid container>
+      <Grid
+        container
+        sx={{ display: "flex", alignItems: "center", marginTop: "3rem" }}
       >
-        My Portfolio
+        <Grid xs={3} item>
+          <Typography
+            variant="h6"
+            color="#FFFFFF"
+            sx={{ ml: 1, fontWeight: 600 }}
+          >
+            My Portfolio
+          </Typography>
+        </Grid>
+        <Grid xs={9} item>
+          <CryptoRates />
+        </Grid>
+      </Grid>
+
+      <Typography
+        sx={{ fontSize: 18, ml: 1, mt: 4, mb: 1, mr: 5, fontWeight: 700 }}
+        color="White"
+      >
+        Aggregate Account Balance
       </Typography>
+      <TotalValue />
+
       <AggregateAccountBalance />
+
       <div
         style={{
           display: "flex",
           flexDirection: "row",
+          flexWrap: "wrap",
+          gap: "1rem",
         }}
       >
-        <div style={{ width: "50%" }}>
+        <div>
           <ExchangeTable />
         </div>
 
@@ -34,15 +59,15 @@ const DashboardComponent = () => {
           <TileChart />
         </div> */}
       </div>
-      <Grid rowSpacing={2} columnSpacing={2} container>
+      {/* <Grid rowSpacing={2} columnSpacing={2} container>
         <Grid xs={12} lg={6} xl={4} item>
           <MyExchange />
         </Grid>
         <Grid xs={12} lg={6} xl={4} item>
           <MyExchange />
         </Grid>
-      </Grid>
-    </>
+      </Grid> */}
+    </Grid>
   );
 };
 

@@ -3,6 +3,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
 import Grid from "@mui/material/Grid";
+import { useSelector } from "react-redux";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import {
@@ -56,6 +57,7 @@ export const options = {
 };
 
 const BotsProgress = ({ heading }) => {
+  const widthAbove1600 = useSelector((state) => state.dashboardWidth.value);
   const [data, setData] = useState({
     labels: [
       "BTC Long Bot",
@@ -71,8 +73,9 @@ const BotsProgress = ({ heading }) => {
         backgroundColor: "#FFA412",
         borderColor: "#FFA412",
         barThickness: 10,
-        categoryPercentage: 0.8, // notice here
-        barPercentage: 0.8, // notice here
+        categoryPercentage: 0.8,
+        barPercentage: 0.8,
+        borderRadius: 5,
       },
     ],
   });
@@ -80,9 +83,11 @@ const BotsProgress = ({ heading }) => {
     <Card
       sx={{
         minWidth: 200,
-        minHeight: 400,
-        background: "#191919",
-        border: "1px solid #666666",
+        minHeight: widthAbove1600<1600 ? 340 : 357,
+        maxHeight: widthAbove1600 < 1600 ? "auto" : 357,
+        background: "#2D1537",
+        borderRadius: "8px",
+        pt: 1,
       }}
     >
       <CardContent>

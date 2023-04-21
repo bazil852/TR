@@ -13,21 +13,20 @@ import Divider from "@mui/material/Divider";
 import SelectInput from "../../widgets/SelectInput";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-
+import Autocomplete from "@mui/material/Autocomplete";
+import SearchIcon from "@mui/icons-material/Search";
+import { InputAdornment } from "@mui/material";
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
     marginTop: theme.spacing(3),
   },
   "& .MuiInputBase-input": {
-    // borderRadius: 4,
-    width: 340,
-    height: 27,
     position: "relative",
-    backgroundColor: "#292929",
-    // border: "1px solid #ced4da",
+    height: 20,
+    backgroundColor: "#452951",
+    borderRadius: "8px",
     fontSize: 16,
-    color: "#CCCCCC",
-    padding: "10px 12px",
+    padding: "8px 12px",
     transition: theme.transitions.create([
       "border-color",
       "background-color",
@@ -51,24 +50,29 @@ const GeneralSettings = (props) => {
   const names = [100, 200, 300, 400, 500];
   const exchange = ["Binance", "OKX"];
   const botType = ["Single Pair", "Multiple Pair"];
+  const name = ["Long", "Short"];
+  const listOfPairs = ["BTC", "ETH", "DOGE", "SOL"];
   return (
     <Container
       sx={{
-        background: "#191919",
+        background: "linear-gradient(to right,#3E2146,#371655)",
         mt: 5,
-        borderRadius: 1,
+        borderRadius: "5px",
         p: 3,
-        border: "1px solid #666666",
         marginBottom: 5,
       }}
       maxWidth="100%"
     >
       <Box>
-        <Typography sx={{ mt: 1 }} color="white" component="h1" variant="h5">
+        <Typography
+          sx={{ mt: 1, fontWeight: 600 }}
+          color="white"
+          component="h1"
+          variant="h5"
+        >
           General Settings
         </Typography>
       </Box>
-      <Divider sx={{ marginTop: 1, background: "#7A8580" }} />
       <Box>
         <Grid
           container
@@ -77,32 +81,91 @@ const GeneralSettings = (props) => {
         >
           <Grid item xs={2} sm={4} md={4}>
             <Typography
-              sx={{ marginBottom: 1, mt: 2, fontSize: 16 }}
+              sx={{ marginBottom: 1, mt: 2, fontSize: 16, pl: 0.5 }}
               color="#CCCCCC"
             >
-              Name
+              Bot Name
             </Typography>
             <ValidationTextField
               margin="normal"
               required
               id="botName"
+              placeholder="Name"
+              fullWidth
               name="botName"
               onChange={() => {
                 props.setName(event.target.value);
               }}
             />
-            {/* <Box sx={{ display: "flex", flexDirection: "row" }}>
-              <SelectInput
-                placeHolder={"Bitcoin Long Bot"}
-                options={names}
-                width={365}
-                keyName={"botName"}
-              />
-            </Box> */}
           </Grid>
           <Grid item xs={2} sm={4} md={4}>
             <Typography
-              sx={{ marginBottom: 1, mt: 2, fontSize: 16 }}
+              sx={{ marginBottom: 1, mt: 2, fontSize: 16, pl: 0.5 }}
+              color="#CCCCCC"
+            >
+              Bot Type
+            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "row" }}>
+              <SelectInput
+                placeHolder={"Bot Type"}
+                options={botType}
+                fullWidth
+                keyName={"botType"}
+                onChange={async (event) => {
+                  props.setBot(event.target.value);
+                }}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={2} sm={4} md={4}>
+            <Typography
+              sx={{ marginBottom: 1, mt: 2, fontSize: 16, pl: 0.5 }}
+              color="#CCCCCC"
+            >
+              Pairs
+            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "row" }}>
+              <Autocomplete
+                id="pairs"
+                freeSolo
+                options={listOfPairs}
+                disableClearable
+                fullWidth
+                PaperComponent={({ children }) => (
+                  <Paper
+                    sx={{
+                      backgroundColor: "#452951",
+                      "& .MuiAutocomplete-option.Mui-selected": {
+                        opacity: 0.3,
+                        backgroundColor: "transparent",
+                      },
+                    }}
+                  >
+                    {children}
+                  </Paper>
+                )}
+                renderInput={(params) => {
+                  const { InputLabelProps, InputProps, ...rest } = params;
+                  return (
+                    <ValidationTextField
+                      margin="normal"
+                      required
+                      placeholder="Search Pair"
+                      fullWidth
+                      {...params.InputProps}
+                      {...rest}
+                    />
+                  );
+                }}
+                onSelect={async (event) => {
+                  props.setPair(event.target.value);
+                }}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={2} sm={4} md={4}>
+            <Typography
+              sx={{ marginBottom: 1, mt: 2, fontSize: 16, pl: 0.5 }}
               color="#CCCCCC"
             >
               Exchange
@@ -111,7 +174,7 @@ const GeneralSettings = (props) => {
               <SelectInput
                 placeHolder={"Exchange"}
                 options={exchange}
-                width={365}
+                fullWidth
                 keyName={"exchange"}
                 onChange={async (event) => {
                   props.setExchangeName(event.target.value);
@@ -121,19 +184,19 @@ const GeneralSettings = (props) => {
           </Grid>
           <Grid item xs={2} sm={4} md={4}>
             <Typography
-              sx={{ marginBottom: 1, mt: 2, fontSize: 16 }}
+              sx={{ marginBottom: 1, mt: 2, fontSize: 16, pl: 0.5 }}
               color="#CCCCCC"
             >
-              Bot Type
+              Strategy Type
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "row" }}>
               <SelectInput
-                placeHolder={"Bot Type"}
-                options={botType}
-                width={365}
-                keyName={"botType"}
+                placeHolder={"Strategy Type"}
+                options={name}
+                fullWidth
+                keyName={"strategyType"}
                 onChange={async (event) => {
-                  props.setBot(event.target.value);
+                  props.setType(event.target.value);
                 }}
               />
             </Box>

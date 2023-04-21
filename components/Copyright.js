@@ -5,8 +5,9 @@ import Typography from "@mui/material/Typography";
 const Copyright = (props) => {
   return (
     <Typography variant="body2" color="#FFFFFF" align="center" {...props}>
-      {"Copyright © "}
-      <Link color="inherit">Trading Bot</Link> {new Date().getFullYear()}
+      {/* {"Copyright © "} */}
+      All rights reserved | Privacy | Terms and conditions
+      {/* {new Date().getFullYear()} */}
     </Typography>
   );
 };

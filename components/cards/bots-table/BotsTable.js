@@ -9,19 +9,25 @@ import { Box } from "@mui/material";
 import SearchBar from "../../widgets/SearchBar";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
-import { InputBase } from "@mui/material";
+import {
+  TextField,
+  IconButton,
+  InputBase,
+  InputAdornment,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import { makeStyles } from "@mui/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-
+import { Edit, Sort } from "../../../utils/icons";
 const useStyles = makeStyles(() => ({
   input: {
-    width: "685px",
+    // width: "685px",
     height: "48px",
-    backgroundColor: "#292929",
+    backgroundColor: "#35193C",
     padding: "10px 12px",
     fontSize: 16,
   },
@@ -346,7 +352,17 @@ function a11yProps(index) {
 const BotsTable = () => {
   const [value, setValue] = React.useState(0);
   const [tableRow, setTableRow] = React.useState([]);
+  const [searchByBotsName, setSearchByBotsName] = React.useState("");
+  const [width, setWidth] = React.useState(globalThis?.innerWidth);
 
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
+  const handleSearch = (event) => {
+    setSearchByBotsName(event.target.value);
+  };
   useEffect(async () => {
     const response = await fetch("/api/user/create-strategy", {
       method: "GET",
@@ -366,9 +382,23 @@ const BotsTable = () => {
     {
       field: "botName",
       headerName: "Name",
-      width: 480,
+      width: 450,
+      disableColumnMenu: true,
+      hideSortIcons: true,
       renderHeader: () => {
-        return <strong>{"Name"}</strong>;
+        return (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              gap: "10px",
+            }}
+          >
+            <strong>{"Name"}</strong>
+            <Sort />
+          </div>
+        );
       },
       renderCell: (cellValues) => {
         return (
@@ -390,17 +420,21 @@ const BotsTable = () => {
                   paddingLeft: 4,
                   paddingRight: 4,
                   marginRight: 8,
-                  backgroundColor: "#FFFFFF22",
+                  borderRadius: "4px",
+                  marginBottom: "5px",
+                  background:
+                    cellValues.row.strategyTime === "short"
+                      ? "#3A0B15"
+                      : "#1E3332",
                   color: "#CCCCCC",
                   // width: "48px",
                   // height: "20px",
                   // left: "222px",
                   // top: "1502px",
-
                   // backgroundColor: "#FFFFFF",
                   // opacity: 0.6,
-                  backgroundBlendMode: "overlay",
-                  backdropFilter: blur("100px"),
+                  // backgroundBlendMode: "overlay",
+                  // backdropFilter: blur("100px"),
                 }}
               >
                 {cellValues.row.strategyTime === "short" ? "Short" : "Long"}
@@ -409,7 +443,7 @@ const BotsTable = () => {
                 style={{
                   fontFamily: "Poppins",
                   fontStyle: "normal",
-                  fontWeight: 400,
+                  fontWeight: 420,
                   fontSize: "16px",
                   lineHeight: "24px",
                   color: "#795BFF",
@@ -423,9 +457,11 @@ const BotsTable = () => {
               style={{
                 padding: 2,
                 paddingLeft: 4,
+                marginTop: "7px",
                 // paddingRight: 4,
                 backgroundColor: "#FFFFFF22",
                 color: "#CCCCCC",
+                borderRadius: "4px",
                 // width: "206px",
                 // height: "20px",
                 // left: "222px",
@@ -446,9 +482,23 @@ const BotsTable = () => {
     {
       field: "exchange",
       headerName: "Exchange",
-      width: 280,
+      width: 220,
+      disableColumnMenu: true,
+      hideSortIcons: true,
       renderHeader: () => {
-        return <strong>{"Exchange"}</strong>;
+        return (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              gap: "10px",
+            }}
+          >
+            <strong>{"Exchange"}</strong>
+            <Sort />
+          </div>
+        );
       },
       renderCell: (cellValues) => {
         return (
@@ -482,8 +532,9 @@ const BotsTable = () => {
     {
       field: "pair",
       headerName: "Pair",
-      width: 200,
+      width: 120,
       sortable: false,
+      disableColumnMenu: true,
       renderHeader: () => {
         return <strong>{"Pair"}</strong>;
       },
@@ -506,8 +557,9 @@ const BotsTable = () => {
     },
     {
       field: "activeDeal",
-      width: 140,
+      width: 120,
       sortable: false,
+      disableColumnMenu: true,
       renderHeader: () => {
         return <strong>{"Active Deal"}</strong>;
       },
@@ -516,19 +568,30 @@ const BotsTable = () => {
       field: "status",
       headerName: "Status",
       type: "boolean",
-      width: 180,
+      width: 150,
       sortable: false,
+      disableColumnMenu: true,
       renderHeader: () => {
         return <strong>{"Status"}</strong>;
       },
       renderCell: (cellValues) => {
-        return <AntSwitch checked={cellValues.row.status} />;
+        return (
+          <AntSwitch
+            // color={
+            //   cellValues.row.status
+            //     ? "linear-gradient(to right,#790D83,#7A5CFF)"
+            //     : "#5A2B6A"
+            // }
+            checked={cellValues.row.status}
+          />
+        );
       },
     },
     {
       headerName: "Action",
-      width: 150,
+      width: 170,
       sortable: false,
+      disableColumnMenu: true,
       renderHeader: () => {
         return <strong>{"Action"}</strong>;
       },
@@ -548,22 +611,32 @@ const BotsTable = () => {
                 paddingLeft: 5,
                 paddingRight: 5,
                 marginRight: 4,
-                backgroundColor: "#FFFFFF22",
+                borderRadius: "5px",
+                backgroundColor: "#5B2A6D",
+                cursor: "pointer",
               }}
             >
               <VisibilityIcon />
             </div>
             <div
               style={{
-                padding: 2,
+                padding: 4,
                 height: "30px",
-                paddingLeft: 5,
-                paddingRight: 5,
+                width: "35px",
+                paddingLeft: 6,
                 marginRight: 4,
-                backgroundColor: "#FFFFFF22",
+                borderRadius: "5px",
+                backgroundColor: "#5B2A6D",
+                cursor: "pointer",
               }}
             >
-              <EditIcon />
+              <Edit
+                viewBox="0 0 15 15"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
+              />
             </div>
             <div
               style={{
@@ -571,7 +644,9 @@ const BotsTable = () => {
                 height: "30px",
                 paddingLeft: 5,
                 paddingRight: 5,
-                backgroundColor: "#F87171",
+                borderRadius: "5px",
+                backgroundColor: "#CB5F5F",
+                cursor: "pointer",
               }}
               onClick={() => handleDelete(cellValues.row)}
             >
@@ -631,91 +706,308 @@ const BotsTable = () => {
 
   const classes = useStyles();
   return (
-    <Container
-      sx={{
-        background: "#191919",
-        borderRadius: 1,
-        p: 3,
-        border: "1px solid #666666",
-        marginTop: 5,
-        marginBottom: 5,
-        disableGutters: true,
-      }}
-      component="main"
-      maxWidth="100%"
-    >
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        aria-label="basic tabs example"
+    <>
+      <Container
         sx={{
-          marginBottom: 5,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-start",
+          gap: 2.5,
+          minWidth: "100%",
+          my: 5.5,
         }}
       >
-        <Tab label="All" {...a11yProps(0)} />
-        <Tab label="Enabled" {...a11yProps(1)} />
-        <Tab label="Disabled" {...a11yProps(2)} />
-        <Tab label="Short" {...a11yProps(3)} />
-        <Tab label="Long" {...a11yProps(4)} />
-        <Tab label="Binance" {...a11yProps(5)} />
-        <Tab label="Binance Futures USDT-M" {...a11yProps(6)} />
-      </Tabs>
-      <Grid container spacing={2}>
-        <Grid item xs={4} sm={4} xl={4}>
-          <SearchBar />
-        </Grid>
-        <Grid item xs={6} sm={6} xl={6}>
-          <InputBase
-            placeholder="Pairs"
-            classes={{
-              root: classes.input,
-            }}
-          />
-        </Grid>
-        <Grid item xs={4} sm={4} xl={2}>
-          <Button
-            size="large"
-            sx={{ width: "235px", height: "48px" }}
-            variant="contained"
-            onClick={handleClearFilter}
-          >
-            Clear Filters
-          </Button>
-        </Grid>
-      </Grid>
-      {/* <Box sx={{ height: 709, disableGutters: true, width: "100%"}}> */}
-      <DataGrid
-        sx={{
-          ".MuiDataGrid-columnSeparator": {
-            display: "none",
-          },
-          "&.MuiDataGrid-root": {
+        <Button
+          sx={{
+            background: "linear-gradient(to right,#790D83,#7A5CFF)",
+            textTransform: "none",
             border: "none",
-          },
-          ".MuiDataGrid-cell:focus-within": {
-            outline: "none !important",
-          },
-          ".MuiDataGrid-row.Mui-even": {
-            backgroundColor: "#292929",
-            backgroundBlendMode: "overlay",
-          },
-          height: 709,
-          width: "100%",
-          padding: 0,
+            transition: "transform 0.2s",
+            borderRadius: "5px",
+            padding: "8px 15px",
+            "&:hover": {
+              transform: "scale(0.95)",
+              backgroundColor: "linear-gradient(to right,#790D83,#7A5CFF)",
+              cursor: "pointer",
+            },
+          }}
+        >
+          <Typography sx={{ color: "white", fontSize: "13px" }}>
+            {" "}
+            Stop All Bots
+          </Typography>
+        </Button>
+        <Button
+          sx={{
+            background: "linear-gradient(to right,#790D83,#7A5CFF)",
+            textTransform: "none",
+            border: "none",
+            transition: "transform 0.2s",
+            borderRadius: "5px",
+            padding: "8px 15px",
+            "&:hover": {
+              transform: "scale(0.95)",
+              backgroundColor: "linear-gradient(to right,#790D83,#7A5CFF)",
+              cursor: "pointer",
+            },
+          }}
+        >
+          <Typography sx={{ color: "white", fontSize: "13px" }}>
+            {" "}
+            Start All Bots
+          </Typography>
+        </Button>
+        <Button
+          sx={{
+            background: "linear-gradient(to right,#790D83,#7A5CFF)",
+            textTransform: "none",
+            border: "none",
+            transition: "transform 0.2s",
+            borderRadius: "5px",
+            padding: "8px 15px",
+            "&:hover": {
+              transform: "scale(0.95)",
+              backgroundColor: "linear-gradient(to right,#790D83,#7A5CFF)",
+              cursor: "pointer",
+            },
+          }}
+        >
+          <Typography sx={{ color: "white", fontSize: "12px" }}>
+            {" "}
+            Sell At Market All Bots
+          </Typography>
+        </Button>
+      </Container>
+      <Container
+        sx={{
+          background: "#2C162F",
+          borderRadius: 2,
+          p: 3,
           marginTop: 5,
+          marginBottom: 5,
+          disableGutters: true,
         }}
-        getRowClassName={(params) =>
-          params.indexRelativeToCurrentPage % 2 === 0 ? "Mui-even" : "Mui-odd"
-        }
-        rowHeight={"120px"}
-        rows={tableRow}
-        columns={columns}
-        pageSize={5}
-        checkboxSelection
-        disableSelectionOnClick
-      />
-      {/* </Box> */}
-    </Container>
+        component="main"
+        maxWidth="100%"
+      >
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="basic tabs example"
+          sx={{
+            marginBottom: 5,
+            "& .MuiTabs-indicator": {
+              backgroundColor: "white",
+            },
+          }}
+        >
+          <Tab
+            sx={{
+              fontWeight: 600,
+              color: "white",
+              "&.Mui-selected": {
+                color: "white",
+              },
+            }}
+            label="All"
+            {...a11yProps(0)}
+          />
+          <Tab
+            sx={{
+              fontWeight: 600,
+              color: "white",
+              "&.Mui-selected": {
+                color: "white",
+              },
+            }}
+            label="Enabled"
+            {...a11yProps(1)}
+          />
+          <Tab
+            sx={{
+              fontWeight: 600,
+              color: "white",
+              "&.Mui-selected": {
+                color: "white",
+              },
+            }}
+            label="Disabled"
+            {...a11yProps(2)}
+          />
+          <Tab
+            sx={{
+              fontWeight: 600,
+              color: "white",
+              "&.Mui-selected": {
+                color: "white",
+              },
+            }}
+            label="Short"
+            {...a11yProps(3)}
+          />
+          <Tab
+            sx={{
+              fontWeight: 600,
+              color: "white",
+              "&.Mui-selected": {
+                color: "white",
+              },
+            }}
+            label="Long"
+            {...a11yProps(4)}
+          />
+          <Tab
+            sx={{
+              fontWeight: 600,
+              color: "white",
+              "&.Mui-selected": {
+                color: "white",
+              },
+            }}
+            label="Binance"
+            {...a11yProps(5)}
+          />
+          <Tab
+            sx={{
+              fontWeight: 600,
+              color: "white",
+              "&.Mui-selected": {
+                color: "white",
+              },
+            }}
+            label="Binance Futures USDT-M"
+            {...a11yProps(6)}
+          />
+        </Tabs>
+        <Grid container spacing={2}>
+          <Grid item xs={4} sm={4} xl={4}>
+            <InputBase
+              placeholder="Search by bot's name"
+              sx={{
+                minWidth: "100%",
+                height: "38px",
+                background: "#ffffff1f",
+                borderRadius: "3px",
+                fontSize: 16,
+              }}
+              value={searchByBotsName}
+              onChange={handleSearch}
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconButton
+                    style={{
+                      color: "white",
+                      paddingRight: "0px",
+                      paddingLeft: "5px",
+                    }}
+                  >
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </Grid>
+          <Grid item xs={5} sm={5} xl={6}>
+            <InputBase
+              placeholder="Pairs"
+              sx={{
+                minWidth: "100%",
+                height: "38px",
+                paddingLeft: "10px",
+                background: "#ffffff1f",
+                borderRadius: "3px",
+                fontSize: 16,
+              }}
+            />
+          </Grid>
+          <Grid item xs={3} sm={3} xl={2}>
+            <Button
+              sx={{
+                background: "linear-gradient(to right,#790D83,#7A5CFF)",
+                textTransform: "none",
+                border: "none",
+                transition: "transform 0.2s",
+                borderRadius: "7px",
+                padding: "6px 15px",
+                width: "100%",
+                "&:hover": {
+                  transform: "scale(0.95)",
+                  backgroundColor: "linear-gradient(to right,#790D83,#7A5CFF)",
+                  cursor: "pointer",
+                },
+              }}
+              variant="contained"
+              onClick={handleClearFilter}
+            >
+              Clear Filters
+            </Button>
+          </Grid>
+        </Grid>
+        {/* <Box sx={{ height: 709, disableGutters: true, width: "100%"}}> */}
+        <Box
+          sx={{
+            width: "100%",
+            ...(width >= 1600 && {
+              width: "100%",
+              pl: 7,
+              pr: 5,
+            }),
+            ...(width >= 1800 && {
+              width: "100%",
+              pl: 14,
+              pr: 14,
+            }),
+          }}
+        >
+          <Box
+            sx={{
+              "::-webkit-scrollbar-vertical": {
+                display: "none",
+              },
+              // minWidth: "100%",
+              px: 0,
+            }}
+          >
+            <DataGrid
+              sx={{
+                ".MuiDataGrid-columnSeparator": {
+                  display: "none",
+                },
+                "&.MuiDataGrid-root": {
+                  border: "none",
+                },
+                " & .MuiDataGrid-cell": {
+                  borderBottom: "none",
+                },
+                ".MuiDataGrid-cell:focus-within": {
+                  outline: "none !important",
+                },
+                ".MuiDataGrid-row.Mui-even": {
+                  backgroundColor: "#2D1537",
+                  backgroundBlendMode: "overlay",
+                },
+                height: 710,
+                // minWidth: "100%",
+                padding: 0,
+                marginTop: 5,
+              }}
+              getRowClassName={(params) =>
+                params.indexRelativeToCurrentPage % 2 === 0
+                  ? "Mui-even"
+                  : "Mui-odd"
+              }
+              rowHeight={"110px"}
+              rows={tableRow}
+              columns={columns}
+              pageSize={5}
+              checkboxSelection
+              disableSelectionOnClick
+            />
+          </Box>
+        </Box>
+        {/* </Box> */}
+      </Container>
+    </>
   );
 };
 

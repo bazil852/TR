@@ -17,6 +17,7 @@ import ProfitCalendar from "../components/calendar/ProfitCalendar";
 import AddBlock from "../components/cards/add-block/AddBlock";
 import GeneralSettings from "../components/cards/general-settings/GeneralSettings";
 import Strategy from "../components/cards/strategy/Strategy";
+import CryptoRates from "../components/cards/crypto-rates/CryptoRates";
 
 const profitCards = [
   { title: "Total Profit", icon: <TotalProfitBarIcon />, data: "$25.62" },
@@ -67,6 +68,9 @@ const BotConfig = () => {
   };
   return (
     <>
+      <div style={{ margin: "40px 0px" }}>
+        <CryptoRates />
+      </div>
       <Grid container rowSpacing={3} columnSpacing={3}>
         {profitCards.map((item, index) => {
           return (
@@ -93,7 +97,11 @@ const BotConfig = () => {
       </Grid>
       {/* <GeneralSettings />
       <Strategy /> */}
-      <AddBlock formRef={formRef} />
+      <Grid container>
+        <Grid item xs={12}>
+          <AddBlock formRef={formRef} />
+        </Grid>
+      </Grid>
     </>
   );
 };
