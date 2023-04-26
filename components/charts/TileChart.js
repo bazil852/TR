@@ -40,7 +40,7 @@ const TileChart = () => {
             y: 2.1,
           },
           {
-            x: "BUSD",
+            x: "BUSDsad",
             y: 0.3,
           },
         ],

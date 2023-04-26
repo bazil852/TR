@@ -23,6 +23,9 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Edit, Sort } from "../../../utils/icons";
+import Modal from "@mui/material/Modal";
+import { getSession } from "next-auth/react";
+
 const useStyles = makeStyles(() => ({
   input: {
     // width: "685px",
@@ -355,6 +358,10 @@ const BotsTable = () => {
   const [searchByBotsName, setSearchByBotsName] = React.useState("");
   const [width, setWidth] = React.useState(globalThis?.innerWidth);
 
+  const [selectedRow, setSelectedRow] = React.useState([]);
+  const [showModal, setShowModal] = React.useState(false);
+  const [logs, setLogs] = React.useState("");
+
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
@@ -369,7 +376,11 @@ const BotsTable = () => {
     });
 
     const data = await response.json();
-    let body = data.body.map((item) => {
+    const session = await getSession();
+    let filteredBot = data.body.filter(
+      (item) => item?.userId === session?.user?.id
+    );
+    let body = filteredBot.map((item) => {
       return {
         ...item,
         id: item._id,
@@ -377,6 +388,65 @@ const BotsTable = () => {
     });
     setTableRow(body);
   }, []);
+
+  const handleStatus = async (event, item) => {
+    let tableRowIndex = tableRow.findIndex(
+      (element) => element._id === item._id
+    );
+    let newData = [...tableRow];
+    let strat = item._id;
+    let url = "";
+    if (event.target.checked) {
+      newData[tableRowIndex].state = "on";
+      url = "start";
+    } else {
+      newData[tableRowIndex].state = "off";
+      url = "end";
+    }
+
+    // const response = await fetch(`http://localhost:8000/${url}`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ strategyID: item._id }),
+    // });
+    // const responseData = await response.json();
+    // console.log(responseData);
+    let reqBody = {
+      strategyId: item._id,
+      state: newData[tableRowIndex].state,
+    };
+
+    const updatedStrategy = await fetch("/api/strategy/update-status", {
+      method: "PATCH",
+      body: JSON.stringify(reqBody),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    setTableRow(newData);
+
+    try {
+      const response = await fetch("https://dcabot1.herokuapp.com/start", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // If you need to send a JSON body, uncomment the following line and replace '{}' with the appropriate JSON object
+        body: JSON.stringify({ strategyId: strat }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Success:", data);
+      } else {
+        console.error("Error:", response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const columns = [
     {
@@ -452,7 +522,7 @@ const BotsTable = () => {
                 {cellValues.row.botName}
               </div>
             </div>
-            <div>{`TP: ${cellValues?.row?.indicatorValues?.minimumTp}%, BO: ${cellValues?.row?.buyOnCondition}%, SO: ${cellValues?.row?.safetyOrderSize}%, OS: ${cellValues?.row?.orderSize}, `}</div>
+            <div>{`TP: ${cellValues?.row?.takeProfitPercent}%, BO: ${cellValues?.row?.orderSize}, SO: ${cellValues?.row?.safetyOrderSize}, OS: ${cellValues?.row?.maxOrders}, `}</div>
             <div
               style={{
                 padding: 2,
@@ -582,7 +652,8 @@ const BotsTable = () => {
             //     ? "linear-gradient(to right,#790D83,#7A5CFF)"
             //     : "#5A2B6A"
             // }
-            checked={cellValues.row.status}
+            checked={cellValues?.row?.state === "on" ? true : false}
+            onChange={() => handleStatus(event, cellValues.row)}
           />
         );
       },
@@ -614,6 +685,9 @@ const BotsTable = () => {
                 borderRadius: "5px",
                 backgroundColor: "#5B2A6D",
                 cursor: "pointer",
+              }}
+              onClick={() => {
+                handleViewModal(cellValues?.row);
               }}
             >
               <VisibilityIcon />
@@ -703,6 +777,34 @@ const BotsTable = () => {
   const handleClearFilter = () => {
     setTableRow(rows);
   };
+  const handleViewModal = async (row) => {
+    setLogs(row.logs);
+    setSelectedRow(row);
+    setShowModal(true);
+
+    const response = await fetch("/api/user/create-strategy", {
+      method: "GET",
+    });
+
+    const data = await response.json();
+    let filteredBot = data.body.filter((item) => item?._id === row._id);
+    setLogs(filteredBot[0].logs);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleRefresh = async () => {
+    const response = await fetch("/api/user/create-strategy", {
+      method: "GET",
+    });
+
+    const data = await response.json();
+
+    let filteredBot = data.body.filter((item) => item?._id === selectedRow._id);
+    setLogs(filteredBot[0].logs);
+  };
 
   const classes = useStyles();
   return (
@@ -790,6 +892,56 @@ const BotsTable = () => {
         component="main"
         maxWidth="100%"
       >
+        <Modal open={showModal} onClose={handleModalClose}>
+          <Box>
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                // overflowY: "scroll",
+                width: 700,
+                maxHeight: 600,
+                bgcolor: "background.paper",
+                border: "2px solid #000",
+                boxShadow: 24,
+                p: 4,
+              }}
+            >
+              <Grid container justifyContent="space-between">
+                <Grid>
+                  <Typography sx={{ fontWeight: 650, fontSize: "2rem" }}>
+                    Logs
+                  </Typography>
+                </Grid>
+                <Grid>
+                  <Button onClick={handleRefresh}>Refresh</Button>
+                </Grid>
+              </Grid>
+              <Box
+                sx={{
+                  overflowY: "scroll",
+                  width: 650,
+                  maxHeight: 450,
+                  "&::-webkit-scrollbar": {
+                    width: "0.4em",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                    webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: "rgba(0,0,0,.1)",
+                    outline: "1px solid slategrey",
+                  },
+                }}
+              >
+                <p dangerouslySetInnerHTML={{ __html: logs }}></p>
+              </Box>
+            </Box>
+          </Box>
+        </Modal>
         <Tabs
           value={value}
           onChange={handleChange}

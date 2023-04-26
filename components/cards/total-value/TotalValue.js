@@ -4,13 +4,11 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 
-const TotalValue = () => {
+const TotalValue = (props) => {
   const data = [
     { time: "Last 24 Hours", points: "2.49" },
-    { time: "Last 24 Hours", points: "2.49" },
-    { time: "Last 24 Hours", points: "-1.76" },
-    { time: "Last 24 Hours", points: "2.49" },
-    { time: "Last 24 Hours", points: "-1.67" },
+    { time: "Last 7 Days", points: "2.49" },
+    { time: "Last 30 Days", points: "-1.76" },
   ];
 
   return (
@@ -41,7 +39,7 @@ const TotalValue = () => {
             Total Value
           </Typography>
           <Typography style={{ color: "#00DE5F", fontSize: "16px" }}>
-            USD $1234
+            USD ${props?.totalValue.toFixed(2)}
           </Typography>
         </CardContent>
       </Card>

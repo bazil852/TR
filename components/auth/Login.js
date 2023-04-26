@@ -60,31 +60,63 @@ const Login = () => {
 
     if (!res.error) {
       const session = await getSession();
-      dispatch(setExchange(session.user.exchanges));
-      const { USDMClient } = require("binance");
-      const baseUrl = "https://testnet.binancefuture.com";
-      const client = new USDMClient({
-        api_key: session.user.exchanges[0].apiKey,
-        api_secret: session.user.exchanges[0].apiSecret,
-        baseUrl,
-      });
-
-      client
-        .getBalance()
-        .then((result) => {
-          dispatch(setAssets(result));
-        })
-        .catch((err) => {
-          console.error("getBalance error: ", err);
-        });
       if (session.user.accountVerified === false) {
         // router.push({pathname: '/verify-token', query: {email: session.user.email}});
         router.push("/verify-token");
       } else {
+        fetchAssetsFromUserInfo(true);
         router.push("/dashboard");
       }
     } else {
       setError("Please enter correct email or password");
+    }
+  };
+
+  const fetchAssetsFromUserInfo = async (save) => {
+    const { user } = await getSession();
+    const response = await fetch(`/api/user/get-user-info?id=${user.id}`, {
+      method: "GET",
+    });
+    const data = await response.json();
+    if (user.exchanges[0]) {
+      const { USDMClient } = require("binance");
+      const baseUrl = "https://testnet.binancefuture.com";
+      const client = new USDMClient({
+        api_key: user.exchanges[0]?.apiKey,
+        api_secret: user.exchanges[0]?.apiSecret,
+        baseUrl,
+      });
+
+      let filteredAssets;
+
+      await client
+        .getBalance()
+        .then(async (result) => {
+          console.log("getBalance result: ", result);
+          filteredAssets = result.filter(
+            (item) => parseFloat(item.balance) !== 0
+          );
+          setAssets(filteredAssets);
+        })
+        .catch((err) => {
+          console.error("getBalance error: ", err);
+        });
+
+      if (filteredAssets?.length > 0 && save) {
+        let reqBody = {
+          exchangeId: user.exchanges[0]._id,
+          userId: user.id,
+          assets: filteredAssets,
+        };
+        console.log(reqBody);
+        const response = await fetch("/api/wallet/create-wallet", {
+          method: "POST",
+          body: JSON.stringify(reqBody),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
     }
   };
 

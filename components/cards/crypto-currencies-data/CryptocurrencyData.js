@@ -6,8 +6,8 @@ const CryptocurrencyData = () => {
   const firstRow = [
     { name: "BTC", abrevation: "Bitcoin", points: "-1.8%" },
     { name: "ETH", abrevation: "ethereum", points: "-5.4%" },
-    { name: "BNB", abrevation: "BNB", points: "-2.5%" },
-    { name: "XRP", abrevation: "XRP", points: "-1.9%" },
+    // { name: "BNB", abrevation: "BNB", points: "-2.5%" },
+    // { name: "XRP", abrevation: "XRP", points: "-1.9%" },
   ];
   const secondRow = [
     { name: "ADA", abrevation: "Cardano", points: "-3.6%" },

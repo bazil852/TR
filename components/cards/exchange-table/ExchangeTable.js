@@ -13,6 +13,8 @@ import { signIn, getSession, useSession } from "next-auth/react";
 import { Sort } from "../../../utils/icons";
 import DataTable from "./DataTable";
 import CryptocurrencyData from "../crypto-currencies-data/CryptocurrencyData";
+
+import Button from "@mui/material/Button";
 const data = [
   {
     id: 1,
@@ -126,46 +128,59 @@ const data = [
 
 const ccxt = require("ccxt");
 
-const ExchangeTable = () => {
+const ExchangeTable = (props) => {
   const exchanges = useSelector((state) => state.exchanges.value);
   const [tableData, setTableData] = useState([]);
 
   React.useEffect(() => {
-    const symbol = ["BTC/USDT", "ETH/USDT"];
-    if (exchanges?.length > 0) {
-      const { USDMClient } = require("binance");
-      const baseUrl = "https://testnet.binancefuture.com";
-      const client = new USDMClient({
-        api_key: exchanges[0]?.apiKey,
-        api_secret: exchanges[0]?.apiSecret,
-        baseUrl,
-      });
-      client
-        .getBalance()
-        .then((result) => {
-          setTableData(
-            result.map((item, i) => {
-              return {
-                ...item,
-                id: i,
-              };
-            })
-          );
-        })
-        .catch((err) => {
-          console.error("getBalance error: ", err);
-        });
-      const binance = new ccxt.binance();
-      binance
-        .fetchTicker("BTC/USDT")
-        .then((ticker) => {
-          console.log(ticker);
-        })
-        .catch((error) => {
-          console.error(`Error fetching ticker for ${"USDT"}: ${error}`);
-        });
-    }
-  }, []);
+    let updatedAssets = props.assets?.map((item) => {
+      return {
+        ...item,
+        crossWalletBalance: parseFloat(item.crossWalletBalance).toFixed(5),
+        availableBalance: parseFloat(item.availableBalance).toFixed(5),
+        balance: parseFloat(item.balance).toFixed(5),
+        share: 2,
+        change: -12,
+      };
+    });
+    setTableData(updatedAssets);
+
+    // const symbol = ["BTC/USDT", "ETH/USDT"];
+    // if (exchanges?.length > 0) {
+    //   const { USDMClient } = require("binance");
+    //   const baseUrl = "https://testnet.binancefuture.com";
+    //   const client = new USDMClient({
+    //     api_key: exchanges[0]?.apiKey,
+    //     api_secret: exchanges[0]?.apiSecret,
+    //     baseUrl,
+    //   });
+    //   client
+    //     .getBalance()
+    //     .then((result) => {
+    //       console.log(result);
+    //       setTableData(
+    //         result.map((item, i) => {
+    //           return {
+    //             ...item,
+    //             id: i,
+    //           };
+    //         })
+    //       );
+    //     })
+    //     .catch((err) => {
+    //       console.error("getBalance error: ", err);
+    //     });
+    //   const binance = new ccxt.binance();
+    //   binance
+    //     .fetchTicker("BTC/USDT")
+    //     .then((ticker) => {
+    //       console.log(ticker);
+    //     })
+    //     .catch((error) => {
+    //       console.error(`Error fetching ticker for ${"USDT"}: ${error}`);
+    //     });
+    // }
+  }, [props.assets]);
 
   // const columnst = [
   //   {
@@ -241,13 +256,83 @@ const ExchangeTable = () => {
   //   },
   // ];
 
+  // const columns = [
+  //   { field: "token", title: "Token", sortable: true },
+  //   { field: "share", title: "Share", sortable: true },
+  //   { field: "change", title: "Change (24h)", sortable: true },
+  //   { field: "price", title: "Price", sortable: true },
+  //   { field: "amount", title: "Amount", sortable: true },
+  //   { field: "total", title: "Total", sortable: true },
+  // ];
+
   const columns = [
-    { field: "token", title: "Token", sortable: true },
-    { field: "share", title: "Share", sortable: true },
+    {
+      field: "asset",
+      title: "Token",
+      width: 108,
+      // renderHeader: () => {
+      //   return <strong>{"Token"}</strong>;
+      // },
+    },
+
     { field: "change", title: "Change (24h)", sortable: true },
-    { field: "price", title: "Price", sortable: true },
-    { field: "amount", title: "Amount", sortable: true },
-    { field: "total", title: "Total", sortable: true },
+    // {
+    //   field: "share",
+    //   headerName: "Share",
+    //   width: 108,
+    //   renderHeader: () => {
+    //     return <strong>{"Share"}</strong>;
+    //   },
+    // },
+    // {
+    //   field: "change",
+    //   headerName: "Change (24h)",
+    //   width: 165,
+    //   renderHeader: () => {
+    //     return <strong>{"Change (24h)"}</strong>;
+    //   },
+    // renderCell: (cellValues) => {
+    //   if (cellValues.value.charAt(0) === "+") {
+    //     return (
+    //       <div style={{ color: "#4BD469" }}>
+    //         {cellValues.value}
+    //         <NorthIcon fontSize="6px" />
+    //       </div>
+    //     );
+    //   } else {
+    //     return (
+    //       <div style={{ color: "#EB5757" }}>
+    //         {cellValues.value}
+    //         <SouthIcon fontSize="6px" />
+    //       </div>
+    //     );
+    //   }
+    // },
+    // },
+    {
+      field: "crossWalletBalance",
+      width: 109,
+      title: "Price",
+      // renderHeader: () => {
+      //   return <strong>{"Price"}</strong>;
+      // },
+    },
+    {
+      field: "availableBalance",
+      title: "Amount",
+      width: 122,
+      // renderHeader: () => {
+      //   return <strong>{"Amount"}</strong>;
+      // },
+    },
+    {
+      field: "balance",
+      title: "Total",
+      width: 110,
+      // renderHeader: () => {
+      //   return <strong>{"Total"}</strong>;
+      // },
+    },
   ];
 
   const [value, setValue] = useState("usd");
@@ -342,9 +427,43 @@ const ExchangeTable = () => {
           </ToggleButtonGroup>
         </Box>
       </Box>
-      <Typography sx={{ fontWeight: 700, fontSize: "18px", pt: 3, pl: 1 }}>
-        Portfolio Summary
-      </Typography>
+      <Box
+        sx={{
+          width: "48vw",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          pt: 3,
+          pl: 1,
+          pr: 1,
+        }}
+      >
+        <Box>
+          <Typography sx={{ fontWeight: 700, fontSize: "18px" }}>
+            Portfolio Summary
+          </Typography>
+        </Box>
+        <Box>
+          <Button
+            sx={{
+              background: "linear-gradient(to right,#790D83,#7A5CFF)",
+              textTransform: "none",
+              border: "none",
+              transition: "transform 0.2s",
+              borderRadius: "15px",
+              padding: "8px 15px",
+              "&:hover": {
+                transform: "scale(0.95)",
+                backgroundColor: "linear-gradient(to right,#790D83,#7A5CFF)",
+                cursor: "pointer",
+              },
+            }}
+            onClick={props.handleRefresh}
+          >
+            Refresh
+          </Button>
+        </Box>
+      </Box>
       {/* <Container
         sx={{
           // background: "#191919",
@@ -412,8 +531,8 @@ const ExchangeTable = () => {
           mb: 7,
         }}
       >
-        <DataTable data={data} columns={columns} />
-        <CryptocurrencyData />
+        <DataTable data={tableData} columns={columns} />
+        {/* <CryptocurrencyData /> */}
       </Box>
       {/* </Container> */}
     </Box>

@@ -19,6 +19,7 @@ import { signIn, getSession, useSession } from "next-auth/react";
 import SelectInput from "../../widgets/SelectInput";
 import { useSelector, useDispatch } from "react-redux";
 import { setExchange } from "../../../slices/exchange-slice";
+import { CircularProgress } from "@mui/material";
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -54,15 +55,54 @@ const WalletConnect = () => {
   const [showDrawer, setShowDrawer] = useState(false);
   const [connected, setConnected] = useState(false);
   const [connectionData, setConnectionData] = useState();
-  const [selectedData, setselectedData] = useState({});
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (assets.length > 0) {
-      setConnectionData(assets);
-      setConnected(true);
-      setShowDrawer(false);
-    }
+    fetchAssetsFromUserInfo();
   }, []);
+
+  const fetchAssetsFromUserInfo = async () => {
+    const { user } = await getSession();
+    const response = await fetch(`/api/user/get-user-info?id=${user.id}`, {
+      method: "GET",
+    });
+    const data = await response.json();
+
+    if (data.body.exchanges[0]) {
+      const { USDMClient } = require("binance");
+      const baseUrl = "https://testnet.binancefuture.com";
+      const client = new USDMClient({
+        api_key: data.body.exchanges[0].apiKey,
+        api_secret: data.body.exchanges[0].apiSecret,
+        baseUrl,
+      });
+
+      client
+        .getBalance()
+        .then((result) => {
+          console.log("getBalance result: ", result);
+          setConnectionData(result);
+          setConnected(true);
+          setShowDrawer(false);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("getBalance error: ", err);
+          setLoading;
+        });
+    } else {
+      setLoading(false);
+    }
+  };
+
+  // useEffect(() => {
+  //   if (assets.length > 0) {
+  //     setConnectionData(assets);
+  //     setConnected(true);
+  //     setShowDrawer(false);
+  //   }
+  // }, []);
 
   const handleClose = () => {
     setShowDrawer(false);
@@ -156,7 +196,11 @@ const WalletConnect = () => {
       component="main"
       maxWidth="xs"
     >
-      {connected ? (
+      {loading ? (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <CircularProgress />
+        </div>
+      ) : connected ? (
         <Box>
           <Typography>Wallet</Typography>
           <Box>

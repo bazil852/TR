@@ -8,8 +8,14 @@ const binance = new ccxt.binance();
 const CryptoRates = () => {
   const symbolBTC = "BTC/USDT";
   const symbolETH = "ETH/USDT";
+  const symbolBNB = "BNB/USDT";
+  const symbolXRP = "XRP/USDT";
+  const symbolLTC = "LTC/USDT";
   const [btcTickerValue, setBtcTickerValue] = React.useState({});
   const [ethTickerValue, setEthTickerValue] = React.useState({});
+  const [bnbTickerValue, setBnbTickerValue] = React.useState({});
+  const [xrpTickerValue, setXrpTickerValue] = React.useState({});
+  const [ltcTickerValue, setLtcTickerValue] = React.useState({});
 
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -30,6 +36,33 @@ const CryptoRates = () => {
         .catch((error) => {
           console.error(`Error fetching ticker for ${symbolETH}: ${error}`);
         });
+
+      binance
+        .fetchTicker(symbolBNB)
+        .then((ticker) => {
+          setBnbTickerValue(ticker);
+        })
+        .catch((error) => {
+          console.error(`Error fetching ticker for ${symbolBNB}: ${error}`);
+        });
+
+      binance
+        .fetchTicker(symbolXRP)
+        .then((ticker) => {
+          setXrpTickerValue(ticker);
+        })
+        .catch((error) => {
+          console.error(`Error fetching ticker for ${symbolXRP}: ${error}`);
+        });
+
+      binance
+        .fetchTicker(symbolLTC)
+        .then((ticker) => {
+          setLtcTickerValue(ticker);
+        })
+        .catch((error) => {
+          console.error(`Error fetching ticker for ${symbolLTC}: ${error}`);
+        });
     }, 2000);
     return () => clearInterval(interval);
   }, []);
@@ -37,12 +70,12 @@ const CryptoRates = () => {
     <Box
       sx={{
         display: "flex",
-        gap: "1.5rem",
+        gap: "1rem",
         flexWrap: "wrap",
         alignItems: "center",
       }}
     >
-      <Box sx={{ display: "flex", gap: "0.8rem" }}>
+      <Box sx={{ display: "flex", gap: "0.4rem" }}>
         <span style={{ color: "#999999", fontSize: "14px" }}>{symbolBTC}</span>
         <span style={{ fontWeight: "600", fontSize: "14px" }}>
           ${btcTickerValue?.last}{" "}
@@ -57,7 +90,7 @@ const CryptoRates = () => {
           {btcTickerValue?.percentage}
         </span>
       </Box>
-      <Box sx={{ display: "flex", gap: "0.8rem" }}>
+      <Box sx={{ display: "flex", gap: "0.4rem" }}>
         <span style={{ color: "#999999", fontSize: "14px" }}>{symbolETH}</span>
         <span style={{ fontWeight: "600", fontSize: "14px" }}>
           ${ethTickerValue?.last}{" "}
@@ -72,49 +105,49 @@ const CryptoRates = () => {
           {ethTickerValue?.percentage}
         </span>
       </Box>
-      <Box sx={{ display: "flex", gap: "0.8rem" }}>
-        <span style={{ color: "#999999", fontSize: "14px" }}>{symbolBTC}</span>
+      <Box sx={{ display: "flex", gap: "0.4rem" }}>
+        <span style={{ color: "#999999", fontSize: "14px" }}>{symbolBNB}</span>
         <span style={{ fontWeight: "600", fontSize: "14px" }}>
-          ${btcTickerValue?.last}{" "}
+          ${bnbTickerValue?.last}{" "}
         </span>
         <span
           style={{
-            color: `${btcTickerValue?.percentage > 0 ? "#4BD469" : "red"}`,
+            color: `${bnbTickerValue?.percentage > 0 ? "#4BD469" : "red"}`,
             fontSize: "14px",
           }}
         >
-          {btcTickerValue?.percentage > 0 ? "+" : ""}{" "}
-          {btcTickerValue?.percentage}
+          {bnbTickerValue?.percentage > 0 ? "+" : ""}{" "}
+          {bnbTickerValue?.percentage}
         </span>
       </Box>
-      <Box sx={{ display: "flex", gap: "0.8rem" }}>
-        <span style={{ color: "#999999", fontSize: "14px" }}>{symbolETH}</span>
+      <Box sx={{ display: "flex", gap: "0.4rem" }}>
+        <span style={{ color: "#999999", fontSize: "14px" }}>{symbolXRP}</span>
         <span style={{ fontWeight: "600", fontSize: "14px" }}>
-          ${ethTickerValue?.last}{" "}
+          ${xrpTickerValue?.last}{" "}
         </span>
         <span
           style={{
-            color: `${ethTickerValue?.percentage > 0 ? "#4BD469" : "red"}`,
+            color: `${xrpTickerValue?.percentage > 0 ? "#4BD469" : "red"}`,
             fontSize: "14px",
           }}
         >
-          {ethTickerValue?.percentage > 0 ? "+" : ""}
-          {ethTickerValue?.percentage}
+          {xrpTickerValue?.percentage > 0 ? "+" : ""}
+          {xrpTickerValue?.percentage}
         </span>
       </Box>
-      <Box sx={{ display: "flex", gap: "0.8rem" }}>
-        <span style={{ color: "#999999", fontSize: "14px" }}>{symbolBTC}</span>
+      <Box sx={{ display: "flex", gap: "0.4rem" }}>
+        <span style={{ color: "#999999", fontSize: "14px" }}>{symbolLTC}</span>
         <span style={{ fontWeight: "600", fontSize: "14px" }}>
-          ${btcTickerValue?.last}{" "}
+          ${ltcTickerValue?.last}{" "}
         </span>
         <span
           style={{
-            color: `${btcTickerValue?.percentage > 0 ? "#4BD469" : "red"}`,
+            color: `${ltcTickerValue?.percentage > 0 ? "#4BD469" : "red"}`,
             fontSize: "14px",
           }}
         >
-          {btcTickerValue?.percentage > 0 ? "+" : ""}
-          {btcTickerValue?.percentage}
+          {ltcTickerValue?.percentage > 0 ? "+" : ""}
+          {ltcTickerValue?.percentage}
         </span>
       </Box>
     </Box>
