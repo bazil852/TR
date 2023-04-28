@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import { Doughnut } from "react-chartjs-2";
@@ -17,6 +17,9 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
+const ccxt = require("ccxt");
+import { signIn, getSession, useSession } from "next-auth/react";
+
 import Card from "@mui/material/Card";
 import { CardContent } from "@mui/material";
 ChartJS.register(
@@ -30,17 +33,17 @@ ChartJS.register(
   PointElement,
   Filler
 );
-const doughnutData = {
-  labels: false,
-  datasets: [
-    {
-      data: [200, 200, 100],
-      backgroundColor: ["#795BFF", "#FFA412", "#666666"],
-      hoverBackgroundColor: ["#795BFF", "#FFA412", "#666666"],
-      borderWidth: 0,
-    },
-  ],
-};
+// const doughnutData = {
+//   labels: false,
+//   datasets: [
+//     {
+//       data: [200, 1000, 100],
+//       backgroundColor: ["#795BFF", "#FFA412", "#666666"],
+//       hoverBackgroundColor: ["#795BFF", "#FFA412", "#666666"],
+//       borderWidth: 0,
+//     },
+//   ],
+// };
 
 const options = {
   responsive: true,
@@ -77,9 +80,117 @@ const options = {
   },
 };
 
-function AggregateAccountBalance() {
+const dates = [];
+
+for (let i = 0; i <= 30; i++) {
+  const date = new Date();
+  date.setDate(date.getDate() - i);
+  const month = date.toLocaleString("default", { month: "short" });
+  const day = date.getDate();
+  const dateString = `${month} ${day}`;
+  dates.push(dateString);
+}
+
+console.log(dates);
+
+console.log("Dates", dates);
+
+function AggregateAccountBalance(props) {
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: [],
+  });
+
+  const [doughnutData, setDoughnutData] = useState({
+    labels: [],
+    datasets: [],
+  });
+
+  useEffect(() => {
+    fetchAllWallet();
+  }, []);
+
+  const fetchAllWallet = async () => {
+    const { user } = await getSession();
+    const getWalletData = await fetch(
+      `/api/wallet/get-all-wallet?id=${user.id}`,
+      {
+        method: "GET",
+      }
+    );
+    const walletData = await getWalletData.json();
+    console.log(walletData.body);
+
+    let chartData = {
+      labels: [],
+      datasets: [],
+    };
+
+    let assetData = {};
+
+    if (walletData.body.length > 0) {
+      const data = {
+        labels: getAssetLabels(
+          walletData.body[walletData.body.length - 1].assets
+        ),
+        datasets: [
+          {
+            data: getAssetBalances(
+              walletData.body[walletData.body.length - 1].assets
+            ),
+            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
+            hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
+          },
+        ],
+      };
+      console.log(data);
+      setDoughnutData(data);
+
+      // Extract data from the array of objects and create an object with assets as keys
+      await walletData?.body?.forEach((doc) => {
+        const date = doc.created.substring(5, 10);
+        chartData.labels.push(date);
+        doc.assets.forEach((asset) => {
+          if (!assetData[asset.asset]) {
+            assetData[asset.asset] = {
+              label: asset.asset,
+              data: [],
+              backgroundColor: "transparent",
+              borderColor: getRandomColor(),
+              borderWidth: 2,
+            };
+          }
+          assetData[asset.asset].data.push(asset.usdtBal);
+        });
+      });
+
+      // Add datasets to the chart data
+      await Object.keys(assetData).forEach((key) => {
+        chartData.datasets.push(assetData[key]);
+      });
+
+      setChartData(chartData);
+    }
+  };
+
+  console.log(doughnutData);
+
+  function getAssetLabels(assets) {
+    return assets.map((asset) => asset.asset);
+  }
+
+  function getAssetBalances(assets) {
+    return assets.map((asset) => asset.usdtBal);
+  }
+  // Generate a random color
+  function getRandomColor() {
+    return `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(
+      Math.random() * 255
+    )}, ${Math.floor(Math.random() * 255)}, 1)`;
+  }
+
   const data = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    labels: dates,
     datasets: [
       {
         label: "Dataset 1",
@@ -99,7 +210,13 @@ function AggregateAccountBalance() {
       },
     ],
   };
-
+  const doughnutOptions = {
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+  };
   return (
     <Grid container>
       <Grid xs={12} item>
@@ -133,7 +250,7 @@ function AggregateAccountBalance() {
                   }}
                 >
                   <div style={{ height: 130, width: 130 }}>
-                    <Doughnut data={doughnutData} />
+                    <Doughnut data={doughnutData} options={doughnutOptions} />
                   </div>
                   <div>
                     <Typography
@@ -150,7 +267,7 @@ function AggregateAccountBalance() {
 
                 <Grid xs={10}>
                   <div style={{ width: "100%", height: "230px" }}>
-                    <Line data={data} options={options} />
+                    <Line data={chartData} options={options} />
                   </div>
                 </Grid>
               </Grid>

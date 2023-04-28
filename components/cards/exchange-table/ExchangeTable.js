@@ -131,6 +131,7 @@ const ccxt = require("ccxt");
 const ExchangeTable = (props) => {
   const exchanges = useSelector((state) => state.exchanges.value);
   const [tableData, setTableData] = useState([]);
+  console.log("Exchange Table", props.assets);
 
   React.useEffect(() => {
     let updatedAssets = props.assets?.map((item) => {
@@ -139,8 +140,6 @@ const ExchangeTable = (props) => {
         crossWalletBalance: parseFloat(item.crossWalletBalance).toFixed(5),
         availableBalance: parseFloat(item.availableBalance).toFixed(5),
         balance: parseFloat(item.balance).toFixed(5),
-        share: 2,
-        change: -12,
       };
     });
     setTableData(updatedAssets);
