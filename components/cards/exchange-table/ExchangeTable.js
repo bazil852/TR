@@ -530,7 +530,7 @@ const ExchangeTable = (props) => {
         }}
       >
         <DataTable data={tableData} columns={columns} />
-        {/* <CryptocurrencyData /> */}
+        <CryptocurrencyData data={tableData} />
       </Box>
       {/* </Container> */}
     </Box>

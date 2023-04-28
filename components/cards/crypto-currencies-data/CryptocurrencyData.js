@@ -1,217 +1,143 @@
-import React from "react";
-import Typography from "@mui/material/Typography";
-import { Box, Container } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { WidthProvider, Responsive } from "react-grid-layout";
 
-const CryptocurrencyData = () => {
-  const firstRow = [
-    { name: "BTC", abrevation: "Bitcoin", points: "-1.8%" },
-    { name: "ETH", abrevation: "ethereum", points: "-5.4%" },
-    // { name: "BNB", abrevation: "BNB", points: "-2.5%" },
-    // { name: "XRP", abrevation: "XRP", points: "-1.9%" },
-  ];
-  const secondRow = [
-    { name: "ADA", abrevation: "Cardano", points: "-3.6%" },
-    { name: "SOL", abrevation: "Solana", points: "-4.4%" },
-    { name: "DOGE", abrevation: "Dogecoin", points: "-3.4%" },
-    { name: "DOT", abrevation: "Polkadot", points: "-7.6%" },
-    { name: "HEX", abrevation: "HEX", points: "-7.4%" },
-  ];
-  const thirdRowfirstHalf = [
-    { name: "UNI", abrevation: "Uniswap", points: "-3.3%" },
-    { name: "stETH", abrevation: "Kido Staked ETH", points: "-5.5%" },
-  ];
-  const thirdRowsecondHalf = [
-    { name: "FTT", abrevation: "FTX Tiken", points: "-3.9%" },
-    { name: "CRO", abrevation: "Cronos", points: "-5.5%" },
-  ];
-  const fourthRow = [
-    { name: "LINK", abrevation: "Chainlink", points: "-6.9%" },
-    { name: "NEAR", abrevation: "NEAR Protocol", points: "-2.0%" },
-  ];
+const ResponsiveGridLayout = WidthProvider(Responsive);
+
+const CryptocurrencyData = (props) => {
+  const [cryptocurrencies, setCryptocurrencies] = useState([]);
+
+  useEffect(() => {
+    setCryptocurrencies(props.data);
+  }, [props.data]);
+  // const cryptocurrencies = [
+  //   { name: "BTC", abrevation: "Bitcoin", points: "-1.8%" },
+  //   { name: "ETH", abrevation: "ethereum", points: "-5.4%" },
+  //   { name: "BNB", abrevation: "BNB", points: "-2.5%" },
+  //   { name: "XRP", abrevation: "XRP", points: "-1.9%" },
+  //   { name: "ADA", abrevation: "Cardano", points: "-3.6%" },
+  // ];
+  const getBackgroundColor = (index) => {
+    const isSecondBox = index % 4 === 1;
+    const isFourthBox = index % 4 === 3;
+    const isSecondRowInFourRows = Math.floor(index / 4) % 4 === 1;
+
+    if (isSecondRowInFourRows && (isSecondBox || isFourthBox)) {
+      return "#009B10";
+    } else {
+      return "#830D0D";
+    }
+  };
+  const generateLayouts = () => {
+    const layouts = [];
+    let currentX = 0;
+    let currentY = 0;
+    const numRows = Math.ceil(cryptocurrencies.length / 4);
+
+    for (let row = 0; row < numRows; row++) {
+      for (let col = 0; col < 4; col++) {
+        const index = row * 4 + col;
+        const isSecondBox = col === 1;
+        const isThirdBox = col === 2;
+        const isLastBoxInSecondColumn =
+          index === cryptocurrencies.length - 1 && isSecondBox;
+
+        let height = 2.1;
+        let width = 1.8;
+        if (isSecondBox && !isLastBoxInSecondColumn) {
+          height = 2;
+          width = 1.1;
+        } else if ((row + 1) % 4 === 3 && col === 2) {
+          height = 2.1;
+          width = 1.8;
+        } else if (
+          ((row + 1) % 4 === 1 && (col === 2 || col === 3)) ||
+          ((row + 1) % 4 === 2 && col === 3)
+        ) {
+          height = 3.2;
+          width = 0.9;
+        } else if (col == 0) {
+          height = 2.5;
+          width = 1.1;
+        } else if (index % 16 === 6) {
+          height = 3.2;
+          width = 0.9;
+        }
+        currentX = col * 1.1;
+
+        layouts.push({
+          i: index.toString(),
+          x: currentX,
+          y: currentY,
+          w: width,
+          h: height,
+        });
+
+        currentX += width;
+      }
+
+      currentX = 0;
+      currentY += 2;
+    }
+
+    return layouts;
+  };
+
+  const layouts = {
+    lg: generateLayouts(),
+  };
+
+  const boxStyle = (index) => ({
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    padding: "10px",
+    boxSizing: "border-box",
+    backgroundColor: getBackgroundColor(index),
+  });
+
+  const textStyle = {
+    fontWeight: "normal",
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+  };
+  const headingStyle = {
+    fontWeight: "bold",
+  };
 
   return (
-    <Container
-      sx={{
-        display: "flex",
-        gap: 0.7,
+    <div
+      style={{
+        margin: "0 auto",
+        width: "800px",
         background: "rgba(41, 8, 77, 0.42)",
         minHeight: 800,
         width: "41vw",
-        borderRadius: 2,
-        mt: 3,
+        borderRadius: 7,
+        marginTop: "24px",
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 1,
-          mt: 3,
-          ml: -1.5,
-        }}
+      <ResponsiveGridLayout
+        className="layout"
+        layouts={layouts}
+        rowHeight={50}
+        cols={{ lg: 4, md: 4, sm: 4, xs: 4, xxs: 4 }}
       >
-        {firstRow.map((coinData, index) => {
-          return (
-            <Box
-              key={index}
-              sx={{
-                // height: 130,
-                minHeight: "10.52778vw",
-                // width: 110,
-                minWidth: "10.13889vw",
-                background: "#830D0D",
-                pt: "2vw",
-                pl: "2vw",
-              }}
-            >
-              <Typography>{coinData.name}</Typography>
-              <Typography sx={{ fontSize: "13px" }}>
-                {coinData.abrevation}
-              </Typography>
-              <Typography sx={{ fontSize: "13px" }}>
-                {coinData.points}
-              </Typography>
-            </Box>
-          );
-        })}
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 1,
-          mt: 3,
-        }}
-      >
-        {secondRow.map((coinData, index) => {
-          return (
-            <Box
-              key={index}
-              sx={{
-                // height: 95,
-                minHeight: "8vw",
-                // width: 115,
-                minWidth: "10.48611vw",
-                background: index === 1 ? "#009B10" : "#830D0D",
-                opacity: index === 1 ? 0.9 : 1,
-                pt: "1vw",
-                pl: "0.8vw",
-              }}
-            >
-              <Typography>{coinData.name}</Typography>
-              <Typography sx={{ fontSize: "13px" }}>
-                {coinData.abrevation}
-              </Typography>
-              <Typography sx={{ fontSize: "13px" }}>
-                {coinData.points}
-              </Typography>
-            </Box>
-          );
-        })}
-      </Box>
-      <Box>
-        <Box
-          sx={{
-            display: "flex",
-            gap: 1,
-            mt: 3,
-          }}
-        >
-          {thirdRowfirstHalf.map((coinData, index) => {
-            return (
-              <Box
-                key={index}
-                sx={{
-                  // height: 150,
-                  minHeight: "12.21667vw",
-                  // width: 90,
-                  minWidth: "8.2vw",
-                  background: "#830D0D",
-                  pt: "1vw",
-                  pl: "0.9vw",
-                }}
-              >
-                <Typography>{coinData.name}</Typography>
-                <Typography sx={{ fontSize: "11.5px" }}>
-                  {coinData.abrevation}
-                </Typography>
-                <Typography sx={{ fontSize: "13px" }}>
-                  {coinData.points}
-                </Typography>
-              </Box>
-            );
-          })}
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            gap: 1,
-            mt: 1,
-          }}
-        >
-          {thirdRowsecondHalf.map((coinData, index) => {
-            return (
-              <Box
-                key={index}
-                sx={{
-                  // height: 150,
-                  minHeight: "12.21667vw",
-                  // width: 90,
-                  minWidth: "8.2vw",
-                  background: "#830D0D",
-                  pt: "1vw",
-                  pl: "0.9vw",
-                  background: index === 1 ? "#009B10" : "#830D0D",
-                  opacity: index === 1 ? 0.9 : 1,
-                }}
-              >
-                <Typography>{coinData.name}</Typography>
-                <Typography sx={{ fontSize: "13px" }}>
-                  {coinData.abrevation}
-                </Typography>
-                <Typography sx={{ fontSize: "13px" }}>
-                  {coinData.points}
-                </Typography>
-              </Box>
-            );
-          })}
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 1,
-            mt: 1,
-            pb: 2,
-          }}
-        >
-          {fourthRow.map((coinData, index) => {
-            return (
-              <Box
-                key={index}
-                sx={{
-                  // height: 110,
-                  minHeight: "9.13889vw",
-                  // width: 188,
-                  minWidth: "16.55556vw",
-                  background: "#830D0D",
-                  pt: "1.7vw",
-                  pl: "2vw",
-                }}
-              >
-                <Typography>{coinData.name}</Typography>
-                <Typography sx={{ fontSize: "13px" }}>
-                  {coinData.abrevation}
-                </Typography>
-                <Typography sx={{ fontSize: "13px" }}>
-                  {coinData.points}
-                </Typography>
-              </Box>
-            );
-          })}
-        </Box>
-      </Box>
-    </Container>
+        {cryptocurrencies.map((crypto, index) => (
+          <div key={index} style={boxStyle(index)}>
+            <div style={headingStyle}>{crypto.asset}</div>
+            <div style={textStyle}>{crypto.balance}</div>
+            <div style={textStyle}>
+              {parseFloat(crypto.change) === 0
+                ? "NA"
+                : parseFloat(crypto.change) > 0
+                ? `+${crypto.change}%`
+                : `-${crypto.change}%`}
+            </div>
+          </div>
+        ))}
+      </ResponsiveGridLayout>
+    </div>
   );
 };
 
