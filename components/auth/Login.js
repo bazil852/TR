@@ -19,6 +19,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { setExchange } from "../../slices/exchange-slice";
 import { setAssets } from "../../slices/asset-slice";
 
+const ccxt = require("ccxt");
+
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
     marginTop: theme.spacing(3),
@@ -92,7 +94,6 @@ const Login = () => {
       await client
         .getBalance()
         .then(async (result) => {
-          console.log("getBalance result: ", result);
           filteredAssets = result.filter(
             (item) => parseFloat(item.balance) !== 0
           );
@@ -103,12 +104,25 @@ const Login = () => {
         });
 
       if (filteredAssets?.length > 0 && save) {
+        const binance = new ccxt.binance();
+        for (const asset of filteredAssets) {
+          if (asset.asset === "USDT") {
+            asset["usdtBal"] = asset.balance;
+          } else {
+            // Get the USDT exchange rate for the asset
+            const symbol = `${asset.asset}/USDT`;
+            const ticker = await binance.fetchTicker(symbol);
+            const usdtPrice = ticker.last;
+            // Multiply the balance by the USDT exchange rate to get the balance in USDT
+            const usdtBalance = parseFloat(asset.balance) * usdtPrice;
+            asset["usdtBal"] = usdtBalance;
+          }
+        }
         let reqBody = {
           exchangeId: user.exchanges[0]._id,
           userId: user.id,
           assets: filteredAssets,
         };
-        console.log(reqBody);
         const response = await fetch("/api/wallet/create-wallet", {
           method: "POST",
           body: JSON.stringify(reqBody),

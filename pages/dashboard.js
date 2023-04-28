@@ -22,6 +22,10 @@ const DashboardComponent = () => {
 
   const [totalAggregateValue24hChange, setTotalAggregateValue24hChange] =
     useState(0);
+  const [totalAggregateValue7DaysChange, setTotalAggregateValue7DaysChange] =
+    useState(0);
+  const [totalAggregateValue30DaysChange, setTotalAggregateValue30DaysChange] =
+    useState(0);
 
   useEffect(() => {
     fetchAssetsFromUserInfo(false);
@@ -50,7 +54,6 @@ const DashboardComponent = () => {
       await client
         .getBalance()
         .then(async (result) => {
-          console.log("getBalance result: ", result);
           filteredAssets = result.filter(
             (item) => parseFloat(item.balance) !== 0
           );
@@ -77,7 +80,6 @@ const DashboardComponent = () => {
             const usdtPrice = ticker.last;
             // Multiply the balance by the USDT exchange rate to get the balance in USDT
             const usdtBalance = parseFloat(asset.balance) * usdtPrice;
-            console.log(usdtBalance);
             totalValue += usdtBalance;
             asset["usdtBal"] = usdtBalance;
           }
@@ -99,35 +101,100 @@ const DashboardComponent = () => {
           });
         }
         const walletYesterdayData = await fetch(
-          `/api/wallet/get-wallet?id=${user.id}`,
+          `/api/wallet/get-yesterday-wallet?id=${user.id}`,
           {
             method: "GET",
           }
         );
         const walletData = await walletYesterdayData.json();
-        console.log(walletData.body);
 
-        let prevTotalValue = 0;
-        for (const asset of walletData?.body?.assets) {
-          if (asset.asset === "USDT") {
-            // If the asset is already in USDT, use its balance directly
-            prevTotalValue += parseFloat(asset.balance);
-          } else {
-            // Get the USDT exchange rate for the asset
-            const symbol = `${asset.asset}/USDT`;
-            const ticker = await binance.fetchTicker(symbol);
-            const usdtPrice = ticker.last;
-            // Multiply the balance by the USDT exchange rate to get the balance in USDT
-            const usdtBalance = parseFloat(asset.balance) * usdtPrice;
-            console.log(usdtBalance);
-            prevTotalValue += usdtBalance;
+        if (walletData.body) {
+          let prevTotalValue = 0;
+          for (const asset of walletData?.body?.assets) {
+            if (asset.asset === "USDT") {
+              // If the asset is already in USDT, use its balance directly
+              prevTotalValue += parseFloat(asset.balance);
+            } else {
+              // Get the USDT exchange rate for the asset
+              const symbol = `${asset.asset}/USDT`;
+              const ticker = await binance.fetchTicker(symbol);
+              const usdtPrice = ticker.last;
+              // Multiply the balance by the USDT exchange rate to get the balance in USDT
+              const usdtBalance = parseFloat(asset.balance) * usdtPrice;
+              prevTotalValue += usdtBalance;
+            }
           }
-        }
-        let last24hChange =
-          ((totalValue - prevTotalValue) / prevTotalValue) * 100;
-        console.log(last24hChange);
+          let last24hChange =
+            ((totalValue - prevTotalValue) / prevTotalValue) * 100;
 
-        setTotalAggregateValue24hChange(last24hChange.toFixed(4));
+          setTotalAggregateValue24hChange(last24hChange.toFixed(4));
+        } else {
+          setTotalAggregateValue24hChange("NA");
+        }
+
+        const walletSevenDaysData = await fetch(
+          `/api/wallet/get-seven-days-wallet?id=${user.id}`,
+          {
+            method: "GET",
+          }
+        );
+        const walletSevenDays = await walletSevenDaysData.json();
+
+        if (walletSevenDays.body) {
+          let prev7DaysTotalValue = 0;
+          for (const asset of walletData?.body?.assets) {
+            if (asset.asset === "USDT") {
+              // If the asset is already in USDT, use its balance directly
+              prev7DaysTotalValue += parseFloat(asset.balance);
+            } else {
+              // Get the USDT exchange rate for the asset
+              const symbol = `${asset.asset}/USDT`;
+              const ticker = await binance.fetchTicker(symbol);
+              const usdtPrice = ticker.last;
+              // Multiply the balance by the USDT exchange rate to get the balance in USDT
+              const usdtBalance = parseFloat(asset.balance) * usdtPrice;
+              prev7DaysTotalValue += usdtBalance;
+            }
+          }
+          let last7DaysChange =
+            ((totalValue - prev7DaysTotalValue) / prev7DaysTotalValue) * 100;
+
+          setTotalAggregateValue7DaysChange(last7DaysChange.toFixed(4));
+        } else {
+          setTotalAggregateValue7DaysChange("NA");
+        }
+
+        const walletThirtyDaysData = await fetch(
+          `/api/wallet/get-one-month-wallet?id=${user.id}`,
+          {
+            method: "GET",
+          }
+        );
+        const walletThirtyDays = await walletThirtyDaysData.json();
+
+        if (walletThirtyDays.body) {
+          let prev30DaysTotalValue = 0;
+          for (const asset of walletData?.body?.assets) {
+            if (asset.asset === "USDT") {
+              // If the asset is already in USDT, use its balance directly
+              prev30DaysTotalValue += parseFloat(asset.balance);
+            } else {
+              // Get the USDT exchange rate for the asset
+              const symbol = `${asset.asset}/USDT`;
+              const ticker = await binance.fetchTicker(symbol);
+              const usdtPrice = ticker.last;
+              // Multiply the balance by the USDT exchange rate to get the balance in USDT
+              const usdtBalance = parseFloat(asset.balance) * usdtPrice;
+              prev30DaysTotalValue += usdtBalance;
+            }
+          }
+          let last30DaysChange =
+            ((totalValue - prev30DaysTotalValue) / prev30DaysTotalValue) * 100;
+
+          setTotalAggregateValue30DaysChange(last30DaysChange.toFixed(4));
+        } else {
+          setTotalAggregateValue30DaysChange("NA");
+        }
 
         filteredAssets.forEach((latestObj) => {
           const previousObj = walletData?.body?.assets.find(
@@ -139,7 +206,6 @@ const DashboardComponent = () => {
                 parseFloat(previousObj.balance)) /
                 parseFloat(previousObj.balance)) *
               100;
-            console.log(change.toFixed(4));
             latestObj.change = change.toFixed(4);
           } else {
             latestObj.change = "0";
@@ -183,6 +249,8 @@ const DashboardComponent = () => {
       <TotalValue
         totalValue={totalAggregateValue}
         last24hChange={totalAggregateValue24hChange}
+        last7DaysChange={totalAggregateValue7DaysChange}
+        last30DaysChange={totalAggregateValue30DaysChange}
       />
 
       <AggregateAccountBalance />

@@ -87,7 +87,7 @@ const CryptoRates = () => {
           }}
         >
           {btcTickerValue?.percentage > 0 ? "+" : ""}{" "}
-          {btcTickerValue?.percentage}
+          {btcTickerValue?.percentage}%
         </span>
       </Box>
       <Box sx={{ display: "flex", gap: "0.4rem" }}>
@@ -102,7 +102,7 @@ const CryptoRates = () => {
           }}
         >
           {ethTickerValue?.percentage > 0 ? "+" : ""}
-          {ethTickerValue?.percentage}
+          {ethTickerValue?.percentage}%
         </span>
       </Box>
       <Box sx={{ display: "flex", gap: "0.4rem" }}>
@@ -117,7 +117,7 @@ const CryptoRates = () => {
           }}
         >
           {bnbTickerValue?.percentage > 0 ? "+" : ""}{" "}
-          {bnbTickerValue?.percentage}
+          {bnbTickerValue?.percentage}%
         </span>
       </Box>
       <Box sx={{ display: "flex", gap: "0.4rem" }}>
@@ -132,7 +132,7 @@ const CryptoRates = () => {
           }}
         >
           {xrpTickerValue?.percentage > 0 ? "+" : ""}
-          {xrpTickerValue?.percentage}
+          {xrpTickerValue?.percentage}%
         </span>
       </Box>
       <Box sx={{ display: "flex", gap: "0.4rem" }}>
@@ -147,7 +147,7 @@ const CryptoRates = () => {
           }}
         >
           {ltcTickerValue?.percentage > 0 ? "+" : ""}
-          {ltcTickerValue?.percentage}
+          {ltcTickerValue?.percentage}%
         </span>
       </Box>
     </Box>

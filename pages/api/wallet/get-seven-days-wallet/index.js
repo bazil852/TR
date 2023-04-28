@@ -24,11 +24,14 @@ export default async function handler(req, res) {
         //     }
         //   });
         const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
+        const sevenDaysAgo = new Date(today);
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const eightDaysAgo = new Date(today);
+        eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
         try {
           const wallet = await Wallet.findOne({
-            created: { $lt: today, $gte: yesterday },
+            userId: id,
+            created: { $lt: sevenDaysAgo, $gte: eightDaysAgo },
           });
           res.status(200).json({ status: 200, body: wallet });
         } catch (err) {

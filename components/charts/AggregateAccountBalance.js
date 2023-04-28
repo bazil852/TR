@@ -80,21 +80,6 @@ const options = {
   },
 };
 
-const dates = [];
-
-for (let i = 0; i <= 30; i++) {
-  const date = new Date();
-  date.setDate(date.getDate() - i);
-  const month = date.toLocaleString("default", { month: "short" });
-  const day = date.getDate();
-  const dateString = `${month} ${day}`;
-  dates.push(dateString);
-}
-
-console.log(dates);
-
-console.log("Dates", dates);
-
 function AggregateAccountBalance(props) {
   const [chartData, setChartData] = useState({
     labels: [],
@@ -119,7 +104,6 @@ function AggregateAccountBalance(props) {
       }
     );
     const walletData = await getWalletData.json();
-    console.log(walletData.body);
 
     let chartData = {
       labels: [],
@@ -143,12 +127,15 @@ function AggregateAccountBalance(props) {
           },
         ],
       };
-      console.log(data);
       setDoughnutData(data);
 
       // Extract data from the array of objects and create an object with assets as keys
       await walletData?.body?.forEach((doc) => {
         const date = doc.created.substring(5, 10);
+        if (chartData.labels.includes(date)) {
+          // Skip this object if the date already exists
+          return;
+        }
         chartData.labels.push(date);
         doc.assets.forEach((asset) => {
           if (!assetData[asset.asset]) {
@@ -173,8 +160,6 @@ function AggregateAccountBalance(props) {
     }
   };
 
-  console.log(doughnutData);
-
   function getAssetLabels(assets) {
     return assets.map((asset) => asset.asset);
   }
@@ -189,27 +174,6 @@ function AggregateAccountBalance(props) {
     )}, ${Math.floor(Math.random() * 255)}, 1)`;
   }
 
-  const data = {
-    labels: dates,
-    datasets: [
-      {
-        label: "Dataset 1",
-        fill: true,
-        backgroundColor: "rgba(121, 91, 255, 0.2)",
-        borderColor: "rgba(121, 91, 255, 1)",
-        pointRadius: 0,
-        data: [65, 59, 80, 81, 83, 67, 40],
-      },
-      {
-        label: "Dataset 2",
-        fill: true,
-        backgroundColor: "rgba(255, 164, 18, 0.1)",
-        borderColor: "rgba(255, 164, 18, 1)",
-        pointRadius: 0,
-        data: [28, 48, 40, 38, 50, 47, 70],
-      },
-    ],
-  };
   const doughnutOptions = {
     plugins: {
       legend: {

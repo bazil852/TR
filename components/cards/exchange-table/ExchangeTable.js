@@ -131,7 +131,6 @@ const ccxt = require("ccxt");
 const ExchangeTable = (props) => {
   const exchanges = useSelector((state) => state.exchanges.value);
   const [tableData, setTableData] = useState([]);
-  console.log("Exchange Table", props.assets);
 
   React.useEffect(() => {
     let updatedAssets = props.assets?.map((item) => {

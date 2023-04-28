@@ -7,8 +7,8 @@ import Typography from "@mui/material/Typography";
 const TotalValue = (props) => {
   const data = [
     { time: "Last 24 Hours", points: props.last24hChange },
-    { time: "Last 7 Days", points: "NA" },
-    { time: "Last 30 Days", points: "NA" },
+    { time: "Last 7 Days", points: props.last7DaysChange },
+    { time: "Last 30 Days", points: props.last30DaysChange },
   ];
 
   return (
@@ -72,7 +72,9 @@ const TotalValue = (props) => {
               <Typography
                 style={{
                   color:
-                    item.points < 0
+                    item.points === "NA"
+                      ? "red"
+                      : item.points < 0
                       ? "red"
                       : item.points > 0
                       ? "#00DE5F"
@@ -82,6 +84,7 @@ const TotalValue = (props) => {
               >
                 {item.points < 0 ? "" : item.points > 0 ? "+" : ""}
                 {item.points}
+                {item.points === "NA" ? "" : "%"}
               </Typography>
             </CardContent>
           </Card>

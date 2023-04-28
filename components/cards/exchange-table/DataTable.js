@@ -114,18 +114,79 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                   height: "60px",
                 }}
               >
-                {columns.map((column) => (
-                  <td
-                    key={column.field}
-                    style={
-                      column.field === "token"
-                        ? firstTableCellStyle
-                        : tableCellStyle
-                    }
-                  >
-                    {column.field === "change" ? (
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        {row[column.field] !== 0 ? (
+                {columns.map((column) => {
+                  return (
+                    <td
+                      key={column.field}
+                      style={
+                        column.field === "token"
+                          ? firstTableCellStyle
+                          : tableCellStyle
+                      }
+                    >
+                      {column.field === "change" ? (
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", pl: 6 }}
+                        >
+                          {parseFloat(row[column.field]) === 0 ? (
+                            <span
+                              style={{ color: "white", paddingLeft: "15%" }}
+                            >
+                              {""}
+                            </span>
+                          ) : row[column.field] !== 0 ? (
+                            row[column.field] > 0 ? (
+                              <span style={{ color: "green" }}>+</span>
+                            ) : (
+                              <span style={{ color: "red" }}>-</span>
+                            )
+                          ) : (
+                            <span
+                              style={{ color: "white", paddingLeft: "15%" }}
+                            >
+                              {""}
+                            </span>
+                          )}
+                          <Box
+                            sx={{
+                              color:
+                                row[column.field] !== 0
+                                  ? row[column.field] > 0
+                                    ? "#4BD469"
+                                    : "#EB5757"
+                                  : "white",
+                            }}
+                          >
+                            {parseFloat(row[column.field]) === 0
+                              ? "NA"
+                              : `${Math.abs(row[column.field])} %`}
+                          </Box>
+                          {parseFloat(row[column.field]) === 0 ? (
+                            <span
+                              style={{ color: "white", paddingLeft: "15%" }}
+                            >
+                              {""}
+                            </span>
+                          ) : row[column.field] !== 0 ? (
+                            row[column.field] > 0 ? (
+                              <NorthIcon
+                                sx={{
+                                  fontSize: "15px !important",
+                                  color: "#4BD469",
+                                }}
+                              />
+                            ) : (
+                              <SouthIcon
+                                sx={{
+                                  fontSize: "15px !important",
+                                  color: "#EB5757",
+                                }}
+                              />
+                            )
+                          ) : (
+                            ""
+                          )}
+                          {/* {row[column.field] !== 0 ? (
                           row[column.field] > 0 ? (
                             <span style={{ color: "green" }}>+</span>
                           ) : (
@@ -169,14 +230,19 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                           )
                         ) : (
                           ""
-                        )}
-                      </Box>
-                    ) : (
-                      row[column.field]
-                    )}
-                    {/* {row[column.field]} */}
-                  </td>
-                ))}
+                        )} */}
+                        </Box>
+                      ) : (
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", pl: 3 }}
+                        >
+                          {row[column.field]}
+                        </Box>
+                      )}
+                      {/* {row[column.field]} */}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
         </tbody>
