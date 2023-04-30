@@ -10,6 +10,7 @@ import {
 import Checkbox from "@material-ui/core/Checkbox";
 import Divider from "@mui/material/Divider";
 import SelectInput from "../../widgets/SelectInput";
+import SelectMulInput from "../../widgets/SelectMulInput";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -236,7 +237,7 @@ const Indicators = (props) => {
                       Select Candle
                     </Typography>
                     <Box sx={{ display: "flex", flexDirection: "row" }}>
-                      <SelectInput
+                      <SelectMulInput
                         placeHolder={"Select Candle"}
                         options={candleOption}
                         fullWidth
