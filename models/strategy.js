@@ -13,9 +13,8 @@ const strategySchema = new Schema({
   candleSizeAndVol: String,
   orderType: String,
   profitCurrency: String,
-  indicator: String,
 
-  indicatorValues: Object,
+  indicators: [Object],
 
   emaResistance: String,
   trendIdentification: String,

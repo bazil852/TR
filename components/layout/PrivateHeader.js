@@ -1,16 +1,11 @@
 import * as React from "react";
 import { styled, useTheme } from "@mui/material/styles";
-
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import MuiDrawer from "@mui/material/Drawer";
-import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
-import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -18,31 +13,33 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import CloseIcon from "@mui/icons-material/Close";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useDispatch } from "react-redux";
 import { setWidth } from "../../slices/dashboardWidthController-slice";
 import { useRouter } from "next/router";
 import {
-  DashboardIcon,
-  DCABotsIcon,
-  MyExchangesIcon,
+  Dash,
   TradingBotsIcon,
   HandShake,
   VgridBot,
-  ChevronDown,
   VdcaBot,
   History,
   Lock,
+  BlueDash,
+  BlueLock,
+  BlueHandShake,
+  BlueTradingBotsIcon,
+  BlueHistory,
 } from "../../utils/icons";
-
-import { signOut, useSession } from "next-auth/react";
-import { Stack } from "@mui/system";
+import { signOut } from "next-auth/react";
 import CryptoCard from "../cards/header-cards/CryptoCard";
 import AdminProfileCard from "../cards/admin-profile-card/AdminProfileCard";
 import AdminProfileCardSideBar from "../cards/admin-profile-card/AdminProfileCardSideBar";
 import SearchBar from "../widgets/SearchBar";
+import { Collapse } from "@material-ui/core";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { Button } from "@mui/material";
 
 const drawerWidth = 240;
 const openedMixin = (theme) => ({
@@ -70,29 +67,8 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "flex-end",
-  // padding: theme.spacing(0, 0),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
-
-// const AppBar = styled(MuiAppBar, {
-//   shouldForwardProp: (prop) => prop !== "open",
-// })(({ theme, open }) => ({
-//   // zIndex: theme.zIndex.drawer + 1,
-//   transition: theme.transitions.create(["width", "margin"], {
-//     easing: theme.transitions.easing.sharp,
-//     duration: theme.transitions.duration.leavingScreen,
-//   }),
-//   ...(open && {
-//     marginLeft: drawerWidth,
-//     width: `calc(100% - ${drawerWidth}px)`,
-//     transition: theme.transitions.create(["width", "margin"], {
-//       easing: theme.transitions.easing.sharp,
-//       duration: theme.transitions.duration.enteringScreen,
-//     }),
-//   }),
-// }));
-
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -109,86 +85,89 @@ const Drawer = styled(MuiDrawer, {
     "& .MuiDrawer-paper": closedMixin(theme),
   }),
 }));
-
-const sideBarFirstTwoItems = [
-  { index: 0, title: "Dashboard", icon: DashboardIcon, path: "/dashboard" },
-  {
-    index: 1,
-    title: "My Exchanges",
-    icon: Lock,
-    path: "/my-exchanges",
-  },
-];
-const sideBarLastTwoItems = [
-  {
-    index: 5,
-    title: "My Deals",
-    icon: HandShake,
-    path: "/AllDeals",
-  },
-  {
-    index: 6,
-    title: "History",
-    icon: History,
-    path: "/DealPage",
-  },
-];
-// const ccxt = require("ccxt");
-
-// const binance = new ccxt.binance();
-
 export default function PrivateHeader({ title, current, Component }) {
-  // const symbolBTC = "BTC/USDT";
-  // const symbolETH = "ETH/USDT";
   const theme = useTheme();
   const dispatch = useDispatch();
   const [open, setOpen] = React.useState(true);
   const [toggle, setToggle] = React.useState(false);
+  const [selectedItem, setSelectedItem] = React.useState();
   const router = useRouter();
-  const session = useSession();
-  // const [btcTickerValue, setBtcTickerValue] = React.useState({});
-  // const [ethTickerValue, setEthTickerValue] = React.useState({});
 
-  // React.useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     binance
-  //       .fetchTicker(symbolBTC)
-  //       .then((ticker) => {
-  //         setBtcTickerValue(ticker);
-  //       })
-  //       .catch((error) => {
-  //         console.error(`Error fetching ticker for ${symbolBTC}: ${error}`);
-  //       });
+  const handleClick = (item) => {
+    router.push(`${item.path}?selected=${item.index}`);
+  };
 
-  //     binance
-  //       .fetchTicker(symbolETH)
-  //       .then((ticker) => {
-  //         setEthTickerValue(ticker);
-  //       })
-  //       .catch((error) => {
-  //         console.error(`Error fetching ticker for ${symbolETH}: ${error}`);
-  //       });
-  //   }, 2000);
-  //   return () => clearInterval(interval);
-  // }, []);
-  // React.useEffect(() => {
-  //   const handleWidth = () => {
-  //     if (window.innerWidth < 1600) {
-  //       setExceedingWidth(false);
-  //       console.log("now is", exceedingWidth);
-  //     } else {
-  //       setExceedingWidth(true);
-  //       console.log("now is", exceedingWidth);
-  //     }
-  //   };
-  //   dispatch(
-  //     setWidth({
-  //       value: exceedingWidth,
-  //     })
-  //   );
-  //   window.addEventListener("exceedingWidth", handleWidth);
-  //   return () => window.removeEventListener("exceedingWidth", handleWidth);
-  // }, [dispatch]);
+  const getSelectedIndexFromUrl = () => {
+    const selectedIndex = parseInt(router.query.selected);
+    return isNaN(selectedIndex) ? -1 : selectedIndex;
+  };
+
+  const getListItemStyle = (index) => {
+    return {
+      color: selectedItem === index ? "#9079F6" : "white",
+      width: index === 2 && open ? "75%" : "100%",
+      pl: 1,
+      minHeight: 45,
+      cursor: "pointer",
+      "&::before": {
+        content: '""',
+        backgroundColor: "white",
+        minHeight: 30,
+        width: "5px",
+        position: "absolute",
+        left: 0,
+        opacity: 0,
+        borderRadius: "1px",
+      },
+      "&:hover::before": {
+        opacity: 1,
+      },
+      "&:hover": {
+        backgroundColor: "#473956",
+        borderRadius: index === 2 && open ? "0px 5px 5px 0px" : "0px",
+      },
+    };
+  };
+
+  const handleDropdownClick = () => {
+    setToggle(!toggle);
+  };
+  const items = [
+    {
+      index: 0,
+      title: "Dashboard",
+      icon: selectedItem === 0 ? BlueDash : Dash,
+      path: "/dashboard",
+    },
+    {
+      index: 1,
+      title: "My Exchanges",
+      icon: selectedItem === 1 ? BlueLock : Lock,
+      path: "/my-exchanges",
+    },
+    {
+      index: 2,
+      title: "Trading Bots",
+      icon: selectedItem === 2 ? BlueTradingBotsIcon : TradingBotsIcon,
+      path: "/trading-bots",
+    },
+    {
+      index: 5,
+      title: "My Deals",
+      icon: selectedItem === 5 ? BlueHandShake : HandShake,
+      path: "/AllDeals",
+    },
+    {
+      index: 6,
+      title: "History",
+      icon: selectedItem === 6 ? BlueHistory : History,
+      path: "/DealPage",
+    },
+  ];
+
+  React.useEffect(() => {
+    setSelectedItem(() => getSelectedIndexFromUrl());
+  }, [getSelectedIndexFromUrl()]);
   React.useEffect(() => {
     const handleResize = () => {
       dispatch(setWidth(window.innerWidth));
@@ -221,6 +200,7 @@ export default function PrivateHeader({ title, current, Component }) {
 
   const handleDrawerClose = () => {
     setOpen(false);
+    setToggle(false);
   };
 
   return (
@@ -260,14 +240,8 @@ export default function PrivateHeader({ title, current, Component }) {
           </Typography>
           {!open ? (
             <IconButton
-              // aria-label="open drawer"
               onClick={handleDrawerOpen}
-              // edge="start"
-              // sx={{
-              //   // marginRight: 5,
-              //   color: "white",
-              //   // ...(open && { display: "none" }),
-              // }}
+              sx={{ left: selectedItem === 0 ? -7 : -3.5 }}
             >
               <MenuIcon
                 sx={{
@@ -293,274 +267,90 @@ export default function PrivateHeader({ title, current, Component }) {
         >
           <SearchBar />
         </Box>
-
-        <List>
-          {sideBarFirstTwoItems.map((item) => {
-            return (
+        <List sx={{ mb: "40vh" }}>
+          {items.map((item) => (
+            <div key={item.index}>
               <ListItem
-                key={item.title}
-                // disablePadding
-                sx={{
-                  color: "#FFFFFF",
-                  padding: "0px",
-                  margin: "0px",
-                  "&::before": {
-                    content: '""',
-                    backgroundColor: "white",
-                    minHeight: 30,
-                    width: "5px",
-                    position: "absolute",
-                    left: 0,
-                    opacity: 0,
-                    borderRadius: "1px",
-                  },
-                  "&:hover::before": {
-                    opacity: 1,
-                  },
-                }}
-                onClick={() => {
-                  router.push(item.path);
-                }}
+                sx={getListItemStyle(item.index)}
+                onClick={() => handleClick(item)}
               >
-                <ListItemButton
+                <ListItemIcon
                   sx={{
-                    minHeight: 45,
-                    justifyContent: open ? "initial" : "center",
+                    display: "flex",
+                    justifyContent: open ? "center" : "",
+                    alignItems: "center",
+                    pr: 2,
+                    pl:
+                      (item.index === 1 && !open) || (item.index === 6 && !open)
+                        ? 0.3
+                        : "",
+                    ml: !open ? 0.5 : "",
                   }}
                 >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 1 : "auto",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <item.icon
-                      fill={item.index == current ? "#8E75FF" : "#D9D9D9"}
-                      // viewBox="0 0 24 24"
-                      // style={{
-                      //   width: "100%",
-                      //   height: "100%",
-                      // }}
-                    />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={item.title}
-                    sx={{
-                      opacity: open ? 1 : 0,
-                      color: item.index == current && "#8E75FF",
-                    }}
-                  />
-                </ListItemButton>
+                  <item.icon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={item.title}
+                  sx={{ display: !open ? "none" : "" }}
+                />
               </ListItem>
-            );
-          })}
+              {item.title === "Trading Bots" && (
+                <div
+                  onClick={handleDropdownClick}
+                  style={{
+                    position: "absolute",
+                    right: "20px",
+                    top: "118px",
+                    display: open ? "inline-block" : "none",
+                  }}
+                >
+                  {toggle ? (
+                    <ExpandLess style={{ color: "white", cursor: "pointer" }} />
+                  ) : (
+                    <ExpandMore style={{ color: "white", cursor: "pointer" }} />
+                  )}
+                </div>
+              )}
+              {item.title === "Trading Bots" && (
+                <Collapse in={toggle} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    <ListItem
+                      sx={getListItemStyle(3)}
+                      onClick={() => router.push("/dca-bots?selected=3")}
+                    >
+                      <ListItemIcon sx={{ pl: 4, pr: 2 }}>
+                        <VdcaBot />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={"VDCA Bot"}
+                        sx={{ display: !open ? "none" : "" }}
+                      />
+                    </ListItem>
+                    <ListItem
+                      sx={getListItemStyle(4)}
+                      onClick={() => router.push("/bot-config?selected=4")}
+                    >
+                      <ListItemIcon sx={{ pl: 4, pr: 2 }}>
+                        <VgridBot />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={"VGrid bot"}
+                        sx={{ display: !open ? "none" : "" }}
+                      />
+                    </ListItem>
+                  </List>
+                </Collapse>
+              )}
+            </div>
+          ))}
         </List>
-
         <List>
-          <Box sx={{ display: "flex" }}>
-            <ListItem
-              sx={{
-                color: "#FFFFFF",
-                padding: "0px",
-                margin: "0px",
-                mt: "-15px",
-                "&::before": {
-                  content: '""',
-                  backgroundColor: "white",
-                  minHeight: 30,
-                  width: "5px",
-                  position: "absolute",
-                  left: 0,
-                  opacity: 0,
-                  borderRadius: "1px",
-                },
-                "&:hover::before": {
-                  opacity: 1,
-                },
-              }}
-              onClick={() => {
-                router.push("/trading-bots");
-              }}
-            >
-              <ListItemButton
-                sx={{
-                  mr: `${open ? "20px" : "0px"}`,
-                  borderTopRightRadius: `${open ? "5px" : "0px"}`,
-                  borderBottomRightRadius: `${open ? "5px" : "0px"}`,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 1 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <TradingBotsIcon
-                    style={{ marginLeft: `${open ? "-2px" : "-5px"}` }}
-                  />
-                </ListItemIcon>
-                <ListItemText sx={{ display: `${open ? "flex" : "none"}` }}>
-                  Trading Bots
-                </ListItemText>
-              </ListItemButton>
-            </ListItem>
-            <Box
-              sx={{
-                display: `${open ? "inline-block" : "none"}`,
-                mr: 4,
-                ml: 0,
-                cursor: "pointer",
-              }}
-            >
-              <ChevronDown onClick={() => setToggle(!toggle)} />
-            </Box>
-          </Box>
-
-          {toggle && open && (
-            <ListItem
-              sx={{
-                color: "#FFFFFF",
-                padding: "0px",
-                margin: "0px",
-                "&::before": {
-                  content: '""',
-                  backgroundColor: "white",
-                  minHeight: 30,
-                  width: "5px",
-                  position: "absolute",
-                  left: 0,
-                  opacity: 0,
-                  borderRadius: "1px",
-                },
-                "&:hover::before": {
-                  opacity: 1,
-                },
-              }}
-              onClick={() => {
-                router.push("/dca-bots");
-              }}
-            >
-              <ListItemButton>
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    pl: 3,
-                    mr: open ? 1 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <VdcaBot />
-                </ListItemIcon>
-                <ListItemText>VDCA Bot</ListItemText>
-              </ListItemButton>
-            </ListItem>
-          )}
-          {toggle && open && (
-            <ListItem
-              sx={{
-                color: "#FFFFFF",
-                padding: "0px",
-                margin: "0px",
-                "&::before": {
-                  content: '""',
-                  backgroundColor: "white",
-                  minHeight: 30,
-                  width: "5px",
-                  position: "absolute",
-                  left: 0,
-                  opacity: 0,
-                  borderRadius: "1px",
-                },
-                "&:hover::before": {
-                  opacity: 1,
-                },
-              }}
-              onClick={() => {
-                router.push("/bot-config");
-              }}
-            >
-              <ListItemButton>
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    pl: 3,
-                    mr: open ? 1 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <VgridBot fill={"pink"} />
-                </ListItemIcon>
-                <ListItemText>VGrid bot</ListItemText>
-              </ListItemButton>
-            </ListItem>
-          )}
-        </List>
-        <List sx={{ marginTop: "-15px" }}>
-          {sideBarLastTwoItems.map((item) => {
-            return (
-              <ListItem
-                key={item.title}
-                // disablePadding
-                sx={{
-                  color: "#FFFFFF",
-                  padding: "0px",
-                  margin: "0px",
-                  "&::before": {
-                    content: '""',
-                    backgroundColor: "white",
-                    minHeight: 30,
-                    width: "5px",
-                    position: "absolute",
-                    left: 0,
-                    opacity: 0,
-                    borderRadius: "1px",
-                  },
-                  "&:hover::before": {
-                    opacity: 1,
-                  },
-                }}
-                onClick={() => {
-                  router.push(item.path);
-                }}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 45,
-                    justifyContent: open ? "initial" : "center",
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 1 : "auto",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <item.icon
-                      fill={item.index == current ? "#8E75FF" : "#D9D9D9"}
-                    />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={item.title}
-                    sx={{
-                      opacity: open ? 1 : 0,
-                      color: item.index == current && "#8E75FF",
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
           <ListItem
             sx={{
               display: `${open ? "flex" : "none"}`,
-              mt: 8,
-              pb: 2,
-              // pl: 2,
+              pl: 2,
+              minHeight: 45,
               cursor: "pointer",
-              color: "#FFFFFF",
               "&::before": {
                 content: '""',
                 backgroundColor: "white",
@@ -573,17 +363,23 @@ export default function PrivateHeader({ title, current, Component }) {
               },
               "&:hover::before": {
                 opacity: 1,
+              },
+              "&:hover": {
+                backgroundColor: "#473956",
               },
             }}
           >
-            <SettingsIcon />
-            <Typography sx={{ pl: 1, fontSize: "15px" }}>Settings</Typography>
+            <SettingsIcon style={{ color: "white" }} />
+            <Typography sx={{ pl: 1, fontSize: "15px", color: "white" }}>
+              Settings
+            </Typography>
           </ListItem>
           <ListItem
             sx={{
-              display: `${open ? "block" : "none"}`,
-              pb: 8,
-              // pl: 1.5,
+              display: `${open ? "flex" : "none"}`,
+              pl: selectedItem === 0 ? 2.5 : 1.5,
+              minHeight: 45,
+              cursor: "pointer",
               "&::before": {
                 content: '""',
                 backgroundColor: "white",
@@ -596,12 +392,15 @@ export default function PrivateHeader({ title, current, Component }) {
               },
               "&:hover::before": {
                 opacity: 1,
+              },
+              "&:hover": {
+                backgroundColor: "#473956",
               },
             }}
           >
             <Button
               sx={{
-                color: "#FFFFFF",
+                textTransform: "none",
                 "&:hover": {
                   background: "none",
                 },
@@ -610,11 +409,13 @@ export default function PrivateHeader({ title, current, Component }) {
                 signOut({ callbackUrl: "http://localhost:3000/login" });
               }}
             >
-              <LogoutIcon />
-              <Typography sx={{ pl: 1, fontSize: "14px" }}>Log Out</Typography>
+              <LogoutIcon style={{ color: "white" }} />
+              <Typography sx={{ pl: 1, fontSize: "14px", color: "#FFFFFF" }}>
+                Log Out
+              </Typography>
             </Button>
           </ListItem>
-          <ListItem sx={{ display: `${open ? "block" : "none"}` }}>
+          <ListItem sx={{ display: `${open ? "block" : "none"}`, mt: 4 }}>
             <AdminProfileCardSideBar />
           </ListItem>
         </List>

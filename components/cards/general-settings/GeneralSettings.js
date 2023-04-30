@@ -51,7 +51,7 @@ const GeneralSettings = (props) => {
   const exchange = ["Binance", "OKX"];
   const botType = ["Single Pair", "Multiple Pair"];
   const name = ["Long", "Short"];
-  const listOfPairs = ["BTC", "ETH", "DOGE", "SOL"];
+  const listOfPairs = ["BTC/USDT", "ETH/USDT", "DOGE/USDT", "SOL/USDT"];
   return (
     <Container
       sx={{
@@ -93,8 +93,9 @@ const GeneralSettings = (props) => {
               placeholder="Name"
               fullWidth
               name="botName"
+              value={props.botName}
               onChange={() => {
-                props.setName(event.target.value);
+                props.setBotName(event.target.value);
               }}
             />
           </Grid>
@@ -111,8 +112,9 @@ const GeneralSettings = (props) => {
                 options={botType}
                 fullWidth
                 keyName={"botType"}
+                value={props.botType}
                 onChange={async (event) => {
-                  props.setBot(event.target.value);
+                  props.setBotType(event.target.value);
                 }}
               />
             </Box>
@@ -154,11 +156,12 @@ const GeneralSettings = (props) => {
                       fullWidth
                       {...params.InputProps}
                       {...rest}
+                      value={props.strategyPair}
                     />
                   );
                 }}
                 onSelect={async (event) => {
-                  props.setPair(event.target.value);
+                  props.setStrategyPair(event.target.value);
                 }}
               />
             </Box>
@@ -176,6 +179,7 @@ const GeneralSettings = (props) => {
                 options={exchange}
                 fullWidth
                 keyName={"exchange"}
+                value={props.exchangeName}
                 onChange={async (event) => {
                   props.setExchangeName(event.target.value);
                 }}
@@ -195,8 +199,9 @@ const GeneralSettings = (props) => {
                 options={name}
                 fullWidth
                 keyName={"strategyType"}
+                value={props.strategyType}
                 onChange={async (event) => {
-                  props.setType(event.target.value);
+                  props.setStrategyType(event.target.value);
                 }}
               />
             </Box>
