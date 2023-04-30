@@ -342,7 +342,7 @@ const AddBlockComponent = (props) => {
       alert("Saved");
     }
   };
-
+  console.log(indicatorArray);
   const [width, setWidth] = useState(globalThis?.innerWidth);
   const [activeTab, setActiveTab] = useState("general");
   const USDT = [

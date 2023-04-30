@@ -60,7 +60,7 @@ const Indicators = (props) => {
     candleTypeValue: candleType[0],
     timeFrameValue: timeFrame[0],
     chooseIndicatorValue: masDistance[0],
-    candleValue: candleOption[0],
+    candleValue: [],
   });
   const [componentsData, setComponentsData] = useState(
     props.indicatorArray.length > 0 ? props.indicatorArray : [initialState()]
@@ -94,6 +94,14 @@ const Indicators = (props) => {
     updateComponentData(index, { timeFrameValue: event.target.value });
   };
 
+  const updateComponentData = (index, updatedData) => {
+    setComponentsData((prevData) =>
+      prevData.map((componentData, i) =>
+        i === index ? { ...componentData, ...updatedData } : componentData
+      )
+    );
+  };
+
   const handleCheckboxChange = (index, checkboxIndex) => {
     const newCheckboxValues = [...componentsData[index].checkboxValues];
     newCheckboxValues[checkboxIndex] =
@@ -101,26 +109,11 @@ const Indicators = (props) => {
     updateComponentData(index, { checkboxValues: newCheckboxValues });
   };
 
-  const updateComponentData = (index, updatedData) => {
-    setComponentsData((prevData) =>
-      prevData.map((componentData, i) =>
-        i === index ? { ...componentData, ...updatedData } : componentData
-      )
-    );
-    setIndicators();
-  };
-
   const addComponent = () => {
     setComponentsData((prevData) => [...prevData, initialState()]);
-    setIndicators();
   };
   const removeComponent = (index) => {
     setComponentsData((prevData) => prevData.filter((_, i) => i !== index));
-    setIndicators();
-  };
-
-  const setIndicators = () => {
-    props.setIndicators(componentsData);
   };
 
   const day = new Date();
@@ -140,6 +133,9 @@ const Indicators = (props) => {
     globalThis?.addEventListener("resize", handleResize);
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
+  useEffect(() => {
+    props.setIndicators(componentsData);
+  }, [componentsData, props]);
 
   return (
     <>
