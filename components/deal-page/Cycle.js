@@ -2,7 +2,7 @@ import React from "react";
 import Grid from "@mui/material/Grid";
 import { Typography, Box, Card } from "@mui/material";
 
-const Cycle = ({ title }) => {
+const Cycle = ({ strategy }) => {
   return (
     <Grid item lg={5.9} md={5.9} sx={{ mb: 2, mx: 0.5 }}>
       <Typography
@@ -14,7 +14,7 @@ const Cycle = ({ title }) => {
           ml: 1,
         }}
       >
-        {title}
+        Cycle - 1
       </Typography>
       <Card
         sx={{
@@ -38,8 +38,31 @@ const Cycle = ({ title }) => {
               >
                 Order
               </Typography>
-              <Typography sx={{ py: 0.5, ml: 0.5 }}>
-                Order Size 200 Multiplier 10%
+              {/* <Typography sx={{ py: 0.5, ml: 0.5 }}>
+                Order Size {strategy.orderSize} Multiplier{" "}
+                {strategy.candleSizeAndVol}% {"    "}OrderType{" "}
+                {strategy.orderType}
+              </Typography> */}
+              <Typography
+                sx={{
+                  p: 1,
+                  mb: 1,
+                  fontSize: "14px",
+                  background: "#422348",
+                  borderRadius: "8px",
+                }}
+              >
+                Order Size: {strategy.orderSize} Multiplier:{" "}
+                {strategy.candleSizeAndVol}% {"    "}OrderType:{" "}
+                {strategy.orderType}
+              </Typography>
+              <Typography
+                sx={{
+                  p: 2,
+                  fontWeight: 600,
+                }}
+              >
+                Take Profit
               </Typography>
               <Typography
                 sx={{
@@ -50,9 +73,19 @@ const Cycle = ({ title }) => {
                   borderRadius: "8px",
                 }}
               >
-                Red or Purpel Vector Candles
+                {strategy.takeProfit === "Fixed" ||
+                strategy.takeProfit === "At candle wick w % up or down"
+                  ? `${strategy.takeProfit}   ${strategy.takeProfitPercent}%`
+                  : `${strategy.takeProfit}`}
               </Typography>
-              <Typography sx={{ py: 0.5, ml: 0.5 }}>Take Profit</Typography>
+              <Typography
+                sx={{
+                  p: 2,
+                  fontWeight: 600,
+                }}
+              >
+                Stop Loss
+              </Typography>
               <Typography
                 sx={{
                   p: 1,
@@ -62,21 +95,11 @@ const Cycle = ({ title }) => {
                   borderRadius: "8px",
                 }}
               >
-                Dynamic 50 Ema 15 min
+                {strategy.stopLoss === "Fixed"
+                  ? `${strategy.stopLoss}   ${strategy.stopLossPercent}%`
+                  : `${strategy.stopLoss}`}
               </Typography>
-              <Typography sx={{ py: 0.5, ml: 0.5 }}>Stop Loss</Typography>
-              <Typography
-                sx={{
-                  p: 1,
-                  mb: 1,
-                  fontSize: "14px",
-                  background: "#422348",
-                  borderRadius: "8px",
-                }}
-              >
-                Trend Identification
-              </Typography>
-              <Typography
+              {/* <Typography
                 sx={{
                   p: 1,
                   mb: 1,
@@ -97,7 +120,7 @@ const Cycle = ({ title }) => {
                 }}
               >
                 Buy Only Below Average Deal Price By 1 %
-              </Typography>
+              </Typography> */}
             </Box>
           </Grid>
 
@@ -110,10 +133,36 @@ const Cycle = ({ title }) => {
                   fontSize: "16px",
                 }}
               >
-                Tigger Conditions
+                Trigger Conditions
               </Typography>
-              <Typography sx={{ py: 0.5, ml: 0.5 }}>
+              {/* <Typography sx={{ py: 0.5, ml: 0.5 }}>
                 Order type Limit
+              </Typography> */}
+              {strategy.indicators.map((item) => {
+                return (
+                  <Typography
+                    sx={{
+                      p: 1,
+                      mb: 1,
+                      fontSize: "14px",
+                      background: "#422348",
+                      borderRadius: "5px",
+                    }}
+                  >
+                    {item.chooseIndicatorValue === "Vector Candle" &&
+                      `${item.chooseIndicatorValue} ${item.candleValue} ${item.timeFrameValue}`}
+                    {item.chooseIndicatorValue === "Moving Averages" &&
+                      `${item.chooseIndicatorValue} ${item.masCondition} ${item.masValue} ${item.timeFrameValue}`}
+                  </Typography>
+                );
+              })}
+              <Typography
+                sx={{
+                  p: 2,
+                  fontWeight: 600,
+                }}
+              >
+                Profit Currency
               </Typography>
               <Typography
                 sx={{
@@ -124,19 +173,7 @@ const Cycle = ({ title }) => {
                   borderRadius: "5px",
                 }}
               >
-                vector Candel Blew ema 50, 15 min
-              </Typography>
-              <Typography sx={{ py: 0.5, ml: 0.5 }}>Profit Currency</Typography>
-              <Typography
-                sx={{
-                  p: 1,
-                  mb: 1,
-                  fontSize: "14px",
-                  background: "#422348",
-                  borderRadius: "5px",
-                }}
-              >
-                Ma Distance 1%
+                {strategy.strategyPair}
               </Typography>
             </Box>
           </Grid>

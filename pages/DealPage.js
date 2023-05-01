@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import { Box, Card, Typography } from "@mui/material";
 import Cycle from "../components/deal-page/Cycle";
@@ -9,15 +9,18 @@ const GaugeChart = dynamic(() => import("react-gauge-chart"), { ssr: false });
 import Chart from "../components/deal-page/Chart";
 import PrivateHeader from "../components/layout/PrivateHeader";
 import CryptoRates from "../components/cards/crypto-rates/CryptoRates";
+import { useRouter } from "next/router";
 
-const DealPage = () => {
+const DealPage = ({ strategy }) => {
+  console.log(strategy);
+
   const Setting = {
     "Bot Name": "Zeus",
     Strategy: "Long",
     "Complated BLocks": "Profit 1 of 4",
     "Take Profit": "2%",
     "Stop Loss": "4%",
-    "P & L": "1,5%",
+    "P & L": "1.5",
   };
 
   var Stats = 100;
@@ -290,7 +293,7 @@ const DealPage = () => {
                     p: 3,
                   }}
                 >
-                  {Setting["Bot Name"]}
+                  {strategy.botName}
                 </Typography>
               </Box>
               <Box
@@ -317,7 +320,7 @@ const DealPage = () => {
                     p: 3,
                   }}
                 >
-                  {Setting["Strategy"]}
+                  {strategy.strategyType}
                 </Typography>
               </Box>
               <Box
@@ -336,7 +339,7 @@ const DealPage = () => {
                     p: 3,
                   }}
                 >
-                  Complated Blocks
+                  Completed Orders
                 </Typography>
                 <Typography
                   sx={{
@@ -372,7 +375,9 @@ const DealPage = () => {
                     p: 3,
                   }}
                 >
-                  {Setting["Take Profit"]}
+                  {strategy.takeProfit === "Fixed"
+                    ? `${strategy?.takeProfitPercent}%`
+                    : strategy.takeProfit}
                 </Typography>
               </Box>
               <Box
@@ -400,7 +405,9 @@ const DealPage = () => {
                     p: 3,
                   }}
                 >
-                  {Setting["Stop Loss"]}
+                  {strategy.stopLoss === "Fixed"
+                    ? `${strategy?.stopLossPercent}%`
+                    : strategy.stopLoss}
                 </Typography>
               </Box>
               <Box
@@ -435,7 +442,7 @@ const DealPage = () => {
               <GaugeChart
                 id="gauge-chart1"
                 nrOfLevels={1000}
-                percent={0.4}
+                percent={Setting["P & L"]}
                 arcPadding={0}
                 cornerRadius={0}
                 colors={["#E30D0D", "#009B10"]}
@@ -446,8 +453,7 @@ const DealPage = () => {
             </Box>
           </Card>
         </Grid>
-        <Cycle title={"Cycle 1"} />
-        <Cycle title={"Cycle 2"} />
+        <Cycle strategy={strategy} />
         <Grid container>
           <Grid item xs={6}>
             <DealsStats />
@@ -457,7 +463,51 @@ const DealPage = () => {
     </>
   );
 };
-function dealsPage() {
-  return <PrivateHeader title="Deal Page" current="6" Component={DealPage} />;
+// function dealsPage() {
+//   return <PrivateHeader title="Deal Page" current="6" Component={DealPage} />;
+// }
+// export default dealsPage;
+
+function dealsPage({ strategy }) {
+  return (
+    <PrivateHeader
+      title="Deal Page"
+      current="6"
+      Component={() => <DealPage strategy={strategy} />}
+    />
+  );
 }
+
 export default dealsPage;
+
+export async function getServerSideProps(context) {
+  const { id } = context.query;
+  const baseUrl = process.env.NEXTAUTH_URL;
+
+  if (!id) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const response = await fetch(
+    `${baseUrl}/api/strategy/get-strategy-by-id?id=${id}`,
+    {
+      method: "GET",
+    }
+  );
+
+  const data = await response.json();
+
+  if (!data || data.error) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      strategy: data.body,
+    },
+  };
+}

@@ -26,6 +26,7 @@ import { Edit, Sort } from "../../../utils/icons";
 import Modal from "@mui/material/Modal";
 import { getSession } from "next-auth/react";
 import { CircularProgress } from "@mui/material";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles(() => ({
   input: {
@@ -311,6 +312,8 @@ function a11yProps(index) {
 }
 
 const BotsTable = () => {
+  const router = useRouter();
+
   const [value, setValue] = React.useState(0);
   const [tableRow, setTableRow] = React.useState([]);
   const [searchByBotsName, setSearchByBotsName] = React.useState("");
@@ -393,7 +396,7 @@ const BotsTable = () => {
     setTableRow(newData);
 
     try {
-      const response = await fetch("https://dcabot1.herokuapp.com/"+url, {
+      const response = await fetch("https://dcabot1.herokuapp.com/" + url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -447,6 +450,10 @@ const BotsTable = () => {
               style={{
                 display: "flex",
                 flexDirection: "row",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                router.push(`/DealPage?id=${cellValues.row._id}`);
               }}
             >
               <div

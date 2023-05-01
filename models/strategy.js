@@ -25,6 +25,7 @@ const strategySchema = new Schema({
   maxOrders: String,
   maxVol: String,
   stopLoss: String,
+  stopLossPercent: Number,
   takeProfit: String,
   takeProfitPercent: Number,
 
