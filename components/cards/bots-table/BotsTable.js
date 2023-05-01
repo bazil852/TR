@@ -25,6 +25,7 @@ import Tab from "@mui/material/Tab";
 import { Edit, Sort } from "../../../utils/icons";
 import Modal from "@mui/material/Modal";
 import { getSession } from "next-auth/react";
+import { CircularProgress } from "@mui/material";
 
 const useStyles = makeStyles(() => ({
   input: {
@@ -300,50 +301,7 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 //   },
 // ];
 
-const rows = [
-  // {
-  //   id: 1,
-  //   botName: "BTC Short bot Green Vector 15 Min",
-  //   exchange: "Binance",
-  //   strategyPair: "BTC/BUSD",
-  //   activeDeal: "Yes",
-  //   status: true,
-  //   strategyType: "short",
-  //   // description: "TP: 3.0% BO: 1.%, So: 0.25 %, OS: 1, 02, SOS: 0.25, MSTC: 1,",
-  //   botType: "Trading View Custom Signal",
-  // },
-  {
-    id: "640181ea8d59365339492f1b",
-    botName: "bot 2.0",
-    exchange: "OKX",
-    botType: "Multiple Pair",
-    strategyType: "Short",
-    strategyPair: "BTC",
-    orderSize: "100",
-    availablePercentage: "89",
-    safetyOrderSize: 12,
-    candleSizeAndVol: "88",
-    orderType: "Limit",
-    profitCurrency: "ETH",
-    indicator: "Vector Candle",
-    indicatorValues: {
-      redAction: "buy",
-      purpleAction: "buy",
-      blueAction: "sell",
-      greenAction: "none",
-      minimumTp: "22",
-    },
-    buyOnCondition: "12",
-    avgPrice: "Below",
-    avgPricePercent: 66,
-    ignoreCondition: "22",
-    maxOrders: "12",
-    maxVol: "200",
-    stopLoss: "Fixed",
-    takeProfit: "Trailing TP",
-    takeProfitPercent: 66,
-  },
-];
+const rows = [];
 
 function a11yProps(index) {
   return {
@@ -362,6 +320,8 @@ const BotsTable = () => {
   const [showModal, setShowModal] = React.useState(false);
   const [logs, setLogs] = React.useState("");
 
+  const [loading, setLoading] = React.useState(true);
+
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
@@ -370,24 +330,29 @@ const BotsTable = () => {
   const handleSearch = (event) => {
     setSearchByBotsName(event.target.value);
   };
-  useEffect(async () => {
-    const response = await fetch("/api/user/create-strategy", {
-      method: "GET",
-    });
+  useEffect(() => {
+    fetchStrategy();
+  }, []);
+
+  const fetchStrategy = async () => {
+    const session = await getSession();
+    const response = await fetch(
+      `/api/strategy/get-strategy?id=${session?.user?.id}`,
+      {
+        method: "GET",
+      }
+    );
 
     const data = await response.json();
-    const session = await getSession();
-    let filteredBot = data.body.filter(
-      (item) => item?.userId === session?.user?.id
-    );
-    let body = filteredBot.map((item) => {
+    let body = data.body.map((item) => {
       return {
         ...item,
         id: item._id,
       };
     });
     setTableRow(body);
-  }, []);
+    setLoading(false);
+  };
 
   const handleStatus = async (event, item) => {
     let tableRowIndex = tableRow.findIndex(
@@ -770,21 +735,32 @@ const BotsTable = () => {
     console.log(newValue);
     setValue(newValue);
   };
-  const handleDelete = (newValue, event) => {
-    console.log(newValue, event);
+  const handleDelete = async (newValue, event) => {
     setTableRow(tableRow.filter((item) => item.id !== newValue.id));
+
+    await fetch("/api/strategy/delete-strategy", {
+      method: "DELETE",
+      body: JSON.stringify({ strategyId: newValue._id }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   };
   const handleClearFilter = () => {
     setTableRow(rows);
   };
   const handleViewModal = async (row) => {
+    const session = await getSession();
     setLogs(row.logs);
     setSelectedRow(row);
     setShowModal(true);
 
-    const response = await fetch("/api/user/create-strategy", {
-      method: "GET",
-    });
+    const response = await fetch(
+      `/api/strategy/get-strategy?id=${session?.user?.id}`,
+      {
+        method: "GET",
+      }
+    );
 
     const data = await response.json();
     let filteredBot = data.body.filter((item) => item?._id === row._id);
@@ -796,9 +772,13 @@ const BotsTable = () => {
   };
 
   const handleRefresh = async () => {
-    const response = await fetch("/api/user/create-strategy", {
-      method: "GET",
-    });
+    const session = await getSession();
+    const response = await fetch(
+      `/api/strategy/get-strategy?id=${session?.user?.id}`,
+      {
+        method: "GET",
+      }
+    );
 
     const data = await response.json();
 
@@ -1120,41 +1100,54 @@ const BotsTable = () => {
               px: 0,
             }}
           >
-            <DataGrid
-              sx={{
-                ".MuiDataGrid-columnSeparator": {
-                  display: "none",
-                },
-                "&.MuiDataGrid-root": {
-                  border: "none",
-                },
-                " & .MuiDataGrid-cell": {
-                  borderBottom: "none",
-                },
-                ".MuiDataGrid-cell:focus-within": {
-                  outline: "none !important",
-                },
-                ".MuiDataGrid-row.Mui-even": {
-                  backgroundColor: "#2D1537",
-                  backgroundBlendMode: "overlay",
-                },
-                height: 710,
-                // minWidth: "100%",
-                padding: 0,
-                marginTop: 5,
-              }}
-              getRowClassName={(params) =>
-                params.indexRelativeToCurrentPage % 2 === 0
-                  ? "Mui-even"
-                  : "Mui-odd"
-              }
-              rowHeight={"110px"}
-              rows={tableRow}
-              columns={columns}
-              pageSize={5}
-              checkboxSelection
-              disableSelectionOnClick
-            />
+            {loading ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: 40,
+                  marginBottom: 20,
+                }}
+              >
+                <CircularProgress />
+              </div>
+            ) : (
+              <DataGrid
+                sx={{
+                  ".MuiDataGrid-columnSeparator": {
+                    display: "none",
+                  },
+                  "&.MuiDataGrid-root": {
+                    border: "none",
+                  },
+                  " & .MuiDataGrid-cell": {
+                    borderBottom: "none",
+                  },
+                  ".MuiDataGrid-cell:focus-within": {
+                    outline: "none !important",
+                  },
+                  ".MuiDataGrid-row.Mui-even": {
+                    backgroundColor: "#2D1537",
+                    backgroundBlendMode: "overlay",
+                  },
+                  height: 710,
+                  // minWidth: "100%",
+                  padding: 0,
+                  marginTop: 5,
+                }}
+                getRowClassName={(params) =>
+                  params.indexRelativeToCurrentPage % 2 === 0
+                    ? "Mui-even"
+                    : "Mui-odd"
+                }
+                rowHeight={"110px"}
+                rows={tableRow}
+                columns={columns}
+                pageSize={5}
+                checkboxSelection
+                disableSelectionOnClick
+              />
+            )}
           </Box>
         </Box>
         {/* </Box> */}

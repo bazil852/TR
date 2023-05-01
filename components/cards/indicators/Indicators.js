@@ -40,6 +40,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
   },
 }));
 const Indicators = (props) => {
+  const masConditionOption = ["Above", "Below"];
   const masDistance = [
     "Vector Candle",
     "Moving Averages",
@@ -61,6 +62,8 @@ const Indicators = (props) => {
     timeFrameValue: timeFrame[0],
     chooseIndicatorValue: masDistance[0],
     candleValue: [],
+    masCondition: "",
+    masValue: "",
   });
   const [componentsData, setComponentsData] = useState(
     props.indicatorArray.length > 0 ? props.indicatorArray : [initialState()]
@@ -76,6 +79,14 @@ const Indicators = (props) => {
 
   const handleCandleTypeChange = (index, event) => {
     updateComponentData(index, { candleTypeValue: event.target.value });
+  };
+
+  const handleMasCondition = (index, event) => {
+    updateComponentData(index, { masCondition: event.target.value });
+  };
+
+  const handleMasValue = (index, event) => {
+    updateComponentData(index, { masValue: event.target.value });
   };
 
   const handleMinCandleSize = (index, event) => {
@@ -683,6 +694,49 @@ const Indicators = (props) => {
               )}
               {componentData.chooseIndicatorValue === "Moving Averages" && (
                 <>
+                  <Grid item xs={3} sm={3} xl={3}>
+                    <Typography
+                      sx={{ marginBottom: 1, mt: 2, fontSize: 16, ml: 0.5 }}
+                      color="#CCCCCC"
+                    >
+                      Condition
+                    </Typography>
+                    <Box sx={{ display: "flex", flexDirection: "row" }}>
+                      <SelectInput
+                        placeHolder={"Choose Ma's Condition"}
+                        options={masConditionOption}
+                        fullWidth
+                        keyName={"masCondition"}
+                        onChange={(event) => handleMasCondition(index, event)}
+                        value={componentData.masCondition}
+                      />
+                    </Box>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Typography
+                      sx={{ marginBottom: 1, mt: 2, fontSize: 16, ml: 0.5 }}
+                      color="#CCCCCC"
+                    >
+                      Ma's Value
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        background: "#452951",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <ValidationTextField
+                        margin="normal"
+                        fullWidth
+                        id="masValue"
+                        name="masValue"
+                        onChange={(event) => handleMasValue(index, event)}
+                        value={componentData.masValue}
+                      />
+                    </Box>
+                  </Grid>
                   <Grid item xs={3} sx={{ mt: 1 }}>
                     <Typography
                       sx={{ my: 1, fontSize: 16, ml: 0.5 }}

@@ -317,7 +317,7 @@ const AddBlockComponent = (props) => {
         avgPricePercent,
         ignoreCondition,
         ignoreConditionPercent: ignoreConditionX,
-        maxOrder,
+        maxOrders: maxOrder,
         maxOrderPercent,
         maxVol,
         maxVolPercent,
