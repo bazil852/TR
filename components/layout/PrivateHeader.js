@@ -152,6 +152,12 @@ export default function PrivateHeader({ title, current, Component }) {
       path: "/trading-bots",
     },
     {
+      index: 4,
+      title: "Bot Config",
+      icon: selectedItem === 4 ? VgridBot : VgridBot,
+      path: "/bot-config",
+    },
+    {
       index: 5,
       title: "My Deals",
       icon: selectedItem === 5 ? BlueHandShake : HandShake,
@@ -326,7 +332,7 @@ export default function PrivateHeader({ title, current, Component }) {
                         sx={{ display: !open ? "none" : "" }}
                       />
                     </ListItem>
-                    <ListItem
+                    {/* <ListItem
                       sx={getListItemStyle(4)}
                       onClick={() => router.push("/bot-config?selected=4")}
                     >
@@ -337,7 +343,7 @@ export default function PrivateHeader({ title, current, Component }) {
                         primary={"VGrid bot"}
                         sx={{ display: !open ? "none" : "" }}
                       />
-                    </ListItem>
+                    </ListItem> */}
                   </List>
                 </Collapse>
               )}

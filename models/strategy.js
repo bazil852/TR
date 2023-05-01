@@ -32,6 +32,8 @@ const strategySchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Users",
   },
+  logs: String,
+  state: String,
 });
 
 const Strategy = models.Strategy || model("Strategy", strategySchema);

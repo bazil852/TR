@@ -325,6 +325,7 @@ const AddBlockComponent = (props) => {
         stopLossPercent,
         takeProfit: takeProfitValue,
         takeProfitPercent,
+        logs: "",
         state: "off",
         userId: session.user.id,
       };
