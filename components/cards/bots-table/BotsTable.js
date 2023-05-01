@@ -369,7 +369,7 @@ const BotsTable = () => {
       url = "start";
     } else {
       newData[tableRowIndex].state = "off";
-      url = "end";
+      url = "stop";
     }
 
     // const response = await fetch(`http://localhost:8000/${url}`, {
