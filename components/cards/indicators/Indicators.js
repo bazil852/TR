@@ -7,7 +7,7 @@ import {
   FormControlLabel,
   FormGroup,
 } from "@mui/material";
-import Checkbox from "@material-ui/core/Checkbox";
+import Checkbox from '@mui/material/Checkbox';
 import Divider from "@mui/material/Divider";
 import SelectInput from "../../widgets/SelectInput";
 import SelectMulInput from "../../widgets/SelectMulInput";

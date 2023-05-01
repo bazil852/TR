@@ -4,7 +4,7 @@ import { useState } from "react";
 import Typography from "@mui/material/Typography";
 import { Box, IconButton } from "@mui/material";
 import SearchBar from "../../widgets/SearchBar";
-import Checkbox from "@material-ui/core/Checkbox";
+import Checkbox from '@mui/material/Checkbox';
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 import { useSelector, useDispatch } from "react-redux";

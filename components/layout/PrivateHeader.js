@@ -37,7 +37,7 @@ import CryptoCard from "../cards/header-cards/CryptoCard";
 import AdminProfileCard from "../cards/admin-profile-card/AdminProfileCard";
 import AdminProfileCardSideBar from "../cards/admin-profile-card/AdminProfileCardSideBar";
 import SearchBar from "../widgets/SearchBar";
-import { Collapse } from "@material-ui/core";
+import { Collapse } from '@mui/material';
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { Button } from "@mui/material";
 
