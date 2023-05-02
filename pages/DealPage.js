@@ -482,7 +482,7 @@ export default dealsPage;
 
 export async function getServerSideProps(context) {
   const { id } = context.query;
-  const baseUrl = process.env.NEXTAUTH_URL;
+  // const baseUrl = process.env.NEXTAUTH_URL;
 
   if (!id) {
     return {
@@ -491,7 +491,7 @@ export async function getServerSideProps(context) {
   }
 
   const response = await fetch(
-    `${baseUrl}/api/strategy/get-strategy-by-id?id=${id}`,
+    `https://fabulous-druid-9cee4e.netlify.app/api/strategy/get-strategy-by-id?id=${id}`,
     {
       method: "GET",
     }
