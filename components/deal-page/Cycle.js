@@ -138,7 +138,7 @@ const Cycle = ({ strategy }) => {
               {/* <Typography sx={{ py: 0.5, ml: 0.5 }}>
                 Order type Limit
               </Typography> */}
-              {strategy.indicators.map((item) => {
+              {strategy?.indicators?.map((item) => {
                 return (
                   <Typography
                     sx={{

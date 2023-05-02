@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Box, Card, Typography } from "@mui/material";
 import Cycle from "../components/deal-page/Cycle";
@@ -11,8 +11,26 @@ import PrivateHeader from "../components/layout/PrivateHeader";
 import CryptoRates from "../components/cards/crypto-rates/CryptoRates";
 import { useRouter } from "next/router";
 
-const DealPage = ({ strategy }) => {
-  console.log(strategy);
+const DealPage = ({ strategyId }) => {
+  console.log(strategyId);
+  const [strategy, setStrategy] = useState({});
+
+  useEffect(() => {
+    fetchStrategy();
+  }, []);
+
+  const fetchStrategy = async () => {
+    const response = await fetch(
+      `/api/strategy/get-strategy-by-id?id=${strategyId}`,
+      {
+        method: "GET",
+      }
+    );
+
+    const data = await response.json();
+    console.log(data.body);
+    setStrategy(data.body);
+  };
 
   const Setting = {
     "Bot Name": "Zeus",
@@ -293,7 +311,7 @@ const DealPage = ({ strategy }) => {
                     p: 3,
                   }}
                 >
-                  {strategy.botName}
+                  {strategy?.botName}
                 </Typography>
               </Box>
               <Box
@@ -320,7 +338,7 @@ const DealPage = ({ strategy }) => {
                     p: 3,
                   }}
                 >
-                  {strategy.strategyType}
+                  {strategy?.strategyType}
                 </Typography>
               </Box>
               <Box
@@ -375,9 +393,9 @@ const DealPage = ({ strategy }) => {
                     p: 3,
                   }}
                 >
-                  {strategy.takeProfit === "Fixed"
+                  {strategy?.takeProfit === "Fixed"
                     ? `${strategy?.takeProfitPercent}%`
-                    : strategy.takeProfit}
+                    : strategy?.takeProfit}
                 </Typography>
               </Box>
               <Box
@@ -405,9 +423,9 @@ const DealPage = ({ strategy }) => {
                     p: 3,
                   }}
                 >
-                  {strategy.stopLoss === "Fixed"
+                  {strategy?.stopLoss === "Fixed"
                     ? `${strategy?.stopLossPercent}%`
-                    : strategy.stopLoss}
+                    : strategy?.stopLoss}
                 </Typography>
               </Box>
               <Box
@@ -468,12 +486,12 @@ const DealPage = ({ strategy }) => {
 // }
 // export default dealsPage;
 
-function dealsPage({ strategy }) {
+function dealsPage({ strategyId }) {
   return (
     <PrivateHeader
       title="Deal Page"
       current="6"
-      Component={() => <DealPage strategy={strategy} />}
+      Component={() => <DealPage strategyId={strategyId} />}
     />
   );
 }
@@ -484,30 +502,30 @@ export async function getServerSideProps(context) {
   const { id } = context.query;
   // const baseUrl = process.env.NEXTAUTH_URL;
 
-  if (!id) {
-    return {
-      notFound: true,
-    };
-  }
+  // if (!id) {
+  //   return {
+  //     notFound: true,
+  //   };
+  // }
 
-  const response = await fetch(
-    `https://fabulous-druid-9cee4e.netlify.app/api/strategy/get-strategy-by-id?id=${id}`,
-    {
-      method: "GET",
-    }
-  );
+  // const response = await fetch(
+  //   `https://fabulous-druid-9cee4e.netlify.app/api/strategy/get-strategy-by-id?id=${id}`,
+  //   {
+  //     method: "GET",
+  //   }
+  // );
 
-  const data = await response.json();
+  // const data = await response.json();
 
-  if (!data || data.error) {
-    return {
-      notFound: true,
-    };
-  }
+  // if (!data || data.error) {
+  //   return {
+  //     notFound: true,
+  //   };
+  // }
 
   return {
     props: {
-      strategy: data.body,
+      strategyId: id,
     },
   };
 }
