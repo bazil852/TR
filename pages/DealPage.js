@@ -11,8 +11,9 @@ import PrivateHeader from "../components/layout/PrivateHeader";
 import CryptoRates from "../components/cards/crypto-rates/CryptoRates";
 import { useRouter } from "next/router";
 
-const DealPage = ({ strategyId }) => {
-  console.log(strategyId);
+const DealPage = () => {
+  const router = useRouter();
+  const { id } = router.query;
   const [strategy, setStrategy] = useState({});
 
   useEffect(() => {
@@ -20,12 +21,9 @@ const DealPage = ({ strategyId }) => {
   }, []);
 
   const fetchStrategy = async () => {
-    const response = await fetch(
-      `/api/strategy/get-strategy-by-id?id=${strategyId}`,
-      {
-        method: "GET",
-      }
-    );
+    const response = await fetch(`/api/strategy/get-strategy-by-id?id=${id}`, {
+      method: "GET",
+    });
 
     const data = await response.json();
     console.log(data.body);
@@ -486,46 +484,46 @@ const DealPage = ({ strategyId }) => {
 // }
 // export default dealsPage;
 
-function dealsPage({ strategyId }) {
+function dealsPage() {
   return (
     <PrivateHeader
       title="Deal Page"
       current="6"
-      Component={() => <DealPage strategyId={strategyId} />}
+      Component={() => <DealPage />}
     />
   );
 }
 
 export default dealsPage;
 
-export async function getServerSideProps(context) {
-  const { id } = context.query;
-  // const baseUrl = process.env.NEXTAUTH_URL;
+// export async function getServerSideProps(context) {
+//   const { id } = context.query;
+//   // const baseUrl = process.env.NEXTAUTH_URL;
 
-  // if (!id) {
-  //   return {
-  //     notFound: true,
-  //   };
-  // }
+//   // if (!id) {
+//   //   return {
+//   //     notFound: true,
+//   //   };
+//   // }
 
-  // const response = await fetch(
-  //   `https://fabulous-druid-9cee4e.netlify.app/api/strategy/get-strategy-by-id?id=${id}`,
-  //   {
-  //     method: "GET",
-  //   }
-  // );
+//   // const response = await fetch(
+//   //   `https://fabulous-druid-9cee4e.netlify.app/api/strategy/get-strategy-by-id?id=${id}`,
+//   //   {
+//   //     method: "GET",
+//   //   }
+//   // );
 
-  // const data = await response.json();
+//   // const data = await response.json();
 
-  // if (!data || data.error) {
-  //   return {
-  //     notFound: true,
-  //   };
-  // }
+//   // if (!data || data.error) {
+//   //   return {
+//   //     notFound: true,
+//   //   };
+//   // }
 
-  return {
-    props: {
-      strategyId: id,
-    },
-  };
-}
+//   return {
+//     props: {
+//       strategyId: id,
+//     },
+//   };
+// }

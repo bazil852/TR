@@ -52,9 +52,9 @@ const Cycle = ({ strategy }) => {
                   borderRadius: "8px",
                 }}
               >
-                Order Size: {strategy.orderSize} Multiplier:{" "}
-                {strategy.candleSizeAndVol}% {"    "}OrderType:{" "}
-                {strategy.orderType}
+                Order Size: {strategy?.orderSize} Multiplier:{" "}
+                {strategy?.candleSizeAndVol}% {"    "}OrderType:{" "}
+                {strategy?.orderType}
               </Typography>
               <Typography
                 sx={{
@@ -73,10 +73,10 @@ const Cycle = ({ strategy }) => {
                   borderRadius: "8px",
                 }}
               >
-                {strategy.takeProfit === "Fixed" ||
-                strategy.takeProfit === "At candle wick w % up or down"
-                  ? `${strategy.takeProfit}   ${strategy.takeProfitPercent}%`
-                  : `${strategy.takeProfit}`}
+                {strategy?.takeProfit === "Fixed" ||
+                strategy?.takeProfit === "At candle wick w % up or down"
+                  ? `${strategy?.takeProfit}   ${strategy?.takeProfitPercent}%`
+                  : `${strategy?.takeProfit}`}
               </Typography>
               <Typography
                 sx={{
@@ -95,9 +95,9 @@ const Cycle = ({ strategy }) => {
                   borderRadius: "8px",
                 }}
               >
-                {strategy.stopLoss === "Fixed"
-                  ? `${strategy.stopLoss}   ${strategy.stopLossPercent}%`
-                  : `${strategy.stopLoss}`}
+                {strategy?.stopLoss === "Fixed"
+                  ? `${strategy?.stopLoss}   ${strategy?.stopLossPercent}%`
+                  : `${strategy?.stopLoss}`}
               </Typography>
               {/* <Typography
                 sx={{
@@ -173,7 +173,7 @@ const Cycle = ({ strategy }) => {
                   borderRadius: "5px",
                 }}
               >
-                {strategy.strategyPair}
+                {strategy?.strategyPair}
               </Typography>
             </Box>
           </Grid>
