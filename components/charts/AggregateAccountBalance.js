@@ -129,34 +129,89 @@ function AggregateAccountBalance(props) {
       };
       setDoughnutData(data);
 
-      // Extract data from the array of objects and create an object with assets as keys
-      await walletData?.body?.forEach((doc) => {
-        const date = doc.created.substring(5, 10);
-        if (chartData.labels.includes(date)) {
-          // Skip this object if the date already exists
-          return;
-        }
-        chartData.labels.push(date);
-        doc.assets.forEach((asset) => {
-          if (!assetData[asset.asset]) {
-            assetData[asset.asset] = {
-              label: asset.asset,
-              data: [],
-              backgroundColor: "transparent",
-              borderColor: getRandomColor(),
-              borderWidth: 2,
-            };
-          }
-          assetData[asset.asset].data.push(asset.usdtBal);
+      const newData = {
+        labels: [],
+        datasets: [
+          {
+            label: "Total USDT Bal",
+            data: [],
+            fill: false,
+            borderColor: "#CC5500",
+            tension: 0.1,
+          },
+        ],
+      };
+
+      const newChartData = walletData?.body.reduce((acc, wallet) => {
+        const date = new Date(wallet.created).toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
         });
+        const totalUsdtBal = wallet.assets.reduce((total, asset) => {
+          if (asset.asset === "USDT") {
+            return total + parseFloat(asset.usdtBal);
+          }
+          return total;
+        }, 0);
+
+        if (!acc[date]) {
+          acc[date] = {
+            date,
+            totalUsdtBal,
+          };
+        } else {
+          acc[date].totalUsdtBal += totalUsdtBal;
+        }
+
+        return acc;
+      }, {});
+
+      const chartDataArray = Object.values(newChartData);
+
+      chartDataArray.forEach((dataItem) => {
+        const { date, totalUsdtBal } = dataItem;
+        const labelIndex = data.labels.indexOf(date);
+
+        if (labelIndex === -1) {
+          newData.labels.push(date);
+          newData.datasets[0].data.push(totalUsdtBal);
+        } else {
+          newData.datasets[0].data[labelIndex] += totalUsdtBal;
+        }
       });
 
-      // Add datasets to the chart data
-      await Object.keys(assetData).forEach((key) => {
-        chartData.datasets.push(assetData[key]);
-      });
+      setChartData(newData);
 
-      setChartData(chartData);
+      //   // Extract data from the array of objects and create an object with assets as keys
+      //   await walletData?.body?.forEach((doc) => {
+      //     const date = doc.created.substring(5, 10);
+      //     if (chartData.labels.includes(date)) {
+      //       // Skip this object if the date already exists
+      //       return;
+      //     }
+      //     chartData.labels.push(date);
+      //     doc.assets.forEach((asset) => {
+      //       if (!assetData[asset.asset]) {
+      //         assetData[asset.asset] = {
+      //           label: asset.asset,
+      //           data: [],
+      //           backgroundColor: "transparent",
+      //           borderColor: getRandomColor(),
+      //           borderWidth: 2,
+      //         };
+      //       }
+      //       assetData[asset.asset].data.push(asset.usdtBal);
+      //     });
+      //   });
+
+      //   // Add datasets to the chart data
+      //   await Object.keys(assetData).forEach((key) => {
+      //     chartData.datasets.push(assetData[key]);
+      //   });
+
+      //   console.log(chartData);
+
+      //   setChartData(chartData);
     }
   };
 

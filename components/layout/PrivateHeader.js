@@ -145,11 +145,17 @@ export default function PrivateHeader({ title, current, Component }) {
       icon: selectedItem === 1 ? BlueLock : Lock,
       path: "/my-exchanges",
     },
+    // {
+    //   index: 2,
+    //   title: "Trading Bots",
+    //   icon: selectedItem === 2 ? BlueTradingBotsIcon : TradingBotsIcon,
+    //   path: "/trading-bots",
+    // },
     {
-      index: 2,
-      title: "Trading Bots",
-      icon: selectedItem === 2 ? BlueTradingBotsIcon : TradingBotsIcon,
-      path: "/trading-bots",
+      index: 3,
+      title: "VDCA Bot",
+      icon: selectedItem === 3 ? VdcaBot : VdcaBot,
+      path: "/dca-bots",
     },
     {
       index: 4,
@@ -265,17 +271,69 @@ export default function PrivateHeader({ title, current, Component }) {
             </IconButton>
           )}
         </DrawerHeader>
-        <Box
+        {/* <Box
           sx={{
             display: `${open ? "inline-block" : "none"}`,
             padding: "5px 15px",
           }}
         >
           <SearchBar />
-        </Box>
+        </Box> */}
         <List sx={{ mb: "40vh" }}>
           {items.map((item) => (
             <div key={item.index}>
+              {item.index === 0 && (
+                <Typography
+                  sx={{
+                    fontWeight: "500",
+                    fontSize: "18px",
+                    paddingLeft: "15px",
+                    margin: "0px",
+                    marginTop: "5px",
+                  }}
+                >
+                  Market Dashboard
+                </Typography>
+              )}
+              {item.index === 3 && (
+                <Typography
+                  sx={{
+                    fontWeight: "500",
+                    fontSize: "18px",
+                    paddingLeft: "15px",
+                    margin: "0px",
+                    marginTop: "5px",
+                  }}
+                >
+                  Trading Bot
+                </Typography>
+              )}
+              {item.index === 4 && (
+                <Typography
+                  sx={{
+                    fontWeight: "500",
+                    fontSize: "18px",
+                    paddingLeft: "15px",
+                    margin: "0px",
+                    marginTop: "5px",
+                  }}
+                >
+                  Configuration
+                </Typography>
+              )}
+              {item.index === 5 && (
+                <Typography
+                  sx={{
+                    fontWeight: "500",
+                    fontSize: "18px",
+                    paddingLeft: "15px",
+                    margin: "0px",
+                    marginTop: "5px",
+                  }}
+                >
+                  Deals
+                </Typography>
+              )}
               <ListItem
                 sx={getListItemStyle(item.index)}
                 onClick={() => handleClick(item)}
@@ -469,20 +527,16 @@ export default function PrivateHeader({ title, current, Component }) {
                   <Grid item>
                     <Grid container spacing={2} item>
                       <Grid item>
-                        <CryptoCard
-                          title="Paper Trading Balance"
-                          rate="B 1 2 3 B 1 2 3 $ 1 2 3"
-                          percentage="B 1 2 3 B 1 2 3 $ 1 2 3"
-                        />
+                        <CryptoCard title="Real Summary Balance" />
                       </Grid>
 
-                      <Grid item>
+                      {/* <Grid item>
                         <CryptoCard
                           title="Paper Trading Balance"
                           rate="B 1 2 3 B 1 2 3 $ 1 2 3"
                           percentage="B 1 2 3 B 1 2 3 $ 1 2 3"
                         />
-                      </Grid>
+                      </Grid> */}
                       <Grid item>
                         <AdminProfileCard />
                       </Grid>

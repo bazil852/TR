@@ -158,7 +158,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                             }}
                           >
                             {parseFloat(row[column.field]) === 0
-                              ? "NA"
+                              ? "0 %"
                               : `${Math.abs(row[column.field])} %`}
                           </Box>
                           {parseFloat(row[column.field]) === 0 ? (

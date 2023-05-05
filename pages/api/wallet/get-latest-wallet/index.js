@@ -11,16 +11,10 @@ export default async function handler(req, res) {
     case "GET":
       try {
         await connectMongo();
-        const today = new Date();
-        const thirtyDaysAgo = new Date(today);
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        const thirtyOneDaysAgo = new Date(today);
-        thirtyOneDaysAgo.setDate(thirtyOneDaysAgo.getDate() - 31);
         try {
-          const wallet = await Wallet.findOne({
-            userId: id,
-            created: { $lt: thirtyDaysAgo, $gte: thirtyOneDaysAgo },
-          });
+          const wallet = await Wallet.findOne({ userId: id })
+            .sort({ created: -1 })
+            .exec();
           res.status(200).json({ status: 200, body: wallet });
         } catch (err) {
           console.log(err);

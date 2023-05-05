@@ -224,9 +224,14 @@ const DashboardComponent = () => {
     <Grid container>
       <Grid
         container
-        sx={{ display: "flex", alignItems: "center", marginTop: "3rem" }}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          marginTop: "3rem",
+          marginLeft: "0.8rem",
+        }}
       >
-        <Grid xs={2} item>
+        {/* <Grid xs={2} item>
           <Typography
             variant="h6"
             color="#FFFFFF"
@@ -234,7 +239,7 @@ const DashboardComponent = () => {
           >
             My Portfolio
           </Typography>
-        </Grid>
+        </Grid> */}
         <Grid xs={10} item>
           <CryptoRates />
         </Grid>

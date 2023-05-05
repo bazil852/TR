@@ -19,7 +19,7 @@ const SearchBar = (props) => {
   const [searchValue, setSearchValue] = useState("");
 
   const handleSearch = (event) => {
-    setSearchValue(event.target.value);
+    props?.setInputSearch(event.target.value);
   };
   return (
     <InputBase
@@ -32,7 +32,7 @@ const SearchBar = (props) => {
         // padding: '10px 12px',
         fontSize: 16,
       }}
-      value={searchValue}
+      value={props?.inputSearch}
       onChange={handleSearch}
       startAdornment={
         <InputAdornment position="start">

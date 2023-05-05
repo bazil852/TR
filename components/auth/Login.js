@@ -107,7 +107,7 @@ const Login = () => {
         const binance = new ccxt.binance();
         for (const asset of filteredAssets) {
           if (asset.asset === "USDT") {
-            asset["usdtBal"] = asset.balance;
+            asset["usdtBal"] = +asset.balance;
           } else {
             // Get the USDT exchange rate for the asset
             const symbol = `${asset.asset}/USDT`;

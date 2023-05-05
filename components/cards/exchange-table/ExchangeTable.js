@@ -4,7 +4,7 @@ import { useState } from "react";
 import Typography from "@mui/material/Typography";
 import { Box, IconButton } from "@mui/material";
 import SearchBar from "../../widgets/SearchBar";
-import Checkbox from '@mui/material/Checkbox';
+import Checkbox from "@mui/material/Checkbox";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -132,13 +132,16 @@ const ExchangeTable = (props) => {
   const exchanges = useSelector((state) => state.exchanges.value);
   const [tableData, setTableData] = useState([]);
 
+  const [inputSearch, setInputSearch] = useState("");
+  console.log(inputSearch);
+
   React.useEffect(() => {
     let updatedAssets = props.assets?.map((item) => {
       return {
         ...item,
-        crossWalletBalance: parseFloat(item.crossWalletBalance).toFixed(5),
-        availableBalance: parseFloat(item.availableBalance).toFixed(5),
-        balance: parseFloat(item.balance).toFixed(5),
+        crossWalletBalance: parseFloat(item.crossWalletBalance).toFixed(2),
+        availableBalance: parseFloat(item.availableBalance).toFixed(2),
+        balance: parseFloat(item.balance).toFixed(2),
       };
     });
     setTableData(updatedAssets);
@@ -272,8 +275,6 @@ const ExchangeTable = (props) => {
       //   return <strong>{"Token"}</strong>;
       // },
     },
-
-    { field: "change", title: "Change (24h)", sortable: true },
     // {
     //   field: "share",
     //   headerName: "Share",
@@ -308,14 +309,6 @@ const ExchangeTable = (props) => {
     // },
     // },
     {
-      field: "crossWalletBalance",
-      width: 109,
-      title: "Price",
-      // renderHeader: () => {
-      //   return <strong>{"Price"}</strong>;
-      // },
-    },
-    {
       field: "availableBalance",
       title: "Amount",
       width: 122,
@@ -323,6 +316,16 @@ const ExchangeTable = (props) => {
       //   return <strong>{"Amount"}</strong>;
       // },
     },
+    {
+      field: "crossWalletBalance",
+      width: 109,
+      title: "Price",
+      // renderHeader: () => {
+      //   return <strong>{"Price"}</strong>;
+      // },
+    },
+
+    { field: "change", title: "Change (24h)", sortable: true },
     {
       field: "balance",
       title: "Total",
@@ -338,6 +341,14 @@ const ExchangeTable = (props) => {
   const handleToggle = (event, newValue) => {
     setValue(newValue);
   };
+
+  const foundTableData = tableData?.filter((item) => {
+    if (!inputSearch) {
+      return true;
+    }
+    return item?.asset.toLowerCase().includes(inputSearch.toLowerCase());
+  });
+
   return (
     <Box>
       <Box
@@ -357,7 +368,10 @@ const ExchangeTable = (props) => {
             justifyContent: "center",
           }}
         >
-          <SearchBar />
+          <SearchBar
+            setInputSearch={setInputSearch}
+            inputSearch={inputSearch}
+          />
           <Box
             sx={{
               display: "flex",
@@ -529,7 +543,7 @@ const ExchangeTable = (props) => {
           mb: 7,
         }}
       >
-        <DataTable data={tableData} columns={columns} />
+        <DataTable data={foundTableData} columns={columns} />
         <CryptocurrencyData data={tableData} />
       </Box>
       {/* </Container> */}
