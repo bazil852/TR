@@ -7,8 +7,8 @@ import * as AWS from "aws-sdk";
 import * as bcrypt from "bcrypt";
 
 const options = {
-  accessKeyId: "AKIA3S7AXVMSOWNWWKHM",
-  secretAccessKey: "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",
+  accessKeyId: "AKIA6Q4YWN4JX6XKJE4T",
+  secretAccessKey: "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",
   region: "us-east-1",
 };
 
