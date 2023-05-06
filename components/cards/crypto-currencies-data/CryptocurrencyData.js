@@ -111,7 +111,7 @@ const CryptocurrencyData = (props) => {
         margin: "0 auto",
         width: "800px",
         background: "rgba(41, 8, 77, 0.42)",
-        minHeight: 800,
+        minHeight: 600,
         width: "41vw",
         borderRadius: 7,
         marginTop: "24px",

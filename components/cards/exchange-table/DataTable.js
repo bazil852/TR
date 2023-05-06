@@ -56,7 +56,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
     <Box
       sx={{
         width: "49vw",
-        height: 800,
+        height: '600px',
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -251,6 +251,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
       <Box sx={{ display: "flex", justifyContent: "flex-end", pb: 7, pr: 4 }}>
         <Box
           sx={{
+            marginTop:'2rem',
             border: "0.7px solid grey",
             borderRadius: "3px",
             borderTopLeftRadius: "10px",

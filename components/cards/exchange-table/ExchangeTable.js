@@ -476,67 +476,12 @@ const ExchangeTable = (props) => {
           </Button>
         </Box>
       </Box>
-      {/* <Container
-        sx={{
-          // background: "#191919",
-          // background:
-          //   "linear-gradient(180deg, rgba(41, 8, 77, 0.72) 5%, #830d5c80 95%)",
-
-          borderRadius: 2,
-          // p: 1,
-          // border: "1px solid #666666",
-          marginTop: 3,
-          marginBottom: 5,
-          disableGutters: true,
-          width: "48vw",
-        }}
-        component="main"
-        //   width="30%"
-      > */}
-      {/* <DataGrid
-        sx={{
-          mt: 2,
-          ".MuiDataGrid-columnSeparator": {
-            display: "none",
-          },
-          "&.MuiDataGrid-root": {
-            border: "none",
-          },
-          ".MuiDataGrid-cell:focus-within": {
-            outline: "none !important",
-          },
-          ".MuiDataGrid-row.Mui-even": {
-            // backgroundColor: "#292929",
-            backgroundColor: "#ffffff15",
-            borderBottom: "none",
-            backdropFilter: "blur(100px)",
-            backgroundBlendMode: "overlay",
-            borderTopLefttRadius: "15px",
-          },
-          height: 800,
-          // width: "100%",
-          padding: 0,
-          width: "48vw",
-          background: "rgba(41, 8, 77, 0.42)",
-          "& .MuiDataGrid-iconSeparator svg": {
-            color: "blue",
-          },
-          // marginTop: 5,
-        }}
-        getRowClassName={(params) =>
-          params.indexRelativeToCurrentPage % 2 === 0 ? "Mui-even" : "Mui-odd"
-        }
-        rowHeight={"55px"}
-        // rows={tableData}
-        rows={rows}
-        columns={columns}
-        pageSize={8}
-        disableSelectionOnClick
-      /> */}
+     
+      
       <Box
         sx={{
           display: "flex",
-          flexWrap: "wrap",
+          flexWrap: "nowrap",
           gap: 1,
           alignItems: "center",
           justifyContent: "center",
