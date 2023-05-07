@@ -88,7 +88,7 @@ const Drawer = styled(MuiDrawer, {
 export default function PrivateHeader({ title, current, Component }) {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const [toggle, setToggle] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState();
   const router = useRouter();
@@ -282,7 +282,7 @@ export default function PrivateHeader({ title, current, Component }) {
         <List sx={{ mb: "40vh" }}>
           {items.map((item) => (
             <div key={item.index}>
-              {item.index === 0 && (
+              {item.index === 0 && open && (
                 <Typography
                   sx={{
                     fontWeight: "500",
@@ -295,7 +295,7 @@ export default function PrivateHeader({ title, current, Component }) {
                   Market Dashboard
                 </Typography>
               )}
-              {item.index === 3 && (
+              {item.index === 3 && open && (
                 <Typography
                   sx={{
                     fontWeight: "500",
@@ -308,7 +308,7 @@ export default function PrivateHeader({ title, current, Component }) {
                   Trading Bot
                 </Typography>
               )}
-              {item.index === 4 && (
+              {item.index === 4 && open && (
                 <Typography
                   sx={{
                     fontWeight: "500",
@@ -321,7 +321,7 @@ export default function PrivateHeader({ title, current, Component }) {
                   Configuration
                 </Typography>
               )}
-              {item.index === 5 && (
+              {item.index === 5 && open && (
                 <Typography
                   sx={{
                     fontWeight: "500",
@@ -358,7 +358,7 @@ export default function PrivateHeader({ title, current, Component }) {
                   sx={{ display: !open ? "none" : "" }}
                 />
               </ListItem>
-              {item.title === "Trading Bots" && (
+              {/* {item.title === "Trading Bots" && (
                 <div
                   onClick={handleDropdownClick}
                   style={{
@@ -390,21 +390,9 @@ export default function PrivateHeader({ title, current, Component }) {
                         sx={{ display: !open ? "none" : "" }}
                       />
                     </ListItem>
-                    {/* <ListItem
-                      sx={getListItemStyle(4)}
-                      onClick={() => router.push("/bot-config?selected=4")}
-                    >
-                      <ListItemIcon sx={{ pl: 4, pr: 2 }}>
-                        <VgridBot />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={"VGrid bot"}
-                        sx={{ display: !open ? "none" : "" }}
-                      />
-                    </ListItem> */}
                   </List>
                 </Collapse>
-              )}
+              )} */}
             </div>
           ))}
         </List>

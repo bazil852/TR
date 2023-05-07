@@ -9,7 +9,7 @@ import * as bcrypt from "bcrypt";
 const options = {
   accessKeyId: "AKIA6Q4YWN4JX6XKJE4T",
   secretAccessKey: "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",
-  region: "us-east-1",
+  region: "eu-north-1",
 };
 
 const SES = new AWS.SES(options);

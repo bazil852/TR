@@ -7,7 +7,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
-import Checkbox from '@mui/material/Checkbox';
+import Checkbox from "@mui/material/Checkbox";
 import InputBase from "@mui/material/InputBase";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -58,14 +58,15 @@ const Register = () => {
     setLoading(true);
     const data = new FormData(event.currentTarget);
     const payload = {
-      // firstName: data.get("firstName"),
-      // lastName: data.get("lastName"),
-      name: data.get("name"),
-      companyName: data.get("companyName"),
+      firstName: data.get("firstName"),
+      lastName: data.get("lastName"),
+      // name: data.get("name"),
+      // companyName: data.get("companyName"),
       email: data.get("email"),
-      mobile: data.get("mobile"),
+      // mobile: data.get("mobile"),
       password: data.get("password"),
     };
+    console.log(payload);
 
     const response = await fetch("/api/user/signup", {
       method: "POST",
@@ -134,10 +135,7 @@ const Register = () => {
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={12}>
-                {/* <Typography color="#FFFFFF" variant="h6">
-                  Name
-                </Typography> */}
+              {/* <Grid item xs={12} sm={12}>
                 <ValidationTextField
                   focused
                   required
@@ -151,7 +149,7 @@ const Register = () => {
                   placeholder="Name"
                   variant="outlined"
                 />
-              </Grid>
+              </Grid> */}
               <Grid item xs={12} sm={6}>
                 {/* <Typography
                   sx={{ marginBottom: 1, mt: 2 }}
@@ -164,12 +162,12 @@ const Register = () => {
                   focused
                   required
                   fullWidth
-                  // id="lastName"
-                  // label="Last Name"
-                  // name="lastName"
-                  id="companyName"
-                  placeholder="Company Name"
-                  pla="companyName"
+                  name="firstName"
+                  id="firstName"
+                  placeholder="First Name"
+                  // id="companyName"
+                  // placeholder="Company Name"
+                  // pla="companyName"
                   // autoComplete="family-name"
                 />
               </Grid>
@@ -185,12 +183,12 @@ const Register = () => {
                   focused
                   required
                   fullWidth
-                  // id="lastName"
-                  // label="Last Name"
-                  // name="lastName"
-                  id="mobile"
-                  placeholder="Mobile Number"
-                  name="mobile"
+                  id="lastName"
+                  placeholder="Last Name"
+                  name="lastName"
+                  // id="mobile"
+                  // placeholder="Mobile Number"
+                  // name="mobile"
                   // autoComplete="family-name"
                 />
               </Grid>

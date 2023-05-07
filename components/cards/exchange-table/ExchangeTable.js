@@ -14,6 +14,8 @@ import { Sort } from "../../../utils/icons";
 import DataTable from "./DataTable";
 import CryptocurrencyData from "../crypto-currencies-data/CryptocurrencyData";
 
+import { CircularProgress } from "@mui/material";
+
 import Button from "@mui/material/Button";
 const data = [
   {
@@ -131,9 +133,9 @@ const ccxt = require("ccxt");
 const ExchangeTable = (props) => {
   const exchanges = useSelector((state) => state.exchanges.value);
   const [tableData, setTableData] = useState([]);
+  const [loading, setLoading] = React.useState(true);
 
   const [inputSearch, setInputSearch] = useState("");
-  console.log(inputSearch);
 
   React.useEffect(() => {
     let updatedAssets = props.assets?.map((item) => {
@@ -145,42 +147,9 @@ const ExchangeTable = (props) => {
       };
     });
     setTableData(updatedAssets);
-
-    // const symbol = ["BTC/USDT", "ETH/USDT"];
-    // if (exchanges?.length > 0) {
-    //   const { USDMClient } = require("binance");
-    //   const baseUrl = "https://testnet.binancefuture.com";
-    //   const client = new USDMClient({
-    //     api_key: exchanges[0]?.apiKey,
-    //     api_secret: exchanges[0]?.apiSecret,
-    //     baseUrl,
-    //   });
-    //   client
-    //     .getBalance()
-    //     .then((result) => {
-    //       console.log(result);
-    //       setTableData(
-    //         result.map((item, i) => {
-    //           return {
-    //             ...item,
-    //             id: i,
-    //           };
-    //         })
-    //       );
-    //     })
-    //     .catch((err) => {
-    //       console.error("getBalance error: ", err);
-    //     });
-    //   const binance = new ccxt.binance();
-    //   binance
-    //     .fetchTicker("BTC/USDT")
-    //     .then((ticker) => {
-    //       console.log(ticker);
-    //     })
-    //     .catch((error) => {
-    //       console.error(`Error fetching ticker for ${"USDT"}: ${error}`);
-    //     });
-    // }
+    if (updatedAssets.length !== 0) {
+      setLoading(false);
+    }
   }, [props.assets]);
 
   // const columnst = [
@@ -455,7 +424,7 @@ const ExchangeTable = (props) => {
             Portfolio Summary
           </Typography>
         </Box>
-        <Box>
+        {/* <Box>
           <Button
             sx={{
               background: "linear-gradient(to right,#790D83,#7A5CFF)",
@@ -474,10 +443,9 @@ const ExchangeTable = (props) => {
           >
             Refresh
           </Button>
-        </Box>
+        </Box> */}
       </Box>
-     
-      
+
       <Box
         sx={{
           display: "flex",
@@ -488,8 +456,23 @@ const ExchangeTable = (props) => {
           mb: 7,
         }}
       >
-        <DataTable data={foundTableData} columns={columns} />
-        <CryptocurrencyData data={tableData} />
+        {loading ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: 40,
+              marginBottom: 20,
+            }}
+          >
+            <CircularProgress />
+          </div>
+        ) : (
+          <>
+            <DataTable data={foundTableData} columns={columns} />
+            <CryptocurrencyData data={tableData} />
+          </>
+        )}
       </Box>
       {/* </Container> */}
     </Box>
