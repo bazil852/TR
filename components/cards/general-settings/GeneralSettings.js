@@ -97,6 +97,7 @@ const GeneralSettings = (props) => {
               onChange={() => {
                 props.setBotName(event.target.value);
               }}
+              disabled={props.editSettings}
             />
           </Grid>
           <Grid item xs={2} sm={4} md={4}>
@@ -116,6 +117,7 @@ const GeneralSettings = (props) => {
                 onChange={async (event) => {
                   props.setBotType(event.target.value);
                 }}
+                disabled={props.editSettings}
               />
             </Box>
           </Grid>
@@ -132,6 +134,7 @@ const GeneralSettings = (props) => {
                 freeSolo
                 options={listOfPairs}
                 disableClearable
+                disabled={props.editSettings}
                 fullWidth
                 PaperComponent={({ children }) => (
                   <Paper
@@ -152,11 +155,14 @@ const GeneralSettings = (props) => {
                     <ValidationTextField
                       margin="normal"
                       required
-                      placeholder="Search Pair"
+                      placeholder={
+                        props.strategyPair ? props.strategyPair : "Search Pair"
+                      }
                       fullWidth
                       {...params.InputProps}
                       {...rest}
                       value={props.strategyPair}
+                      disabled={props.editSettings}
                     />
                   );
                 }}
@@ -183,6 +189,7 @@ const GeneralSettings = (props) => {
                 onChange={async (event) => {
                   props.setExchangeName(event.target.value);
                 }}
+                disabled={props.editSettings}
               />
             </Box>
           </Grid>
@@ -203,6 +210,7 @@ const GeneralSettings = (props) => {
                 onChange={async (event) => {
                   props.setStrategyType(event.target.value);
                 }}
+                disabled={props.editSettings}
               />
             </Box>
           </Grid>

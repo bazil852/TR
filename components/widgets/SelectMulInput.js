@@ -30,7 +30,7 @@ const SelectMulInput = (props) => {
       multiple
       onChange={handleChange}
       input={<OutlinedInput />}
-      value={selectedOptions}
+      value={props.value ? props.value : selectedOptions}
       renderValue={renderValue}
       MenuProps={{
         PaperProps: {

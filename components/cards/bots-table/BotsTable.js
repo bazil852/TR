@@ -675,6 +675,9 @@ const BotsTable = () => {
                 backgroundColor: "#5B2A6D",
                 cursor: "pointer",
               }}
+              onClick={() => {
+                router.push(`/bot-edit?id=${cellValues.row._id}`);
+              }}
             >
               <Edit
                 viewBox="0 0 15 15"

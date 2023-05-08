@@ -16,6 +16,7 @@ const SelectInput = (props) => {
       onChange={props.onChange}
       input={<OutlinedInput />}
       value={props.value}
+      disabled={props.disabled}
       MenuProps={{
         PaperProps: {
           sx: {
