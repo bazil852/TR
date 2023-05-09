@@ -28,11 +28,11 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "& .MuiInputBase-input": {
     borderRadius: 4,
     position: "relative",
-    backgroundColor: "#292929",
-    border: "1px solid #ced4da",
+    // backgroundColor: "#292929",
+    borderBottom: "1px solid #ced4da",
     fontSize: 16,
     color: "#CCCCCC",
-    padding: "10px 12px",
+    padding: "20px 12px",
     transition: theme.transitions.create([
       "border-color",
       "background-color",
@@ -137,11 +137,16 @@ const Login = () => {
   return (
     <>
       <Container
-        sx={{
-          background: "#191919",
-          borderRadius: 5,
+         sx={{
+          marginTop:'-5%',
+          background: "rgba(255, 255, 255, 0.09)",
+          borderRadius: 10,
           p: 1,
-          border: "1px solid #666666",
+          // marginLeft:'60%',
+          border: "0px solid #666666",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)", // For Safari compatibility
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Optional: add a subtle shadow for depth
         }}
         component="main"
         maxWidth="xs"
@@ -155,25 +160,34 @@ const Login = () => {
             alignItems: "center",
           }}
         >
-          <Avatar>
-            <LockOutlinedIcon color="primary" />
-          </Avatar>
           <Typography
-            sx={{ mt: 1 }}
-            color="primary"
+            sx={{ mt: 1 ,fontSize:'2.5rem'}}
+            color="white"
+            fontWeight={800}
+            fontFamily="poppins"
             component="h1"
             variant="h5"
           >
-            Sign in
+            Welcome Back
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <Typography
-              sx={{ marginBottom: 1, mt: 2 }}
-              color="#FFFFFF"
+          {/* Log in to access your account */}
+          <Typography
+              sx={{  mt: 1 }}
+              color="#cecece"
               variant="h6"
+              fontSize='1rem'
+            >
+              Log in to access your account
+            </Typography>
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            {/* <Typography
+              sx={{ marginBottom: 1, mt: 2 }}
+              color="#cecece"
+              variant="h6"
+              fontSize='1rem'
             >
               Email Address:
-            </Typography>
+            </Typography> */}
             <ValidationTextField
               focused
               margin="normal"
@@ -181,17 +195,19 @@ const Login = () => {
               fullWidth
               id="email"
               label="Email Address"
+              placeholder="Email Address / Username"
               name="email"
               autoComplete="email"
               autoFocus
             />
-            <Typography
+            {/* <Typography
               sx={{ marginBottom: 1, mt: 2 }}
-              color="#FFFFFF"
+              color="#cecece"
               variant="h6"
+              fontSize='1rem'
             >
               Password:
-            </Typography>
+            </Typography> */}
             <ValidationTextField
               focused
               margin="normal"
@@ -200,15 +216,26 @@ const Login = () => {
               name="password"
               label="Password"
               type="password"
+              placeholder="Password"
               id="password"
               autoComplete="current-password"
             />
 
             <Button
               type="submit"
-              fullWidth
+              
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              
+              sx={{ mt: 3, mb: 2,ml:16 ,
+                background: "linear-gradient(90deg, #790D83 0%, #7A5CFF 100%)",
+                color: "white",
+                "&:hover": {
+                  background: "linear-gradient(90deg, #790D83 0%, #7A5CFF 100%)",
+                  opacity: 0.9,
+                },
+                width:'8rem',
+                fontWeight:'600'
+              }}
             >
               Sign In
             </Button>
