@@ -325,6 +325,8 @@ const BotsTable = () => {
 
   const [loading, setLoading] = React.useState(true);
 
+  const [exchangeArr, setExchangeArr] = React.useState([]);
+
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
@@ -339,6 +341,7 @@ const BotsTable = () => {
 
   const fetchStrategy = async () => {
     const session = await getSession();
+    setExchangeArr(session.user.exchanges);
     const response = await fetch(
       `/api/strategy/get-strategy?id=${session?.user?.id}`,
       {
@@ -543,6 +546,9 @@ const BotsTable = () => {
         );
       },
       renderCell: (cellValues) => {
+        const exchange = exchangeArr.find(
+          (item) => item._id === cellValues.row.exchange
+        );
         return (
           <div
           // style={{
@@ -564,9 +570,9 @@ const BotsTable = () => {
                 color: "#795BFF",
               }}
             >
-              {cellValues.row.exchange}
+              {exchange?.exchangeName}
             </div>
-            <div>{cellValues.row.exchange}</div>
+            <div>{exchange?.exchangeName}</div>
           </div>
         );
       },

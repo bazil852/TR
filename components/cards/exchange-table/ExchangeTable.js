@@ -147,6 +147,7 @@ const ExchangeTable = (props) => {
       };
     });
     setTableData(updatedAssets);
+    console.log(updatedAssets);
     if (updatedAssets.length !== 0) {
       setLoading(false);
     }
@@ -361,7 +362,7 @@ const ExchangeTable = (props) => {
             </Typography>
           </Box>
         </Box>
-        <Box
+        {/* <Box
           sx={{
             background: "#19191985",
             padding: "0.25rem",
@@ -406,7 +407,7 @@ const ExchangeTable = (props) => {
               BTC
             </ToggleButton>
           </ToggleButtonGroup>
-        </Box>
+        </Box> */}
       </Box>
       <Box
         sx={{

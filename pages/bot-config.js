@@ -91,9 +91,9 @@ const BotConfig = () => {
         <Grid xs={12} md={6} xl={4} item>
           <ProfitByDay />
         </Grid>
-        <Grid xs={12} md={6} xl={4} item>
+        {/* <Grid xs={12} md={6} xl={4} item>
           <ProfitCalendar />
-        </Grid>
+        </Grid> */}
       </Grid>
       {/* <GeneralSettings />
       <Strategy /> */}

@@ -1,7 +1,7 @@
 import PrivateHeader from "../components/layout/PrivateHeader";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Container, Typography } from "@mui/material";
@@ -20,8 +20,11 @@ import {
   BotAnalytics,
   GreyCross,
 } from "../utils/icons";
+import { Router, useRouter } from "next/router";
+import { getSession } from "next-auth/react";
 
 const DcaBot = () => {
+  const router = useRouter();
   const [button, setButton] = useState("bot");
 
   const handleSelect = (event, selected) => {
@@ -29,10 +32,80 @@ const DcaBot = () => {
   };
   const [isActive, setActive] = React.useState(1);
   const [toggle, setToggle] = React.useState(true);
+  const [chartData, setChartData] = useState({
+    labels: [],
+    data: [],
+  });
+
+  const [totalProfit, setTotalProfit] = React.useState(0);
 
   const handleClick = (buttonIndex) => {
     setActive(buttonIndex);
   };
+
+  useEffect(() => {
+    fetchOrdersByUser();
+  }, []);
+
+  const fetchOrdersByUser = async () => {
+    let session = await getSession();
+    const response = await fetch(
+      `/api/order/get-order?id=${session?.user?.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const newData = await response.json();
+    const simpleArr = newData.body.map((item) => {
+      return {
+        ...item,
+        strategyName: item.strategyId.botName,
+      };
+    });
+    const chartData = simpleArr.reduce(
+      (result, item) => {
+        const label = item.strategyName;
+        const profit = item.totalProfit;
+
+        // check if the label already exists in the result array
+        const existingIndex = result.labels.indexOf(label);
+        if (existingIndex >= 0) {
+          // add the profit to the existing label
+          result.data[existingIndex] += profit;
+        } else {
+          // add a new label with the profit
+          result.labels.push(label);
+          result.data.push(profit);
+        }
+
+        return result;
+      },
+      { labels: [], data: [] }
+    );
+    const sum = chartData.data.reduce((total, number) => total + number, 0);
+    console.log(sum);
+    setTotalProfit(sum);
+
+    // sort the data in descending order and update the labels
+    const dataWithLabels = chartData.data.map((data, index) => ({
+      data,
+      label: chartData.labels[index],
+    }));
+    const sortedData = dataWithLabels.sort((a, b) => b.data - a.data);
+    chartData.labels = sortedData.map((data) => data.label);
+    chartData.data = sortedData.map((data) => data.data);
+    const chartDataLimited = {
+      labels: chartData.labels.slice(0, 6),
+      data: chartData.data.slice(0, 6),
+    };
+    setChartData(chartData);
+    console.log(chartData);
+  };
+
   return (
     <>
       {/* <ToggleButtonGroup value={button} onChange={handleSelect} exclusive>
@@ -109,12 +182,14 @@ const DcaBot = () => {
             },
             textTransform: "none",
           }}
-          onClick={() => handleClick(2)}
+          onClick={() => {
+            router.push("/AllDeals");
+          }}
         >
           <YellowHandShake />
           My Deals
         </Button>
-        <Button
+        {/* <Button
           size="large"
           sx={{
             display: "flex",
@@ -138,9 +213,9 @@ const DcaBot = () => {
           onClick={() => handleClick(3)}
         >
           <BotAnalytics /> Bot Analytics
-        </Button>
+        </Button> */}
       </Stack>
-      <Container
+      {/* <Container
         sx={{
           mt: 5,
           display: toggle ? "flex" : "none",
@@ -166,31 +241,37 @@ const DcaBot = () => {
           onClick={() => setToggle(!toggle)}
         />
         <Typography sx={{ ml: -4 }}>Pairs &quot; Black List &quot;</Typography>
-      </Container>
+      </Container> */}
       <Grid mt={2} container rowSpacing={2} columnSpacing={2}>
         <Grid xs={8} xl={4} item>
-          <TotalProfit />
+          <TotalProfit profit={totalProfit} />
         </Grid>
         <Grid xs={4} xl={2} item>
           <ClosedDeals />
         </Grid>
         <Grid xs={6} xl={3} item>
-          <BotsProgress heading="Most Profitable Bots" />
+          <BotsProgress heading="Most Profitable Bots" chartData={chartData} />
         </Grid>
-        <Grid xs={6} xl={3} item>
+        {/* <Grid xs={6} xl={3} item>
           <BotsProgress heading="Most Profitable Bots by Time" />
+        </Grid> */}
+        <Grid xs={6} xl={3} item>
+          <BotsProgress
+            heading="Best Performing Bots This Week"
+            chartData={chartData}
+          />
         </Grid>
       </Grid>
       <Grid mt={2} container rowSpacing={2} columnSpacing={2}>
-        <Grid xs={12} xl={6} item>
+        {/* <Grid xs={12} xl={6} item>
           <MyBotSummary />
-        </Grid>
-        <Grid xs={6} xl={3} item>
+        </Grid> */}
+        {/* <Grid xs={6} xl={3} item>
           <BotsProgress heading="Best Performing Bots This Week" />
-        </Grid>
-        <Grid xs={6} xl={3} item>
+        </Grid> */}
+        {/* <Grid xs={6} xl={3} item>
           <BotsProgress heading="Best Performing Bots This Month" />
-        </Grid>
+        </Grid> */}
       </Grid>
       <BotsTable />
     </>

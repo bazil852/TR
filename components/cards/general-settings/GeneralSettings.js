@@ -16,6 +16,10 @@ import Paper from "@mui/material/Paper";
 import Autocomplete from "@mui/material/Autocomplete";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
+
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import MenuItem from "@mui/material/MenuItem";
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
     marginTop: theme.spacing(3),
@@ -180,17 +184,70 @@ const GeneralSettings = (props) => {
               Exchange
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "row" }}>
-              <SelectInput
-                placeHolder={"Exchange"}
-                options={exchange}
-                fullWidth
-                keyName={"exchange"}
-                value={props.exchangeName}
+              <Select
+                name={"exchange"}
                 onChange={async (event) => {
                   props.setExchangeName(event.target.value);
                 }}
+                input={<OutlinedInput />}
+                value={props.exchangeName}
                 disabled={props.editSettings}
-              />
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      backgroundColor: "#452951",
+                      mt: 0.5,
+                      "& .MuiMenuItem-root": {
+                        color: "white",
+                        "&:hover": {
+                          backgroundColor: "#4E2C60",
+                        },
+                      },
+                      "& .Mui-selected": {
+                        opacity: 0.4,
+                        backgroundColor: "transparent",
+                      },
+                      "& .MuiList-root": {
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                      },
+                      "& .MuiMenu-paper": {
+                        marginTop: "8px",
+                      },
+                      "& .MuiListItem-root": {
+                        paddingTop: "10px",
+                        paddingBottom: "10px",
+                        "&:hover": {
+                          backgroundColor: "none",
+                        },
+                      },
+                    },
+                  },
+                }}
+                sx={{
+                  "& .MuiSelect-select .notranslate::after": "Exchange"
+                    ? {
+                        content: `"Exchange"`,
+                        opacity: 0.42,
+                      }
+                    : {},
+                  minWidth: "100%",
+                  height: 37,
+                  borderRadius: "8px",
+                  color: "white",
+                  backgroundColor: "#452951",
+                  boxShadow: "none",
+                  ".MuiOutlinedInput-notchedOutline": {
+                    border: 0,
+                  },
+                }}
+              >
+                {props.exchangeOptions.map((item) => (
+                  <MenuItem key={item._id} value={item._id}>
+                    {item.exchangeName}
+                  </MenuItem>
+                ))}
+              </Select>
             </Box>
           </Grid>
           <Grid item xs={2} sm={4} md={4}>

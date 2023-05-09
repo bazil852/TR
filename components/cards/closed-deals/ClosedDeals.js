@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
@@ -6,14 +6,38 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { YellowHandShakeBig } from "../../../utils/icons";
 import { useSelector } from "react-redux";
+import { getSession } from "next-auth/react";
 
 const ClosedDeals = () => {
   const widthAbove1600 = useSelector((state) => state.dashboardWidth.value);
+  const [activeDeals, setActiveDeals] = useState(0);
+  useEffect(() => {
+    fetchAndSetActiveStrategy();
+  }, []);
+
+  const fetchAndSetActiveStrategy = async () => {
+    let session = await getSession();
+    const response = await fetch(
+      `/api/strategy/get-strategy?id=${session?.user?.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const newData = await response.json();
+    const onStrategies = newData.body.filter(
+      (strategy) => strategy.state === "on"
+    );
+    setActiveDeals(onStrategies.length);
+  };
   return (
     <Card
       sx={{
         minWidth: 200,
-        minHeight: widthAbove1600 < 1600 ? 340 : 357,
+        minHeight: widthAbove1600 < 1600 ? 120 : 120,
         maxHeight: widthAbove1600 < 1600 ? "auto" : 357,
         background: "#2D1537",
         borderRadius: "8px",
@@ -33,12 +57,12 @@ const ClosedDeals = () => {
           <Stack spacing={1}>
             <Typography color="#CCCCCC">Closed Deals</Typography>
             <Typography fontSize="24px" fontWeight="600" color="#CCCCCC">
-              1266
+              0
             </Typography>
           </Stack>
         </Stack>
         <Typography mt={3} color="#CCCCCC">
-          Active Deals: 9
+          Active Deals: {activeDeals}
         </Typography>
       </CardContent>
     </Card>

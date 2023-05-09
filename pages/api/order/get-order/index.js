@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     case "GET":
       try {
         await connectMongo();
-        const order = await Order.find({ userId: id });
+        const order = await Order.find({ userId: id }).populate("strategyId");
 
         res.status(200).json({ status: 200, body: order });
       } catch (error) {

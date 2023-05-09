@@ -9,7 +9,7 @@ import { styled } from "@mui/material/styles";
 import { TotalProfitYellow } from "../../../utils/icons";
 import { useSelector } from "react-redux";
 
-const TotalProfit = () => {
+const TotalProfit = (props) => {
   const widthAbove1600 = useSelector((state) => state.dashboardWidth.value);
   return (
     <Card
@@ -17,7 +17,7 @@ const TotalProfit = () => {
         minWidth: 400,
         background: "#2D1537",
         borderRadius: "8px",
-        minHeight: widthAbove1600<1600? 340 : 357,
+        minHeight: widthAbove1600 < 1600 ? 165 : 165,
         maxHeight: widthAbove1600 < 1600 ? "auto" : 357,
       }}
     >
@@ -35,11 +35,11 @@ const TotalProfit = () => {
           <Stack spacing={1}>
             <Typography>Total Profit</Typography>
             <Typography fontSize="24px" color="#4BD569">
-              +22 263.08 $
+              {props.profit} $
             </Typography>
           </Stack>
         </Stack>
-        <Grid
+        {/* <Grid
           mt={2}
           container
           rowSpacing={1}
@@ -87,7 +87,7 @@ const TotalProfit = () => {
               <Typography color="#4BD569">00.27 $</Typography>
             </Stack>
           </Grid>
-        </Grid>
+        </Grid> */}
       </CardContent>
     </Card>
   );

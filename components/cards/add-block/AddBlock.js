@@ -157,6 +157,29 @@ const AddBlockComponent = (props) => {
   const [ignoreCondition, setIgnoreCondition] = useState("");
   const [ignoreConditionX, setIgnoreConditionX] = useState("");
 
+  const [exchangeOptions, setExchangeOptions] = useState([]);
+
+  useEffect(() => {
+    fetchUserAndSetExchanges();
+  }, []);
+
+  const fetchUserAndSetExchanges = async () => {
+    let session = await getSession();
+    const response = await fetch(
+      `/api/user/get-user-info?id=${session?.user?.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const newData = await response.json();
+    console.log(newData);
+    setExchangeOptions(newData?.body?.exchanges);
+  };
+
   const handleChangeMaPercentage = (event) => {
     if (event.target.value.match(/^(100|[1-9]?[0-9])$/)) {
       setAvgPricePercent(event.target.value);
@@ -531,6 +554,7 @@ const AddBlockComponent = (props) => {
               setStrategyType={setStrategyType}
               strategyPair={strategyPair}
               setStrategyPair={setStrategyPair}
+              exchangeOptions={exchangeOptions}
             />
           )}
           {activeTab === "orders" && (

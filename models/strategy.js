@@ -2,7 +2,7 @@ import mongoose, { Schema, model, models } from "mongoose";
 
 const strategySchema = new Schema({
   botName: String,
-  exchange: String,
+  exchange: mongoose.Schema.Types.ObjectId,
   botType: String,
   strategyType: String,
   strategyPair: String,

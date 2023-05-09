@@ -67,9 +67,6 @@ const SelectInput = (props) => {
         },
       }}
     >
-      {/* <MenuItem disabled value="">
-        <em>{props.placeHolder}</em>
-      </MenuItem> */}
       {props.options.map((item) => (
         <MenuItem key={item} value={item}>
           {item}

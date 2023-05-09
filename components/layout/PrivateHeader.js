@@ -169,12 +169,12 @@ export default function PrivateHeader({ title, current, Component }) {
       icon: selectedItem === 5 ? BlueHandShake : HandShake,
       path: "/AllDeals",
     },
-    {
-      index: 6,
-      title: "History",
-      icon: selectedItem === 6 ? BlueHistory : History,
-      path: "/history",
-    },
+    // {
+    //   index: 6,
+    //   title: "History",
+    //   icon: selectedItem === 6 ? BlueHistory : History,
+    //   path: "/history",
+    // },
   ];
 
   React.useEffect(() => {

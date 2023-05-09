@@ -20,6 +20,10 @@ const orderSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Strategy",
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Users",
+  },
   created: { type: Date, default: Date.now },
 });
 
