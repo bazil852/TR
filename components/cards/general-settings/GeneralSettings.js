@@ -242,7 +242,7 @@ const GeneralSettings = (props) => {
                   },
                 }}
               >
-                {props.exchangeOptions.map((item) => (
+                {props?.exchangeOptions?.map((item) => (
                   <MenuItem key={item._id} value={item._id}>
                     {item.exchangeName}
                   </MenuItem>
