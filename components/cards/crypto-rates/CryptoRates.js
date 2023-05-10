@@ -2,6 +2,7 @@ import React from "react";
 import { Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import styles from "./CryptoRates.module.css";
 const ccxt = require("ccxt");
 
 const binance = new ccxt.binance();
@@ -67,6 +68,7 @@ const CryptoRates = () => {
     return () => clearInterval(interval);
   }, []);
   return (
+    <div className={styles.scrollContainer}>
     <Box
       sx={{
         display: "flex",
@@ -150,7 +152,10 @@ const CryptoRates = () => {
           {ltcTickerValue?.percentage}%
         </span>
       </Box>
+      
+      
     </Box>
+    </div>
   );
 };
 
