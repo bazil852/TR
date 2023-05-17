@@ -37,6 +37,11 @@ const DcaBot = () => {
     data: [],
   });
 
+  const [oneWeekChartData, setOneWeekChartData] = useState({
+    labels: [],
+    data: [],
+  });
+
   const [totalProfit, setTotalProfit] = React.useState(0);
 
   const handleClick = (buttonIndex) => {
@@ -45,6 +50,7 @@ const DcaBot = () => {
 
   useEffect(() => {
     fetchOrdersByUser();
+    fetchOneWeekOrdersByUser();
   }, []);
 
   const fetchOrdersByUser = async () => {
@@ -87,7 +93,6 @@ const DcaBot = () => {
       { labels: [], data: [] }
     );
     const sum = chartData.data.reduce((total, number) => total + number, 0);
-    console.log(sum);
     setTotalProfit(sum);
 
     // sort the data in descending order and update the labels
@@ -103,6 +108,62 @@ const DcaBot = () => {
       data: chartData.data.slice(0, 6),
     };
     setChartData(chartData);
+    console.log(chartData);
+  };
+
+  const fetchOneWeekOrdersByUser = async () => {
+    let session = await getSession();
+    const response = await fetch(
+      `/api/order/get-one-week-order?id=${session?.user?.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const newData = await response.json();
+    const simpleArr = newData.body.map((item) => {
+      return {
+        ...item,
+        strategyName: item.strategyId.botName,
+      };
+    });
+    const chartData = simpleArr.reduce(
+      (result, item) => {
+        const label = item.strategyName;
+        const profit = item.totalProfit;
+
+        // check if the label already exists in the result array
+        const existingIndex = result.labels.indexOf(label);
+        if (existingIndex >= 0) {
+          // add the profit to the existing label
+          result.data[existingIndex] += profit;
+        } else {
+          // add a new label with the profit
+          result.labels.push(label);
+          result.data.push(profit);
+        }
+
+        return result;
+      },
+      { labels: [], data: [] }
+    );
+
+    // sort the data in descending order and update the labels
+    const dataWithLabels = chartData.data.map((data, index) => ({
+      data,
+      label: chartData.labels[index],
+    }));
+    const sortedData = dataWithLabels.sort((a, b) => b.data - a.data);
+    chartData.labels = sortedData.map((data) => data.label);
+    chartData.data = sortedData.map((data) => data.data);
+    const chartDataLimited = {
+      labels: chartData.labels.slice(0, 6),
+      data: chartData.data.slice(0, 6),
+    };
+    setOneWeekChartData(chartData);
     console.log(chartData);
   };
 
@@ -258,7 +319,7 @@ const DcaBot = () => {
         <Grid xs={6} xl={3} item>
           <BotsProgress
             heading="Best Performing Bots This Week"
-            chartData={chartData}
+            chartData={oneWeekChartData}
           />
         </Grid>
       </Grid>

@@ -10,6 +10,8 @@ import { getSession } from "next-auth/react";
 
 const ClosedDeals = () => {
   const widthAbove1600 = useSelector((state) => state.dashboardWidth.value);
+
+  const [closedDeals, setClosedDeals] = useState(0);
   const [activeDeals, setActiveDeals] = useState(0);
   useEffect(() => {
     fetchAndSetActiveStrategy();
@@ -28,6 +30,17 @@ const ClosedDeals = () => {
     );
 
     const newData = await response.json();
+    let newCount = 0;
+    newData.body.forEach((item) => {
+      if (item.dealTime && item.dealTime.length > 0) {
+        item.dealTime.forEach((time) => {
+          if (time.startTime && time.endTime) {
+            newCount++;
+          }
+        });
+      }
+    });
+    setClosedDeals(newCount);
     const onStrategies = newData.body.filter(
       (strategy) => strategy.state === "on"
     );
@@ -57,7 +70,7 @@ const ClosedDeals = () => {
           <Stack spacing={1}>
             <Typography color="#CCCCCC">Closed Deals</Typography>
             <Typography fontSize="24px" fontWeight="600" color="#CCCCCC">
-              0
+              {closedDeals}
             </Typography>
           </Stack>
         </Stack>

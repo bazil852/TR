@@ -370,10 +370,38 @@ const BotsTable = () => {
     if (event.target.checked) {
       newData[tableRowIndex].state = "on";
       url = "start";
+      newData[tableRowIndex].dealTime.push({
+        startTime: new Date(),
+        endTime: "",
+      });
     } else {
       newData[tableRowIndex].state = "off";
+      let index =
+        newData[tableRowIndex]?.dealTime?.length > 0
+          ? newData[tableRowIndex]?.dealTime?.length - 1
+          : -1; // Set initial index as -1
+
+      if (
+        index === -1 ||
+        typeof newData[tableRowIndex]?.dealTime?.[index] === "undefined"
+      ) {
+        index = 0; // Assign 0 if index is -1 or undefined
+        newData[tableRowIndex].dealTime[index] = {};
+      }
+
+      newData[tableRowIndex].dealTime[index] = {
+        ...newData[tableRowIndex].dealTime[index],
+        endTime: new Date(),
+      };
+
+      // newData[tableRowIndex].dealTime[index] = {
+      //   ...dealTime[index],
+      //   endTime: "20",
+      // };
       url = "stop";
     }
+
+    console.log(newData[tableRowIndex]);
 
     // const response = await fetch(`http://localhost:8000/${url}`, {
     //   method: "POST",
@@ -389,13 +417,16 @@ const BotsTable = () => {
       state: newData[tableRowIndex].state,
     };
 
-    const updatedStrategy = await fetch("/api/strategy/update-status", {
-      method: "PATCH",
-      body: JSON.stringify(reqBody),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const updatedStrategy = await fetch(
+      `/api/strategy/put-strategy?id=${item._id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(newData[tableRowIndex]),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     setTableRow(newData);
 
     try {

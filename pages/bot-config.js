@@ -20,37 +20,37 @@ import Strategy from "../components/cards/strategy/Strategy";
 import CryptoRates from "../components/cards/crypto-rates/CryptoRates";
 
 const profitCards = [
-  { title: "Total Profit", icon: <TotalProfitBarIcon />, data: "$25.62" },
+  { title: "Total Profit", icon: <TotalProfitBarIcon />, data: "$0" },
   {
     title: "Deals Completed",
     icon: <DealsCompletedIcon />,
-    data: "$25.62",
+    data: "$0",
   },
   {
     title: "Max. Drop in Deal",
     icon: <MaxDropIcon />,
-    data: "$25.62",
+    data: "$0",
   },
-  { title: "Max. Deal Time", icon: <MaxDealIcon />, data: "1:30 Hour" },
+  { title: "Max. Deal Time", icon: <MaxDealIcon />, data: "0 Hour" },
   {
     title: "Avg. Deal Time",
     icon: <MaxDealIcon />,
-    data: "1:30 Hour",
+    data: "0 Hour",
   },
   {
     title: "Avg. Profit",
     icon: <TotalProfitBarIcon />,
-    data: "$25.62",
+    data: "$0",
   },
   {
     title: "Avg. Time Between Signals",
     icon: <AverageTimeSignalIcon />,
-    data: "1:30 Hour",
+    data: "0 Hour",
   },
   {
     title: "Total Time",
     icon: <AverageTimeSignalIcon />,
-    data: "1:30 Hour",
+    data: "0 Hour",
   },
 ];
 
@@ -84,17 +84,17 @@ const BotConfig = () => {
           );
         })}
       </Grid>
-      <Grid sx={{ mt: 2 }} container rowSpacing={3} columnSpacing={3}>
+      {/* <Grid sx={{ mt: 2 }} container rowSpacing={3} columnSpacing={3}>
         <Grid xs={12} md={6} xl={4} item>
           <SummaryProfit />
         </Grid>
         <Grid xs={12} md={6} xl={4} item>
           <ProfitByDay />
         </Grid>
-        {/* <Grid xs={12} md={6} xl={4} item>
+        <Grid xs={12} md={6} xl={4} item>
           <ProfitCalendar />
-        </Grid> */}
-      </Grid>
+        </Grid>
+      </Grid> */}
       {/* <GeneralSettings />
       <Strategy /> */}
       <Grid container>
