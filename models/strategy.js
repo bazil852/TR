@@ -36,6 +36,8 @@ const strategySchema = new Schema({
   logs: String,
   state: String,
   dealTime: [Object],
+
+  created: { type: Date, default: Date.now },
 });
 
 const Strategy = models.Strategy || model("Strategy", strategySchema);

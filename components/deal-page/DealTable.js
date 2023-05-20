@@ -15,7 +15,7 @@ import dynamic from "next/dynamic";
 import { useEffect } from "react";
 const GaugeChart = dynamic(() => import("react-gauge-chart"), { ssr: false });
 
-const DealTable = () => {
+const DealTable = (props) => {
   const [sortKey, setSortKey] = useState("item");
   const [sortOrder, setSortOrder] = useState("asc");
   const [width, setWidth] = useState(globalThis?.innerWidth);
@@ -152,11 +152,31 @@ const DealTable = () => {
           </tr>
         </thead>
         <tbody>
-          {sortedData.map((item, index) => {
-            const pairParts = item.pair.split(" ");
-            const pairs = pairParts.join("\n");
-            const createdPairs = item.created.split(" ");
-            const created = createdPairs.join("\n");
+          {props?.strategy?.map((item, index) => {
+            let totalProfit = item?.order?.reduce(
+              (accumulator, currentObject) => {
+                return accumulator + currentObject.totalProfit;
+              },
+              0
+            );
+
+            const maxProfit = Math.max(
+              ...item?.order?.map((item) => item.totalProfit)
+            );
+            const minProfit = Math.min(
+              ...item?.order?.map((item) => item.totalProfit)
+            );
+
+            console.log(
+              (totalProfit - minProfit * item?.order?.length) /
+                ((maxProfit - minProfit) * item?.order?.length)
+            );
+            const date = new Date(item?.strategy?.created);
+            const formattedDate = date?.toLocaleDateString();
+            // const pairParts = item.pair.split(" ");
+            // const pairs = pairParts.join("\n");
+            // const createdPairs = item.created.split(" ");
+            // const created = createdPairs.join("\n");
             return (
               <>
                 <tr
@@ -196,7 +216,7 @@ const DealTable = () => {
                         <Arrow />
                       </Box>
                       <Typography sx={{ color: "#795BFF" }}>
-                        {item.bot}
+                        {item?.strategy?.botName}
                       </Typography>
                     </Box>
                   </td>
@@ -210,7 +230,7 @@ const DealTable = () => {
                       textAlign: "center",
                     }}
                   >
-                    {pairs}
+                    {item?.strategy?.strategyPair}
                   </td>
                   <td
                     style={{
@@ -221,8 +241,16 @@ const DealTable = () => {
                     <Box sx={{ margin: "auto", width: "60%" }}>
                       <GaugeChart
                         id="gauge-chart1"
-                        nrOfLevels={1000}
-                        percent={0.4}
+                        nrOfLevels={100}
+                        percent={
+                          !isNaN(
+                            (totalProfit - minProfit * item?.order?.length) /
+                              ((maxProfit - minProfit) * item?.order?.length)
+                          )
+                            ? (totalProfit - minProfit * item?.order?.length) /
+                              ((maxProfit - minProfit) * item?.order?.length)
+                            : 0
+                        }
                         arcPadding={0}
                         cornerRadius={0}
                         colors={["#E30D0D", "#009B10"]}
@@ -241,7 +269,7 @@ const DealTable = () => {
                       textAlign: "center",
                     }}
                   >
-                    {created}
+                    {formattedDate && formattedDate}
                   </td>
                 </tr>
               </>
@@ -249,7 +277,7 @@ const DealTable = () => {
           })}
         </tbody>
       </table>
-      <Box
+      {/* <Box
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -359,7 +387,7 @@ const DealTable = () => {
             </Button>
           </Box>
         </Box>
-      </Box>
+      </Box> */}
       <Box
         sx={{
           display: "flex",
@@ -369,7 +397,7 @@ const DealTable = () => {
           background: "linear-gradient(to right,#300E3A,#41134D)",
         }}
       >
-        <Box
+        {/* <Box
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -397,7 +425,7 @@ const DealTable = () => {
         </Box>
         <Box sx={{ pl: 5, cursor: "pointer" }}>
           <Hide />
-        </Box>
+        </Box> */}
       </Box>
     </Card>
   );

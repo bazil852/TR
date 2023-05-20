@@ -3,11 +3,11 @@ import React from "react";
 import { Refresh } from "../../utils/icons";
 import Card from "@mui/material/Card";
 
-const OverallStats = () => {
+const OverallStats = (props) => {
   const data = [
     { text: "Today Profit", value: "***" },
-    { text: "Total", value: "***" },
-    { text: " Active Deals", value: "6" },
+    { text: "Total", value: `$${props.totalProfit}` },
+    { text: " Active Deals", value: `${props.activeDeals}` },
     { text: " Funds Locked in DVA Bot Deals", value: " " },
     { text: " UPNL of Active Bot Deals", value: " " },
   ];

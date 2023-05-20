@@ -12,7 +12,8 @@ import React from "react";
 import { Refresh } from "../../utils/icons";
 import Card from "@mui/material/Card";
 
-const Balances = () => {
+const Balances = (props) => {
+  console.log(props);
   return (
     <Card
       sx={{
@@ -101,7 +102,36 @@ const Balances = () => {
               Available
             </TableCell>
           </TableRow>
-          <TableRow>
+          {props.assets?.map((item) => {
+            return (
+              <TableRow>
+                <TableCell
+                  sx={{
+                    borderRight: "1px solid rgba(255, 255, 255, 0.3)",
+                    justifyContent: "flex-end",
+                    display: "flex",
+                  }}
+                >
+                  {item?.asset}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    borderRight: "1px solid rgba(255, 255, 255, 0.3)",
+                  }}
+                >
+                  {item?.usdtBal?.toFixed(2)}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "white",
+                  }}
+                >
+                  {item?.usdtBal?.toFixed(2)}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+          {/* <TableRow>
             <TableCell
               sx={{
                 borderRight: "1px solid rgba(255, 255, 255, 0.3)",
@@ -180,7 +210,7 @@ const Balances = () => {
               }}
             ></TableCell>
             <TableCell sx={{ borderBottom: "none" }}></TableCell>
-          </TableRow>
+          </TableRow> */}
         </TableBody>
       </Table>
     </Card>
