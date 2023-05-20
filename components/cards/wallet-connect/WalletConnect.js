@@ -117,7 +117,7 @@ const WalletConnect = () => {
     // console.log(session.user);
     var ccxt = require("ccxt");
     const { USDMClient } = require("binance");
-    console.log("Exchangee",event.currentTarget)
+    console.log("Exchangee",data)
     const API_KEY = data.get("apiKey");
     const API_SECRET = data.get("apiSecret");
     const baseUrl = "https://testnet.binancefuture.com";
@@ -137,6 +137,7 @@ const WalletConnect = () => {
       })
       .catch((err) => {
         console.error("getBalance error: ", err);
+        setShowDrawer(false);
       });
 
     const body = [
@@ -175,15 +176,43 @@ const WalletConnect = () => {
 
     var ccxt = require("ccxt");
     const { USDMClient } = require("binance");
+    const { MainClient } = require('binance');
 
     const API_KEY = event.target.value.apiKey;
     const API_SECRET = event.target.value.apiSecret;
+    console.log("yo",event.target.value.exchangeName)
+    let client = new USDMClient();
+    if (event.target.value.exchangeName === "Binance Futures Testnet")
+    {
+      console.log ("Truth Nothing")
     const baseUrl = "https://testnet.binancefuture.com";
-    const client = new USDMClient({
+    client = new USDMClient({
       api_key: API_KEY,
       api_secret: API_SECRET,
       baseUrl,
     });
+    }
+    else if (event.target.value.exchangeName === "Binance Futures")
+    {
+      console.log ("Truth Futures")
+      client = new USDMClient({
+        api_key: API_KEY,
+        api_secret: API_SECRET,
+        baseUrl,
+      });
+    }
+    else if (event.target.value.exchangeName === "Binance Spot"){
+      console.log ("Truth Spot")
+      const client = new MainClient({
+        api_key: API_KEY,
+        api_secret: API_SECRET,
+      });
+    }
+    else {
+      
+      alert ("Invalid Exchange, Try again")
+      return
+    }
 
     client
       .getBalance()
@@ -378,144 +407,10 @@ const WalletConnect = () => {
           </Box>
         )
 
-        // : (
-        //   <Box
-        //     sx={{
-        //       marginTop: 2,
-        //       display: "flex",
-        //       flexDirection: "column",
-        //       alignItems: "center",
-        //     }}
-        //   >
-        //     <Typography color="white" variant="h4" sx={{ mb: 2 }}>
-        //       Analyze and manage assets:
-        //     </Typography>
-        //     <Typography
-        //       color="white"
-        //       variant="p"
-        //       sx={{ textAlign: "center", mb: 2 }}
-        //     >
-        //       Track, manage and analyze your assets performance by gathering all
-        //       exchange accounts, wallets, and virtual portfolios in one place.
-        //     </Typography>
-
-        //     <Button
-        //       onClick={handleConnectAccount}
-        //       variant="contained"
-        //       sx={{ mt: 3, mb: 2 }}
-        //     >
-        //       Connect account
-        //     </Button>
-        //     <Drawer
-        //       PaperProps={{
-        //         sx: {
-        //           backgroundColor: "black",
-        //         },
-        //       }}
-        //       anchor="right"
-        //       open={showDrawer}
-        //       onClose={handleClose}
-        //     >
-        //       <Box
-        //         sx={{
-        //           width: 300,
-        //           p: 1,
-        //         }}
-        //         role="presentation"
-        //         component="form"
-        //         onSubmit={handleBinance}
-        //       >
-        //         <Typography
-        //           variant="h5"
-        //           color="white"
-        //           sx={{ textAlign: "center", mt: 17, mb: 2 }}
-        //         >
-        //           Connect Exchange
-        //         </Typography>
-        //         <Typography color="white" variant="p">
-        //           Select Exchange:
-        //         </Typography>
-        //         <SelectInput
-        //           placeHolder={"Exchange"}
-        //           options={exchangeTypes}
-        //           width={"100%"}
-        //           keyName={"exchangeTypes"}
-        //         />
-        //         <Typography color="white" variant="p">
-        //           Name:
-        //         </Typography>
-        //         <ValidationTextField
-        //           sx={{ mb: 1 }}
-        //           size="small"
-        //           required
-        //           fullWidth
-        //           id="name"
-        //           name="name"
-        //           autoFocus
-        //         />
-        //         <Typography color="white" variant="p">
-        //           API Key:
-        //         </Typography>
-        //         <ValidationTextField
-        //           sx={{ mb: 1 }}
-        //           size="small"
-        //           required
-        //           fullWidth
-        //           id="apiKey"
-        //           name="apiKey"
-        //           autoFocus
-        //         />
-        //         <Typography color="white" variant="p">
-        //           API Secret:
-        //         </Typography>
-        //         <ValidationTextField
-        //           sx={{ mb: 1 }}
-        //           size="small"
-        //           required
-        //           fullWidth
-        //           id="apiSecret"
-        //           name="apiSecret"
-        //           autoFocus
-        //         />
-        //         <Button
-        //           type="submit"
-        //           sx={{ mt: 2 }}
-        //           fullWidth
-        //           variant="contained"
-        //         >
-        //           Connect
-        //         </Button>
-        //       </Box>
-        //     </Drawer>
-        //   </Box>
-        // )
+        
       }
 
-      {/* {connected && (
-        <Box sx={{ minWidth: 120 }}>
-          <Typography variant="p">
-            User Accout Type: {connectionData.accountType}
-          </Typography>
-          <Typography variant="p">Can User Withdraw:</Typography>
-          {connectionData.canWithdraw && <Typography>Yes</Typography>}
-          <Typography variant="p">Can User Deposit:</Typography>
-          {connectionData.canDeposit && <Typography>Yes</Typography>}
-          <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Age</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={selectedData}
-            label="Age"
-            onChange={handleSelect}
-          >
-            {connectionData.balances.from(connectionData.balances(10)).map(item => {
-              return <MenuItem value={item}>{item.assest}</MenuItem>;
-            })}
-          </Select>
-        </FormControl>
-        </Box>
-      )} */}
+      
     </Container>
   );
 };
