@@ -41,7 +41,9 @@ const AllDeals = () => {
     const strategyData = await strategyResponse.json();
     console.log(strategyData.body);
 
-    setStrategyData(strategyData.body);
+    setStrategyData(
+      strategyData.body?.filter((item) => item.strategy?.state === "on")
+    );
 
     let activeDeals = 0;
 

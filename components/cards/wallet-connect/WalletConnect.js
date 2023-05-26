@@ -75,7 +75,7 @@ const WalletConnect = () => {
     if (data.body.exchanges[0]) {
       setAllExchange(data.body.exchanges);
       setSelectedExchange(data.body.exchanges[0].exchangeName);
-      console.log("Exchange: ",data.body.exchanges[0].exchangeName)
+      console.log("Exchange: ", data.body.exchanges[0].exchangeName);
       const { USDMClient } = require("binance");
       const baseUrl = "https://testnet.binancefuture.com";
       const client = new USDMClient({
@@ -113,11 +113,23 @@ const WalletConnect = () => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
+    let url;
+
+    if (event.currentTarget?.exchangeName === "Binance Futures Testnet") {
+      url = "https://www.google.com/";
+    }
+    if (event.currentTarget?.exchangeName === "Binance Futures") {
+      url = "https://www.google.com/";
+    }
+    if (event.currentTarget?.exchangeName === "Binance Spot") {
+      url = "https://www.google.com/";
+    }
+
     let session = await getSession();
     // console.log(session.user);
     var ccxt = require("ccxt");
     const { USDMClient } = require("binance");
-    console.log("Exchangee",event.currentTarget)
+    console.log("Exchangee", event.currentTarget);
     const API_KEY = data.get("apiKey");
     const API_SECRET = data.get("apiSecret");
     const baseUrl = "https://testnet.binancefuture.com";
