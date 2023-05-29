@@ -12,7 +12,8 @@ import Paper from "@mui/material/Paper";
 import Divider from "@mui/material/Divider";
 import GeneralSettings from "../../../components/cards/general-settings/GeneralSettings";
 import { getSession } from "next-auth/react";
-import Chart from "../../deal-page/Chart";
+// import Chart from "../../deal-page/Chart";
+import CandlestickChart from "../../deal-page/Chart";
 import Indicators from "../indicators/Indicators";
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
@@ -39,6 +40,8 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
 }));
 
 const orderTypeOptions = ["Market", "Limit"];
+
+
 
 const avgPriceCondition = ["Above", "Below"];
 const stopLoss = ["Fixed", "At candle body w % up or down", "Trailing SL"];
@@ -123,6 +126,7 @@ const AddBlockComponent = (props) => {
   const [maPercentage, setMaPercentage] = useState("");
   const [dynamicPercentage, setDynamicPercentage] = useState("");
   const [error, setError] = useState(false);
+  const [chartData,setChartData] = useState({})
 
   const [showTPPercentageTab, setShowTPPercentageTab] = useState(false);
   const [showSLPercentageTab, setShowSLPercentageTab] = useState(false);
@@ -417,31 +421,31 @@ const AddBlockComponent = (props) => {
         userId: session.user.id,
       };
       console.log(body);
-      const response = await fetch("/api/user/create-strategy", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      // const response = await fetch("/api/user/create-strategy", {
+      //   method: "POST",
+      //   body: JSON.stringify(body),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
 
-      const newData = await response.json();
-      console.log(newData);
-      console.log(newData['body']['_id'])
-      alert("Saved");
+      // const newData = await response.json();
+      // console.log(newData);
+      // alert("Saved");
       try {
-        const response = await fetch("https://dcabot1.herokuapp.com/backtest", {
+        const response = await fetch("https://dcabot1.herokuapp.com//backtest", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           // If you need to send a JSON body, uncomment the following line and replace '{}' with the appropriate JSON object
-          body: JSON.stringify({ strategyId: newData['body']['_id'] }),
+          body: JSON.stringify(body),
         });
   
         if (response.ok) {
           const data = await response.json();
           console.log("Success:", data);
+          setChartData(data);
         } else {
           console.error("Error:", response.status, response.statusText);
         }
@@ -449,6 +453,10 @@ const AddBlockComponent = (props) => {
         console.error("Error:", error);
       }
     }
+      
+    
+
+    
   };
   console.log(indicatorArray);
   const [width, setWidth] = useState(globalThis?.innerWidth);
@@ -1429,11 +1437,11 @@ const AddBlockComponent = (props) => {
                       </Box>
                     </Box>
                   </Box>
-                  <Chart />
+                  <CandlestickChart data={chartData} />
                 </Box>
               </Grid>
               <Grid item xs={1} sx={{ pl: 1 }}>
-                <Box>
+                {/* <Box>
                   <Typography
                     sx={{
                       fontSize: "12px",
@@ -1467,7 +1475,7 @@ const AddBlockComponent = (props) => {
                       {item}
                     </Typography>
                   ))}
-                </Box>
+                </Box> */}
               </Grid>
             </Grid>
           </Grid>
@@ -1488,9 +1496,9 @@ const AddBlockComponent = (props) => {
                     minWidth: "50%",
                   }}
                 >
-                  {[...Array(10)].map((_, index) => (
+                  {/* {[...Array(10)].map((_, index) => ( */}
                     <Typography
-                      key={index}
+                      // key={index}
                       sx={{
                         display: "flex",
                         flexDirection: "row",
@@ -1501,8 +1509,34 @@ const AddBlockComponent = (props) => {
                         py: 3,
                         borderBottom: "1px solid grey",
                       }}
-                    ></Typography>
-                  ))}
+                    > Total Profit </Typography>
+                  {/* ))} */}
+                  <Typography
+                      // key={index}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: "16px",
+                        textAlign: "center",
+                        px: "auto",
+                        py: 3,
+                        borderBottom: "1px solid grey",
+                      }}
+                    > Total Buy Orders </Typography>
+                    <Typography
+                      // key={index}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: "16px",
+                        textAlign: "center",
+                        px: "auto",
+                        py: 3,
+                        borderBottom: "1px solid grey",
+                      }}
+                    > Total Sell Orders </Typography>
                 </Box>
                 <Box
                   sx={{
@@ -1511,9 +1545,9 @@ const AddBlockComponent = (props) => {
                     minWidth: "50%",
                   }}
                 >
-                  {[...Array(10)].map((_, index) => (
+                  {/* {[...Array(10)].map((_, index) => ( */}
                     <Typography
-                      key={index}
+                      // key={index}
                       sx={{
                         display: "flex",
                         flexDirection: "row",
@@ -1525,8 +1559,36 @@ const AddBlockComponent = (props) => {
                         py: 3,
                         borderLeft: "1px solid grey",
                       }}
-                    ></Typography>
-                  ))}
+                    >{chartData?.profit}</Typography>
+                    <Typography
+                      // key={index}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: "16px",
+                        textAlign: "center",
+                        borderBottom: "1px solid grey",
+                        px: "auto",
+                        py: 3,
+                        borderLeft: "1px solid grey",
+                      }}
+                    >{chartData?.buy_orders?.length}</Typography>
+                    <Typography
+                      // key={index}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: "16px",
+                        textAlign: "center",
+                        borderBottom: "1px solid grey",
+                        px: "auto",
+                        py: 3,
+                        borderLeft: "1px solid grey",
+                      }}
+                    >{chartData?.sell_orders?.length}</Typography>
+                  {/* // ))} */}
                 </Box>
               </Box>
             </Box>
