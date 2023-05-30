@@ -165,6 +165,7 @@ const Wallet = () => {
           }
 
           exchangeArray.push({
+            _id: item?._id,
             exchangeName: item.name,
             assets: result,
           });
@@ -279,6 +280,26 @@ const Wallet = () => {
         console.error("getBalance error: ", err);
       });
   };
+
+  const handleDeleteExchange = async (id) => {
+    let session = await getSession();
+    const response = await fetch(
+      `/api/user/delete-exchange?id=${session.user.id}`,
+      {
+        method: "DELETE",
+        body: JSON.stringify({ exchangeId: id }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const resp = await response.json();
+    console.log(resp);
+    setAllExchangesAssetsData(
+      allExchangesAssetsData.filter((item) => item._id !== id)
+    );
+  };
+
   return (
     <>
       <div style={{ margin: "40px 0px" }}>
@@ -487,6 +508,7 @@ const Wallet = () => {
                       my: 2,
                       px: 1.5,
                     }}
+                    onClick={() => handleDeleteExchange(data?._id)}
                   >
                     Remove
                   </Button>
