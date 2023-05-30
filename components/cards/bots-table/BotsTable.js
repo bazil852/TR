@@ -430,7 +430,7 @@ const BotsTable = () => {
     setTableRow(newData);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/" + url, {
+      const response = await fetch("https://dcabot2.herokuapp.com/backtest/" + url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

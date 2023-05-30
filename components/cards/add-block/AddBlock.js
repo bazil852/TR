@@ -433,7 +433,7 @@ const AddBlockComponent = (props) => {
       // console.log(newData);
       // alert("Saved");
       try {
-        const response = await fetch("https://dcabot1.herokuapp.com//backtest", {
+        const response = await fetch("https://dcabot2.herokuapp.com/backtest", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
