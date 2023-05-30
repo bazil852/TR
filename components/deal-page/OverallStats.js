@@ -20,8 +20,9 @@ const OverallStats = (props) => {
         borderRadius: "5px",
         boxShadow: "none",
         minHeight: "300px",
-        background:
-          "linear-gradient(180deg, rgba(121, 13, 131, 0.125) 0%, rgba(41, 8, 77, 0.5) 100%)",
+        // background:
+        //   "linear-gradient(180deg, rgba(121, 13, 131, 0.125) 0%, rgba(41, 8, 77, 0.5) 100%)",
+        background: "#790d832d",
       }}
     >
       <Box
@@ -35,7 +36,7 @@ const OverallStats = (props) => {
       >
         <Typography
           sx={{
-            fontWeight: "600",
+            fontWeight: "500",
             fontSize: "18px",
             color: "white",
           }}

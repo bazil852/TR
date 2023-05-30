@@ -52,7 +52,34 @@ import Smoke from "../assets/icons/smokecandle.svg";
 import DownPolygon from "../assets/icons/downPolygon.svg";
 import UpPolygon from "../assets/icons/upPolygon.svg";
 
+import DCAProfit from "../assets/icons/dca-profit.svg";
+import DCABitcoin from "../assets/icons/dca-bitcoin.svg";
+import DCAEthereum from "../assets/icons/dca-eth.svg";
+import DCALtc from "../assets/icons/dca-ltc.svg";
+import DCAStar from "../assets/icons/dca-star.svg";
+import DCADeal from "../assets/icons/dca-deal.svg";
+import Btc from "../assets/icons/btc.svg";
+import TotalTime from "../assets/icons/total-time.svg";
+import Google from "../assets/icons/google.svg";
+import Auth from "../assets/icons/Auth.svg";
+import NavBarLogo from "../assets/icons/navBarLogo.svg";
+import Logo from "../assets/icons/Logo.svg";
+import ClosedMenuIcon from "../assets/icons/MenuIcon.svg";
+
 export {
+  ClosedMenuIcon,
+  Logo,
+  NavBarLogo,
+  Auth,
+  Google,
+  TotalTime,
+  Btc,
+  DCAProfit,
+  DCABitcoin,
+  DCAEthereum,
+  DCALtc,
+  DCAStar,
+  DCADeal,
   BlueDash,
   DownPolygon,
   UpPolygon,

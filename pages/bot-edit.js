@@ -47,13 +47,13 @@ const BotConfigEdit = () => {
     console.log(orderData.body);
 
     let totalProfit = 0;
-    orderData.body.forEach((item) => {
+    orderData?.body?.forEach((item) => {
       if (!isNaN(item.totalProfit)) {
         totalProfit += item.totalProfit;
       }
     });
 
-    console.log(totalProfit, totalProfit / orderData.body.length);
+    console.log(totalProfit, totalProfit / orderData?.body?.length);
 
     const strategyResponse = await fetch(
       `/api/strategy/get-strategy-by-id?id=${id}`,

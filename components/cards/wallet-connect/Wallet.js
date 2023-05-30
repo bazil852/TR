@@ -5,21 +5,26 @@ import InputBase from "@mui/material/InputBase";
 import emailjs from "@emailjs/browser";
 import nc from "next-connect";
 import { createProxyMiddleware } from "http-proxy-middleware";
-import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Drawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import InputLabel from "@mui/material/InputLabel";
 import { signIn, getSession, useSession } from "next-auth/react";
 import SelectInput from "../../widgets/SelectInput";
 import { useSelector, useDispatch } from "react-redux";
 import { setExchange } from "../../../slices/exchange-slice";
-import { CircularProgress } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import OutlinedInput from "@mui/material/OutlinedInput";
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  CircularProgress,
+} from "@mui/material";
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -51,7 +56,89 @@ const exchangeTypes = [
   "Binance Spot",
 ];
 
-const WalletConnect = () => {
+import CryptoRates from "../crypto-rates/CryptoRates";
+import { Btc } from "../../../utils/icons";
+
+const updatedExchangeData = [
+  {
+    exchangeName: "Binance Test 1.0",
+    assets: [
+      {
+        accountAlias: "FzmYfWFzSgSgsR",
+        asset: "BTC",
+        balance: "0.03547866",
+        crossWalletBalance: "0.03547866",
+        crossUnPnl: "0.00000000",
+        availableBalance: "0.03547866",
+        maxWithdrawAmount: "0.03547866",
+        marginAvailable: true,
+        updateTime: 1682544381895,
+      },
+      {
+        accountAlias: "FzmYfWFzSgSgsR",
+        asset: "BNB",
+        balance: "0.03547866",
+        crossWalletBalance: "0.03547866",
+        crossUnPnl: "0.00000000",
+        availableBalance: "0.03547866",
+        maxWithdrawAmount: "0.03547866",
+        marginAvailable: true,
+        updateTime: 1682544381895,
+      },
+      {
+        accountAlias: "FzmYfWFzSgSgsR",
+        asset: "ETH",
+        balance: "0.03547866",
+        crossWalletBalance: "0.03547866",
+        crossUnPnl: "0.00000000",
+        availableBalance: "0.03547866",
+        maxWithdrawAmount: "0.03547866",
+        marginAvailable: true,
+        updateTime: 1682544381895,
+      },
+    ],
+  },
+  {
+    exchangeName: "Binance Test 2.0",
+    assets: [
+      {
+        accountAlias: "FzmYfWFzSgSgsR",
+        asset: "BTC",
+        balance: "0.03547866",
+        crossWalletBalance: "0.03547866",
+        crossUnPnl: "0.00000000",
+        availableBalance: "0.03547866",
+        maxWithdrawAmount: "0.03547866",
+        marginAvailable: true,
+        updateTime: 1682544381895,
+      },
+      {
+        accountAlias: "FzmYfWFzSgSgsR",
+        asset: "BNB",
+        balance: "0.03547866",
+        crossWalletBalance: "0.03547866",
+        crossUnPnl: "0.00000000",
+        availableBalance: "0.03547866",
+        maxWithdrawAmount: "0.03547866",
+        marginAvailable: true,
+        updateTime: 1682544381895,
+      },
+      {
+        accountAlias: "FzmYfWFzSgSgsR",
+        asset: "ETH",
+        balance: "0.03547866",
+        crossWalletBalance: "0.03547866",
+        crossUnPnl: "0.00000000",
+        availableBalance: "0.03547866",
+        maxWithdrawAmount: "0.03547866",
+        marginAvailable: true,
+        updateTime: 1682544381895,
+      },
+    ],
+  },
+];
+
+const Wallet = () => {
   const [showDrawer, setShowDrawer] = useState(false);
   const [connected, setConnected] = useState(false);
   const [connectionData, setConnectionData] = useState();
@@ -129,7 +216,7 @@ const WalletConnect = () => {
     // console.log(session.user);
     var ccxt = require("ccxt");
     const { USDMClient } = require("binance");
-    console.log("Exchangee", data);
+    console.log("Exchangee", event.currentTarget);
     const API_KEY = data.get("apiKey");
     const API_SECRET = data.get("apiSecret");
     const baseUrl = "https://testnet.binancefuture.com";
@@ -149,7 +236,6 @@ const WalletConnect = () => {
       })
       .catch((err) => {
         console.error("getBalance error: ", err);
-        setShowDrawer(false);
       });
 
     const body = [
@@ -188,37 +274,15 @@ const WalletConnect = () => {
 
     var ccxt = require("ccxt");
     const { USDMClient } = require("binance");
-    const { MainClient } = require("binance");
 
     const API_KEY = event.target.value.apiKey;
     const API_SECRET = event.target.value.apiSecret;
-    console.log("yo", event.target.value.exchangeName);
-    let client = new USDMClient();
-    if (event.target.value.exchangeName === "Binance Futures Testnet") {
-      console.log("Truth Nothing");
-      const baseUrl = "https://testnet.binancefuture.com";
-      client = new USDMClient({
-        api_key: API_KEY,
-        api_secret: API_SECRET,
-        baseUrl,
-      });
-    } else if (event.target.value.exchangeName === "Binance Futures") {
-      console.log("Truth Futures");
-      client = new USDMClient({
-        api_key: API_KEY,
-        api_secret: API_SECRET,
-        baseUrl,
-      });
-    } else if (event.target.value.exchangeName === "Binance Spot") {
-      console.log("Truth Spot");
-      const client = new MainClient({
-        api_key: API_KEY,
-        api_secret: API_SECRET,
-      });
-    } else {
-      alert("Invalid Exchange, Try again");
-      return;
-    }
+    const baseUrl = "https://testnet.binancefuture.com";
+    const client = new USDMClient({
+      api_key: API_KEY,
+      api_secret: API_SECRET,
+      baseUrl,
+    });
 
     client
       .getBalance()
@@ -232,18 +296,32 @@ const WalletConnect = () => {
         console.error("getBalance error: ", err);
       });
   };
+  const walletData = [
+    {
+      coinName: "Binance",
+      coin: Btc,
+      available: "0.00",
+      lockedBalances: "0.00",
+    },
+    {
+      coinName: "Binance",
+      coin: Btc,
+      available: "0.00",
+      lockedBalances: "0.00",
+    },
+    {
+      coinName: "Binance",
+      coin: Btc,
+      available: "0.00",
+      lockedBalances: "0.00",
+    },
+  ];
 
   return (
-    <Container
-      sx={{
-        background: "#191919",
-        borderRadius: 1,
-        p: 3,
-        border: "1px solid #666666",
-      }}
-      component="main"
-      maxWidth="xs"
-    >
+    <>
+      <div style={{ margin: "40px 0px" }}>
+        <CryptoRates />
+      </div>
       <Button
         onClick={handleConnectAccount}
         variant="contained"
@@ -251,6 +329,7 @@ const WalletConnect = () => {
       >
         + Add Exchange
       </Button>
+
       <Drawer
         PaperProps={{
           sx: {
@@ -327,90 +406,122 @@ const WalletConnect = () => {
           </Button>
         </Box>
       </Drawer>
-
-      {loading ? (
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <CircularProgress />
-        </div>
-      ) : connected ? (
-        <Box>
-          <Typography sx={{ marginBottom: 2 }}>Wallet</Typography>
-          <Select
-            onChange={handleExchangeOnChange}
-            input={<OutlinedInput />}
-            MenuProps={{
-              PaperProps: {
-                sx: {
-                  backgroundColor: "#452951",
-                  mt: 0.5,
-                  "& .MuiMenuItem-root": {
+      <Grid container spacing={1}>
+        {walletData?.map((data, index) => (
+          <Grid item xs={4} key={index}>
+            <Card
+              sx={{
+                backgroundImage:
+                  "url(https://i.postimg.cc/K8q3CHyH/Rectangle-18960.png)",
+                backgroundSize: "100% 100%",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                backgroundColor: "transparent",
+                boxShadow: "none",
+                p: "2vw",
+              }}
+            >
+              <CardContent>
+                <Typography fontSize={"1.1rem"} fontWeight={500}>
+                  {data.coinName}
+                </Typography>
+                <Typography color={"#9F90A2"} fontSize={"0.9rem"}>
+                  Assets
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    my: 2,
+                    border: "1.5px solid #764080",
+                    borderRadius: 1,
+                    height: "4rem",
+                    pl: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: "50%",
+                      background: "rgba(255,255,255,0.1)",
+                      backdropFilter: "blur(0.5px)",
+                      width: "40px",
+                      height: "40px",
+                    }}
+                  >
+                    <data.coin />
+                  </Box>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography color={"#9F90A2"}>Available</Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: 1,
+                    }}
+                  >
+                    <Typography color={"#9F90A2"} fontWeight={500}>
+                      {data.available}
+                    </Typography>
+                    <Typography color={"#5D3FA6"} fontWeight={500}>
+                      USDT
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography color={"#9F90A2"}>Locked Balances</Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: 1,
+                    }}
+                  >
+                    <Typography color={"#9F90A2"} fontWeight={500}>
+                      {data.lockedBalances}
+                    </Typography>
+                    <Typography color={"#5D3FA6"} fontWeight={500}>
+                      USDT
+                    </Typography>
+                  </Box>
+                </Box>
+                <Button
+                  sx={{
+                    background: "#C8181A",
+                    textTransform: "none",
                     color: "white",
-                    "&:hover": {
-                      backgroundColor: "#4E2C60",
-                    },
-                  },
-                  "& .Mui-selected": {
-                    opacity: 0.4,
-                    backgroundColor: "transparent",
-                  },
-                  "& .MuiList-root": {
-                    paddingTop: 0,
-                    paddingBottom: 0,
-                  },
-                  "& .MuiMenu-paper": {
-                    marginTop: "8px",
-                  },
-                  "& .MuiListItem-root": {
-                    paddingTop: "10px",
-                    paddingBottom: "10px",
-                    "&:hover": {
-                      backgroundColor: "none",
-                    },
-                  },
-                },
-              },
-            }}
-            sx={{
-              "& .MuiSelect-select .notranslate::after": `${selectedExchange}`
-                ? {
-                    content: `"${selectedExchange}"`,
-                    opacity: 0.42,
-                  }
-                : {},
-              minWidth: "100%",
-              height: 37,
-              borderRadius: "8px",
-              color: "white",
-              backgroundColor: "#452951",
-              boxShadow: "none",
-              ".MuiOutlinedInput-notchedOutline": {
-                border: 0,
-              },
-            }}
-          >
-            {allExchange.map((item) => (
-              <MenuItem key={item._id} value={item}>
-                {item.exchangeName}
-              </MenuItem>
-            ))}
-          </Select>
-          <Box>
-            <ul>
-              {connectionData.map((connectionData) => (
-                <li key={connectionData.asset}>
-                  {connectionData.asset}: {connectionData.balance}
-                </li>
-              ))}
-            </ul>
-          </Box>
-        </Box>
-      ) : (
-        <Box>
-          <Typography sx={{ marginBottom: 2 }}>No Wallet Connected</Typography>
-        </Box>
-      )}
-    </Container>
+                    float: "right",
+                    my: 2,
+                    px: 1.5,
+                  }}
+                >
+                  Remove
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </>
   );
 };
 
-export default WalletConnect;
+export default Wallet;

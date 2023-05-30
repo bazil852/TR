@@ -13,15 +13,15 @@ import { Refresh } from "../../utils/icons";
 import Card from "@mui/material/Card";
 
 const Balances = (props) => {
-  console.log(props);
   return (
     <Card
       sx={{
         mt: 2,
         boxShadow: "none",
         minHeight: "300px",
-        background:
-          "linear-gradient(180deg, rgba(121, 13, 131, 0.125) 0%, rgba(41, 8, 77, 0.5) 100%)",
+        // background:
+        //   "linear-gradient(180deg, rgba(121, 13, 131, 0.125) 0%, rgba(41, 8, 77, 0.5) 100%)",
+        background: "#790d832d",
       }}
     >
       <Table>
@@ -29,7 +29,7 @@ const Balances = (props) => {
           <TableRow>
             <TableCell
               sx={{
-                fontWeight: "600",
+                fontWeight: "500",
                 borderRight: "1px solid rgba(255, 255, 255, 0.3)",
               }}
             >
@@ -75,7 +75,7 @@ const Balances = (props) => {
                     color: "white",
                   }}
                 >
-                  History
+                  Refresh
                 </Typography>
               </Box>
             </TableCell>
@@ -88,7 +88,7 @@ const Balances = (props) => {
             ></TableCell>
             <TableCell
               sx={{
-                fontWeight: "600",
+                fontWeight: "500",
                 borderRight: "1px solid rgba(255, 255, 255, 0.3)",
               }}
             >
@@ -96,7 +96,7 @@ const Balances = (props) => {
             </TableCell>
             <TableCell
               sx={{
-                fontWeight: "600",
+                fontWeight: "500",
               }}
             >
               Available
@@ -131,6 +131,7 @@ const Balances = (props) => {
               </TableRow>
             );
           })}
+
           {/* <TableRow>
             <TableCell
               sx={{

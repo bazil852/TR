@@ -366,6 +366,90 @@ const AddBlockComponent = (props) => {
       alert("Saved");
     }
   };
+
+  const handlebacktest = async () => {
+    if (
+      botName === "" ||
+      exchange === "" ||
+      botType === "" ||
+      strategyType === "" ||
+      strategyPair === ""
+    ) {
+      alert("Please Fill out the General Settings Section");
+    } else if (orderType === "" || baseOrderSize === "") {
+      alert("Please Fill out the required fields in Orders Section");
+    } else if (
+      indicatorArray.length === 0 ||
+      indicatorArray[0]?.chooseIndicatorValue === "" ||
+      indicatorArray[0]?.timeFrameValue === ""
+    ) {
+      alert("Please Fill out the required fields in Indicators Section");
+    } else {
+      let session = await getSession();
+      const body = {
+        botName,
+        exchange,
+        botType,
+        strategyType,
+        strategyPair,
+        orderSize: baseOrderSize,
+        // availablePercentage,
+        safetyOrderSize: safetyOrder,
+        candleSizeAndVol: safetyOrderMul,
+        orderType,
+        indicators: indicatorArray,
+        buyOnCondition,
+        buyOnConditionPercent: buyOnConditionX,
+        avgPrice,
+        avgPricePercent,
+        ignoreCondition,
+        ignoreConditionPercent: ignoreConditionX,
+        maxOrders: maxOrder,
+        maxOrderPercent,
+        maxVol,
+        maxVolPercent,
+        stopLoss: stopLossValue,
+        stopLossPercent,
+        takeProfit: takeProfitValue,
+        takeProfitPercent,
+        logs: "",
+        state: "off",
+        userId: session.user.id,
+      };
+      console.log(body);
+      const response = await fetch("/api/user/create-strategy", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const newData = await response.json();
+      console.log(newData);
+      console.log(newData["body"]["_id"]);
+      alert("Saved");
+      try {
+        const response = await fetch("https://dcabot1.herokuapp.com/backtest", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // If you need to send a JSON body, uncomment the following line and replace '{}' with the appropriate JSON object
+          body: JSON.stringify({ strategyId: newData["body"]["_id"] }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Success:", data);
+        } else {
+          console.error("Error:", response.status, response.statusText);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+  };
   console.log(indicatorArray);
   const [width, setWidth] = useState(globalThis?.innerWidth);
   const [activeTab, setActiveTab] = useState("general");
@@ -560,7 +644,7 @@ const AddBlockComponent = (props) => {
           {activeTab === "orders" && (
             <>
               <Typography
-                sx={{ mt: 1, fontWeight: 600 }}
+                sx={{ mt: 1, fontWeight: 500 }}
                 color="white"
                 component="h1"
                 variant="h5"
@@ -789,7 +873,7 @@ const AddBlockComponent = (props) => {
             <>
               {" "}
               <Typography
-                sx={{ mt: 3, ml: 1, fontWeight: 600 }}
+                sx={{ mt: 3, ml: 1, fontWeight: 500 }}
                 color="white"
                 component="h1"
                 variant="h5"
@@ -798,10 +882,10 @@ const AddBlockComponent = (props) => {
               </Typography>
               <Box
                 sx={{
-                  background: "linear-gradient(to left,#3E2146,#301631)",
+                  // background: "linear-gradient(to left,#3E2146,#301631)",
                   mt: 2,
                   borderRadius: "5px",
-                  p: 3,
+                  // p: 3,
                   marginBottom: 5,
                 }}
               >
@@ -987,15 +1071,15 @@ const AddBlockComponent = (props) => {
           {activeTab === "stop-loss" && (
             <Box
               sx={{
-                background: "linear-gradient(to left,#3E2146,#301631)",
+                // background: "linear-gradient(to left,#3E2146,#301631)",
                 mt: 5,
                 borderRadius: "5px",
-                p: 3,
+                // p: 3,
                 marginBottom: 5,
               }}
             >
               <Typography
-                sx={{ mt: 1, fontWeight: 600 }}
+                sx={{ mt: 1, fontWeight: 500 }}
                 color="white"
                 component="h1"
                 variant="h5"
@@ -1069,15 +1153,15 @@ const AddBlockComponent = (props) => {
           {activeTab === "take-profit" && (
             <Box
               sx={{
-                background: "linear-gradient(to left,#3E2146,#301631)",
+                // background: "linear-gradient(to left,#3E2146,#301631)",
                 mt: 5,
                 borderRadius: "5px",
-                p: 3,
+                // p: 3,
                 marginBottom: 5,
               }}
             >
               <Typography
-                sx={{ mt: 1, fontWeight: 600 }}
+                sx={{ mt: 1, fontWeight: 500 }}
                 color="white"
                 component="h1"
                 variant="h5"
@@ -1161,7 +1245,7 @@ const AddBlockComponent = (props) => {
                   border: "none",
                   padding: "7px 20px",
                 }}
-                onClick={handleTestStrategy}
+                onClick={handlebacktest}
               >
                 <Typography>Test Your Strategy!</Typography>
               </button>

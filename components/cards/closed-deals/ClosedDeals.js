@@ -5,14 +5,18 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { YellowHandShakeBig } from "../../../utils/icons";
-import { useSelector } from "react-redux";
 import { getSession } from "next-auth/react";
 
 const ClosedDeals = () => {
-  const widthAbove1600 = useSelector((state) => state.dashboardWidth.value);
-
   const [closedDeals, setClosedDeals] = useState(0);
   const [activeDeals, setActiveDeals] = useState(0);
+  const [width, setWidth] = useState(globalThis?.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
   useEffect(() => {
     fetchAndSetActiveStrategy();
   }, []);
@@ -50,8 +54,8 @@ const ClosedDeals = () => {
     <Card
       sx={{
         minWidth: 200,
-        minHeight: widthAbove1600 < 1600 ? 120 : 120,
-        maxHeight: widthAbove1600 < 1600 ? "auto" : 357,
+        minHeight: 120,
+        maxHeight: width < 1600 ? "auto" : 357,
         background: "#2D1537",
         borderRadius: "8px",
       }}
@@ -68,13 +72,15 @@ const ClosedDeals = () => {
             <YellowHandShakeBig />
           </div>
           <Stack spacing={1}>
-            <Typography color="#CCCCCC">Closed Deals</Typography>
+            <Typography color="#CCCCCC" fontWeight={500}>
+              Closed Deals
+            </Typography>
             <Typography fontSize="24px" fontWeight="600" color="#CCCCCC">
               {closedDeals}
             </Typography>
           </Stack>
         </Stack>
-        <Typography mt={3} color="#CCCCCC">
+        <Typography mt={3} color="#CCCCCC" fontWeight={500}>
           Active Deals: {activeDeals}
         </Typography>
       </CardContent>

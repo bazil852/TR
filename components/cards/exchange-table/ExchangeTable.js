@@ -421,7 +421,7 @@ const ExchangeTable = (props) => {
         }}
       >
         <Box>
-          <Typography sx={{ fontWeight: 700, fontSize: "18px" }}>
+          <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
             Portfolio Summary
           </Typography>
         </Box>
@@ -469,10 +469,18 @@ const ExchangeTable = (props) => {
             <CircularProgress />
           </div>
         ) : (
-          <>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "0.8rem",
+            }}
+          >
             <DataTable data={foundTableData} columns={columns} />
             <CryptocurrencyData data={tableData} />
-          </>
+          </Box>
         )}
       </Box>
       {/* </Container> */}

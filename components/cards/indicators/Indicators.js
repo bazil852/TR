@@ -7,9 +7,10 @@ import {
   FormControlLabel,
   FormGroup,
 } from "@mui/material";
-import Checkbox from '@mui/material/Checkbox';
+import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
 import SelectInput from "../../widgets/SelectInput";
+import TimeFrameSelectInput from "../../widgets/TimeFrameSelectInput";
 import SelectMulInput from "../../widgets/SelectMulInput";
 import React from "react";
 import { useState } from "react";
@@ -161,7 +162,7 @@ const Indicators = (props) => {
           }}
         >
           <Typography
-            sx={{ mt: 1, fontWeight: 600 }}
+            sx={{ mt: 1, fontWeight: 500 }}
             color="white"
             component="h1"
             variant="h5"
@@ -283,9 +284,8 @@ const Indicators = (props) => {
                       Timeframe
                     </Typography>
                     <Box sx={{ display: "flex", flexDirection: "row" }}>
-                      <SelectInput
-                        placeHolder={timeFrame[0]}
-                        options={timeFrame}
+                      <TimeFrameSelectInput
+                        placeHolder={"Select TimeFrame"}
                         fullWidth
                         keyName={"timeFrame"}
                         onChange={(event) => handleTimeFrame(index, event)}
@@ -745,9 +745,8 @@ const Indicators = (props) => {
                       Timeframe
                     </Typography>
                     <Box sx={{ display: "flex", flexDirection: "row" }}>
-                      <SelectInput
-                        placeHolder={timeFrame[0]}
-                        options={timeFrame}
+                      <TimeFrameSelectInput
+                        placeHolder={"Select TimeFrame"}
                         fullWidth
                         keyName={"timeFrame"}
                         onChange={(event) => handleTimeFrame(index, event)}
@@ -767,9 +766,8 @@ const Indicators = (props) => {
                       Timeframe
                     </Typography>
                     <Box sx={{ display: "flex", flexDirection: "row" }}>
-                      <SelectInput
-                        placeHolder={timeFrame[0]}
-                        options={timeFrame}
+                      <TimeFrameSelectInput
+                        placeHolder={"Select TimeFrame"}
                         fullWidth
                         keyName={"timeFrame"}
                         onChange={(event) => handleTimeFrame(index, event)}

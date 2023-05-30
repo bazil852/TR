@@ -12,7 +12,7 @@ class CandlestickChart extends React.Component {
           type: "candlestick",
           height: 350,
           toolbar: {
-            show: false,
+            show: true,
           },
         },
         xaxis: {
@@ -27,6 +27,51 @@ class CandlestickChart extends React.Component {
         },
         tooltip: {
           enabled: false,
+        },
+        zoom: {
+          enabled: true,
+          autoScaleYaxis: true,
+        },
+        pan: {
+          enabled: true,
+          handleDblClick: "reset",
+        },
+        annotations: {
+          position: "back",
+          points: [
+            {
+              x: new Date("2022-01-02").getTime(),
+              y: 13.0,
+              marker: {
+                size: 0,
+              },
+              label: {
+                style: {
+                  color: "#fff",
+                  background: "#00E396",
+                },
+                borderColor: "#00E396",
+                offsetY: -20,
+                text: "Buy",
+              },
+            },
+            {
+              x: new Date("2022-01-11").getTime(),
+              y: 17.0,
+              marker: {
+                size: 0,
+              },
+              label: {
+                borderColor: "#FEB019",
+                offsetY: -20,
+                style: {
+                  color: "#fff",
+                  background: "#FEB019",
+                },
+                text: "Sell",
+              },
+            },
+          ],
         },
         plotOptions: {
           candlestick: {
@@ -65,14 +110,41 @@ class CandlestickChart extends React.Component {
     };
   }
 
+  toggleFullScreen = () => {
+    const chartElement = document.getElementById("chart");
+    if (!document.fullscreenElement) {
+      if (chartElement.requestFullscreen) {
+        chartElement.requestFullscreen();
+      } else if (chartElement.mozRequestFullScreen) {
+        chartElement.mozRequestFullScreen();
+      } else if (chartElement.webkitRequestFullscreen) {
+        chartElement.webkitRequestFullscreen();
+      } else if (chartElement.msRequestFullscreen) {
+        chartElement.msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  };
+
   render() {
     return (
       <Box>
+        <button onClick={this.toggleFullScreen}>Toggle Full Screen</button>
         <Chart
           options={this.state.options}
           series={this.state.series}
           type="candlestick"
           height={350}
+          id="chart"
         />
       </Box>
     );
