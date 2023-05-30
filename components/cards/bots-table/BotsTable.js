@@ -1237,18 +1237,19 @@ const BotsTable = () => {
         > */}
         <Grid container spacing={1} mt={2}>
           {/* <Box sx={{  mt: 3 }}> */}
-          <Grid item xs={isDrawerOpen && width < 1600 ? 6 : 4}>
-            {tableRow?.map((item) => {
-              return (
-                <>
+          {tableRow?.map((item) => {
+            return (
+              <>
+                <Grid item xs={isDrawerOpen && width < 1600 ? 6 : 4}>
                   <Card
                     sx={{
                       minWidth: 250,
                       // background: "linear-gradient(#3D273F,#2C252C)",
                       background: "#412645",
                       borderRadius: "8px",
-                      minHeight: 360,
-                      marginBottom: 5,
+                      minHeight: 800,
+                      // marginBottom: 5,
+                      position: "relative",
                     }}
                   >
                     <CardContent
@@ -1392,8 +1393,7 @@ const BotsTable = () => {
                               borderRadius: 3,
                               boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
                               minWidth: 125,
-                              height: width > 1600 ? "12rem" : "15rem",
-
+                              height: width > 1600 ? "15rem" : "17rem",
                               p: 1,
                             }}
                           >
@@ -1483,7 +1483,7 @@ const BotsTable = () => {
                               borderRadius: 3,
                               boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
                               minWidth: 125,
-                              height: width > 1600 ? "12rem" : "15rem",
+                              height: width > 1600 ? "15rem" : "17rem",
                               p: 1,
                             }}
                           >
@@ -1502,7 +1502,7 @@ const BotsTable = () => {
                               borderRadius: 3,
                               boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
                               minWidth: 125,
-                              height: width > 1600 ? "12rem" : "15rem",
+                              height: width > 1600 ? "15rem" : "17rem",
                               p: 1,
                             }}
                           >
@@ -1521,7 +1521,7 @@ const BotsTable = () => {
                               borderRadius: 3,
                               boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
                               minWidth: 125,
-                              height: width > 1600 ? "12rem" : "15rem",
+                              height: width > 1600 ? "15rem" : "17rem",
                               p: 1,
                             }}
                           >
@@ -1534,98 +1534,105 @@ const BotsTable = () => {
                           </Box>
                         </Grid>
                       </Grid>
-
                       <Box
                         sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          position: "relative",
-                          mt: 3,
+                          position: "absolute",
+                          bottom: 20,
+                          left: 0,
+                          right: 0,
                         }}
                       >
-                        <Button
-                          sx={{
-                            border: "1px solid #4E343F",
-                            background:
-                              "linear-gradient(to left,#422240,#47294B)",
-                            borderTopRightRadius: 0,
-                            borderBottomRightRadius: 0,
-                            borderTopLeftRadius: 10,
-                            borderBottomLeftRadius: 10,
-                            textTransform: "none",
-                            color: "white",
-                            py: 0.3,
-                          }}
-                        >
-                          Copy
-                        </Button>
-                        <Button
-                          sx={{
-                            border: "1px solid #4E343F",
-                            background:
-                              "linear-gradient(to left,#422240,#47294B)",
-                            borderTopRightRadius: 0,
-                            borderBottomRightRadius: 0,
-                            borderTopLeftRadius: 0,
-                            borderBottomLeftRadius: 0,
-                            textTransform: "none",
-                            color: "white",
-                            py: 0.3,
-                          }}
-                        >
-                          Share
-                        </Button>
-                        <Button
-                          sx={{
-                            border: "1px solid #4E343F",
-                            background:
-                              "linear-gradient(to left,#422240,#47294B)",
-                            borderTopRightRadius: 10,
-                            borderBottomRightRadius: 10,
-                            borderTopLeftRadius: 0,
-                            borderBottomLeftRadius: 0,
-                            textTransform: "none",
-                            color: "white",
-                            py: 0.3,
-                          }}
-                          onClick={() => {
-                            router.push(`/bot-edit?id=${item._id}`);
-                          }}
-                        >
-                          Edit
-                        </Button>
                         <Box
                           sx={{
-                            position: "absolute",
-                            right: width < 1050 ? -25 : -10,
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            position: "relative",
                           }}
                         >
-                          <Switch
-                            // checked={btcchecked}
-                            onChange={handleSwitchChange}
-                            name="customSwitch"
+                          <Button
                             sx={{
-                              "& .MuiSwitch-thumb": {
-                                bgcolor: "#FFFFFF",
-                              },
-                              "& .MuiSwitch-track": {
-                                background: btcchecked
-                                  ? "linear-gradient(to right,#790D83,#7A5CFF)"
-                                  : "#9E9E9E",
-                              },
+                              border: "1px solid #4E343F",
+                              background:
+                                "linear-gradient(to left,#422240,#47294B)",
+                              borderTopRightRadius: 0,
+                              borderBottomRightRadius: 0,
+                              borderTopLeftRadius: 10,
+                              borderBottomLeftRadius: 10,
+                              textTransform: "none",
+                              color: "white",
+                              py: 0.3,
                             }}
-                            checked={item?.state === "on" ? true : false}
-                            onChange={() => handleStatus(event, item)}
-                          />
+                          >
+                            Copy
+                          </Button>
+                          <Button
+                            sx={{
+                              border: "1px solid #4E343F",
+                              background:
+                                "linear-gradient(to left,#422240,#47294B)",
+                              borderTopRightRadius: 0,
+                              borderBottomRightRadius: 0,
+                              borderTopLeftRadius: 0,
+                              borderBottomLeftRadius: 0,
+                              textTransform: "none",
+                              color: "white",
+                              py: 0.3,
+                            }}
+                          >
+                            Share
+                          </Button>
+                          <Button
+                            sx={{
+                              border: "1px solid #4E343F",
+                              background:
+                                "linear-gradient(to left,#422240,#47294B)",
+                              borderTopRightRadius: 10,
+                              borderBottomRightRadius: 10,
+                              borderTopLeftRadius: 0,
+                              borderBottomLeftRadius: 0,
+                              textTransform: "none",
+                              color: "white",
+                              py: 0.3,
+                            }}
+                            onClick={() => {
+                              router.push(`/bot-edit?id=${item._id}`);
+                            }}
+                          >
+                            Edit
+                          </Button>
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              right: width < 1050 ? -7 : 0,
+                            }}
+                          >
+                            <Switch
+                              // checked={btcchecked}
+                              onChange={handleSwitchChange}
+                              name="customSwitch"
+                              sx={{
+                                "& .MuiSwitch-thumb": {
+                                  bgcolor: "#FFFFFF",
+                                },
+                                "& .MuiSwitch-track": {
+                                  background: btcchecked
+                                    ? "linear-gradient(to right,#790D83,#7A5CFF)"
+                                    : "#9E9E9E",
+                                },
+                              }}
+                              checked={item?.state === "on" ? true : false}
+                              // onChange={() => handleStatus(event, item)}
+                            />
+                          </Box>
                         </Box>
                       </Box>
                     </CardContent>
                   </Card>
-                </>
-              );
-            })}
-          </Grid>
+                </Grid>
+              </>
+            );
+          })}
           {/* <Grid item xs={isDrawerOpen && width < 1600 ? 6 : 4}>
             <Card
               sx={{

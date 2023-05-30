@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { alpha, styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
+import Select from "react-select";
 // import { ccxt } from 'ccxt';
 import emailjs from "@emailjs/browser";
 import nc from "next-connect";
@@ -15,7 +16,6 @@ import SelectInput from "../../widgets/SelectInput";
 import { useSelector, useDispatch } from "react-redux";
 import { setExchange } from "../../../slices/exchange-slice";
 import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import {
   Grid,
@@ -59,15 +59,15 @@ const exchangeTypes = [
 import CryptoRates from "../crypto-rates/CryptoRates";
 import { Btc } from "../../../utils/icons";
 
-const updatedExchangeData = [
+const exchangeData = [
   {
     exchangeName: "Binance Test 1.0",
     assets: [
       {
         accountAlias: "FzmYfWFzSgSgsR",
         asset: "BTC",
-        balance: "0.03547866",
-        crossWalletBalance: "0.03547866",
+        balance: "656",
+        crossWalletBalance: "6565",
         crossUnPnl: "0.00000000",
         availableBalance: "0.03547866",
         maxWithdrawAmount: "0.03547866",
@@ -77,8 +77,8 @@ const updatedExchangeData = [
       {
         accountAlias: "FzmYfWFzSgSgsR",
         asset: "BNB",
-        balance: "0.03547866",
-        crossWalletBalance: "0.03547866",
+        balance: "976",
+        crossWalletBalance: "5457",
         crossUnPnl: "0.00000000",
         availableBalance: "0.03547866",
         maxWithdrawAmount: "0.03547866",
@@ -88,8 +88,8 @@ const updatedExchangeData = [
       {
         accountAlias: "FzmYfWFzSgSgsR",
         asset: "ETH",
-        balance: "0.03547866",
-        crossWalletBalance: "0.03547866",
+        balance: "454",
+        crossWalletBalance: "455",
         crossUnPnl: "0.00000000",
         availableBalance: "0.03547866",
         maxWithdrawAmount: "0.03547866",
@@ -104,8 +104,8 @@ const updatedExchangeData = [
       {
         accountAlias: "FzmYfWFzSgSgsR",
         asset: "BTC",
-        balance: "0.03547866",
-        crossWalletBalance: "0.03547866",
+        balance: "5656",
+        crossWalletBalance: "7568",
         crossUnPnl: "0.00000000",
         availableBalance: "0.03547866",
         maxWithdrawAmount: "0.03547866",
@@ -115,8 +115,8 @@ const updatedExchangeData = [
       {
         accountAlias: "FzmYfWFzSgSgsR",
         asset: "BNB",
-        balance: "0.03547866",
-        crossWalletBalance: "0.03547866",
+        balance: "2331",
+        crossWalletBalance: "5455",
         crossUnPnl: "0.00000000",
         availableBalance: "0.03547866",
         maxWithdrawAmount: "0.03547866",
@@ -126,8 +126,8 @@ const updatedExchangeData = [
       {
         accountAlias: "FzmYfWFzSgSgsR",
         asset: "ETH",
-        balance: "0.03547866",
-        crossWalletBalance: "0.03547866",
+        balance: "767",
+        crossWalletBalance: "3445",
         crossUnPnl: "0.00000000",
         availableBalance: "0.03547866",
         maxWithdrawAmount: "0.03547866",
@@ -147,6 +147,41 @@ const Wallet = () => {
   const [selectedExchange, setSelectedExchange] = useState("Select Exchange");
 
   const [allExchange, setAllExchange] = useState([]);
+
+  const [selectedAssets, setSelectedAssets] = useState({});
+
+  const handleAssetChange = (selectedOption, exchangeName) => {
+    setSelectedAssets((prevSelectedAssets) => ({
+      ...prevSelectedAssets,
+      [exchangeName]: selectedOption,
+    }));
+  };
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      cursor: "default",
+      background: "none",
+      border: "1.5px solid #764080",
+      boxShadow: "none",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      background: "#452951",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      color: "white",
+      background: state.isSelected ? "#5D3FA6" : "transparent",
+      cursor: "pointer",
+      "&:hover": {
+        background: state.isSelected ? "#5D3FA6" : "transparent",
+      },
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "white",
+    }),
+  };
 
   useEffect(() => {
     fetchAssetsFromUserInfo();
@@ -296,36 +331,28 @@ const Wallet = () => {
         console.error("getBalance error: ", err);
       });
   };
-  const walletData = [
-    {
-      coinName: "Binance",
-      coin: Btc,
-      available: "0.00",
-      lockedBalances: "0.00",
-    },
-    {
-      coinName: "Binance",
-      coin: Btc,
-      available: "0.00",
-      lockedBalances: "0.00",
-    },
-    {
-      coinName: "Binance",
-      coin: Btc,
-      available: "0.00",
-      lockedBalances: "0.00",
-    },
-  ];
-
   return (
     <>
       <div style={{ margin: "40px 0px" }}>
         <CryptoRates />
       </div>
+
       <Button
-        onClick={handleConnectAccount}
+        type="submit"
         variant="contained"
-        sx={{ mt: 1, mb: 3 }}
+        sx={{
+          my: 2,
+          ml: 0.5,
+          textTransform: "none",
+          background: "linear-gradient(90deg, #790D83 0%, #7A5CFF 100%)",
+          color: "white",
+          fontWeight: "600",
+          "&:hover": {
+            background: "linear-gradient(90deg, #790D83 0%, #7A5CFF 100%)",
+            opacity: 0.9,
+          },
+        }}
+        onClick={handleConnectAccount}
       >
         + Add Exchange
       </Button>
@@ -406,8 +433,9 @@ const Wallet = () => {
           </Button>
         </Box>
       </Drawer>
+
       <Grid container spacing={1}>
-        {walletData?.map((data, index) => (
+        {exchangeData?.map((data, index) => (
           <Grid item xs={4} key={index}>
             <Card
               sx={{
@@ -423,37 +451,24 @@ const Wallet = () => {
             >
               <CardContent>
                 <Typography fontSize={"1.1rem"} fontWeight={500}>
-                  {data.coinName}
+                  {data.exchangeName}
                 </Typography>
                 <Typography color={"#9F90A2"} fontSize={"0.9rem"}>
                   Assets
                 </Typography>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                    my: 2,
-                    border: "1.5px solid #764080",
-                    borderRadius: 1,
-                    height: "4rem",
-                    pl: 1,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      borderRadius: "50%",
-                      background: "rgba(255,255,255,0.1)",
-                      backdropFilter: "blur(0.5px)",
-                      width: "40px",
-                      height: "40px",
-                    }}
-                  >
-                    <data.coin />
-                  </Box>
+                <Box my={2}>
+                  <Select
+                    options={data.assets.map((asset) => ({
+                      value: asset,
+                      label: asset.asset,
+                    }))}
+                    onChange={(selectedOption) =>
+                      handleAssetChange(selectedOption, data.exchangeName)
+                    }
+                    value={selectedAssets[data.exchangeName]}
+                    styles={customStyles}
+                    placeholder="Select Asset"
+                  />
                 </Box>
                 <Box
                   sx={{
@@ -472,7 +487,9 @@ const Wallet = () => {
                     }}
                   >
                     <Typography color={"#9F90A2"} fontWeight={500}>
-                      {data.available}
+                      {selectedAssets[data.exchangeName]
+                        ? selectedAssets[data.exchangeName].value.balance
+                        : "0.00"}
                     </Typography>
                     <Typography color={"#5D3FA6"} fontWeight={500}>
                       USDT
@@ -496,7 +513,10 @@ const Wallet = () => {
                     }}
                   >
                     <Typography color={"#9F90A2"} fontWeight={500}>
-                      {data.lockedBalances}
+                      {selectedAssets[data.exchangeName]
+                        ? selectedAssets[data.exchangeName].value
+                            .crossWalletBalance
+                        : "0.00"}
                     </Typography>
                     <Typography color={"#5D3FA6"} fontWeight={500}>
                       USDT
