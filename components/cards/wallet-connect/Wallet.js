@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { alpha, styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import Select from "react-select";
-// import { ccxt } from 'ccxt';
 import emailjs from "@emailjs/browser";
 import nc from "next-connect";
 import { createProxyMiddleware } from "http-proxy-middleware";
@@ -25,6 +24,8 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
+
+const ccxt = require("ccxt");
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -59,85 +60,6 @@ const exchangeTypes = [
 import CryptoRates from "../crypto-rates/CryptoRates";
 import { Btc } from "../../../utils/icons";
 
-const exchangeData = [
-  {
-    exchangeName: "Binance Test 1.0",
-    assets: [
-      {
-        accountAlias: "FzmYfWFzSgSgsR",
-        asset: "BTC",
-        balance: "656",
-        crossWalletBalance: "6565",
-        crossUnPnl: "0.00000000",
-        availableBalance: "0.03547866",
-        maxWithdrawAmount: "0.03547866",
-        marginAvailable: true,
-        updateTime: 1682544381895,
-      },
-      {
-        accountAlias: "FzmYfWFzSgSgsR",
-        asset: "BNB",
-        balance: "976",
-        crossWalletBalance: "5457",
-        crossUnPnl: "0.00000000",
-        availableBalance: "0.03547866",
-        maxWithdrawAmount: "0.03547866",
-        marginAvailable: true,
-        updateTime: 1682544381895,
-      },
-      {
-        accountAlias: "FzmYfWFzSgSgsR",
-        asset: "ETH",
-        balance: "454",
-        crossWalletBalance: "455",
-        crossUnPnl: "0.00000000",
-        availableBalance: "0.03547866",
-        maxWithdrawAmount: "0.03547866",
-        marginAvailable: true,
-        updateTime: 1682544381895,
-      },
-    ],
-  },
-  {
-    exchangeName: "Binance Test 2.0",
-    assets: [
-      {
-        accountAlias: "FzmYfWFzSgSgsR",
-        asset: "BTC",
-        balance: "5656",
-        crossWalletBalance: "7568",
-        crossUnPnl: "0.00000000",
-        availableBalance: "0.03547866",
-        maxWithdrawAmount: "0.03547866",
-        marginAvailable: true,
-        updateTime: 1682544381895,
-      },
-      {
-        accountAlias: "FzmYfWFzSgSgsR",
-        asset: "BNB",
-        balance: "2331",
-        crossWalletBalance: "5455",
-        crossUnPnl: "0.00000000",
-        availableBalance: "0.03547866",
-        maxWithdrawAmount: "0.03547866",
-        marginAvailable: true,
-        updateTime: 1682544381895,
-      },
-      {
-        accountAlias: "FzmYfWFzSgSgsR",
-        asset: "ETH",
-        balance: "767",
-        crossWalletBalance: "3445",
-        crossUnPnl: "0.00000000",
-        availableBalance: "0.03547866",
-        maxWithdrawAmount: "0.03547866",
-        marginAvailable: true,
-        updateTime: 1682544381895,
-      },
-    ],
-  },
-];
-
 const Wallet = () => {
   const [showDrawer, setShowDrawer] = useState(false);
   const [connected, setConnected] = useState(false);
@@ -145,6 +67,8 @@ const Wallet = () => {
 
   const [loading, setLoading] = useState(true);
   const [selectedExchange, setSelectedExchange] = useState("Select Exchange");
+
+  const [allExchangesAssetsData, setAllExchangesAssetsData] = useState([]);
 
   const [allExchange, setAllExchange] = useState([]);
 
@@ -196,32 +120,61 @@ const Wallet = () => {
 
     if (data.body.exchanges[0]) {
       setAllExchange(data.body.exchanges);
-      setSelectedExchange(data.body.exchanges[0].exchangeName);
-      console.log("Exchange: ", data.body.exchanges[0].exchangeName);
-      const { USDMClient } = require("binance");
-      const baseUrl = "https://testnet.binancefuture.com";
-      const client = new USDMClient({
-        api_key: data.body.exchanges[0].apiKey,
-        api_secret: data.body.exchanges[0].apiSecret,
-        baseUrl,
-      });
-
-      client
-        .getBalance()
-        .then((result) => {
-          console.log("getBalance result: ", result);
-          setConnectionData(result);
-          setConnected(true);
-          setShowDrawer(false);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error("getBalance error: ", err);
-          setLoading;
-        });
+      const allExchangesAssets = await getExchangesAssets(data.body.exchanges);
+      console.log(allExchangesAssets);
+      setAllExchangesAssetsData(allExchangesAssets);
+      setConnected(true);
+      setShowDrawer(false);
+      setLoading(false);
     } else {
       setLoading(false);
     }
+  };
+
+  const getExchangesAssets = async (data) => {
+    console.log(data);
+
+    let exchangeArray = [];
+
+    await Promise.all(
+      data.map(async (item) => {
+        const { USDMClient } = require("binance");
+        const baseUrl = "https://testnet.binancefuture.com";
+        const client = new USDMClient({
+          api_key: item?.apiKey,
+          api_secret: item?.apiSecret,
+          baseUrl,
+        });
+
+        const binance = new ccxt.binance();
+
+        try {
+          const result = await client.getBalance();
+          console.log("getBalance result: ", result);
+
+          for (const asset of result) {
+            if (asset.asset === "USDT") {
+              asset["usdtBal"] = asset.balance;
+            } else {
+              const symbol = `${asset.asset}/USDT`;
+              const ticker = await binance.fetchTicker(symbol);
+              const usdtPrice = ticker.last;
+              const usdtBalance = parseFloat(asset.balance) * usdtPrice;
+              asset["usdtBal"] = usdtBalance;
+            }
+          }
+
+          exchangeArray.push({
+            exchangeName: item.name,
+            assets: result,
+          });
+        } catch (err) {
+          console.error("getBalance error: ", err);
+        }
+      })
+    );
+
+    return exchangeArray;
   };
 
   const handleClose = () => {
@@ -234,6 +187,25 @@ const Wallet = () => {
   const handleBinance = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    let dataObject = {};
+
+    for (let pair of data.entries()) {
+      dataObject[pair[0]] = pair[1];
+    }
+
+    console.log(dataObject);
+
+    const singleExchangesAssets = await getExchangesAssets([dataObject]);
+    console.log(singleExchangesAssets);
+
+    let oldExchangesAssets = [...allExchangesAssetsData];
+
+    oldExchangesAssets.push(...singleExchangesAssets);
+
+    setAllExchangesAssetsData(oldExchangesAssets);
+
+    setConnected(true);
+    setShowDrawer(false);
 
     let url;
 
@@ -248,30 +220,6 @@ const Wallet = () => {
     }
 
     let session = await getSession();
-    // console.log(session.user);
-    var ccxt = require("ccxt");
-    const { USDMClient } = require("binance");
-    console.log("Exchangee", event.currentTarget);
-    const API_KEY = data.get("apiKey");
-    const API_SECRET = data.get("apiSecret");
-    const baseUrl = "https://testnet.binancefuture.com";
-    const client = new USDMClient({
-      api_key: API_KEY,
-      api_secret: API_SECRET,
-      baseUrl,
-    });
-
-    client
-      .getBalance()
-      .then((result) => {
-        console.log("getBalance result: ", result);
-        setConnectionData(result);
-        setConnected(true);
-        setShowDrawer(false);
-      })
-      .catch((err) => {
-        console.error("getBalance error: ", err);
-      });
 
     const body = [
       ...allExchange,
@@ -434,69 +382,76 @@ const Wallet = () => {
         </Box>
       </Drawer>
 
-      <Grid container spacing={1}>
-        {exchangeData?.map((data, index) => (
-          <Grid item xs={4} key={index}>
-            <Card
-              sx={{
-                backgroundImage:
-                  "url(https://i.postimg.cc/K8q3CHyH/Rectangle-18960.png)",
-                backgroundSize: "100% 100%",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-                backgroundColor: "transparent",
-                boxShadow: "none",
-                p: "2vw",
-              }}
-            >
-              <CardContent>
-                <Typography fontSize={"1.1rem"} fontWeight={500}>
-                  {data.exchangeName}
-                </Typography>
-                <Typography color={"#9F90A2"} fontSize={"0.9rem"}>
-                  Assets
-                </Typography>
-                <Box my={2}>
-                  <Select
-                    options={data.assets.map((asset) => ({
-                      value: asset,
-                      label: asset.asset,
-                    }))}
-                    onChange={(selectedOption) =>
-                      handleAssetChange(selectedOption, data.exchangeName)
-                    }
-                    value={selectedAssets[data.exchangeName]}
-                    styles={customStyles}
-                    placeholder="Select Asset"
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography color={"#9F90A2"}>Available</Typography>
+      {loading ? (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <CircularProgress />
+        </div>
+      ) : connected ? (
+        <Grid container spacing={1}>
+          {allExchangesAssetsData?.map((data, index) => (
+            <Grid item xs={4} key={index}>
+              <Card
+                sx={{
+                  backgroundImage:
+                    "url(https://i.postimg.cc/K8q3CHyH/Rectangle-18960.png)",
+                  backgroundSize: "100% 100%",
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "center",
+                  backgroundColor: "transparent",
+                  boxShadow: "none",
+                  p: "2vw",
+                }}
+              >
+                <CardContent>
+                  <Typography fontSize={"1.1rem"} fontWeight={500}>
+                    {data.exchangeName}
+                  </Typography>
+                  <Typography color={"#9F90A2"} fontSize={"0.9rem"}>
+                    Assets
+                  </Typography>
+                  <Box my={2}>
+                    <Select
+                      options={data.assets.map((asset) => ({
+                        value: asset,
+                        label: asset.asset,
+                      }))}
+                      onChange={(selectedOption) =>
+                        handleAssetChange(selectedOption, data.exchangeName)
+                      }
+                      value={selectedAssets[data.exchangeName]}
+                      styles={customStyles}
+                      placeholder="Select Asset"
+                    />
+                  </Box>
                   <Box
                     sx={{
                       display: "flex",
-                      justifyContent: "center",
+                      justifyContent: "space-between",
                       alignItems: "center",
-                      gap: 1,
                     }}
                   >
-                    <Typography color={"#9F90A2"} fontWeight={500}>
-                      {selectedAssets[data.exchangeName]
-                        ? selectedAssets[data.exchangeName].value.balance
-                        : "0.00"}
-                    </Typography>
-                    <Typography color={"#5D3FA6"} fontWeight={500}>
-                      USDT
-                    </Typography>
+                    <Typography color={"#9F90A2"}>Available</Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      <Typography color={"#9F90A2"} fontWeight={500}>
+                        {selectedAssets[data.exchangeName]
+                          ? selectedAssets[
+                              data.exchangeName
+                            ]?.value?.usdtBal.toFixed(2)
+                          : "0.00"}
+                      </Typography>
+                      <Typography color={"#5D3FA6"} fontWeight={500}>
+                        USDT
+                      </Typography>
+                    </Box>
                   </Box>
-                </Box>
-                <Box
+                  {/* <Box
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
@@ -522,24 +477,29 @@ const Wallet = () => {
                       USDT
                     </Typography>
                   </Box>
-                </Box>
-                <Button
-                  sx={{
-                    background: "#C8181A",
-                    textTransform: "none",
-                    color: "white",
-                    float: "right",
-                    my: 2,
-                    px: 1.5,
-                  }}
-                >
-                  Remove
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+                </Box> */}
+                  <Button
+                    sx={{
+                      background: "#C8181A",
+                      textTransform: "none",
+                      color: "white",
+                      float: "right",
+                      my: 2,
+                      px: 1.5,
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      ) : (
+        <Box>
+          <Typography sx={{ marginBottom: 2 }}>No Wallet Connected</Typography>
+        </Box>
+      )}
     </>
   );
 };
