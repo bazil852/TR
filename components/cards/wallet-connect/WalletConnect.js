@@ -114,30 +114,48 @@ const WalletConnect = () => {
     const data = new FormData(event.currentTarget);
 
     let url;
-
+    let client;
+    let session = await getSession();
     if (event.currentTarget?.exchangeName === "Binance Futures Testnet") {
-      url = "https://www.google.com/";
+      url = "https://testnet.binancefuture.com";
+      const { USDMClient } = require("binance");
+      console.log("Exchangee", data);
+      const API_KEY = data.get("apiKey");
+      const API_SECRET = data.get("apiSecret");
+      const baseUrl = "https://testnet.binancefuture.com";
+       client = new USDMClient({
+        api_key: API_KEY,
+        api_secret: API_SECRET,
+        baseUrl,
+      });
     }
     if (event.currentTarget?.exchangeName === "Binance Futures") {
-      url = "https://www.google.com/";
+      const { USDMClient } = require("binance");
+      console.log("Exchangee", data);
+      const API_KEY = data.get("apiKey");
+      const API_SECRET = data.get("apiSecret");
+       client = new USDMClient({
+        api_key: API_KEY,
+        api_secret: API_SECRET
+      });
+      
     }
     if (event.currentTarget?.exchangeName === "Binance Spot") {
       url = "https://www.google.com/";
+      url = "https://www.google.com/";
+      const { MainClient } = require('binance');
+      const API_KEY = data.get("apiKey");
+      const API_SECRET = data.get("apiSecret");
+       client = new MainClient({
+        api_key: API_KEY,
+        api_secret: API_SECRET
+      });
     }
 
-    let session = await getSession();
+    
     // console.log(session.user);
     var ccxt = require("ccxt");
-    const { USDMClient } = require("binance");
-    console.log("Exchangee", data);
-    const API_KEY = data.get("apiKey");
-    const API_SECRET = data.get("apiSecret");
-    const baseUrl = "https://testnet.binancefuture.com";
-    const client = new USDMClient({
-      api_key: API_KEY,
-      api_secret: API_SECRET,
-      baseUrl,
-    });
+    
 
     client
       .getBalance()

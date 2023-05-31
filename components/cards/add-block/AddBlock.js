@@ -13,6 +13,7 @@ import Divider from "@mui/material/Divider";
 import GeneralSettings from "../../../components/cards/general-settings/GeneralSettings";
 import { getSession } from "next-auth/react";
 import Chart from "../../deal-page/Chart";
+// import CandlestickChart from "../../deal-page/Chart";
 import Indicators from "../indicators/Indicators";
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
@@ -132,7 +133,7 @@ const AddBlockComponent = (props) => {
   const [botType, setBotType] = useState("");
   const [strategyType, setStrategyType] = useState("");
   const [strategyPair, setStrategyPair] = useState("");
-
+  const [chartData,setChartData] = useState({})
   const [orderType, setOrderType] = useState("");
   const [baseOrderSize, setBaseOrderSize] = useState("");
   const [safetyOrderMul, setSafetyOrderMul] = useState("");
@@ -367,7 +368,7 @@ const AddBlockComponent = (props) => {
     }
   };
 
-  const handlebacktest = async () => {
+  const handlebacktest = async ()=> {
     if (
       botName === "" ||
       exchange === "" ||
@@ -417,18 +418,17 @@ const AddBlockComponent = (props) => {
         userId: session.user.id,
       };
       console.log(body);
-      const response = await fetch("/api/user/create-strategy", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      // const response = await fetch("/api/user/create-strategy", {
+      //   method: "POST",
+      //   body: JSON.stringify(body),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
 
-      const newData = await response.json();
-      console.log(newData);
-      console.log(newData["body"]["_id"]);
-      alert("Saved");
+      // const newData = await response.json();
+      // console.log(newData);
+      // alert("Saved");
       try {
         const response = await fetch("https://dcabot1.herokuapp.com/backtest", {
           method: "POST",
@@ -436,12 +436,13 @@ const AddBlockComponent = (props) => {
             "Content-Type": "application/json",
           },
           // If you need to send a JSON body, uncomment the following line and replace '{}' with the appropriate JSON object
-          body: JSON.stringify({ strategyId: newData["body"]["_id"] }),
+          body: JSON.stringify(body),
         });
-
+  
         if (response.ok) {
           const data = await response.json();
           console.log("Success:", data);
+          setChartData(data);
         } else {
           console.error("Error:", response.status, response.statusText);
         }
@@ -449,6 +450,10 @@ const AddBlockComponent = (props) => {
         console.error("Error:", error);
       }
     }
+      
+    
+
+    
   };
   console.log(indicatorArray);
   const [width, setWidth] = useState(globalThis?.innerWidth);

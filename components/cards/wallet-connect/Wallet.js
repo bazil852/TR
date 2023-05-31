@@ -135,19 +135,47 @@ const Wallet = () => {
     console.log(data);
 
     let exchangeArray = [];
-
+    let client;
     await Promise.all(
       data.map(async (item) => {
-        const { USDMClient } = require("binance");
-        const baseUrl = "https://testnet.binancefuture.com";
-        const client = new USDMClient({
-          api_key: item?.apiKey,
+        if (item?.exchangeName === "Binance Futures Testnet") {
+          const { USDMClient } = require("binance");
+          console.log("Exchangee", item);
+          const baseUrl = "https://testnet.binancefuture.com";
+           client = new USDMClient({
+            api_key: item?.apiKey,
           api_secret: item?.apiSecret,
-          baseUrl,
-        });
+            baseUrl,
+          });
+        }
+        if (item?.exchangeName === "Binance Futures") {
+          const { USDMClient } = require("binance");
+          console.log("Exchangee", item);
+           client = new USDMClient({
+            api_key: item?.apiKey,
+          api_secret: item?.apiSecret,
+          });
+          
+        }
+        if (item?.exchangeName === "Binance Spot") {
+          const { MainClient } = require('binance');
+          console.log("Exchangee", item);
+           client = new MainClient({
+            api_key: item?.apiKey,
+          api_secret: item?.apiSecret,
+          });
+        }
+
+        // const { USDMClient } = require("binance");
+        // const baseUrl = "https://testnet.binancefuture.com";
+        // const client = new USDMClient({
+        //   api_key: item?.apiKey,
+        //   api_secret: item?.apiSecret,
+        //   baseUrl,
+        // });
 
         const binance = new ccxt.binance();
-
+        console.log("client is ",client)
         try {
           const result = await client.getBalance();
           console.log("getBalance result: ", result);
