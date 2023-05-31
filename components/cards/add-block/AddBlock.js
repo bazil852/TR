@@ -1254,6 +1254,18 @@ const AddBlockComponent = (props) => {
               >
                 <Typography>Test Your Strategy!</Typography>
               </button>
+              <button
+                style={{
+                  background: "linear-gradient(to right,#790F87,#794AE3)",
+                  cursor: "pointer",
+                  border: "none",
+                  padding: "7px 20px",
+                  marginLeft:"10px",
+                }}
+                onClick={handleTestStrategy}
+              >
+                <Typography>Submit</Typography>
+              </button>
             </Box>
           </Grid>
         </Grid>
@@ -1434,11 +1446,11 @@ const AddBlockComponent = (props) => {
                       </Box>
                     </Box>
                   </Box>
-                  <Chart />
+                  <Chart data={chartData}/>
                 </Box>
               </Grid>
               <Grid item xs={1} sx={{ pl: 1 }}>
-                <Box>
+                {/* <Box>
                   <Typography
                     sx={{
                       fontSize: "12px",
@@ -1472,7 +1484,7 @@ const AddBlockComponent = (props) => {
                       {item}
                     </Typography>
                   ))}
-                </Box>
+                </Box> */}
               </Grid>
             </Grid>
           </Grid>
@@ -1493,9 +1505,9 @@ const AddBlockComponent = (props) => {
                     minWidth: "50%",
                   }}
                 >
-                  {[...Array(10)].map((_, index) => (
+                  {/* {[...Array(10)].map((_, index) => ( */}
                     <Typography
-                      key={index}
+                      // key={index}
                       sx={{
                         display: "flex",
                         flexDirection: "row",
@@ -1506,8 +1518,34 @@ const AddBlockComponent = (props) => {
                         py: 3,
                         borderBottom: "1px solid grey",
                       }}
-                    ></Typography>
-                  ))}
+                    > Total Profit </Typography>
+                  {/* ))} */}
+                  <Typography
+                      // key={index}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: "16px",
+                        textAlign: "center",
+                        px: "auto",
+                        py: 3,
+                        borderBottom: "1px solid grey",
+                      }}
+                    > Total Buy Orders </Typography>
+                    <Typography
+                      // key={index}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: "16px",
+                        textAlign: "center",
+                        px: "auto",
+                        py: 3,
+                        borderBottom: "1px solid grey",
+                      }}
+                    > Total Sell Orders </Typography>
                 </Box>
                 <Box
                   sx={{
@@ -1516,9 +1554,9 @@ const AddBlockComponent = (props) => {
                     minWidth: "50%",
                   }}
                 >
-                  {[...Array(10)].map((_, index) => (
+                  {/* {[...Array(10)].map((_, index) => ( */}
                     <Typography
-                      key={index}
+                      // key={index}
                       sx={{
                         display: "flex",
                         flexDirection: "row",
@@ -1530,8 +1568,36 @@ const AddBlockComponent = (props) => {
                         py: 3,
                         borderLeft: "1px solid grey",
                       }}
-                    ></Typography>
-                  ))}
+                    >{chartData?.profit}</Typography>
+                    <Typography
+                      // key={index}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: "16px",
+                        textAlign: "center",
+                        borderBottom: "1px solid grey",
+                        px: "auto",
+                        py: 3,
+                        borderLeft: "1px solid grey",
+                      }}
+                    >{chartData?.buy_orders?.length}</Typography>
+                    <Typography
+                      // key={index}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: "16px",
+                        textAlign: "center",
+                        borderBottom: "1px solid grey",
+                        px: "auto",
+                        py: 3,
+                        borderLeft: "1px solid grey",
+                      }}
+                    >{chartData?.sell_orders?.length}</Typography>
+                  {/* // ))} */}
                 </Box>
               </Box>
             </Box>

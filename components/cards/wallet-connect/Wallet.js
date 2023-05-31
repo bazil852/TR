@@ -146,6 +146,7 @@ const Wallet = () => {
             api_key: item?.apiKey,
             api_secret: item?.apiSecret,
             baseUrl,
+            recvWindow: 10000,
           });
         }
         if (item?.exchangeName === "Binance Futures") {
@@ -154,15 +155,14 @@ const Wallet = () => {
           client = new USDMClient({
             api_key: item?.apiKey,
             api_secret: item?.apiSecret,
+            recvWindow: 10000,
           });
         }
         if (item?.exchangeName === "Binance Spot") {
           const { MainClient } = require("binance");
           console.log("Exchangee", item);
-          client = new MainClient({
-            api_key: item?.apiKey,
-            api_secret: item?.apiSecret,
-          });
+          client = new MainClient();
+         
         }
 
         // const { USDMClient } = require("binance");
@@ -178,7 +178,20 @@ const Wallet = () => {
         try {
           let result;
           if (item?.exchangeName === "Binance Spot") {
-            result = await client.getBalances();
+            console.log("Testing new server.");
+            fetch('http://localhost:3005/api/binance/balances', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(item),
+            })
+            .then(response => response.json())
+            .then(data => console.log("Result from server: ",data))
+            .catch((error) => {
+              console.error('Error:', error);
+            });
+            result = data;
             console.log("getBalance result: ", result);
           } else {
             result = await client.getBalance();
@@ -186,18 +199,34 @@ const Wallet = () => {
           }
           // const result = await client.getBalance();
           // console.log("getBalance result: ", result);
-
-          for (const asset of result) {
-            if (asset.asset === "USDT") {
-              asset["usdtBal"] = asset.balance;
-            } else {
-              const symbol = `${asset.asset}/USDT`;
-              const ticker = await binance.fetchTicker(symbol);
-              const usdtPrice = ticker.last;
-              const usdtBalance = parseFloat(asset.balance) * usdtPrice;
-              asset["usdtBal"] = usdtBalance;
+          if (item?.exchangeName === "Binance Spot"){
+            console.log("spot is" ,result);
+            for (const asset of result) {
+              if (asset.asset === "USDT") {
+                asset["usdtBal"] = asset.free;
+              } else {
+                const symbol = asset.coin;
+                
+                const ticker = await binance.fetchTicker(symbol);
+                const usdtPrice = ticker.last;
+                const usdtBalance = parseFloat(asset.free) * usdtPrice;
+                asset["usdtBal"] = usdtBalance;
+              }
             }
           }
+          else {
+              for (const asset of result) {
+                if (asset.asset === "USDT") {
+                  asset["usdtBal"] = asset.balance;
+                } else {
+                  const symbol = `${asset.asset}/USDT`;
+                  const ticker = await binance.fetchTicker(symbol);
+                  const usdtPrice = ticker.last;
+                  const usdtBalance = parseFloat(asset.balance) * usdtPrice;
+                  asset["usdtBal"] = usdtBalance;
+                }
+              }
+            }
 
           exchangeArray.push({
             _id: item?._id,

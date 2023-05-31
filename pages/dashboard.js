@@ -47,7 +47,9 @@ const DashboardComponent = () => {
         api_key: data.body.exchanges[0].apiKey,
         api_secret: data.body.exchanges[0].apiSecret,
         baseUrl,
+        recvWindow: 10000,
       });
+      
 
       let filteredAssets;
 

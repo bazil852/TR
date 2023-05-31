@@ -7,6 +7,7 @@ function CandlestickChart({ data }) {
   const chartContainerRef = useRef();
   const [chart, setChart] = useState(null);
   const [candleSeries, setCandleSeries] = useState(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   
 
   const formatCandles = (candles) => {
@@ -33,9 +34,10 @@ function CandlestickChart({ data }) {
   };
 
   useEffect(() => {
+    console.log("Trying to Render new chart ")
       const newChart = createChart(chartContainerRef.current, { 
-          width: 700, 
-          height: 500,
+        width: isFullScreen ? window.innerWidth : 700, 
+        height: isFullScreen ? window.innerHeight : 500,
           layout: {
               background: {
                 type: 'solid',
@@ -64,7 +66,14 @@ function CandlestickChart({ data }) {
       const newCandleSeries = newChart.addCandlestickSeries();
       setChart(newChart);
       setCandleSeries(newCandleSeries);
-  }, []);
+      return () => {
+        // When 'isFullScreen' changes, this cleanup function will run
+        // We check if we are exiting fullscreen mode, and if so, resize the chart
+        if (!isFullScreen && chart) {
+          chart.resize(700, 500);
+        }
+      };
+  },[isFullScreen]);
 
   useEffect(() => {
       if (chart && candleSeries) {
@@ -89,12 +98,24 @@ function CandlestickChart({ data }) {
       }
   }, [data, chart, candleSeries]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (isFullScreen && chart) {
+        chart.resize(window.innerWidth, window.innerHeight);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isFullScreen, chart]);
+
   return (
       <Box >
+        <button onClick={() => setIsFullScreen(!isFullScreen)}>{isFullScreen ? "Exit Fullscreen" : "Go Fullscreen"}</button>
           <div ref={chartContainerRef} style={{ backgroundColor: 'transparent' }}/>
       </Box>
   );
 }
+
 
 export default CandlestickChart;
 
