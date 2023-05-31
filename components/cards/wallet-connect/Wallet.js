@@ -201,7 +201,7 @@ const Wallet = () => {
           let result;
           if (item?.exchangeName === "Binance Spot") {
             console.log("Testing new server.");
-            await fetch("http://localhost:3005/api/binance/balances", {
+            await fetch("https://binance1.herokuapp.com/api/binance/balances", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
