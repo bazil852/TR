@@ -1609,7 +1609,7 @@ const BotsTable = () => {
                           >
                             <Switch
                               // checked={btcchecked}
-                              onChange={handleSwitchChange}
+                              // onChange={handleSwitchChange}
                               name="customSwitch"
                               sx={{
                                 "& .MuiSwitch-thumb": {
@@ -1622,7 +1622,7 @@ const BotsTable = () => {
                                 },
                               }}
                               checked={item?.state === "on" ? true : false}
-                              // onChange={() => handleStatus(event, item)}
+                              onChange={() => handleStatus(event, item)}
                             />
                           </Box>
                         </Box>

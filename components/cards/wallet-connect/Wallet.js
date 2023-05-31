@@ -27,6 +27,29 @@ import {
 
 const ccxt = require("ccxt");
 
+const cryptoSymbols = [
+  "BTC", // Bitcoin
+  "ETH", // Ethereum
+  "XRP", // Ripple
+  "BCH", // Bitcoin Cash
+  "LTC", // Litecoin
+  "ADA", // Cardano
+  "DOT", // Polkadot
+  "LINK", // Chainlink
+  "XLM", // Stellar
+  "DOGE", // Dogecoin
+  "USDT", // Tether
+  "BNB", // Binance Coin
+  "XMR", // Monero
+  "UNI", // Uniswap
+  "EOS", // EOS
+  "TRX", // TRON
+  "XTZ", // Tezos
+  "VET", // VeChain
+  "DASH", // Dash
+  "ZEC", // Zcash
+];
+
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
     marginTop: theme.spacing(3),
@@ -162,7 +185,6 @@ const Wallet = () => {
           const { MainClient } = require("binance");
           console.log("Exchangee", item);
           client = new MainClient();
-         
         }
 
         // const { USDMClient } = require("binance");
@@ -174,24 +196,30 @@ const Wallet = () => {
         // });
 
         const binance = new ccxt.binance();
-        console.log("client is ", client);
+        // console.log("client is ", client);
         try {
           let result;
           if (item?.exchangeName === "Binance Spot") {
             console.log("Testing new server.");
-            fetch('http://localhost:3005/api/binance/balances', {
-              method: 'POST',
+            await fetch("http://localhost:3005/api/binance/balances", {
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
               },
               body: JSON.stringify(item),
             })
-            .then(response => response.json())
-            .then(data => console.log("Result from server: ",data))
-            .catch((error) => {
-              console.error('Error:', error);
-            });
-            result = data;
+              .then((response) => response.json())
+              .then((data) => {
+                result = data.filter((item) =>
+                  cryptoSymbols.includes(item.coin)
+                );
+                // result = data;
+                console.log("Result from server: ", data);
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+              });
+
             console.log("getBalance result: ", result);
           } else {
             result = await client.getBalance();
@@ -199,34 +227,47 @@ const Wallet = () => {
           }
           // const result = await client.getBalance();
           // console.log("getBalance result: ", result);
-          if (item?.exchangeName === "Binance Spot"){
-            console.log("spot is" ,result);
+          if (item?.exchangeName === "Binance Spot") {
+            console.log("spot is", result);
+            // const newResult = result.filter(item=> item.free !== "0")
+            for (const asset of result) {
+              if (asset.coin === "USDT") {
+                asset["usdtBal"] = +asset.free;
+                asset["asset"] = asset.coin;
+              } else {
+                // const symbol = asset.coin;
+                try {
+                  const symbol = `${asset.coin}/USDT`;
+
+                  const ticker = await binance.fetchTicker(symbol);
+                  const usdtPrice = ticker.last;
+                  const usdtBalance = parseFloat(asset.free) * usdtPrice;
+                  asset["usdtBal"] = usdtBalance;
+                  asset["asset"] = asset.coin;
+                } catch (err) {
+                  console.log(err);
+                }
+                // const symbol = `${asset.coin}/USDT`;
+
+                // const ticker = await binance.fetchTicker(symbol);
+                // const usdtPrice = ticker.last;
+                // const usdtBalance = parseFloat(asset.free) * usdtPrice;
+                // asset["usdtBal"] = usdtBalance;
+              }
+            }
+          } else {
             for (const asset of result) {
               if (asset.asset === "USDT") {
-                asset["usdtBal"] = asset.free;
+                asset["usdtBal"] = asset.balance;
               } else {
-                const symbol = asset.coin;
-                
+                const symbol = `${asset.asset}/USDT`;
                 const ticker = await binance.fetchTicker(symbol);
                 const usdtPrice = ticker.last;
-                const usdtBalance = parseFloat(asset.free) * usdtPrice;
+                const usdtBalance = parseFloat(asset.balance) * usdtPrice;
                 asset["usdtBal"] = usdtBalance;
               }
             }
           }
-          else {
-              for (const asset of result) {
-                if (asset.asset === "USDT") {
-                  asset["usdtBal"] = asset.balance;
-                } else {
-                  const symbol = `${asset.asset}/USDT`;
-                  const ticker = await binance.fetchTicker(symbol);
-                  const usdtPrice = ticker.last;
-                  const usdtBalance = parseFloat(asset.balance) * usdtPrice;
-                  asset["usdtBal"] = usdtBalance;
-                }
-              }
-            }
 
           exchangeArray.push({
             _id: item?._id,
