@@ -142,27 +142,26 @@ const Wallet = () => {
           const { USDMClient } = require("binance");
           console.log("Exchangee", item);
           const baseUrl = "https://testnet.binancefuture.com";
-           client = new USDMClient({
+          client = new USDMClient({
             api_key: item?.apiKey,
-          api_secret: item?.apiSecret,
+            api_secret: item?.apiSecret,
             baseUrl,
           });
         }
         if (item?.exchangeName === "Binance Futures") {
           const { USDMClient } = require("binance");
           console.log("Exchangee", item);
-           client = new USDMClient({
+          client = new USDMClient({
             api_key: item?.apiKey,
-          api_secret: item?.apiSecret,
+            api_secret: item?.apiSecret,
           });
-          
         }
         if (item?.exchangeName === "Binance Spot") {
-          const { MainClient } = require('binance');
+          const { MainClient } = require("binance");
           console.log("Exchangee", item);
-           client = new MainClient({
+          client = new MainClient({
             api_key: item?.apiKey,
-          api_secret: item?.apiSecret,
+            api_secret: item?.apiSecret,
           });
         }
 
@@ -175,10 +174,18 @@ const Wallet = () => {
         // });
 
         const binance = new ccxt.binance();
-        console.log("client is ",client)
+        console.log("client is ", client);
         try {
-          const result = await client.getBalance();
-          console.log("getBalance result: ", result);
+          let result;
+          if (item?.exchangeName === "Binance Spot") {
+            result = await client.getBalances();
+            console.log("getBalance result: ", result);
+          } else {
+            result = await client.getBalance();
+            console.log("getBalance result: ", result);
+          }
+          // const result = await client.getBalance();
+          // console.log("getBalance result: ", result);
 
           for (const asset of result) {
             if (asset.asset === "USDT") {
