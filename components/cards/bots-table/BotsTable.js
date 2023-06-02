@@ -328,7 +328,7 @@ const BotsTable = () => {
   const [tableRow, setTableRow] = React.useState([]);
   const [searchByBotsName, setSearchByBotsName] = React.useState("");
   const [width, setWidth] = React.useState(globalThis?.innerWidth);
-  const [coinProfitValue, setCoinProfitValue] = React.useState(1234);
+  const [coinProfitValue, setCoinProfitValue] = React.useState(0);
   const [numberOfDeals, setNumberOfDeals] = React.useState(9);
 
   const [selectedRow, setSelectedRow] = React.useState([]);
@@ -859,6 +859,19 @@ const BotsTable = () => {
     setLogs(filteredBot[0].logs);
   };
 
+  function mapIndicatorValue(value) {
+    switch(value) {
+      case "Vector Candle":
+        return "VC";
+      case "Tom Demark":
+        return "TD";
+      case "Moving Averages":
+        return "MA";
+      default:
+        return value;
+    }
+  }
+
   const classes = useStyles();
   return (
     <>
@@ -1247,7 +1260,7 @@ const BotsTable = () => {
                       // background: "linear-gradient(#3D273F,#2C252C)",
                       background: "#412645",
                       borderRadius: "8px",
-                      minHeight: 800,
+                      minHeight: 500,
                       // marginBottom: 5,
                       position: "relative",
                     }}
@@ -1293,7 +1306,26 @@ const BotsTable = () => {
                             <Typography fontSize={"0.9rem"}>Binance</Typography>
                           </Box>
                         </Box>
+
+                        <Box
+                            style={{
+                              padding: 2,
+                              height: "30px",
+                              paddingLeft: 5,
+                              paddingRight: 5,
+                              marginRight: 4,
+                              borderRadius: "5px",
+                              backgroundColor: "#5B2A6D",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              handleViewModal(item);
+                            }}
+                          >
+                            <VisibilityIcon />
+                          </Box>
                         <Box>
+
                           <Checkbox
                             style={{
                               color: "white",
@@ -1302,6 +1334,7 @@ const BotsTable = () => {
                               },
                             }}
                           />
+                         
                         </Box>
                       </Box>
 
@@ -1393,7 +1426,7 @@ const BotsTable = () => {
                               borderRadius: 3,
                               boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
                               minWidth: 125,
-                              height: width > 1600 ? "15rem" : "17rem",
+                              height: width > 1600 ? "8rem" : "8rem",
                               p: 1,
                             }}
                           >
@@ -1410,64 +1443,62 @@ const BotsTable = () => {
                             </Typography>
                             <Box
                               sx={{
-                                display: width > 1600 ? "flex" : "",
-                                gap: width > 1600 ? 2 : "",
+                                display: "flex",
+                                gap: 2 ,
+                                justifyContent: "space-between" ,
                               }}
                             >
                               <Box>
                                 <Typography
                                   color={"#ffffffbd"}
-                                  borderBottom={"1px solid #ffffffbd "}
-                                  fontSize={"0.7rem"}
+                                  // borderBottom={"1px solid #ffffffbd "}
+                                  fontSize={"0.6rem"}
                                   my={0.5}
                                 >
                                   Max Order : {item?.maxOrders}
                                 </Typography>
                                 <Typography
                                   color={"#ffffffbd"}
-                                  borderBottom={"1px solid #ffffffbd "}
-                                  fontSize={"0.7rem"}
+                                  // borderBottom={"1px solid #ffffffbd "}
+                                  fontSize={"0.6rem"}
                                   my={0.5}
                                 >
                                   Max Volume : {item?.maxVol}
                                 </Typography>
                                 <Typography
                                   color={"#ffffffbd"}
-                                  borderBottom={"1px solid #ffffffbd "}
-                                  fontSize={"0.7rem"}
+                                  // borderBottom={"1px solid #ffffffbd "}
+                                  fontSize={"0.6rem"}
                                   my={0.5}
                                 >
                                   Lead Indicator :{" "}
-                                  {item?.indicators[0]?.chooseIndicatorValue}
+                                  {mapIndicatorValue(item?.indicators[0]?.chooseIndicatorValue)}
                                 </Typography>
                               </Box>
 
                               <Box>
+                              <Typography
+                                color={"#ffffffbd"}
+                                fontSize={"0.6rem"}
+                                my={0.5}
+                              >
+                                Filter Indicator :{" "}
+                                {item?.indicators
+                                  .map((element) => mapIndicatorValue(element.chooseIndicatorValue))
+                                  .join(",")}
+                              </Typography>
+                              <Typography
+                                color={"#ffffffbd"}
+                                // borderBottom={"1px solid #ffffffbd "}
+                                fontSize={"0.6rem"}
+                                my={0.5}
+                              >
+                                TP: {item?.takeProfit?.length > 6 ? item?.takeProfit.substring(0, 6) + "..." : item?.takeProfit}
+                              </Typography>
                                 <Typography
                                   color={"#ffffffbd"}
-                                  borderBottom={"1px solid #ffffffbd "}
-                                  fontSize={"0.7rem"}
-                                  my={0.5}
-                                >
-                                  Filter Indicator :{" "}
-                                  {item?.indicators
-                                    .map(
-                                      (element) => element.chooseIndicatorValue
-                                    )
-                                    .join(",")}
-                                </Typography>
-                                <Typography
-                                  color={"#ffffffbd"}
-                                  borderBottom={"1px solid #ffffffbd "}
-                                  fontSize={"0.7rem"}
-                                  my={0.5}
-                                >
-                                  TP: {item?.takeProfit}
-                                </Typography>
-                                <Typography
-                                  color={"#ffffffbd"}
-                                  borderBottom={"1px solid #ffffffbd "}
-                                  fontSize={"0.7rem"}
+                                  // borderBottom={"1px solid #ffffffbd "}
+                                  fontSize={"0.6rem"}
                                   my={0.5}
                                 >
                                   SL : {item?.stopLoss}
@@ -1483,7 +1514,7 @@ const BotsTable = () => {
                               borderRadius: 3,
                               boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
                               minWidth: 125,
-                              height: width > 1600 ? "15rem" : "17rem",
+                              height: width > 1600 ? "8rem" : "8rem",
                               p: 1,
                             }}
                           >
@@ -1502,7 +1533,7 @@ const BotsTable = () => {
                               borderRadius: 3,
                               boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
                               minWidth: 125,
-                              height: width > 1600 ? "15rem" : "17rem",
+                              height: width > 1600 ? "8rem" : "8rem",
                               p: 1,
                             }}
                           >
@@ -1521,7 +1552,7 @@ const BotsTable = () => {
                               borderRadius: 3,
                               boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
                               minWidth: 125,
-                              height: width > 1600 ? "15rem" : "17rem",
+                              height: width > 1600 ? "8rem" : "8rem",
                               p: 1,
                             }}
                           >
