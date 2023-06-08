@@ -474,7 +474,7 @@ const ExchangeTable = (props) => {
           <Box
             sx={{
               display: "flex",
-              // justifyContent: "center",
+              justifyContent: "center",
               alignItems: "center",
               flexWrap: "wrap",
               gap: "0.8rem",

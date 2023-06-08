@@ -171,15 +171,10 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
 
   return (
     <>
-      <Box mt={2}>
-        {" "}
-        <DashboardTabs exchangeData={exchangeData} />
-      </Box>
-
       <Box
         sx={{
           width: "49vw",
-          height: "600px",
+          height: "700px",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -190,6 +185,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
           mt: 3,
         }}
       >
+        <DashboardTabs exchangeData={exchangeData} />
         <table style={{ borderCollapse: "collapse" }}>
           <thead>
             <tr>
