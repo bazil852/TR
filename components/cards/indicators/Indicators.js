@@ -185,6 +185,7 @@ const Indicators = (props) => {
                   justifyContent: "center",
                   alignItems: "center",
                   fontSize: "17px",
+                  color: "white",
                 }}
               >
                 +

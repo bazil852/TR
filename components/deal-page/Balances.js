@@ -131,7 +131,28 @@ const Balances = (props) => {
               </TableRow>
             );
           })}
-
+          <TableRow>
+            <TableCell
+              sx={{
+                borderRight: "1px solid rgba(255, 255, 255, 0.3)",
+                justifyContent: "flex-end",
+                display: "flex",
+                borderBottom: "none",
+              }}
+            ></TableCell>
+            <TableCell
+              sx={{
+                borderRight: "1px solid rgba(255, 255, 255, 0.3)",
+                borderBottom: "none",
+              }}
+            ></TableCell>
+            <TableCell
+              sx={{
+                color: "white",
+                borderBottom: "none",
+              }}
+            ></TableCell>
+          </TableRow>
           {/* <TableRow>
             <TableCell
               sx={{

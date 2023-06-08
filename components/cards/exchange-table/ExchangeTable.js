@@ -6,7 +6,7 @@ import { Box, IconButton } from "@mui/material";
 import SearchBar from "../../widgets/SearchBar";
 import Checkbox from "@mui/material/Checkbox";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-
+import DashboardTabs from "../dashboard-tabs/DashboardTabs";
 import { useSelector, useDispatch } from "react-redux";
 
 import { signIn, getSession, useSession } from "next-auth/react";
@@ -362,6 +362,7 @@ const ExchangeTable = (props) => {
             </Typography>
           </Box>
         </Box>
+
         {/* <Box
           sx={{
             background: "#19191985",
@@ -409,6 +410,7 @@ const ExchangeTable = (props) => {
           </ToggleButtonGroup>
         </Box> */}
       </Box>
+
       <Box
         sx={{
           width: "48vw",
@@ -472,7 +474,7 @@ const ExchangeTable = (props) => {
           <Box
             sx={{
               display: "flex",
-              justifyContent: "center",
+              // justifyContent: "center",
               alignItems: "center",
               flexWrap: "wrap",
               gap: "0.8rem",
