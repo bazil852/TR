@@ -357,7 +357,9 @@ const DashboardComponent = () => {
           asset["usdtBal"] = usdtBalance;
         }
       }
-      setTotalAggregateValue((prevTotal) => prevTotal + totalValue);
+      if (exchange?.exchangeName !== "Binance Futures Testnet") {
+        setTotalAggregateValue((prevTotal) => prevTotal + totalValue);
+      }
     }
     const walletYesterdayData = await fetch(
       `/api/wallet/get-yesterday-wallet?id=${user.id}`,
