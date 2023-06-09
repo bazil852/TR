@@ -1,5 +1,5 @@
-import { Box, Typography } from "@mui/material";
-import { useState } from "react";
+import { Box, Typography, Tabs, Tab } from "@mui/material";
+import { useEffect, useState } from "react";
 import { Sort } from "../../../utils/icons";
 import NorthIcon from "@mui/icons-material/North";
 import SouthIcon from "@mui/icons-material/South";
@@ -9,120 +9,19 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
   const [page, setPage] = useState(0);
   const [sort, setSort] = useState({ field: null, direction: null });
 
-  const exchangeData = [
-    {
-      ExchangeName: "spot",
-      ExchangeAssets: {
-        Pair: "single",
-        Total: 100,
-      },
-    },
-    {
-      ExchangeName: "margin",
-      ExchangeAssets: {
-        Pair: "double",
-        Total: 200,
-      },
-    },
-    {
-      ExchangeName: "margin1",
-      ExchangeAssets: {
-        Pair: "dccouble",
-        Total: 300,
-      },
-    },
-    {
-      ExchangeName: "margin2",
-      ExchangeAssets: {
-        Pair: "dccoasduble",
-        Total: 400,
-      },
-    },
-    {
-      ExchangeName: "margin3",
-      ExchangeAssets: {
-        Pair: "dccoasdublxxae",
-        Total: 500,
-      },
-    },
-    {
-      ExchangeName: "margin4",
-      ExchangeAssets: {
-        Pair: "dcae",
-        Total: 600,
-      },
-    },
-    {
-      ExchangeName: "margin5",
-      ExchangeAssets: {
-        Pair: "dcaeasx",
-        Total: 700,
-      },
-    },
-    {
-      ExchangeName: "margin6",
-      ExchangeAssets: {
-        Pair: "dc6sx",
-        Total: 800,
-      },
-    },
-    {
-      ExchangeName: "margin7",
-      ExchangeAssets: {
-        Pair: "dccac6sx",
-        Total: 900,
-      },
-    },
-    {
-      ExchangeName: "margin8",
-      ExchangeAssets: {
-        Pair: "dsx",
-        Total: 1000,
-      },
-    },
-    {
-      ExchangeName: "margin9",
-      ExchangeAssets: {
-        Pair: "xaxdsx",
-        Total: 1100,
-      },
-    },
-    {
-      ExchangeName: "margin10",
-      ExchangeAssets: {
-        Pair: "xff4dsx",
-        Total: 1200,
-      },
-    },
-    {
-      ExchangeName: "margin11",
-      ExchangeAssets: {
-        Pair: "xdsx",
-        Total: 1300,
-      },
-    },
-    {
-      ExchangeName: "margin12",
-      ExchangeAssets: {
-        Pair: "xdxxxasx",
-        Total: 1400,
-      },
-    },
-    {
-      ExchangeName: "margin13",
-      ExchangeAssets: {
-        Pair: "xdxxxcxacasx",
-        Total: 1500,
-      },
-    },
-    {
-      ExchangeName: "margin14",
-      ExchangeAssets: {
-        Pair: "xasx",
-        Total: 1600,
-      },
-    },
-  ];
+  // console.log(data);
+  const [selectedTab, setSelectedTab] = useState(0);
+
+  const [selectedAssets, setSelectedAssets] = useState([]);
+
+  const handleChange = (event, newValue) => {
+    setSelectedTab(newValue);
+  };
+
+  // useEffect(() => {
+  //   setSelectedAssets(exchangeData[selectedTab].exchangeAssets);
+  // }, [selectedTab]);
+  // console.log(selectedAssets);
 
   const handleSortClick = (field) => {
     if (sort.field === field) {
@@ -149,7 +48,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
     setPage(newPage);
   };
 
-  const totalPages = Math.ceil(sortedData.length / rowsPerPage);
+  const totalPages = Math.ceil(sortedData?.length / rowsPerPage);
 
   const tableCellStyle = {
     whiteSpace: "normal",
@@ -185,7 +84,6 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
           mt: 3,
         }}
       >
-        <DashboardTabs exchangeData={exchangeData} />
         <table style={{ borderCollapse: "collapse" }}>
           <thead>
             <tr>
@@ -223,7 +121,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
           </thead>
           <tbody>
             {sortedData
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => (
                 <tr
                   key={index}

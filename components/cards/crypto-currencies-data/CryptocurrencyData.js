@@ -31,7 +31,7 @@ const CryptocurrencyData = (props) => {
     const layouts = [];
     let currentX = 0;
     let currentY = 0;
-    const numRows = Math.ceil(cryptocurrencies.length / 4);
+    const numRows = Math.ceil(cryptocurrencies?.length / 4);
 
     for (let row = 0; row < numRows; row++) {
       for (let col = 0; col < 4; col++) {
@@ -124,7 +124,7 @@ const CryptocurrencyData = (props) => {
         rowHeight={50}
         cols={{ lg: 4, md: 4, sm: 4, xs: 4, xxs: 4 }}
       >
-        {cryptocurrencies.map((crypto, index) => (
+        {cryptocurrencies?.map((crypto, index) => (
           <div key={index} style={boxStyle(index)}>
             <div style={headingStyle}>{crypto.asset}</div>
             <div style={textStyle}>{crypto.balance}</div>

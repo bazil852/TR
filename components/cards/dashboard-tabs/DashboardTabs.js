@@ -62,14 +62,14 @@ const DashboardTabs = ({ exchangeData }) => {
           ))}
         </Tabs>
       </Box>
-      <Box my={5}>
+      {/* <Box my={5}>
         <Typography variant="h6">
           Pair: {exchangeData[selectedTab].ExchangeAssets.Pair}
         </Typography>
         <Typography variant="h6">
           Total: {exchangeData[selectedTab].ExchangeAssets.Total}
         </Typography>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

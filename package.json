@@ -6,7 +6,6 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p $PORT",
-    
     "lint": "next lint"
   },
   "dependencies": {
@@ -27,7 +26,7 @@
     "ccxt": "^2.8.60",
     "chart.js": "^4.1.1",
     "dgram": "^1.0.1",
-    "dns": "^0.2.2",
+    "dns": "^0.1.2",
     "eslint": "8.28.0",
     "esm": "^3.2.25",
     "fs": "^0.0.1-security",
