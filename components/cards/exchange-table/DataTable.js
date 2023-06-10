@@ -1,22 +1,16 @@
-import { Box, Typography, Tabs, Tab } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, Typography } from "@mui/material";
+import { useState } from "react";
 import { Sort } from "../../../utils/icons";
 import NorthIcon from "@mui/icons-material/North";
 import SouthIcon from "@mui/icons-material/South";
-import DashboardTabs from "../dashboard-tabs/DashboardTabs";
 
-const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
+const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
   const [page, setPage] = useState(0);
   const [sort, setSort] = useState({ field: null, direction: null });
 
   // console.log(data);
-  const [selectedTab, setSelectedTab] = useState(0);
 
   const [selectedAssets, setSelectedAssets] = useState([]);
-
-  const handleChange = (event, newValue) => {
-    setSelectedTab(newValue);
-  };
 
   // useEffect(() => {
   //   setSelectedAssets(exchangeData[selectedTab].exchangeAssets);
@@ -73,7 +67,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
       <Box
         sx={{
           width: "49vw",
-          height: "700px",
+          minHeight: "700px",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",

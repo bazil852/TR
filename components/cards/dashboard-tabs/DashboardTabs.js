@@ -1,34 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Tabs, Tab, Typography, Box } from "@mui/material";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import { Tabs, Tab, Box } from "@mui/material";
+
 
 const DashboardTabs = ({ exchangeData }) => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
-  const [width, setWidth] = React.useState(globalThis?.innerWidth);
 
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
-
-  useEffect(() => {
-    const handleResize = () => setWidth(globalThis?.innerWidth);
-    globalThis?.addEventListener("resize", handleResize);
-    return () => globalThis?.removeEventListener("resize", handleResize);
-  }, []);
 
   return (
     <Box>
       <Box
         sx={{
           width: "49vw",
-          // width < 1300
-          //   ? isDrawerOpen
-          //     ? "72vw"
-          //     : "91vw"
-          //   : isDrawerOpen
-          //   ? "78vw"
-          //   : "93vw",
         }}
       >
         <Tabs

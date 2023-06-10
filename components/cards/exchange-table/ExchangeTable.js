@@ -22,6 +22,7 @@ const ccxt = require("ccxt");
 
 const ExchangeTable = (props) => {
   const exchanges = useSelector((state) => state.exchanges.value);
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
   const [tableData, setTableData] = useState([]);
   // const [loading, setLoading] = React.useState(true);
 
@@ -319,13 +320,7 @@ const ExchangeTable = (props) => {
       <Box
         sx={{
           width: "49vw",
-          // width < 1300
-          //   ? isDrawerOpen
-          //     ? "72vw"
-          //     : "91vw"
-          //   : isDrawerOpen
-          //   ? "78vw"
-          //   : "93vw",
+          margin: isDrawerOpen ? "auto" : "",
         }}
       >
         <Tabs
@@ -386,9 +381,10 @@ const ExchangeTable = (props) => {
             sx={{
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
+              alignItems: "stretch",
               flexWrap: "wrap",
               gap: "0.8rem",
+              minHeight: "700px",
             }}
           >
             <DataTable data={foundTableData} columns={columns} />
