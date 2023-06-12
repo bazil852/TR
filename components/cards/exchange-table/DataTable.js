@@ -1,8 +1,9 @@
 import { Box, Typography } from "@mui/material";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Sort } from "../../../utils/icons";
 import NorthIcon from "@mui/icons-material/North";
 import SouthIcon from "@mui/icons-material/South";
+import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
 
 const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
   const [page, setPage] = useState(0);
@@ -17,26 +18,53 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
   // }, [selectedTab]);
   // console.log(selectedAssets);
 
+  //commented code
+  // const handleSortClick = (field) => {
+  //   if (sort.field === field) {
+  //     setSort({
+  //       ...sort,
+  //       direction: sort.direction === "asc" ? "desc" : "asc",
+  //     });
+  //   } else {
+  //     setSort({ field, direction: "asc" });
+  //   }
+  // };
+
+  // const sortedData = sort.field
+  //   ? [...data].sort((a, b) => {
+  //       if (sort.direction === "asc") {
+  //         return a[sort.field] > b[sort.field] ? 1 : -1;
+  //       } else {
+  //         return a[sort.field] < b[sort.field] ? 1 : -1;
+  //       }
+  //     })
+  //   : data;
+
   const handleSortClick = (field) => {
-    if (sort.field === field) {
-      setSort({
-        ...sort,
-        direction: sort.direction === "asc" ? "desc" : "asc",
-      });
-    } else {
-      setSort({ field, direction: "asc" });
-    }
+    setSort((sortState) => ({
+      field,
+      direction:
+        sortState.field === field && sortState.direction === "asc"
+          ? "desc"
+          : "asc",
+    }));
   };
 
-  const sortedData = sort.field
-    ? [...data].sort((a, b) => {
-        if (sort.direction === "asc") {
-          return a[sort.field] > b[sort.field] ? 1 : -1;
-        } else {
-          return a[sort.field] < b[sort.field] ? 1 : -1;
+  const sortedData = useMemo(() => {
+    console.log(sort);
+    if (sort.field) {
+      return [...data].sort((a, b) => {
+        if (a[sort.field] === b[sort.field]) {
+          return 0;
         }
-      })
-    : data;
+        const asc = a[sort.field] > b[sort.field] ? 1 : -1;
+        return sort.direction === "asc" ? asc : -asc;
+      });
+    }
+    return data;
+  }, [data, sort]);
+
+  console.log("sortable", sortedData);
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage);
@@ -81,7 +109,7 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
         <table style={{ borderCollapse: "collapse" }}>
           <thead>
             <tr>
-              {columns.map((column) => (
+              {/* {columns.map((column) => (
                 <th key={column.field} style={{ paddingRight: "10px" }}>
                   <Box
                     sx={{
@@ -106,6 +134,60 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
                         onClick={() => handleSortClick(column.field)}
                       >
                         <Sort />
+                      </button>
+                    )}
+                  </Box>
+                </th>
+              ))} */}
+
+              {columns.map((column) => (
+                <th key={column.field} style={{ paddingRight: "10px" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      pb: 2,
+                    }}
+                  >
+                    <Typography sx={{ fontSize: "13px" }}>
+                      {column.title}
+                    </Typography>
+                    {column.sortable && (
+                      <button
+                        style={{
+                          background: "none",
+                          border: "none",
+                          margin: "0px 0px 0px 5px",
+                          padding: "0px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => handleSortClick(column.field)}
+                      >
+                        {sort.field === column.field ? (
+                          sort.direction === "asc" ? (
+                            <ArrowDownward
+                              sx={{
+                                fontSize: "15px !important",
+                                color: "white",
+                              }}
+                            />
+                          ) : (
+                            <ArrowUpward
+                              sx={{
+                                fontSize: "15px !important",
+                                color: "white",
+                              }}
+                            />
+                          )
+                        ) : (
+                          <ArrowDownward
+                            sx={{
+                              fontSize: "15px !important",
+                              color: "white",
+                            }}
+                          />
+                        )}
                       </button>
                     )}
                   </Box>
@@ -194,51 +276,6 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
                             ) : (
                               ""
                             )}
-                            {/* {row[column.field] !== 0 ? (
-                          row[column.field] > 0 ? (
-                            <span style={{ color: "green" }}>+</span>
-                          ) : (
-                            <span style={{ color: "red" }}>-</span>
-                          )
-                        ) : (
-                          <span
-                            style={{
-                              color: "white",
-                              paddingLeft: "15%",
-                            }}
-                          ></span>
-                        )}
-                        <Box
-                          sx={{
-                            color:
-                              row[column.field] !== 0
-                                ? row[column.field] > 0
-                                  ? "#4BD469"
-                                  : "#EB5757"
-                                : "white",
-                          }}
-                        >
-                          {Math.abs(row[column.field])}%
-                        </Box>
-                        {row[column.field] !== 0 ? (
-                          row[column.field] > 0 ? (
-                            <NorthIcon
-                              sx={{
-                                fontSize: "15px !important",
-                                color: "#4BD469",
-                              }}
-                            />
-                          ) : (
-                            <SouthIcon
-                              sx={{
-                                fontSize: "15px !important",
-                                color: "#EB5757",
-                              }}
-                            />
-                          )
-                        ) : (
-                          ""
-                        )} */}
                           </Box>
                         ) : (
                           <Box
@@ -251,7 +288,6 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
                             {row[column.field]}
                           </Box>
                         )}
-                        {/* {row[column.field]} */}
                       </td>
                     );
                   })}

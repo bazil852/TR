@@ -156,6 +156,7 @@ const ExchangeTable = (props) => {
       field: "asset",
       title: "Token",
       width: 108,
+      sortable: true,
       // renderHeader: () => {
       //   return <strong>{"Token"}</strong>;
       // },
@@ -197,6 +198,7 @@ const ExchangeTable = (props) => {
       field: "availableBalance",
       title: "Amount",
       width: 122,
+      sortable: true,
       // renderHeader: () => {
       //   return <strong>{"Amount"}</strong>;
       // },
@@ -205,6 +207,7 @@ const ExchangeTable = (props) => {
       field: "crossWalletBalance",
       width: 109,
       title: "Price",
+      sortable: true,
       // renderHeader: () => {
       //   return <strong>{"Price"}</strong>;
       // },
@@ -215,6 +218,7 @@ const ExchangeTable = (props) => {
       field: "balance",
       title: "Total",
       width: 110,
+      sortable: true,
       // renderHeader: () => {
       //   return <strong>{"Total"}</strong>;
       // },
