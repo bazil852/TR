@@ -39,7 +39,7 @@ const AllDeals = () => {
     );
 
     const strategyData = await strategyResponse.json();
-    console.log(strategyData.body);
+    console.log("UseEffect", strategyData.body);
 
     setStrategyData(
       strategyData.body?.filter((item) => item.strategy?.state === "on")
@@ -132,6 +132,35 @@ const AllDeals = () => {
       },
     ];
     setCardData(cardData);
+  };
+
+  const handleOnBotsRefresh = async () => {
+    const { user } = await getSession();
+    const strategyResponse = await fetch(
+      `/api/strategy/get-strategy-and-order?id=${user.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const strategyData = await strategyResponse.json();
+    console.log("UseEffect", strategyData.body);
+
+    setStrategyData(
+      strategyData.body?.filter((item) => item.strategy?.state === "on")
+    );
+  };
+
+  const handleOffStrategy = (id) => {
+    console.log(id, strategyData);
+    let newData = strategyData?.filter(
+      (item) => item.strategy?._id !== id && item.strategy?.state === "on"
+    );
+    console.log(newData);
+    setStrategyData(newData);
   };
 
   return (
@@ -230,7 +259,11 @@ const AllDeals = () => {
       </Grid>
       <Grid container>
         <Grid item xs={12}>
-          <DealTable strategy={strategyData} />
+          <DealTable
+            strategy={strategyData}
+            handleRefresh={handleOnBotsRefresh}
+            handleOffStrategy={handleOffStrategy}
+          />
         </Grid>
       </Grid>
     </Grid>

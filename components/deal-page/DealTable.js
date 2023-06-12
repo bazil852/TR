@@ -61,6 +61,55 @@ const DealTable = (props) => {
     },
   ];
 
+  const handleCancel = async (item) => {
+    console.log("cancel item", item);
+    let reqBody = item.strategy;
+    reqBody.state = "off";
+    const updatedStrategy = await fetch(
+      `/api/strategy/put-strategy?id=${item?.strategy._id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(reqBody),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(updatedStrategy);
+    if (updatedStrategy.ok) {
+      props.handleOffStrategy(item?.strategy._id);
+    } else {
+      console.error(
+        "Error:",
+        updatedStrategy.status,
+        updatedStrategy.statusText
+      );
+    }
+    // setTableRow(newData);
+
+    let url = "stop";
+
+    try {
+      const response = await fetch("https://dcabot1.herokuapp.com/" + url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // If you need to send a JSON body, uncomment the following line and replace '{}' with the appropriate JSON object
+        body: JSON.stringify({ strategyId: item?.strategy._id }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Success:", data);
+      } else {
+        console.error("Error:", response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   const handleButtonClick = (buttonName, cardId) => {
     switch (buttonName) {
       case "Cancel":
@@ -81,6 +130,7 @@ const DealTable = (props) => {
         console.log(`Edit button clicked on card with id ${cardId}`);
         break;
       case "Refresh":
+        props.handleRefresh();
         console.log(`Refresh button clicked on card with id ${cardId}`);
         break;
       default:
@@ -126,6 +176,15 @@ const DealTable = (props) => {
   return (
     <Grid container spacing={1}>
       {props?.strategy?.map((data, index) => {
+        console.log(data);
+        let noOfOrders = data?.order?.length;
+        let sumExecutedQty = 0;
+        let sumPrice = 0;
+
+        data?.order?.forEach((item) => {
+          sumExecutedQty += parseFloat(item.executedQty);
+          sumPrice += parseFloat(item.price);
+        });
         let totalProfit = data?.order?.reduce((accumulator, currentObject) => {
           return accumulator + currentObject.totalProfit;
         }, 0);
@@ -185,7 +244,7 @@ const DealTable = (props) => {
                     mt: 5,
                   }}
                 >
-                  {labels.map((label, index) => (
+                  {/* {labels.map((label, index) => (
                     <Circle
                       key={index}
                       index={index}
@@ -193,7 +252,7 @@ const DealTable = (props) => {
                       radius={105}
                       label={label}
                     />
-                  ))}
+                  ))} */}
                   <GaugeChart
                     id="gauge-chart1"
                     nrOfLevels={100}
@@ -230,14 +289,14 @@ const DealTable = (props) => {
                     }}
                   >
                     <Typography fontSize={"0.8rem"}>
-                      Order : {data.strategy?.maxOrders}
+                      Order : {noOfOrders}
                     </Typography>
                     <Typography fontSize={"0.8rem"}>
-                      Price : {data.strategy?.price}{" "}
+                      Price : {sumPrice}{" "}
                     </Typography>
-                    <Typography fontSize={"0.8rem"}>
+                    {/* <Typography fontSize={"0.8rem"}>
                       Volume : {data.strategy?.maxVol}
-                    </Typography>
+                    </Typography> */}
                   </Box>
                 </Box>
 
@@ -257,16 +316,20 @@ const DealTable = (props) => {
                   }}
                 >
                   <Typography fontSize={"1rem"}>
-                    Total Volume : {data.totalVolume}$
+                    Total Volume : {sumExecutedQty}
                   </Typography>
                   <Typography fontSize={"1rem"}>
                     P&L :{" "}
                     {!isNaN(
-                      (totalProfit - minProfit * data?.order?.length) /
+                      (
+                        (totalProfit - minProfit * data?.order?.length) /
                         ((maxProfit - minProfit) * data?.order?.length)
+                      ).toFixed(2)
                     )
-                      ? (totalProfit - minProfit * data?.order?.length) /
-                        ((maxProfit - minProfit) * data?.order?.length)
+                      ? (
+                          (totalProfit - minProfit * data?.order?.length) /
+                          ((maxProfit - minProfit) * data?.order?.length)
+                        ).toFixed(2)
                       : 0}
                     %
                   </Typography>
@@ -312,12 +375,13 @@ const DealTable = (props) => {
                           backgroundColor: "#cc0000b3",
                         },
                       }}
-                      onClick={() => handleButtonClick("Cancel", index)}
+                      // onClick={() => handleButtonClick("Cancel", index)}
+                      onClick={() => handleCancel(data)}
                     >
                       Cancel
                     </Button>
                   </Box>
-                  <Box>
+                  {/* <Box>
                     <Button
                       sx={{
                         background: "#1D8A36",
@@ -349,7 +413,7 @@ const DealTable = (props) => {
                         <Typography fontSize={"0.8rem"}>Funds</Typography>
                       </Box>
                     </Button>
-                  </Box>
+                  </Box> */}
                   <Box>
                     <Box
                       sx={{
@@ -437,9 +501,9 @@ const DealTable = (props) => {
                           background: "linear-gradient(#6a477db4,#692e75aa)",
                         },
                       }}
-                      // onClick={() => {
-                      //   router.push(`/bot-edit?id=${data?._id}`);
-                      // }}
+                      onClick={() => {
+                        router.push(`/bot-edit?id=${data.strategy._id}`);
+                      }}
                     >
                       <EditDeals style={{ marginRight: "3px" }} />
                       Edit
