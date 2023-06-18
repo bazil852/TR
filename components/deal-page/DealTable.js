@@ -26,6 +26,7 @@ import { useRouter } from "next/router";
 const GaugeChart = dynamic(() => import("react-gauge-chart"), { ssr: false });
 
 const DealTable = (props) => {
+  console.log(props.strategy);
   const router = useRouter();
   console.log(props);
   // const [sortKey, setSortKey] = useState("item");
@@ -176,7 +177,11 @@ const DealTable = (props) => {
   return (
     <Grid container spacing={1}>
       {props?.strategy?.map((data, index) => {
-        console.log(data);
+        console.log(
+          data.strategy?.dealTime[data?.strategy?.dealTime?.length - 1]
+        );
+        let latestDeal =
+          data.strategy?.dealTime[data?.strategy?.dealTime?.length - 1];
         let noOfOrders = data?.order?.length;
         let sumExecutedQty = 0;
         let sumPrice = 0;
@@ -292,7 +297,7 @@ const DealTable = (props) => {
                       Order : {noOfOrders}
                     </Typography>
                     <Typography fontSize={"0.8rem"}>
-                      Price : {sumPrice}{" "}
+                      Price : {latestDeal?.price}{" "}
                     </Typography>
                     {/* <Typography fontSize={"0.8rem"}>
                       Volume : {data.strategy?.maxVol}
@@ -316,11 +321,11 @@ const DealTable = (props) => {
                   }}
                 >
                   <Typography fontSize={"1rem"}>
-                    Total Volume : {sumExecutedQty}
+                    Total Volume : {latestDeal?.totalVolume}
                   </Typography>
                   <Typography fontSize={"1rem"}>
-                    P&L :{" "}
-                    {!isNaN(
+                    P&L : {latestDeal?.profit}
+                    {/* {!isNaN(
                       (
                         (totalProfit - minProfit * data?.order?.length) /
                         ((maxProfit - minProfit) * data?.order?.length)
@@ -330,7 +335,7 @@ const DealTable = (props) => {
                           (totalProfit - minProfit * data?.order?.length) /
                           ((maxProfit - minProfit) * data?.order?.length)
                         ).toFixed(2)
-                      : 0}
+                      : 0} */}
                     %
                   </Typography>
                 </Box>
