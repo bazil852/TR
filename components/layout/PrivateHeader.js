@@ -462,7 +462,10 @@ export default function PrivateHeader({ title, current, Component }) {
                 },
               }}
               onClick={() => {
-                signOut({ callbackUrl: "http://localhost:3000/login" });
+                localStorage.removeItem("token");
+                router.push("login");
+
+                // signOut({ callbackUrl: "http://localhost:3000/login" });
               }}
             >
               <LogoutIcon style={{ color: "white" }} />

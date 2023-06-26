@@ -60,24 +60,48 @@ const Login = () => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    const res = await signIn("credentials", {
-      email: data.get("email"),
-      password: data.get("password"),
-      redirect: false,
-    });
-
-    if (!res.error) {
-      const session = await getSession();
-      if (session.user.accountVerified === false) {
-        // router.push({pathname: '/verify-token', query: {email: session.user.email}});
-        router.push("/verify-token");
-      } else {
-        fetchAssetsFromUserInfo(true);
-        router.push("/dashboard?selected=0");
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}users/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.get("email"),
+          password: data.get("password"),
+        }),
       }
+    );
+
+    const responseData = await response.json();
+    localStorage.setItem("token", responseData);
+
+    if (!response.error) {
+      fetchAssetsFromUserInfo(true);
+      router.push("/dashboard?selected=0");
     } else {
       setError("Please enter correct email or password");
     }
+
+    // const res = await signIn("credentials", {
+    //   email: data.get("email"),
+    //   password: data.get("password"),
+    //   redirect: false,
+    // });
+
+    // if (!res.error) {
+    //   const session = await getSession();
+    //   if (session.user.accountVerified === false) {
+    //     // router.push({pathname: '/verify-token', query: {email: session.user.email}});
+    //     router.push("/verify-token");
+    //   } else {
+    //     fetchAssetsFromUserInfo(true);
+    //     router.push("/dashboard?selected=0");
+    //   }
+    // } else {
+    //   setError("Please enter correct email or password");
+    // }
   };
 
   const fetchAssetsFromUserInfo = async (save) => {
