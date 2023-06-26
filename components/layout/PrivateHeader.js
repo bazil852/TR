@@ -1,47 +1,45 @@
 import * as React from "react";
-import { styled, useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import { styled } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import CssBaseline from "@mui/material/CssBaseline";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
+import {
+  Box,
+  useTheme,
+  List,
+  Typography,
+  CssBaseline,
+  IconButton,
+  ListItem,
+  Container,
+  Button,
+} from "@mui/material";
+
 import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsIcon from "@mui/icons-material/Settings";
 import CloseIcon from "@mui/icons-material/Close";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
+import MenuIcon from "@mui/icons-material/Menu";
+
 import { useDispatch } from "react-redux";
 import { setWidth } from "../../slices/dashboardWidthController-slice";
 import { useRouter } from "next/router";
 import {
-  Logo,
+  Gift,
   Dash,
   BlueDash,
   ClosedMenuIcon,
-  TradingBotsIcon,
   HandShake,
   VgridBot,
   VdcaBot,
-  History,
   Lock,
   BlueLock,
   BlueHandShake,
-  BlueTradingBotsIcon,
-  BlueHistory,
+  TradingBotsIcon,
 } from "../../utils/icons";
 import { signOut } from "next-auth/react";
-import CryptoCard from "../cards/header-cards/CryptoCard";
-import AdminProfileCard from "../cards/admin-profile-card/AdminProfileCard";
+
 import AdminProfileCardSideBar from "../cards/admin-profile-card/AdminProfileCardSideBar";
-import SearchBar from "../widgets/SearchBar";
-import { Collapse } from "@mui/material";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import NavBar from "../navbar/NavBar";
 
 const drawerWidth = 240;
 const openedMixin = (theme) => ({
@@ -107,7 +105,7 @@ export default function PrivateHeader({ title, current, Component }) {
   const getListItemStyle = (index) => {
     return {
       color: selectedItem === index ? "#9079F6" : "white",
-      width: index === 2 && open ? "75%" : "100%",
+      width: "100%",
       pl: 1,
       minHeight: 45,
       cursor: "pointer",
@@ -125,15 +123,12 @@ export default function PrivateHeader({ title, current, Component }) {
         opacity: 1,
       },
       "&:hover": {
-        backgroundColor: !open ? "none" : "#473956",
-        borderRadius: index === 2 && open ? "0px 5px 5px 0px" : "0px",
+        backgroundColor: !open ? "none" : "rgba(255,255,255,0.1)",
+        borderRadius: "0px",
       },
     };
   };
 
-  const handleDropdownClick = () => {
-    setToggle(!toggle);
-  };
   const items = [
     {
       index: 0,
@@ -143,40 +138,35 @@ export default function PrivateHeader({ title, current, Component }) {
     },
     {
       index: 1,
-      title: "My Exchanges",
+      title: "Strategy",
       icon: selectedItem === 1 ? BlueLock : Lock,
       path: "/my-exchanges",
     },
-    // {
-    //   index: 2,
-    //   title: "Trading Bots",
-    //   icon: selectedItem === 2 ? BlueTradingBotsIcon : TradingBotsIcon,
-    //   path: "/trading-bots",
-    // },
+
     {
-      index: 3,
-      title: "VDCA Bot",
-      icon: selectedItem === 3 ? VdcaBot : VdcaBot,
+      index: 2,
+      title: "DCA Bot",
+      icon: selectedItem === 2 ? VdcaBot : VdcaBot,
       path: "/dca-bots",
     },
     {
-      index: 4,
-      title: "Bot Config",
-      icon: selectedItem === 4 ? VgridBot : VgridBot,
+      index: 3,
+      title: "Deals",
+      icon: selectedItem === 3 ? VgridBot : VgridBot,
       path: "/bot-config",
     },
     {
-      index: 5,
-      title: "My Deals",
+      index: 4,
+      title: "Exchanges API",
       icon: selectedItem === 5 ? BlueHandShake : HandShake,
       path: "/AllDeals",
     },
-    // {
-    //   index: 6,
-    //   title: "History",
-    //   icon: selectedItem === 6 ? BlueHistory : History,
-    //   path: "/history",
-    // },
+    {
+      index: 5,
+      title: "Account",
+      icon: selectedItem === 5 ? BlueHandShake : TradingBotsIcon,
+      path: "/AllDeals",
+    },
   ];
 
   React.useEffect(() => {
@@ -209,11 +199,7 @@ export default function PrivateHeader({ title, current, Component }) {
             "&::-webkit-scrollbar": {
               display: "none",
             },
-            background: `${
-              open
-                ? "linear-gradient(to bottom left, #29084D , #191919)"
-                : " linear-gradient(to bottom left, #19191985 10% , #191919 ) "
-            }`,
+            background: `${open ? "#131414" : " rgba(0,0,0,0.8)"}`,
           },
         }}
         variant="permanent"
@@ -222,25 +208,16 @@ export default function PrivateHeader({ title, current, Component }) {
         <DrawerHeader
           sx={{ display: "flex", justifyContent: "space-between", p: 1 }}
         >
-          {/* <Typography
-            sx={{
-              display: `${open ? "inline-block" : "none"}`,
-              fontWeight: "600",
-              fontSize: "20px",
-              paddingLeft: "15px",
-              margin: "0px",
-            }}
-          >
-            VeBot
-          </Typography> */}
           {!open ? (
-            <IconButton onClick={handleDrawerOpen} sx={{ left: -7 }}>
-              <ClosedMenuIcon />
+            <IconButton onClick={handleDrawerOpen} sx={{ left: -5 }}>
+              <MenuIcon />
             </IconButton>
           ) : (
             <>
-              <Logo />
-              <IconButton onClick={handleDrawerClose}>
+              <IconButton
+                onClick={handleDrawerClose}
+                sx={{ position: "absolute", right: 5 }}
+              >
                 {theme.direction === "rtl" ? (
                   <ChevronRightIcon sx={{ color: "#FFFFFF" }} />
                 ) : (
@@ -249,100 +226,62 @@ export default function PrivateHeader({ title, current, Component }) {
               </IconButton>
             </>
           )}
-          {/* <img
-              style={{
-                cursor: "pointer",
-                // flexWrap:'nowrap',
-                // marginLeft:'50%'
-              }}
-              src="https://i.postimg.cc/wBfYXdvq/Group-1000009101-1.png"
-              width={130}
-            ></img> */}
-          {/* https://i.postimg.cc/HnrK4JN3/Group-1000009101.png */}
-          {/* {!open ? (
-            <IconButton
-              onClick={handleDrawerOpen}
-              sx={{ left: selectedItem === 0 ? -7 : -3.5 }}
-            >
-              <MenuIcon
-                sx={{
-                  color: "white",
-                }}
-              />
-            </IconButton>
-          ) : (
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === "rtl" ? (
-                <ChevronRightIcon sx={{ color: "#FFFFFF" }} />
-              ) : (
-                <CloseIcon sx={{ color: "#FFFFFF" }} />
-              )}
-            </IconButton>
-          )} */}
         </DrawerHeader>
-        {/* <Box
+        <Box
           sx={{
-            display: `${open ? "inline-block" : "none"}`,
-            padding: "5px 15px",
+            display: open ? "flex" : "none",
+            flexDirection: "column",
+            gap: 1,
+            pl: 3,
           }}
         >
-          <SearchBar />
-        </Box> */}
-        <List sx={{ mb: "40vh", mt: open ? 2 : 0 }}>
+          <Box>
+            <Typography
+              sx={{
+                fontSize: "0.9rem",
+                fontFamily: "Barlow, san-serif",
+                color: "#ffffff",
+              }}
+            >
+              Real Account Balance
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "0.9rem",
+                fontFamily: "Barlow, san-serif",
+                color: "#ffffff",
+                fontWeight: 600,
+              }}
+            >
+              $1250
+            </Typography>
+          </Box>
+          <Box>
+            <Typography
+              sx={{
+                fontSize: "0.9rem",
+                fontFamily: "Barlow, san-serif",
+                color: "#ffffff",
+              }}
+            >
+              Paper Trading Balance
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "0.9rem",
+                fontFamily: "Barlow, san-serif",
+                color: "#ffffff",
+                fontWeight: 600,
+              }}
+            >
+              $1250
+            </Typography>
+          </Box>
+        </Box>
+
+        <List sx={{ mt: open ? 2 : 0, mb: 6 }}>
           {items.map((item) => (
             <div key={item.index}>
-              {item.index === 0 && open && (
-                <Typography
-                  sx={{
-                    fontWeight: "500",
-                    fontSize: "18px",
-                    paddingLeft: "15px",
-                    margin: "0px",
-                    marginTop: "5px",
-                  }}
-                >
-                  Market Dashboard
-                </Typography>
-              )}
-              {item.index === 3 && open && (
-                <Typography
-                  sx={{
-                    fontWeight: "500",
-                    fontSize: "18px",
-                    paddingLeft: "15px",
-                    margin: "0px",
-                    marginTop: "5px",
-                  }}
-                >
-                  Trading Bot
-                </Typography>
-              )}
-              {item.index === 4 && open && (
-                <Typography
-                  sx={{
-                    fontWeight: "500",
-                    fontSize: "18px",
-                    paddingLeft: "15px",
-                    margin: "0px",
-                    marginTop: "5px",
-                  }}
-                >
-                  Configuration
-                </Typography>
-              )}
-              {item.index === 5 && open && (
-                <Typography
-                  sx={{
-                    fontWeight: "500",
-                    fontSize: "18px",
-                    paddingLeft: "15px",
-                    margin: "0px",
-                    marginTop: "5px",
-                  }}
-                >
-                  Deals
-                </Typography>
-              )}
               <ListItem
                 sx={getListItemStyle(item.index)}
                 onClick={() => handleClick(item)}
@@ -357,50 +296,175 @@ export default function PrivateHeader({ title, current, Component }) {
                 >
                   <item.icon />
                 </ListItemIcon>
-                <ListItemText
-                  primary={item.title}
-                  sx={{ display: !open ? "none" : "" }}
-                />
-              </ListItem>
-              {/* {item.title === "Trading Bots" && (
-                <div
-                  onClick={handleDropdownClick}
-                  style={{
-                    position: "absolute",
-                    right: "20px",
-                    top: "118px",
-                    display: open ? "inline-block" : "none",
-                  }}
-                >
-                  {toggle ? (
-                    <ExpandLess style={{ color: "white", cursor: "pointer" }} />
-                  ) : (
-                    <ExpandMore style={{ color: "white", cursor: "pointer" }} />
-                  )}
-                </div>
-              )}
-              {item.title === "Trading Bots" && (
-                <Collapse in={toggle} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    <ListItem
-                      sx={getListItemStyle(3)}
-                      onClick={() => router.push("/dca-bots?selected=3")}
+                {item.title === "Strategy" ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        display: open ? "flex" : "none",
+                        fontFamily: "Barlow, san-serif",
+                      }}
                     >
-                      <ListItemIcon sx={{ pl: 4, pr: 2 }}>
-                        <VdcaBot />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={"VDCA Bot"}
-                        sx={{ display: !open ? "none" : "" }}
-                      />
-                    </ListItem>
-                  </List>
-                </Collapse>
-              )} */}
+                      {item.title}
+                    </Typography>
+                    <Box
+                      sx={{
+                        background: "linear-gradient(to right,#790D83,#7A5CFF)",
+                        fontWeight: "bold",
+                        display: open ? "flex" : "none",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: 1,
+                        cursor: "pointer",
+                        ml: 4,
+                        height: 20,
+                        width: 20,
+                      }}
+                    >
+                      +
+                    </Box>
+                  </Box>
+                ) : item.title === "DCA Bot" ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        display: open ? "flex" : "none",
+                        fontFamily: "Barlow, san-serif",
+                      }}
+                    >
+                      {item.title}
+                    </Typography>
+                    <Box
+                      sx={{
+                        background: "linear-gradient(to right,#790D83,#7A5CFF)",
+                        fontWeight: "bold",
+                        display: open ? "flex" : "none",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: 1,
+                        cursor: "pointer",
+                        ml: 4,
+                        height: 20,
+                        width: 20,
+                      }}
+                    >
+                      +
+                    </Box>
+                  </Box>
+                ) : (
+                  <Typography
+                    sx={{
+                      display: open ? "flex" : "none",
+                      fontFamily: "Barlow, san-serif",
+                    }}
+                  >
+                    {item.title}
+                  </Typography>
+                )}
+              </ListItem>
             </div>
           ))}
         </List>
-        <List>
+        <Box mb={"40vh"} display={open ? "inline-block" : "none"}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Gift />
+            <Typography
+              sx={{
+                fontSize: 16,
+                fontFamily: "Barlow, san-serif",
+                color: "#5156BE",
+                fontWeight: 500,
+                mt: 1.5,
+              }}
+            >
+              Unlimited Access
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: 14,
+                fontFamily: "Barlow, san-serif",
+                color: "#ffffff",
+                mt: 2.5,
+              }}
+            >
+              Upgrade your plan
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: 14,
+                fontFamily: "Barlow, san-serif",
+                color: "#ffffff",
+              }}
+            >
+              from a Free trial to
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: 14,
+                fontFamily: "Barlow, san-serif",
+                color: "#ffffff",
+              }}
+            >
+              'Buisness Plan'
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mt: 2,
+            }}
+          >
+            <Button
+              sx={{
+                background: "linear-gradient(to right,#790D83,#7A5CFF)",
+                textTransform: "none",
+                border: "none",
+                transition: "transform 0.2s",
+                borderRadius: "5px",
+                padding: "8px 15px",
+                "&:hover": {
+                  transform: "scale(0.95)",
+                  backgroundColor: "linear-gradient(to right,#790D83,#7A5CFF)",
+                  cursor: "pointer",
+                },
+              }}
+            >
+              <Typography sx={{ color: "white", fontSize: "13px" }}>
+                Upgrade Now
+              </Typography>
+            </Button>
+          </Box>
+        </Box>
+        {/* <List>
           <ListItem
             sx={{
               display: `${open ? "flex" : "none"}`,
@@ -474,77 +538,18 @@ export default function PrivateHeader({ title, current, Component }) {
           <ListItem sx={{ display: `${open ? "block" : "none"}`, mt: 4 }}>
             <AdminProfileCardSideBar />
           </ListItem>
-        </List>
+        </List> */}
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3, pt: 0 }}>
-        {/* <DrawerHeader /> */}
-        <Box
-          open={open}
-          sx={{
-            background: "none",
-            boxShadow: 0,
-          }}
-        >
-          <Box>
-            <IconButton
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{
-                marginRight: 5,
-                color: "#FFFFFF",
-                ...(open && { display: "none" }),
-              }}
-            ></IconButton>
-            <Grid
-              sx={{ pt: 2 }}
-              container
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Grid item xs={4}>
-                <Typography
-                  variant="h2"
-                  component="div"
-                  color="#FFFFFF"
-                  fontSize={30}
-                  fontWeight={600}
-                  sx={{ cursor: "pointer", ml: 1 }}
-                >
-                  {title}
-                </Typography>
-              </Grid>
-              <Grid item xs={8}>
-                <Grid container justifyContent="flex-end">
-                  <Grid item>
-                    <Grid container spacing={2} item>
-                      <Grid item>
-                        <CryptoCard title="Real Summary Balance" />
-                      </Grid>
-
-                      {/* <Grid item>
-                        <CryptoCard
-                          title="Paper Trading Balance"
-                          rate="B 1 2 3 B 1 2 3 $ 1 2 3"
-                          percentage="B 1 2 3 B 1 2 3 $ 1 2 3"
-                        />
-                      </Grid> */}
-                      <Grid item>
-                        <AdminProfileCard />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
+      <Box sx={{ position: "fixed", minWidth: "100%", zIndex: 1000 }}>
+        <NavBar />
+      </Box>
+      <Container>
         {Component && (
           <div>
             <Component />
           </div>
         )}
-      </Box>
+      </Container>
     </Box>
   );
 }

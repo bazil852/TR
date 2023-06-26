@@ -65,8 +65,11 @@ import Auth from "../assets/icons/Auth.svg";
 import NavBarLogo from "../assets/icons/navBarLogo.svg";
 import Logo from "../assets/icons/Logo.svg";
 import ClosedMenuIcon from "../assets/icons/MenuIcon.svg";
-
+import Video from "../assets/icons/video.svg";
+import Gift from "../assets/icons/gift.svg";
 export {
+  Gift,
+  Video,
   ClosedMenuIcon,
   Logo,
   NavBarLogo,

@@ -1,22 +1,9 @@
-import { DataGrid, GridColDef, DataGridSortIcon } from "@mui/x-data-grid";
 import React from "react";
 import { useState } from "react";
-import Typography from "@mui/material/Typography";
-import { Box, IconButton, Tabs, Tab } from "@mui/material";
-import SearchBar from "../../widgets/SearchBar";
-import Checkbox from "@mui/material/Checkbox";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import DashboardTabs from "../dashboard-tabs/DashboardTabs";
-import { useSelector, useDispatch } from "react-redux";
-
-import { signIn, getSession, useSession } from "next-auth/react";
-import { Sort } from "../../../utils/icons";
+import { Box, CircularProgress } from "@mui/material";
+import { useSelector } from "react-redux";
 import DataTable from "./DataTable";
 import CryptocurrencyData from "../crypto-currencies-data/CryptocurrencyData";
-
-import { CircularProgress } from "@mui/material";
-
-import Button from "@mui/material/Button";
 
 const ccxt = require("ccxt");
 
@@ -24,25 +11,8 @@ const ExchangeTable = (props) => {
   const exchanges = useSelector((state) => state.exchanges.value);
   const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
   const [tableData, setTableData] = useState([]);
-  // const [loading, setLoading] = React.useState(true);
 
   const [inputSearch, setInputSearch] = useState("");
-
-  // React.useEffect(() => {
-  //   let updatedAssets = props.assets?.map((item) => {
-  //     return {
-  //       ...item,
-  //       crossWalletBalance: parseFloat(item.crossWalletBalance).toFixed(2),
-  //       availableBalance: parseFloat(item.availableBalance).toFixed(2),
-  //       balance: parseFloat(item.balance).toFixed(2),
-  //     };
-  //   });
-  //   setTableData(updatedAssets);
-  //   // console.log(updatedAssets);
-  //   if (updatedAssets.length !== 0) {
-  //     setLoading(false);
-  //   }
-  // }, [props.assets]);
 
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -68,160 +38,33 @@ const ExchangeTable = (props) => {
 
   console.log("asset", selectedAssets);
 
-  // const columnst = [
-  //   {
-  //     field: "asset",
-  //     headerName: "Token",
-  //     width: 100,
-  //     disableColumnMenu: true,
-  //     sortIcon: (
-  //       <img src={Sort} alt="sort arrow icon" style={{ marginLeft: 4 }} />
-  //     ),
-  //   },
-  //   {
-  //     field: "share",
-  //     headerName: "Share",
-  //     width: 70,
-  //     disableColumnMenu: true,
-  //   },
-  //   {
-  //     field: "change",
-  //     headerName: "Change (24h)",
-  //     width: 120,
-  //     disableColumnMenu: true,
-  //   },
-  //   // renderCell: (cellValues) => {
-  //   if (cellValues.value.charAt(0) === "+") {
-  //     return (
-  //       <div style={{ color: "#4BD469" }}>
-  //         {cellValues.value}
-  //         <NorthIcon fontSize="6px" />
-  //       </div>
-  //     );
-  //   } else {
-  //     return (
-  //       <div style={{ color: "#EB5757" }}>
-  //         {cellValues.value}
-  //         <SouthIcon fontSize="6px" />
-  //       </div>
-  //     );
-  //   }
-  // },
-
-  //   {
-  //     field: "crossWalletBalance",
-  //     headerName: "Price",
-  //     width: 70,
-  //     disableColumnMenu: true,
-  //   },
-  //   {
-  //     field: "availableBalance",
-  //     headerName: "Amount",
-  //     width: 80,
-  //     disableColumnMenu: true,
-
-  //     // renderCell: (cellValues) => {
-  //     //   // let newValue = cellValues.value.split(" ");
-  //     //   return (
-  //     //     <div
-  //     //       style={{
-  //     //         display: "flex",
-  //     //         flexDirection: "column",
-  //     //       }}
-  //     //     >
-  //     //       <div>{cellValues}</div>
-  //     //     </div>
-  //     //   );
-  //     // },
-  //   },
-  //   {
-  //     field: "balance",
-  //     headerName: "Total",
-  //     width: 70,
-  //     disableColumnMenu: true,
-  //   },
-  // ];
-
-  // const columns = [
-  //   { field: "token", title: "Token", sortable: true },
-  //   { field: "share", title: "Share", sortable: true },
-  //   { field: "change", title: "Change (24h)", sortable: true },
-  //   { field: "price", title: "Price", sortable: true },
-  //   { field: "amount", title: "Amount", sortable: true },
-  //   { field: "total", title: "Total", sortable: true },
-  // ];
-
   const columns = [
     {
       field: "asset",
-      title: "Token",
-      width: 108,
-      sortable: true,
-      // renderHeader: () => {
-      //   return <strong>{"Token"}</strong>;
-      // },
+      title: "TOKEN",
+      width: 150,
+      // sortable: true,
     },
-    // {
-    //   field: "share",
-    //   headerName: "Share",
-    //   width: 108,
-    //   renderHeader: () => {
-    //     return <strong>{"Share"}</strong>;
-    //   },
-    // },
-    // {
-    //   field: "change",
-    //   headerName: "Change (24h)",
-    //   width: 165,
-    //   renderHeader: () => {
-    //     return <strong>{"Change (24h)"}</strong>;
-    //   },
-    // renderCell: (cellValues) => {
-    //   if (cellValues.value.charAt(0) === "+") {
-    //     return (
-    //       <div style={{ color: "#4BD469" }}>
-    //         {cellValues.value}
-    //         <NorthIcon fontSize="6px" />
-    //       </div>
-    //     );
-    //   } else {
-    //     return (
-    //       <div style={{ color: "#EB5757" }}>
-    //         {cellValues.value}
-    //         <SouthIcon fontSize="6px" />
-    //       </div>
-    //     );
-    //   }
-    // },
-    // },
+
     {
       field: "availableBalance",
-      title: "Amount",
-      width: 122,
-      sortable: true,
-      // renderHeader: () => {
-      //   return <strong>{"Amount"}</strong>;
-      // },
+      title: "AMOUNT",
+      width: 100,
+      // sortable: true,
     },
     {
       field: "crossWalletBalance",
-      width: 109,
-      title: "Price",
-      sortable: true,
-      // renderHeader: () => {
-      //   return <strong>{"Price"}</strong>;
-      // },
+      width: 100,
+      title: "ALLOCATION",
+      // sortable: true,
     },
 
-    { field: "change", title: "Change (24h)", sortable: true },
+    { field: "change", title: "CHANGE", width: 100 },
     {
       field: "balance",
-      title: "Total",
-      width: 110,
-      sortable: true,
-      // renderHeader: () => {
-      //   return <strong>{"Total"}</strong>;
-      // },
+      title: "VALUE",
+      width: 100,
+      // sortable: true,
     },
   ];
 
@@ -250,7 +93,7 @@ const ExchangeTable = (props) => {
           justifyContent: "space-between",
         }}
       >
-        <Box
+        {/* <Box
           sx={{
             display: "flex",
             alignItems: "center",
@@ -298,7 +141,7 @@ const ExchangeTable = (props) => {
           <Typography sx={{ fontWeight: 600, fontSize: "18px" }}>
             Portfolio Summary
           </Typography>
-        </Box>
+        </Box> */}
         {/* <Box>
           <Button
             sx={{
@@ -321,7 +164,7 @@ const ExchangeTable = (props) => {
         </Box> */}
       </Box>
 
-      <Box
+      {/* <Box
         sx={{
           width: "49vw",
           margin: isDrawerOpen ? "auto" : "",
@@ -357,7 +200,7 @@ const ExchangeTable = (props) => {
             />
           ))}
         </Tabs>
-      </Box>
+      </Box> */}
 
       <Box
         sx={{

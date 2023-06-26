@@ -1,42 +1,49 @@
-import WalletConnect from "../components/cards/wallet-connect/WalletConnect";
 import PrivateHeader from "../components/layout/PrivateHeader";
 import React, { useEffect, useState } from "react";
 import AggregateAccountBalance from "../components/charts/AggregateAccountBalance";
-// import TileChart from "../components/charts/TileChart";
-import { Box, Container, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import MyExchange from "../components/cards/my-exchanges/MyExchange";
+import { Box, Modal, Typography, Backdrop, Fade, Grid } from "@mui/material";
+import ReactPlayer from "react-player";
 import ExchangeTable from "../components/cards/exchange-table/ExchangeTable";
 
-import { signIn, getSession, useSession } from "next-auth/react";
-import CryptoRates from "../components/cards/crypto-rates/CryptoRates";
-import TotalValue from "../components/cards/total-value/TotalValue";
-import CryptocurrencyData from "../components/cards/crypto-currencies-data/CryptocurrencyData";
+import { getSession } from "next-auth/react";
+import TotalPortfolioAndInvestedDeals from "../components/cards/total-portfolio-invested-deals/TotalPortfolioAndInvestedDeals";
+
+import { Video } from "../utils/icons";
+import TotalAndInvestedDeals from "../components/cards/total-deals-total-invested-deals/TotalAndInvestedDeals";
+import { useSelector } from "react-redux";
+import ConsolidatedPortfolio from "../components/cards/consolidated-invested-portfolio/ConsolidatedPortfolio";
+import InvestedPortfolio from "../components/cards/consolidated-invested-portfolio/InvestedPortfolio";
+import SpotFuturePieChart from "../components/cards/spot-future-pie-chart/SpotFuturePieChart";
 
 const ccxt = require("ccxt");
 
 const DashboardComponent = () => {
+  const [open, setOpen] = useState(false);
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   const cryptoSymbols = [
-    "BTC", // Bitcoin
-    "ETH", // Ethereum
-    "XRP", // Ripple
-    "BCH", // Bitcoin Cash
-    "LTC", // Litecoin
-    "ADA", // Cardano
-    "DOT", // Polkadot
-    "LINK", // Chainlink
-    "XLM", // Stellar
-    "DOGE", // Dogecoin
-    "USDT", // Tether
-    "BNB", // Binance Coin
-    "XMR", // Monero
-    "UNI", // Uniswap
-    "EOS", // EOS
-    "TRX", // TRON
-    "XTZ", // Tezos
-    "VET", // VeChain
-    "DASH", // Dash
-    "ZEC", // Zcash
+    "BTC",
+    "ETH",
+    "XRP",
+    "BCH",
+    "LTC",
+    "ADA",
+    "DOT",
+    "LINK",
+    "XLM",
+    "DOGE",
+    "USDT",
+    "BNB",
+    "XMR",
+    "UNI",
+    "EOS",
+    "TRX",
+    "XTZ",
+    "VET",
+    "DASH",
+    "ZEC",
   ];
 
   const [loading, setLoading] = useState(true);
@@ -71,8 +78,6 @@ const DashboardComponent = () => {
 
     console.log(exchangesAssets);
 
-    // const responseRate = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${symbols}&vs_currencies=usd`);
-
     if (data.body.exchanges[0]) {
       const { USDMClient } = require("binance");
       const baseUrl = "https://testnet.binancefuture.com";
@@ -91,7 +96,6 @@ const DashboardComponent = () => {
           filteredAssets = result.filter(
             (item) => parseFloat(item.balance) !== 0
           );
-          // setAssets(filteredAssets);
         })
         .catch((err) => {
           console.error("getBalance error: ", err);
@@ -99,26 +103,21 @@ const DashboardComponent = () => {
 
       if (filteredAssets?.length > 0) {
         const binance = new ccxt.binance();
-        // Calculate the total value in USDT
         let totalValue = 0;
         for (const asset of filteredAssets) {
           if (asset.asset === "USDT") {
-            // If the asset is already in USDT, use its balance directly
             totalValue += parseFloat(asset.balance);
 
             asset["usdtBal"] = asset.balance;
           } else {
-            // Get the USDT exchange rate for the asset
             const symbol = `${asset.asset}/USDT`;
             const ticker = await binance.fetchTicker(symbol);
             const usdtPrice = ticker.last;
-            // Multiply the balance by the USDT exchange rate to get the balance in USDT
             const usdtBalance = parseFloat(asset.balance) * usdtPrice;
             totalValue += usdtBalance;
             asset["usdtBal"] = usdtBalance;
           }
         }
-        // setTotalAggregateValue(totalValue);
 
         if (save) {
           let reqBody = {
@@ -146,14 +145,11 @@ const DashboardComponent = () => {
           let prevTotalValue = 0;
           for (const asset of walletData?.body?.assets) {
             if (asset.asset === "USDT") {
-              // If the asset is already in USDT, use its balance directly
               prevTotalValue += parseFloat(asset.balance);
             } else {
-              // Get the USDT exchange rate for the asset
               const symbol = `${asset.asset}/USDT`;
               const ticker = await binance.fetchTicker(symbol);
               const usdtPrice = ticker.last;
-              // Multiply the balance by the USDT exchange rate to get the balance in USDT
               const usdtBalance = parseFloat(asset.balance) * usdtPrice;
               prevTotalValue += usdtBalance;
             }
@@ -178,14 +174,11 @@ const DashboardComponent = () => {
           let prev7DaysTotalValue = 0;
           for (const asset of walletData?.body?.assets) {
             if (asset.asset === "USDT") {
-              // If the asset is already in USDT, use its balance directly
               prev7DaysTotalValue += parseFloat(asset.balance);
             } else {
-              // Get the USDT exchange rate for the asset
               const symbol = `${asset.asset}/USDT`;
               const ticker = await binance.fetchTicker(symbol);
               const usdtPrice = ticker.last;
-              // Multiply the balance by the USDT exchange rate to get the balance in USDT
               const usdtBalance = parseFloat(asset.balance) * usdtPrice;
               prev7DaysTotalValue += usdtBalance;
             }
@@ -206,29 +199,26 @@ const DashboardComponent = () => {
         );
         const walletThirtyDays = await walletThirtyDaysData.json();
 
-        if (walletThirtyDays.body) {
-          let prev30DaysTotalValue = 0;
-          for (const asset of walletData?.body?.assets) {
-            if (asset.asset === "USDT") {
-              // If the asset is already in USDT, use its balance directly
-              prev30DaysTotalValue += parseFloat(asset.balance);
-            } else {
-              // Get the USDT exchange rate for the asset
-              const symbol = `${asset.asset}/USDT`;
-              const ticker = await binance.fetchTicker(symbol);
-              const usdtPrice = ticker.last;
-              // Multiply the balance by the USDT exchange rate to get the balance in USDT
-              const usdtBalance = parseFloat(asset.balance) * usdtPrice;
-              prev30DaysTotalValue += usdtBalance;
-            }
-          }
-          let last30DaysChange =
-            ((totalValue - prev30DaysTotalValue) / prev30DaysTotalValue) * 100;
+        // if (walletThirtyDays.body) {
+        //   let prev30DaysTotalValue = 0;
+        //   for (const asset of walletData?.body?.assets) {
+        //     if (asset.asset === "USDT") {
+        //       prev30DaysTotalValue += parseFloat(asset.balance);
+        //     } else {
+        //       const symbol = `${asset.asset}/USDT`;
+        //       const ticker = await binance.fetchTicker(symbol);
+        //       const usdtPrice = ticker.last;
+        //       const usdtBalance = parseFloat(asset.balance) * usdtPrice;
+        //       prev30DaysTotalValue += usdtBalance;
+        //     }
+        //   }
+        //   let last30DaysChange =
+        //     ((totalValue - prev30DaysTotalValue) / prev30DaysTotalValue) * 100;
 
-          setTotalAggregateValue30DaysChange(last30DaysChange.toFixed(4));
-        } else {
-          setTotalAggregateValue30DaysChange("NA");
-        }
+        //   setTotalAggregateValue30DaysChange(last30DaysChange.toFixed(4));
+        // } else {
+        //   setTotalAggregateValue30DaysChange("NA");
+        // }
 
         filteredAssets.forEach((latestObj) => {
           const previousObj = walletData?.body?.assets.find(
@@ -300,8 +290,6 @@ const DashboardComponent = () => {
         .then((response) => response.json())
         .then((data) => {
           result = data.filter((item) => cryptoSymbols.includes(item.coin));
-          // result = data;
-          // console.log("Result from server: ", data);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -329,7 +317,6 @@ const DashboardComponent = () => {
           filteredAssets = result.filter(
             (item) => parseFloat(item.balance) !== 0
           );
-          // setAssets(filteredAssets);
         })
         .catch((err) => {
           console.error("getBalance error: ", err);
@@ -338,20 +325,16 @@ const DashboardComponent = () => {
 
     if (filteredAssets?.length > 0) {
       const binance = new ccxt.binance();
-      // Calculate the total value in USDT
       let totalValue = 0;
       for (const asset of filteredAssets) {
         if (asset.asset === "USDT") {
-          // If the asset is already in USDT, use its balance directly
           totalValue += parseFloat(asset.balance);
 
           asset["usdtBal"] = asset.balance;
         } else {
-          // Get the USDT exchange rate for the asset
           const symbol = `${asset.asset}/USDT`;
           const ticker = await binance.fetchTicker(symbol);
           const usdtPrice = ticker.last;
-          // Multiply the balance by the USDT exchange rate to get the balance in USDT
           const usdtBalance = parseFloat(asset.balance) * usdtPrice;
           totalValue += usdtBalance;
           asset["usdtBal"] = usdtBalance;
@@ -396,45 +379,161 @@ const DashboardComponent = () => {
     fetchAssetsFromUserInfo(true);
   };
 
+  const totalPortfolio = [
+    {
+      name: "Total Portfolio",
+      total: 865200,
+      lastWeek: 33110.9,
+      lastMonth: -21100.78,
+      graph: [10, 20, 50, 20, 80, 100, 80, 50, 30, 60, 80, 20],
+    },
+  ];
+  const investedInDeals = [
+    {
+      name: "Invested in Deals",
+      total: 2530,
+      lastWeek: 723,
+      lastMonth: 2930,
+      graph: [20, 10, 30, 50, 90, 120, 90, 40, 50, 30, 80, 10],
+    },
+  ];
+  const totalDeals = [
+    {
+      name: "Total Deals",
+      total: 352,
+      lastWeek: 723,
+      lastMonth: 2930,
+    },
+  ];
+
   return (
-    <Grid container>
-      <Grid
-        container
+    <Box mt={10} minHeight={"100%"}>
+      <Box
         sx={{
           display: "flex",
+          justifyContent: "space-between",
           alignItems: "center",
-          marginTop: "3rem",
-          marginLeft: "0.8rem",
+          minWidth: "100%",
         }}
       >
-        {/* <Grid xs={2} item>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Typography
-            variant="h6"
-            color="#FFFFFF"
-            sx={{ ml: 1, fontWeight: 600 }}
+            sx={{
+              fontSize: "2.2rem",
+              fontWeight: 600,
+              ml: 1,
+              fontFamily: "Barlow, san-serif",
+            }}
           >
-            My Portfolio
+            Dashboard
           </Typography>
-        </Grid> */}
-        <Grid xs={10} item>
-          <CryptoRates />
+          <Typography
+            sx={{
+              fontSize: "0.9rem",
+              ml: 1,
+              fontFamily: "Inter, san-serif",
+              color: "#ACB2B7",
+            }}
+          >
+            All your accounts in the same place
+          </Typography>
+        </Box>
+        <Box>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "#2A2C2D",
+              p: 1,
+              borderRadius: 2,
+              border: "1px solid #393B3C",
+              gap: 1,
+              width: 120,
+              height: 42,
+              cursor: "pointer",
+              "&:active": {
+                backgroundColor: "#434546",
+              },
+            }}
+            onClick={handleOpen}
+          >
+            <Video />
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography
+                sx={{
+                  fontSize: 16,
+                  color: "white",
+                  fontFamily: "Barlow, san-serif",
+                  mb: -0.5,
+                }}
+              >
+                Dashboard
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: 16,
+                  fontFamily: "Barlow, san-serif",
+                  color: "white",
+                  mt: -0.5,
+                }}
+              >
+                Guide
+              </Typography>
+            </Box>
+          </Box>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+              timeout: 500,
+            }}
+          >
+            <Fade in={open}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <ReactPlayer
+                  url="https://www.youtube.com/watch?v=0fPQ1lNAUbY"
+                  playing
+                />
+              </Box>
+            </Fade>
+          </Modal>
+        </Box>
+      </Box>
+
+      <Grid container spacing={1} mt={3}>
+        <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 3.5} lg={3.5}>
+          <TotalPortfolioAndInvestedDeals data={totalPortfolio} />
+        </Grid>
+        <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 3.5} lg={3.5}>
+          <TotalPortfolioAndInvestedDeals data={investedInDeals} />
+        </Grid>
+        <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 2.5} lg={2.5}>
+          <TotalAndInvestedDeals data={totalDeals} />
+        </Grid>
+        <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 2.5} lg={2.5}>
+          <TotalAndInvestedDeals data={investedInDeals} />
         </Grid>
       </Grid>
 
-      <Typography
-        sx={{ fontSize: 18, ml: 1, mt: 4, mb: 1, mr: 5, fontWeight: 600 }}
-        color="White"
-      >
-        Aggregate Account Balance
-      </Typography>
-      <TotalValue
-        totalValue={totalAggregateValue}
-        last24hChange={totalAggregateValue24hChange}
-        last7DaysChange={totalAggregateValue7DaysChange}
-        last30DaysChange={totalAggregateValue30DaysChange}
-      />
+      <Grid container spacing={1} mt={1}>
+        <Grid item xs={12} sm={12} md={isDrawerOpen ? 6 : 5} lg={5}>
+          <ConsolidatedPortfolio />
+        </Grid>
+        <Grid item xs={12} sm={12} md={isDrawerOpen ? 6 : 7} lg={7}>
+          <InvestedPortfolio />
+        </Grid>
+      </Grid>
 
-      <AggregateAccountBalance />
       <div>
         <ExchangeTable
           assets={assets}
@@ -444,18 +543,8 @@ const DashboardComponent = () => {
         />
       </div>
 
-      {/* <div style={{ width: "50%", marginLeft: "5%" }}>
-          <TileChart />
-        </div> */}
-      {/* <Grid rowSpacing={2} columnSpacing={2} container>
-        <Grid xs={12} lg={6} xl={4} item>
-          <MyExchange />
-        </Grid>
-        <Grid xs={12} lg={6} xl={4} item>
-          <MyExchange />
-        </Grid>
-      </Grid> */}
-    </Grid>
+      <SpotFuturePieChart />
+    </Box>
   );
 };
 
