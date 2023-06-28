@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Popover, Typography } from "@mui/material";
 import Camera from "./navbarIcons/Camera";
 import Bell from "./navbarIcons/Bell";
@@ -6,6 +6,7 @@ import Eye from "./navbarIcons/Eye";
 
 const NavBarListItems = () => {
   const [name, setName] = useState("R");
+  const [windowWidth, setWindowWidth] = useState(globalThis?.innerWidth);
 
   const [CameraHoverAnchorEl, setCameraHoverAnchorEl] = useState(null);
   const [EyeHoverAnchorEl, setEyeHoverAnchorEl] = useState(null);
@@ -69,16 +70,28 @@ const NavBarListItems = () => {
   const BellClickOpen = Boolean(BellClickAnchorEl);
   const NameClickOpen = Boolean(NameClickAnchorEl);
 
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
   return (
     <Box
       sx={{
         width: 200,
-        background: "#070909",
+        background: "#0B0D0D",
         position: "absolute",
         top: 0,
-        right: 0,
+        right:
+          windowWidth < 1050 && windowWidth > 1000
+            ? 20
+            : windowWidth < 1000 && windowWidth > 990
+            ? 60
+            : windowWidth < 990
+            ? 80
+            : 0,
         height: 60,
-        display: "flex",
+        display: windowWidth < 960 ? "none" : "flex",
         justifyContent: "center",
         alignItems: "center",
         gap: 2,

@@ -109,12 +109,10 @@ const CryptocurrencyData = (props) => {
   return (
     <div
       style={{
-        margin: "0 auto",
-        width: "800px",
-        background: "rgba(41, 8, 77, 0.42)",
-        width: "41vw",
-        borderRadius: 7,
-        marginTop: "24px",
+        width: "100%",
+        background: "#242424",
+        borderRadius: "5px",
+        marginTop: "28px",
         minHeight: "700px",
       }}
     >

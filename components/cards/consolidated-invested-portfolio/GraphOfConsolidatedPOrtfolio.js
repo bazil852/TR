@@ -103,28 +103,21 @@ const GraphOfConsolidatedPOrtfolio = ({ data }) => {
   return (
     <div
       style={{
-        width:
-          width < 961
-            ? "300px"
-            : width > 1250 && width < 1350
-            ? "300px"
-            : width > 1350 && width < 1500
-            ? "320x"
-            : width > 1500
-            ? "350px"
-            : "280px",
-        height: "230px",
-        position: "absolute",
-        left:
-          width < 961
-            ? "50px"
-            : width > 1250 && width < 1350
+        minWidth: "280px",
+        marginLeft:
+          width < 1100 && width > 960
+            ? "-40px"
+            : width > 1200 && width < 1300
+            ? "-20px"
+            : width < 600 && width > 500
+            ? "-10px"
+            : width < 500
             ? "-30px"
-            : width > 1350 && width < 1500
-            ? "5px"
-            : width > 1500
-            ? "10px"
-            : "-30px",
+            : "0px",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
       <canvas ref={chartRef} />

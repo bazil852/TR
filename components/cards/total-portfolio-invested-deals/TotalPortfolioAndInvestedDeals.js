@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -10,10 +10,17 @@ const formatValue = (number) => {
 };
 
 const TotalPortfolioAndInvestedDeals = ({ data }) => {
+  const [width, setWidth] = useState(globalThis?.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
   return (
     <Card
       sx={{
-        background: "#383B3B",
+        background: "#242424",
         minHeight: 125,
         minWidth: "100%",
         border: "1px solid #3F4341",
@@ -142,7 +149,7 @@ const TotalPortfolioAndInvestedDeals = ({ data }) => {
           <Box
             sx={{
               float: "right",
-              width: "35%",
+              width: width < 1024 && width > 959 ? "32%" : "35%",
               pt: 2,
             }}
           >

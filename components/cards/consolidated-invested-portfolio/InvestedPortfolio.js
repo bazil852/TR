@@ -36,16 +36,16 @@ const InvestedPortfolio = () => {
   return (
     <Card
       sx={{
-        background: "#383B3B",
-        height: 320,
+        background: "#242424",
+        minHeight: 320,
         minWidth: "100%",
       }}
     >
-      <CardContent>
+      <CardContent sx={{ px: width < 960 ? 5 : width > 1200 ? 5 : "" }}>
         <Typography
           sx={{
             fontFamily: "Barlow, san-serif",
-            fontWeight: 500,
+            fontWeight: 600,
             fontSize: 20,
           }}
         >
@@ -59,16 +59,22 @@ const InvestedPortfolio = () => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  flexDirection: width < 600 && "column",
                 }}
                 key={index}
               >
                 <Box>
                   <GuageMeter value={item.guageValue} />
                 </Box>
-                <Box sx={{ pr: width > 1250 ? 10 : "" }}>
+                <Box
+                  sx={{
+                    pr:
+                      width > 1250 ? 10 : width < 961 && width > 605 ? 10 : "",
+                  }}
+                >
                   <Typography
                     sx={{
-                      fontFamily: "Inter, san-serif",
+                      fontFamily: "Barlow, san-serif",
                       color: "#ACB2B7",
                       fontSize: 13,
                     }}
@@ -87,7 +93,7 @@ const InvestedPortfolio = () => {
                   </Typography>
                   <Typography
                     sx={{
-                      fontFamily: "Inter, san-serif",
+                      fontFamily: "Barlow, san-serif",
                       color: "#ACB2B7",
                       fontSize: 13,
                       mb: 1.5,
@@ -108,7 +114,7 @@ const InvestedPortfolio = () => {
                     <Box sx={{ display: "flex", flexDirection: "column" }}>
                       <Typography
                         sx={{
-                          fontFamily: "Inter, san-serif",
+                          fontFamily: "Barlow, san-serif",
                           color: "#ACB2B7",
                           fontSize: 13,
                         }}
@@ -128,7 +134,7 @@ const InvestedPortfolio = () => {
                     <Box sx={{ display: "flex", flexDirection: "column" }}>
                       <Typography
                         sx={{
-                          fontFamily: "Inter, san-serif",
+                          fontFamily: "Barlow, san-serif",
                           color: "#ACB2B7",
                           fontSize: 13,
                         }}
@@ -148,7 +154,7 @@ const InvestedPortfolio = () => {
                     <Box sx={{ display: "flex", flexDirection: "column" }}>
                       <Typography
                         sx={{
-                          fontFamily: "Inter, san-serif",
+                          fontFamily: "Barlow, san-serif",
                           color: "#ACB2B7",
                           fontSize: 13,
                         }}

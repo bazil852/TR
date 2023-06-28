@@ -7,7 +7,7 @@ const NavBar = () => {
   return (
     <Box
       sx={{
-        background: "rgba(0,0,0,0.8)",
+        background: "#0B0D0D",
         minWidth: "100%",
         position: "absolute",
         top: 0,
@@ -18,7 +18,7 @@ const NavBar = () => {
       }}
     >
       <CryptoRates />
-      <Box>
+      <Box sx={{ float: "right" }}>
         <NavBarListItems />
       </Box>
     </Box>

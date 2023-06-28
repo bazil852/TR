@@ -91,8 +91,15 @@ export default function PrivateHeader({ title, current, Component }) {
   const [open, setOpen] = React.useState(false);
   const [toggle, setToggle] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState();
+  const [realAccountBalance, setRealAccountBalance] = React.useState(1250);
+  const [paperTradingBalance, setPaperTradingBalance] = React.useState(1250);
   const router = useRouter();
-
+  const [windowWidth, setWindowWidth] = React.useState(globalThis?.innerWidth);
+  React.useEffect(() => {
+    const handleResize = () => setWindowWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
   const handleClick = (item) => {
     router.push(`${item.path}?selected=${item.index}`);
   };
@@ -139,7 +146,7 @@ export default function PrivateHeader({ title, current, Component }) {
     {
       index: 1,
       title: "Strategy",
-      icon: selectedItem === 1 ? BlueLock : Lock,
+      icon: selectedItem === 1 ? Lock : Lock,
       path: "/my-exchanges",
     },
 
@@ -158,13 +165,13 @@ export default function PrivateHeader({ title, current, Component }) {
     {
       index: 4,
       title: "Exchanges API",
-      icon: selectedItem === 5 ? BlueHandShake : HandShake,
+      icon: selectedItem === 5 ? HandShake : HandShake,
       path: "/AllDeals",
     },
     {
       index: 5,
       title: "Account",
-      icon: selectedItem === 5 ? BlueHandShake : TradingBotsIcon,
+      icon: selectedItem === 5 ? TradingBotsIcon : TradingBotsIcon,
       path: "/AllDeals",
     },
   ];
@@ -189,27 +196,39 @@ export default function PrivateHeader({ title, current, Component }) {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: windowWidth < 961 ? "absolute" : "flex" }}>
       <CssBaseline />
       <Drawer
         PaperProps={{
           sx: {
+            height: windowWidth < 961 ? 60 : "100%",
             color: "#795BFF",
             border: "none",
             "&::-webkit-scrollbar": {
               display: "none",
             },
-            background: `${open ? "#131414" : " rgba(0,0,0,0.8)"}`,
+            background: `${open ? "#131414" : "#0A0A0A)"}`,
           },
         }}
         variant="permanent"
         open={open}
       >
         <DrawerHeader
-          sx={{ display: "flex", justifyContent: "space-between", p: 1 }}
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            p: 1,
+          }}
         >
           {!open ? (
-            <IconButton onClick={handleDrawerOpen} sx={{ left: -5 }}>
+            <IconButton
+              onClick={handleDrawerOpen}
+              sx={{
+                left: windowWidth < 600 ? 0 : -3,
+                top: windowWidth < 600 ? 5 : "",
+                height: 35,
+              }}
+            >
               <MenuIcon />
             </IconButton>
           ) : (
@@ -233,6 +252,7 @@ export default function PrivateHeader({ title, current, Component }) {
             flexDirection: "column",
             gap: 1,
             pl: 3,
+            mt: -1,
           }}
         >
           <Box>
@@ -253,7 +273,7 @@ export default function PrivateHeader({ title, current, Component }) {
                 fontWeight: 600,
               }}
             >
-              $1250
+              ${realAccountBalance}
             </Typography>
           </Box>
           <Box>
@@ -274,12 +294,18 @@ export default function PrivateHeader({ title, current, Component }) {
                 fontWeight: 600,
               }}
             >
-              $1250
+              ${paperTradingBalance}
             </Typography>
           </Box>
         </Box>
 
-        <List sx={{ mt: open ? 2 : 0, mb: 6 }}>
+        <List
+          sx={{
+            mt: open ? 2 : 0,
+            mb: 6,
+            display: windowWidth < 961 && !open && "none",
+          }}
+        >
           {items.map((item) => (
             <div key={item.index}>
               <ListItem
@@ -458,7 +484,14 @@ export default function PrivateHeader({ title, current, Component }) {
                 },
               }}
             >
-              <Typography sx={{ color: "white", fontSize: "13px" }}>
+              <Typography
+                sx={{
+                  color: "white",
+                  fontSize: "13px",
+                  fontFamily: "Barlow, san-serif",
+                  fontWeight: 500,
+                }}
+              >
                 Upgrade Now
               </Typography>
             </Button>

@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Grid } from "@mui/material";
 import { useSelector } from "react-redux";
 import DataTable from "./DataTable";
 import CryptocurrencyData from "../crypto-currencies-data/CryptocurrencyData";
@@ -42,28 +42,24 @@ const ExchangeTable = (props) => {
     {
       field: "asset",
       title: "TOKEN",
-      width: 150,
       // sortable: true,
     },
 
     {
       field: "availableBalance",
       title: "AMOUNT",
-      width: 100,
       // sortable: true,
     },
     {
       field: "crossWalletBalance",
-      width: 100,
       title: "ALLOCATION",
       // sortable: true,
     },
 
-    { field: "change", title: "CHANGE", width: 100 },
+    { field: "change", title: "CHANGE" },
     {
       field: "balance",
       title: "VALUE",
-      width: 100,
       // sortable: true,
     },
   ];
@@ -86,7 +82,7 @@ const ExchangeTable = (props) => {
       <Box
         sx={{
           p: 1,
-          width: "48vw",
+          // width: "48vw",
           marginTop: 5,
           display: "flex",
           alignItems: "center",
@@ -209,7 +205,7 @@ const ExchangeTable = (props) => {
           gap: 1,
           alignItems: "center",
           justifyContent: "center",
-          mb: 7,
+          mb: 4,
         }}
       >
         {props?.loading ? (
@@ -224,19 +220,14 @@ const ExchangeTable = (props) => {
             <CircularProgress />
           </div>
         ) : (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "stretch",
-              flexWrap: "wrap",
-              gap: "0.8rem",
-              minHeight: "700px",
-            }}
-          >
-            <DataTable data={foundTableData} columns={columns} />
-            <CryptocurrencyData data={selectedAssets} />
-          </Box>
+          <Grid container spacing={1} alignContent={"stretch"}>
+            <Grid item xs={12} sm={12} md={isDrawerOpen ? 12 : 6} lg={6}>
+              <DataTable data={foundTableData} columns={columns} />
+            </Grid>
+            <Grid item xs={12} sm={12} md={isDrawerOpen ? 12 : 6} lg={6}>
+              <CryptocurrencyData data={selectedAssets} />
+            </Grid>
+          </Grid>
         )}
       </Box>
       {/* </Container> */}

@@ -1,14 +1,19 @@
+import React, { useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import { useState, useMemo } from "react";
 import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import Select from "react-select";
+import dynamic from "next/dynamic";
+const CryptoIcon = dynamic(() => import("crypto-icons-react"), { ssr: false });
 
 const customStyles = {
   control: (provided, state) => ({
     ...provided,
     backgroundColor: "#27292A",
     borderRadius: "7px",
-    borderColor: "transparent",
+    border: "none",
+    borderTop: "2px solid #333536 ",
     cursor: "pointer",
     width: 120,
     textAlign: "center",
@@ -52,7 +57,27 @@ const options = [
   { value: "option3", label: "Option 3" },
 ];
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error(error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return <MonetizationOnIcon sx={{ fontSize: "35px" }} />;
+    }
+    return this.props.children;
+  }
+}
+
 const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
+  const [width, setWidth] = useState(globalThis?.innerWidth);
   const [page, setPage] = useState(0);
   const [sort, setSort] = useState({ field: null, direction: null });
 
@@ -104,12 +129,18 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
     fontSize: "15px",
   };
 
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <Box mt={-5}>
       <Typography
         sx={{
           fontFamily: "Barlow, san-serif",
-          fontWeight: 500,
+          fontWeight: 600,
           fontSize: 24,
           pl: 2,
           py: 2,
@@ -119,11 +150,11 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
       </Typography>
       <Box
         sx={{
-          width: "49vw",
+          width: "100%",
           minHeight: "700px",
-          background: "#383B3B",
+          background: "#242424",
           border: "none",
-          borderRadius: "8px",
+          borderRadius: "5px",
           px: 3,
           position: "relative",
         }}
@@ -140,7 +171,7 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
             <Typography
               sx={{
                 fontFamily: "Barlow, san-serif",
-                fontWeight: 500,
+                fontWeight: 600,
                 fontSize: 22,
               }}
             >
@@ -149,7 +180,7 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
             <Typography
               sx={{
                 fontSize: "0.9rem",
-                fontFamily: "Inter, san-serif",
+                fontFamily: "Barlow, san-serif",
                 color: "#859498",
               }}
             >
@@ -163,128 +194,199 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
             isSearchable={false}
           />
         </Box>
-        <table style={{ borderCollapse: "collapse", minWidth: "100%" }}>
-          <thead>
-            <tr>
-              {columns.map((column) => (
-                <th key={column.field}>
-                  {column.title === "CHANGE" ? (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <Typography
+        <Box
+          sx={{
+            display: width < 600 ? "block" : "",
+            overflowX: width < 600 ? "auto" : "",
+          }}
+        >
+          <table style={{ borderCollapse: "collapse", minWidth: "100%" }}>
+            <thead>
+              <tr>
+                {columns.map((column) => (
+                  <th key={column.field}>
+                    {column.title === "CHANGE" ? (
+                      <Box
                         sx={{
-                          fontSize: "13px",
-                          fontFamily: "Inter, san-serif",
-                          color: "#859498",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexDirection: "column",
                         }}
                       >
-                        CHANGE
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontSize: "13px",
-                          fontFamily: "Inter, san-serif",
-                          color: "#859498",
-                        }}
-                      >
-                        (DAY)
-                      </Typography>
-                    </Box>
-                  ) : (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontSize: "13px",
-                          fontFamily: "Inter, san-serif",
-                          color: "#859498",
-                        }}
-                      >
-                        {column.title}
-                      </Typography>
-                      {column.sortable && (
-                        <button
-                          style={{
-                            background: "none",
-                            border: "none",
-                            margin: "0px 0px 0px 5px",
-                            padding: "0px",
-                            cursor: "pointer",
+                        <Typography
+                          sx={{
+                            fontSize: "13px",
+                            fontFamily: "Barlow, san-serif",
+                            color: "#859498",
                           }}
-                          onClick={() => handleSortClick(column.field)}
                         >
-                          {sort.field === column.field ? (
-                            sort.direction === "asc" ? (
+                          CHANGE
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "13px",
+                            fontFamily: "Barlow, san-serif",
+                            color: "#859498",
+                          }}
+                        >
+                          (DAY)
+                        </Typography>
+                      </Box>
+                    ) : (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            fontSize: "13px",
+                            fontFamily: "Barlow, san-serif",
+                            color: "#859498",
+                          }}
+                        >
+                          {column.title}
+                        </Typography>
+                        {column.sortable && (
+                          <button
+                            style={{
+                              background: "none",
+                              border: "none",
+                              margin: "0px 0px 0px 5px",
+                              padding: "0px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => handleSortClick(column.field)}
+                          >
+                            {sort.field === column.field ? (
+                              sort.direction === "asc" ? (
+                                <ArrowDownward
+                                  sx={{
+                                    fontSize: "15px !important",
+                                    color: "white",
+                                  }}
+                                />
+                              ) : (
+                                <ArrowUpward
+                                  sx={{
+                                    fontSize: "15px !important",
+                                    color: "white",
+                                  }}
+                                />
+                              )
+                            ) : (
                               <ArrowDownward
                                 sx={{
                                   fontSize: "15px !important",
                                   color: "white",
                                 }}
                               />
-                            ) : (
-                              <ArrowUpward
-                                sx={{
-                                  fontSize: "15px !important",
-                                  color: "white",
-                                }}
-                              />
-                            )
-                          ) : (
-                            <ArrowDownward
+                            )}
+                          </button>
+                        )}
+                      </Box>
+                    )}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {sortedData
+                ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => (
+                  <tr
+                    key={index}
+                    style={{
+                      backgroundColor: index % 2 === 0 ? "#323233" : "#2A2A2B",
+                      height: "45px",
+                    }}
+                  >
+                    {columns.map((column) => {
+                      return (
+                        <td
+                          key={column.field}
+                          style={
+                            column.field === "token"
+                              ? firstTableCellStyle
+                              : tableCellStyle
+                          }
+                        >
+                          {column.field === "asset" ? (
+                            <Box
                               sx={{
-                                fontSize: "15px !important",
-                                color: "white",
+                                display: "flex",
+                                alignItems: "center",
+                                pl: "15%",
+                                width: "200px",
                               }}
-                            />
-                          )}
-                        </button>
-                      )}
-                    </Box>
-                  )}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {sortedData
-              ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => (
-                <tr
-                  key={index}
-                  style={{
-                    backgroundColor: index % 2 === 0 ? "#323233" : "#2A2A2B",
-                    height: "45px",
-                  }}
-                >
-                  {columns.map((column) => {
-                    return (
-                      <td
-                        key={column.field}
-                        style={
-                          column.field === "token"
-                            ? firstTableCellStyle
-                            : tableCellStyle
-                        }
-                      >
-                        {column.field === "token" ? (
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
+                            >
+                              <Box>
+                                <ErrorBoundary>
+                                  <CryptoIcon
+                                    symbol={row[column.field]}
+                                    size={32}
+                                    color="auto"
+                                  />
+                                </ErrorBoundary>
+                              </Box>
+
+                              <Box
+                                sx={{
+                                  fontFamily: "Barlow,san-serif",
+                                  color: "#D2D2D2",
+                                  ml: 1,
+                                }}
+                              >
+                                {row[column.field]}
+                              </Box>
+                            </Box>
+                          ) : column.field === "balance" ? (
+                            <Box
+                              sx={{
+                                textAlign: "center",
+                                fontFamily: "Barlow,san-serif",
+                                color:
+                                  row[column.field] !== 0
+                                    ? row[column.field] > 0
+                                      ? "#20A95D"
+                                      : "#EB5757"
+                                    : "#D2D2D2",
+                              }}
+                            >
+                              {row[column.field]}
+                            </Box>
+                          ) : column.field === "change" ? (
+                            <Box
+                              sx={{
+                                textAlign: "center",
+                                fontFamily: "Barlow,san-serif",
+                                color:
+                                  row[column.field] !== 0
+                                    ? row[column.field] > 0
+                                      ? "#20A95D"
+                                      : "#EB5757"
+                                    : "#D2D2D2",
+                              }}
+                            >
+                              {row[column.field] > 0 && row[column.field] !== 0
+                                ? "+"
+                                : ""}
+                              {row[column.field]}%
+                            </Box>
+                          ) : column.field === "crossWalletBalance" ? (
+                            <Box
+                              sx={{
+                                textAlign: "center",
+                                fontFamily: "Barlow,san-serif",
+                                color: "#D2D2D2",
+                              }}
+                            >
+                              {row[column.field]}%
+                            </Box>
+                          ) : (
                             <Box
                               sx={{
                                 textAlign: "center",
@@ -294,46 +396,41 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
                             >
                               {row[column.field]}
                             </Box>
-                          </Box>
-                        ) : column.field === "balance" ? (
-                          <Box
-                            sx={{
-                              textAlign: "center",
-                              fontFamily: "Barlow,san-serif",
-                              color:
-                                row[column.field] !== 0
-                                  ? row[column.field] > 0
-                                    ? "#20A95D"
-                                    : "#EB5757"
-                                  : "white",
-                            }}
-                          >
-                            {row[column.field]}
-                          </Box>
-                        ) : (
-                          <Box
-                            sx={{
-                              textAlign: "center",
-                              fontFamily: "Barlow,san-serif",
-                              color: "#D2D2D2",
-                            }}
-                          >
-                            {row[column.field]}
-                          </Box>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-          </tbody>
-          <tfoot></tfoot>
-        </table>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+            </tbody>
+            <tfoot></tfoot>
+          </table>
+        </Box>
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: width < 600 ? 50 : 10,
+            left: 22,
+          }}
+        >
+          <Typography
+            sx={{
+              marginBottom: "1rem",
+              color: "white",
+              fontFamily: "Barlow, san-serif",
+            }}
+          >
+            Showing {page * rowsPerPage + 1} to{" "}
+            {Math.min((page + 1) * rowsPerPage, sortedData.length)} of{" "}
+            {sortedData.length}
+          </Typography>
+        </Box>
         <Box
           sx={{
             position: "absolute",
             bottom: 20,
-            right: 20,
+            right: width > 600 ? 23.5 : "",
+            left: width < 600 ? 20 : "",
           }}
         >
           <Box
@@ -353,7 +450,7 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
                 color: "#5C636A",
                 borderTopLeftRadius: "4px",
                 borderBottomLeftRadius: "4px",
-                fontFamily: "Inter, san-serif",
+                fontFamily: "Barlow, san-serif",
               }}
             >
               Previous
@@ -369,7 +466,7 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
                   padding: "8px 10px",
                   cursor: "pointer",
                   color: "white",
-                  fontFamily: "Inter, san-serif",
+                  fontFamily: "Barlow, san-serif",
                 }}
               >
                 {p + 1}
@@ -386,7 +483,7 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
                 color: "#5C636A",
                 borderTopRightRadius: "4px",
                 borderBottomRightRadius: "4px",
-                fontFamily: "Inter, san-serif",
+                fontFamily: "Barlow, san-serif",
               }}
             >
               Next

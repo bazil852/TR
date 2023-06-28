@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import ConsolidatedPortfolio from "../components/cards/consolidated-invested-portfolio/ConsolidatedPortfolio";
 import InvestedPortfolio from "../components/cards/consolidated-invested-portfolio/InvestedPortfolio";
 import SpotFuturePieChart from "../components/cards/spot-future-pie-chart/SpotFuturePieChart";
+import PortfolioByExchange from "../components/cards/portfolio-by-exchange/PortfolioByExchange";
 
 const ccxt = require("ccxt");
 
@@ -53,12 +54,18 @@ const DashboardComponent = () => {
 
   const [totalAggregateValue, setTotalAggregateValue] = useState(0);
 
-  const [totalAggregateValue24hChange, setTotalAggregateValue24hChange] =
-    useState(0);
-  const [totalAggregateValue7DaysChange, setTotalAggregateValue7DaysChange] =
-    useState(0);
-  const [totalAggregateValue30DaysChange, setTotalAggregateValue30DaysChange] =
-    useState(0);
+  const [
+    totalAggregateValue24hChange,
+    setTotalAggregateValue24hChange,
+  ] = useState(0);
+  const [
+    totalAggregateValue7DaysChange,
+    setTotalAggregateValue7DaysChange,
+  ] = useState(0);
+  const [
+    totalAggregateValue30DaysChange,
+    setTotalAggregateValue30DaysChange,
+  ] = useState(0);
 
   useEffect(() => {
     fetchAssetsFromUserInfo(false);
@@ -405,15 +412,22 @@ const DashboardComponent = () => {
       lastMonth: 2930,
     },
   ];
+  const [width, setWidth] = useState(globalThis?.innerWidth);
 
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
   return (
-    <Box mt={10} minHeight={"100%"}>
+    <Box mt={8} minHeight={"100%"}>
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: width < 600 && "left",
           minWidth: "100%",
+          flexDirection: width < 600 && "column",
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -431,7 +445,8 @@ const DashboardComponent = () => {
             sx={{
               fontSize: "0.9rem",
               ml: 1,
-              fontFamily: "Inter, san-serif",
+              mb: 1,
+              fontFamily: "Barlow, san-serif",
               color: "#ACB2B7",
             }}
           >
@@ -441,6 +456,7 @@ const DashboardComponent = () => {
         <Box>
           <Box
             sx={{
+              mt: 2.5,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -462,7 +478,6 @@ const DashboardComponent = () => {
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography
                 sx={{
-                  fontSize: 16,
                   color: "white",
                   fontFamily: "Barlow, san-serif",
                   mb: -0.5,
@@ -472,7 +487,6 @@ const DashboardComponent = () => {
               </Typography>
               <Typography
                 sx={{
-                  fontSize: 16,
                   fontFamily: "Barlow, san-serif",
                   color: "white",
                   mt: -0.5,
@@ -498,6 +512,8 @@ const DashboardComponent = () => {
                   justifyContent: "center",
                   alignItems: "center",
                   height: "100%",
+                  width: "90vw",
+                  margin: "auto",
                 }}
               >
                 <ReactPlayer
@@ -542,7 +558,7 @@ const DashboardComponent = () => {
           loading={loading}
         />
       </div>
-
+      <PortfolioByExchange />
       <SpotFuturePieChart />
     </Box>
   );

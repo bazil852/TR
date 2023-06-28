@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
 import GraphOfConsolidatedPOrtfolio from "./GraphOfConsolidatedPOrtfolio";
 
 const ConsolidatedPortfolio = () => {
@@ -44,12 +44,12 @@ const ConsolidatedPortfolio = () => {
   };
 
   return (
-    <Card sx={{ background: "#383B3B", height: 320, minWidth: "100%" }}>
+    <Card sx={{ background: "#242424", minHeight: 320, minWidth: "100%" }}>
       <CardContent sx={{ position: "relative" }}>
         <Typography
           sx={{
             fontFamily: "Barlow, san-serif",
-            fontWeight: 500,
+            fontWeight: 600,
             fontSize: 20,
           }}
         >
@@ -58,71 +58,88 @@ const ConsolidatedPortfolio = () => {
         <Typography
           sx={{
             fontSize: "0.9rem",
-            fontFamily: "Inter, san-serif",
+            fontFamily: "Barlow, san-serif",
             color: "#ACB2B7",
           }}
         >
           Portfolio distribution
         </Typography>
 
-        <Box pt={3}>
-          <GraphOfConsolidatedPOrtfolio data={data} />
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            float: "right",
-            gap: 1.5,
-            pr: width < 961 ? 10 : 0,
-          }}
-        >
-          {topThree.map((coin) => (
-            <Box>
-              <Typography
-                sx={{
-                  fontSize:
-                    width < 1050 && width > 960 ? 14 : width < 961 ? 16 : 14,
-                  fontFamily: "Inter, san-serif",
-                  color: "#ACB2B7",
-                  pl: 1,
-                }}
-              >
-                {coin.abbreviation}
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: width > 960 && width < 1050 ? "column" : "row",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize:
-                      width < 1050 && width > 960 ? 14 : width < 961 ? 16 : 14,
-                    fontFamily: "Inter, san-serif",
-                    fontWeight: 600,
-                    color: "#B3B4B9",
-                  }}
-                >
-                  {decimalFormatter(coin.amount)} {coin.name} =
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize:
-                      width < 1050 && width > 960 ? 14 : width < 961 ? 16 : 14,
-                    fontFamily: "Inter, san-serif",
-                    color: "#ACB2B7",
-                  }}
-                >
-                  ${numberFormatter(coin.worth)}
-                </Typography>
-              </Box>
+        <Grid container alignItems={"center"}>
+          <Grid item xs={12} sm={7} md={7} lg={6}>
+            <GraphOfConsolidatedPOrtfolio data={data} />
+          </Grid>
+          <Grid item xs={12} sm={5} md={5} lg={6}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: width < 961 ? "row" : "column",
+                flexWrap: width < 961 ? "wrap" : "nowrap",
+                float: width < 961 ? "left" : "right",
+                gap: 1.5,
+                mt: width < 961 ? 2 : "",
+                px: width > 1200 ? 5 : "",
+              }}
+            >
+              {topThree.map((coin) => (
+                <Box>
+                  <Typography
+                    sx={{
+                      fontSize:
+                        width < 1050 && width > 960
+                          ? 14
+                          : width < 961
+                          ? 16
+                          : 14,
+                      fontFamily: "Barlow, san-serif",
+                      color: "#ACB2B7",
+                      pl: 1,
+                    }}
+                  >
+                    {coin.abbreviation}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize:
+                          width < 1050 && width > 960
+                            ? 14
+                            : width < 961
+                            ? 16
+                            : 14,
+                        fontFamily: "Barlow, san-serif",
+                        fontWeight: 600,
+                        color: "#B3B4B9",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {decimalFormatter(coin.amount)} {coin.name} =
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize:
+                          width < 1050 && width > 960
+                            ? 14
+                            : width < 961
+                            ? 16
+                            : 14,
+                        fontFamily: "Barlow, san-serif",
+                        color: "#ACB2B7",
+                      }}
+                    >
+                      ${numberFormatter(coin.worth)}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
             </Box>
-          ))}
-        </Box>
+          </Grid>
+        </Grid>
       </CardContent>
     </Card>
   );

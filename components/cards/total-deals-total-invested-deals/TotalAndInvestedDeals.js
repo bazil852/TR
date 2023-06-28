@@ -9,7 +9,7 @@ const TotalAndInvestedDeals = ({ data }) => {
   return data.map((item) => (
     <Card
       sx={{
-        background: "#383B3B",
+        background: "#242424",
         minHeight: 125,
         minWidth: "100%",
         border: "1px solid #3F4341",

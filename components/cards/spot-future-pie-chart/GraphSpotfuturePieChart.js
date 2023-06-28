@@ -29,11 +29,12 @@ const GraphSpotfuturePieChart = ({ data }) => {
 
   return (
     <svg
-      viewBox="-2 0 40 40"
+      viewBox="-7 -2 50 50"
       style={{
         height: "230px",
         width: "230px",
         position: "relative",
+        overflow: "visible",
       }}
     >
       {dataWithWorth.map((item, index) => {
@@ -52,9 +53,12 @@ const GraphSpotfuturePieChart = ({ data }) => {
           18 + 14 * Math.cos(((start + percentage * 180 - 90) * Math.PI) / 180);
         const centerY =
           18 + 14 * Math.sin(((start + percentage * 180 - 90) * Math.PI) / 180);
+        const midX =
+          18 + 16 * Math.cos(((start + percentage * 180 - 90) * Math.PI) / 180);
+        const midY =
+          18 + 16 * Math.sin(((start + percentage * 180 - 90) * Math.PI) / 180);
         const labelX =
-          18 +
-          14.5 * Math.cos(((start + percentage * 180 - 90) * Math.PI) / 180);
+          18 + 17 * Math.cos(((start + percentage * 180 - 90) * Math.PI) / 180);
         const labelY =
           18 + 17 * Math.sin(((start + percentage * 180 - 90) * Math.PI) / 180);
 
@@ -76,8 +80,16 @@ const GraphSpotfuturePieChart = ({ data }) => {
             <line
               x1={centerX}
               y1={centerY}
+              x2={midX}
+              y2={midY}
+              stroke="#A8A8A8"
+              strokeWidth="0.2"
+            />
+            <line
+              x1={midX}
+              y1={midY}
               x2={labelX}
-              y2={labelY}
+              y2={midY}
               stroke="#A8A8A8"
               strokeWidth="0.2"
             />
