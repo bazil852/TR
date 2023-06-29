@@ -6,6 +6,7 @@
 // module.exports = nextConfig;
 
 module.exports = {
+  target: "server",
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,

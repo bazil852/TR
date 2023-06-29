@@ -14,7 +14,7 @@ import Container from "@mui/material/Container";
 
 import { Alert } from "@mui/material";
 import { useRouter } from "next/router";
-import { signIn, getSession } from "next-auth/react";
+import { signIn, getSession, useSession } from "next-auth/react";
 import { useSelector, useDispatch } from "react-redux";
 import { setExchange } from "../../slices/exchange-slice";
 import { setAssets } from "../../slices/asset-slice";
@@ -52,10 +52,32 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
 const Login = () => {
   const [error, setError] = useState("");
   const [width, setWidth] = useState(globalThis?.innerWidth);
+  const [user, setUser] = useState({});
 
   const router = useRouter();
   const exchanges = useSelector((state) => state.exchanges.value);
   const dispatch = useDispatch();
+  const [session, loading] = useSession();
+
+  useEffect(() => {
+    if (!loading && session) {
+      // Create a new session object with updated values
+      const updatedSession = {
+        ...session,
+        user: {
+          ...session.user,
+          firstName: user?.first_name,
+          lastName: user?.last_name,
+        },
+      };
+
+      // Update the session in the client-side session storage
+      window.sessionStorage.setItem(
+        "next-auth.session-token",
+        JSON.stringify(updatedSession)
+      );
+    }
+  }, [loading, session, user]);
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -74,10 +96,12 @@ const Login = () => {
       }
     );
 
-    const responseData = await response.json();
-    localStorage.setItem("token", responseData);
+    const { token, userInfo } = await response.json();
+    setUser(JSON.stringify(userInfo));
+    localStorage.setItem("token", token);
+    localStorage.setItem("userInfo", JSON.stringify(userInfo));
 
-    if (!response.error) {
+    if (response.ok) {
       fetchAssetsFromUserInfo(true);
       router.push("/dashboard?selected=0");
     } else {

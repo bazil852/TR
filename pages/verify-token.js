@@ -51,19 +51,23 @@ export default function VerifyToken() {
     const data = new FormData(event.currentTarget);
     const session = await getSession();
     const payload = {
-      email: session.user.email,
-      code: data.get("verifyNumber"),
+      email: router.query.email,
+      verificationKey: `${data.get("verifyNumber")}`,
     };
 
-    const response = await fetch("/api/user/verify-email", {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}users/verify-email`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     const newData = await response.json();
-    if (newData.status == 404) {
+    console.log(newData);
+    if (response.status == 400) {
       setError("Invalid Code! Try Again.");
     } else {
       router.push("dashboard");

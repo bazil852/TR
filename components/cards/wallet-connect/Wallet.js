@@ -96,6 +96,7 @@ const Wallet = () => {
   const [allExchange, setAllExchange] = useState([]);
 
   const [selectedAssets, setSelectedAssets] = useState({});
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
   const handleAssetChange = (selectedOption, exchangeName) => {
     setSelectedAssets((prevSelectedAssets) => ({
@@ -136,6 +137,7 @@ const Wallet = () => {
 
   const fetchAssetsFromUserInfo = async () => {
     const { user } = await getSession();
+    console.log("session", user);
     const response = await fetch(`/api/user/get-user-info?id=${user.id}`, {
       method: "GET",
     });
@@ -330,31 +332,38 @@ const Wallet = () => {
     const body = [
       ...allExchange,
       {
-        exchangeName: data.get("exchangeName"),
-        name: data.get("name"),
+        exchangeType: data.get("exchangeName"),
+        exchangeName: data.get("name"),
         apiKey: data.get("apiKey"),
         apiSecret: data.get("apiSecret"),
       },
     ];
 
     const response = await fetch(
-      `/api/user/connect-binance?id=${session.user.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}exchanges/${userInfo.id}`,
       {
         method: "POST",
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          exchangeType: data.get("exchangeName"),
+          exchangeName: data.get("name"),
+          apiKey: data.get("apiKey"),
+          secretKey: data.get("apiSecret"),
+        }),
         headers: {
           "Content-Type": "application/json",
         },
       }
     );
-    const resp = await response.json();
-    setAllExchange(resp.body.exchanges);
-    setSelectedExchange(data.get("name"));
+    if (response.ok) {
+      const resp = await response.json();
+      // setAllExchange(resp.body?.exchanges);
+      // setSelectedExchange(data.get("name"));
 
-    if (resp.body.balances) {
-      setConnectionData(resp.body);
-      setConnected(true);
-      setShowDrawer(false);
+      if (resp.body?.balances) {
+        // setConnectionData(resp.body);
+        // setConnected(true);
+        // setShowDrawer(false);
+      }
     }
   };
 

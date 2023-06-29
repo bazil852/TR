@@ -68,31 +68,37 @@ const Register = () => {
     };
     console.log(payload);
 
-    const response = await fetch("/api/user/signup", {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}users/register`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     const newData = await response.json();
 
-    if (newData.status == 409) {
+    if (response.status == 400) {
       setLoading(false);
 
       setError("Email already exists");
     } else {
-      const res = await signIn("credentials", {
-        email: payload.email,
-        password: payload.password,
-        redirect: false,
-      });
+      // const res = await signIn("credentials", {
+      //   email: payload.email,
+      //   password: payload.password,
+      //   redirect: false,
+      // });
 
-      const session = await getSession();
+      // const session = await getSession();
       setLoading(false);
       setError("");
       // router.push({pathname: '/verify-token', query: {email: session.user.email}});
-      router.push("/verify-token");
+      router.push({
+        pathname: "/verify-token",
+        query: { email: payload.email },
+      });
     }
   };
 

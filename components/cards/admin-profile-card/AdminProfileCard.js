@@ -6,7 +6,10 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 const AdminProfileCard = () => {
-  const session = useSession();
+  let userInfo;
+  if (typeof window !== "undefined") {
+    userInfo = JSON.parse(localStorage?.getItem("userInfo"));
+  }
   return (
     <Card
       sx={{ minWidth: 200 }}
@@ -29,8 +32,8 @@ const AdminProfileCard = () => {
               sx={{ fontSize: 15, fontWeight: 600, color: "white" }}
               gutterBottom
             >
-              {session?.data?.user.firstName}&nbsp;
-              {session?.data?.user.lastName}
+              {userInfo?.first_name}&nbsp;
+              {userInfo?.last_name}
             </Typography>
             <Typography color="white" fontSize={14}>
               Admin

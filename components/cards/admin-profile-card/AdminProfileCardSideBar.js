@@ -5,7 +5,10 @@ import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
 
 const AdminProfileCardSideBar = () => {
-  const session = useSession();
+  let userInfo;
+  if (typeof window !== "undefined") {
+    userInfo = JSON.parse(localStorage?.getItem("userInfo"));
+  }
   return (
     <Box
       sx={{
@@ -30,8 +33,8 @@ const AdminProfileCardSideBar = () => {
           color="white"
           sx={{ mr: 8, fontSize: "16px", paddingBottom: "5px" }}
         >
-          {session?.data?.user.firstName}&nbsp;
-          {session?.data?.user.lastName}
+          {userInfo?.first_name}&nbsp;
+          {userInfo?.last_name}
         </Typography>
         <Typography color="white" fontSize={12}>
           Admin
