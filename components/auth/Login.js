@@ -72,7 +72,7 @@ const Login = () => {
         // router.push({pathname: '/verify-token', query: {email: session.user.email}});
         router.push("/verify-token");
       } else {
-        fetchAssetsFromUserInfo(true);
+        // fetchAssetsFromUserInfo(true);
         router.push("/dashboard?selected=0");
       }
     } else {
@@ -82,11 +82,12 @@ const Login = () => {
 
   const fetchAssetsFromUserInfo = async (save) => {
     const { user } = await getSession();
+    console.log(user);
     const response = await fetch(`/api/user/get-user-info?id=${user.id}`, {
       method: "GET",
     });
     const data = await response.json();
-    if (user.exchanges[0]) {
+    if (user?.exchanges[0]) {
       const { USDMClient } = require("binance");
       const baseUrl = "https://testnet.binancefuture.com";
       const client = new USDMClient({

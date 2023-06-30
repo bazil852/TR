@@ -5,9 +5,10 @@ const GraphSpotfuturePieChart = ({ data }) => {
   const colors = ["#36D2B6", "#1EB1D2", "#4E38D2", "#90BAD2", "#2474D2"];
 
   useEffect(() => {
-    const computedData = data.map((obj) => ({
+    const removeUsdt = data?.filter((item) => item.asset !== "USDT");
+    const computedData = removeUsdt?.map((obj) => ({
       ...obj,
-      worth: obj.amount * obj.value,
+      worth: obj.usdt_price,
     }));
 
     const sortedData = computedData.sort((a, b) => b.worth - a.worth);
@@ -20,7 +21,7 @@ const GraphSpotfuturePieChart = ({ data }) => {
       0
     );
 
-    setDataWithWorth([...topFour, { name: "Others", worth: remainingWorth }]);
+    setDataWithWorth([...topFour, { asset: "Others", worth: remainingWorth }]);
   }, [data]);
 
   const totalWorth = dataWithWorth.reduce((sum, obj) => sum + obj.worth, 0);
@@ -101,7 +102,7 @@ const GraphSpotfuturePieChart = ({ data }) => {
               textAnchor={labelX > 18 ? "start" : "end"}
               alignmentBaseline="middle"
             >
-              {item.name}
+              {item.asset}
             </text>
           </g>
         );

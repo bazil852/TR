@@ -15,6 +15,7 @@ import ConsolidatedPortfolio from "../components/cards/consolidated-invested-por
 import InvestedPortfolio from "../components/cards/consolidated-invested-portfolio/InvestedPortfolio";
 import SpotFuturePieChart from "../components/cards/spot-future-pie-chart/SpotFuturePieChart";
 import PortfolioByExchange from "../components/cards/portfolio-by-exchange/PortfolioByExchange";
+const moment = require("moment");
 
 const ccxt = require("ccxt");
 
@@ -47,6 +48,14 @@ const DashboardComponent = () => {
     "ZEC",
   ];
 
+  //New useStates
+  const [totalPortfolioValue, setTotalPortfolioValue] = useState(0);
+  const [totalAssets, setTotalAssets] = useState([]);
+  const [allExchangesWithAssets, setAllExchangesWithAssets] = useState([]);
+  const [exchangeList, setExchangeList] = useState([]);
+  const [balanceHistoryList, setBalanceHistoryList] = useState([]);
+
+  //Old ones
   const [loading, setLoading] = useState(true);
 
   const [assets, setAssets] = useState([]);
@@ -68,8 +77,116 @@ const DashboardComponent = () => {
   ] = useState(0);
 
   useEffect(() => {
-    fetchAssetsFromUserInfo(false);
+    fetchPortfoliosFromUserId();
+    fetchBalanceHistoryFromUserId();
+    // fetchAssetsFromUserInfo(false);
   }, []);
+
+  const fetchBalanceHistoryFromUserId = async () => {
+    const { user } = await getSession();
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}balance-history/user/${user.id}`,
+      {
+        method: "GET",
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+
+    if (response.ok) {
+      const currentMonth = moment().format("MM");
+      let totalBalance = 0;
+
+      data.forEach((item) => {
+        const month = moment(item.balanceHistory.date).format("MM");
+        if (month === currentMonth) {
+          totalBalance += item.balanceHistory.balance;
+        }
+      });
+
+      console.log(totalBalance);
+
+      const balanceArray = [];
+
+      for (let i = 1; i <= 12; i++) {
+        if (i === parseInt(currentMonth, 10)) {
+          balanceArray.push(totalBalance);
+        } else {
+          balanceArray.push(0);
+        }
+      }
+
+      console.log(balanceArray);
+      setBalanceHistoryList(balanceArray);
+    }
+  };
+
+  const fetchPortfoliosFromUserId = async () => {
+    const { user } = await getSession();
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}portfolios/user/${user.id}`,
+      {
+        method: "GET",
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+
+    if (response.ok) {
+      setAllExchangesWithAssets(data);
+    }
+
+    let totalBalance = 0;
+
+    data.forEach((obj) => {
+      const { portfolios } = obj;
+      portfolios.forEach((portfolio) => {
+        totalBalance += portfolio.balance;
+      });
+    });
+
+    console.log("total PortFolio", totalBalance);
+    setTotalPortfolioValue(totalBalance);
+
+    const newExchanges = data.map((item) => {
+      return { exchange_type: item.exchange.exchange_type, profitOrLoss: 0 };
+    });
+    console.log(newExchanges);
+    setExchangeList(newExchanges);
+
+    const newArray = data.map((item) => {
+      return [...item.assets];
+    });
+    console.log(newArray);
+
+    // Combine the assets
+    const combinedAssets = {};
+
+    newArray.forEach((array) => {
+      array.forEach((obj) => {
+        const { asset, availableBalance, usdt_price } = obj;
+        if (combinedAssets.hasOwnProperty(asset)) {
+          combinedAssets[asset].availableBalance += parseFloat(
+            availableBalance
+          );
+          combinedAssets[asset].usdt_price += parseFloat(usdt_price);
+        } else {
+          combinedAssets[asset] = {
+            asset,
+            availableBalance: parseFloat(availableBalance),
+            usdt_price: parseFloat(usdt_price),
+          };
+        }
+      });
+    });
+
+    // Convert the combined assets object to an array
+    const combinedArray = Object.values(combinedAssets);
+
+    console.log(combinedArray);
+    setTotalAssets(combinedArray);
+    setLoading(false);
+  };
 
   const fetchAssetsFromUserInfo = async (save) => {
     const { user } = await getSession();
@@ -390,26 +507,26 @@ const DashboardComponent = () => {
     {
       name: "Total Portfolio",
       total: 865200,
-      lastWeek: 33110.9,
-      lastMonth: -21100.78,
-      graph: [10, 20, 50, 20, 80, 100, 80, 50, 30, 60, 80, 20],
+      lastWeek: 0,
+      lastMonth: 0,
+      graph: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     },
   ];
   const investedInDeals = [
     {
       name: "Invested in Deals",
-      total: 2530,
-      lastWeek: 723,
-      lastMonth: 2930,
-      graph: [20, 10, 30, 50, 90, 120, 90, 40, 50, 30, 80, 10],
+      total: 0,
+      lastWeek: 0,
+      lastMonth: 0,
+      graph: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     },
   ];
   const totalDeals = [
     {
       name: "Total Deals",
-      total: 352,
-      lastWeek: 723,
-      lastMonth: 2930,
+      total: 0,
+      lastWeek: 0,
+      lastMonth: 0,
     },
   ];
   const [width, setWidth] = useState(globalThis?.innerWidth);
@@ -528,10 +645,16 @@ const DashboardComponent = () => {
 
       <Grid container spacing={1} mt={3}>
         <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 3.5} lg={3.5}>
-          <TotalPortfolioAndInvestedDeals data={totalPortfolio} />
+          <TotalPortfolioAndInvestedDeals
+            data={totalPortfolio}
+            totalBalance={totalPortfolioValue}
+          />
         </Grid>
         <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 3.5} lg={3.5}>
-          <TotalPortfolioAndInvestedDeals data={investedInDeals} />
+          <TotalPortfolioAndInvestedDeals
+            data={investedInDeals}
+            totalBalance={0}
+          />
         </Grid>
         <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 2.5} lg={2.5}>
           <TotalAndInvestedDeals data={totalDeals} />
@@ -543,23 +666,27 @@ const DashboardComponent = () => {
 
       <Grid container spacing={1} mt={1}>
         <Grid item xs={12} sm={12} md={isDrawerOpen ? 6 : 5} lg={5}>
-          <ConsolidatedPortfolio />
+          <ConsolidatedPortfolio totalAssets={totalAssets} />
         </Grid>
         <Grid item xs={12} sm={12} md={isDrawerOpen ? 6 : 7} lg={7}>
-          <InvestedPortfolio />
+          <InvestedPortfolio totalBalance={totalPortfolioValue} />
         </Grid>
       </Grid>
 
       <div>
         <ExchangeTable
-          assets={assets}
-          handleRefresh={handleRefresh}
-          allExchangesAssets={allExchangesAssets}
+          data={allExchangesWithAssets}
+          // assets={assets}
+          // handleRefresh={handleRefresh}
+          // allExchangesAssets={allExchangesAssets}
           loading={loading}
         />
       </div>
-      <PortfolioByExchange />
-      <SpotFuturePieChart />
+      <PortfolioByExchange
+        coins={exchangeList}
+        balanceHistory={balanceHistoryList}
+      />
+      <SpotFuturePieChart data={allExchangesWithAssets} />
     </Box>
   );
 };

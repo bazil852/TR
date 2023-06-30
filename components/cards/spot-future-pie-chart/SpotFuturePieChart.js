@@ -2,63 +2,36 @@ import React from "react";
 import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
 import GraphSpotfuturePieChart from "./GraphSpotfuturePieChart";
 import { useSelector } from "react-redux";
-const SpotFuturePieChart = () => {
+const SpotFuturePieChart = ({ data }) => {
   const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
 
-  const data = [
-    {
-      title: "BINANCE SPOT",
-      graphData: [
-        { name: "BTC", amount: 16, value: 25678 },
-        { name: "ETH", amount: 10, value: 20000 },
-        { name: "XRP", amount: 20, value: 17000 },
-        { name: "MATIC", amount: 4, value: 7000 },
-        { name: "LTC", amount: 20, value: 5000 },
-        { name: "ADA", amount: 18, value: 15000 },
-        { name: "Doge", amount: 8, value: 20000 },
-      ],
-    },
-    {
-      title: "BINANCE FUTURES",
-      graphData: [
-        { name: "BTC", amount: 19, value: 25678 },
-        { name: "ETH", amount: 8, value: 20000 },
-        { name: "XRP", amount: 3, value: 17000 },
-        { name: "MATIC", amount: 14, value: 7000 },
-        { name: "LTC", amount: 20, value: 5000 },
-        { name: "ADA", amount: 18, value: 15000 },
-        { name: "Doge", amount: 8, value: 20000 },
-      ],
-    },
-    {
-      title: "OKX SPOT",
-      graphData: [
-        { name: "BTC", amount: 6, value: 25678 },
-        { name: "ETH", amount: 19, value: 20000 },
-        { name: "XRP", amount: 22, value: 17000 },
-        { name: "MATIC", amount: 14, value: 7000 },
-        { name: "LTC", amount: 21, value: 5000 },
-        { name: "ADA", amount: 18, value: 15000 },
-        { name: "Doge", amount: 6, value: 20000 },
-      ],
-    },
-    {
-      title: "OKX FUTURES",
-      graphData: [
-        { name: "BTC", amount: 7, value: 2578 },
-        { name: "ETH", amount: 6, value: 2000 },
-        { name: "XRP", amount: 20, value: 1700 },
-        { name: "MATIC", amount: 4, value: 700 },
-        { name: "LTC", amount: 20, value: 5000 },
-        { name: "ADA", amount: 9, value: 1500 },
-        { name: "Doge", amount: 18, value: 2000 },
-      ],
-    },
-  ];
+  // const data = [
+  //   {
+  //     exchange: {
+  //       id: 23,
+  //       exchange_name: "Binance",
+  //       exchange_type: "Binance Futures Testnet",
+  //       api_key:
+  //         "99768ccdd173118886404b103dbd24875ead769d651c3d0c1143c031e0fd9e2a",
+  //       secret_key:
+  //         "f332768806f2aed54f85ec6b055516e8bf23f31cfef5ec874a3af7ee07daf4da",
+  //       user_id: 12,
+  //     },
+  //     assets: [
+  //       { asset: "BTC", availableBalance: 16, usdt_price: 25678 },
+  //       { asset: "ETH", availableBalance: 10, usdt_price: 20000 },
+  //       { asset: "XRP", availableBalance: 20, usdt_price: 17000 },
+  //       { asset: "MATIC", availableBalance: 4, usdt_price: 7000 },
+  //       { asset: "LTC", availableBalance: 20, usdt_price: 5000 },
+  //       { asset: "ADA", availableBalance: 18, usdt_price: 15000 },
+  //       { asset: "Doge", availableBalance: 8, usdt_price: 20000 },
+  //     ],
+  //   },
+  // ];
 
   return (
     <Grid container my={5} spacing={1}>
-      {data.map((item, index) => {
+      {data?.map((item, index) => {
         return (
           <Grid
             item
@@ -77,7 +50,7 @@ const SpotFuturePieChart = () => {
                     fontSize: 21,
                   }}
                 >
-                  {item.title}
+                  {item.exchange.exchange_type}
                 </Typography>
                 <Typography
                   sx={{
@@ -97,7 +70,7 @@ const SpotFuturePieChart = () => {
                   ml: 1,
                 }}
               >
-                <GraphSpotfuturePieChart data={item.graphData} />
+                <GraphSpotfuturePieChart data={item.assets} />
               </CardContent>
             </Card>
           </Grid>

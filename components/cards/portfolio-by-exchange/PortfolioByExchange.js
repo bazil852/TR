@@ -11,14 +11,14 @@ import BarGraph from "./BarGraph";
 import { useEffect } from "react";
 import { useState } from "react";
 
-const PortfolioByExchange = () => {
-  const coins = [
-    { coin: "Binance Spot", value: 2.5 },
-    { coin: "Binance Futures", value: 8.3 },
-    { coin: "OKX Spot", value: -3.6 },
-    { coin: "OKX Futures", value: 7.1 },
-    { coin: "Bitfinix", value: -0.9 },
-  ];
+const PortfolioByExchange = ({ coins, balanceHistory }) => {
+  // const coins = [
+  //   { exchange_type: "Binance Spot", profitOrLoss: 0 },
+  //   { exchange_type: "Binance Futures", profitOrLoss: 0 },
+  //   { exchange_type: "OKX Spot", profitOrLoss: 0 },
+  //   { exchange_type: "OKX Futures", profitOrLoss: 0 },
+  //   { exchange_type: "Bitfinix", profitOrLoss: 0 },
+  // ];
   const [width, setWidth] = useState(globalThis?.innerWidth);
 
   useEffect(() => {
@@ -146,7 +146,7 @@ const PortfolioByExchange = () => {
                 overflowX: "auto",
               }}
             >
-              <BarGraph />
+              <BarGraph balanceHistory={balanceHistory}/>
             </Grid>
             <Grid item xs={12} sm={12} md={4} lg={4}>
               <Box
@@ -193,7 +193,7 @@ const PortfolioByExchange = () => {
                             fontSize: 16,
                           }}
                         >
-                          {coin.coin}
+                          {coin.exchange_type}
                         </Typography>
                       </Box>
                     );
@@ -213,17 +213,20 @@ const PortfolioByExchange = () => {
                         sx={{
                           px: 1,
                           borderRadius: 9,
-                          background: coin.value < 0 ? "#462E2D" : "#243A32",
+                          background:
+                            coin.profitOrLoss < 0 ? "#462E2D" : "#243A32",
                         }}
                       >
                         <Typography
                           sx={{
-                            color: coin.value < 0 ? "#D05451" : "#27966A",
+                            color:
+                              coin.profitOrLoss < 0 ? "#D05451" : "#27966A",
                             textAlign: "center",
                             fontSize: 12,
                           }}
                         >
-                          {coin.value < 0 ? "" : "+"} {coin.value}%
+                          {coin.profitOrLoss < 0 ? "" : "+"} {coin.profitOrLoss}
+                          %
                         </Typography>
                       </Box>
                     );

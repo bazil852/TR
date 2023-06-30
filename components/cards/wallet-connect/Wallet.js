@@ -98,6 +98,7 @@ const Wallet = () => {
   const [selectedAssets, setSelectedAssets] = useState({});
 
   const handleAssetChange = (selectedOption, exchangeName) => {
+    console.log(selectedOption, exchangeName);
     setSelectedAssets((prevSelectedAssets) => ({
       ...prevSelectedAssets,
       [exchangeName]: selectedOption,
@@ -136,16 +137,22 @@ const Wallet = () => {
 
   const fetchAssetsFromUserInfo = async () => {
     const { user } = await getSession();
-    const response = await fetch(`/api/user/get-user-info?id=${user.id}`, {
-      method: "GET",
-    });
+    console.log(user);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}exchanges/${user.id}`,
+      {
+        method: "GET",
+      }
+    );
     const data = await response.json();
+    console.log(data);
 
-    if (data.body.exchanges[0]) {
-      setAllExchange(data.body.exchanges);
-      const allExchangesAssets = await getExchangesAssets(data.body.exchanges);
-      console.log(allExchangesAssets);
-      setAllExchangesAssetsData(allExchangesAssets);
+    if (response.ok) {
+      setAllExchange(data);
+
+      // const allExchangesAssets = await getExchangesAssets(data.body.exchanges);
+      // console.log(allExchangesAssets);
+      // setAllExchangesAssetsData(allExchangesAssets);
       setConnected(true);
       setShowDrawer(false);
       setLoading(false);
@@ -301,14 +308,14 @@ const Wallet = () => {
 
     console.log(dataObject);
 
-    const singleExchangesAssets = await getExchangesAssets([dataObject]);
-    console.log(singleExchangesAssets);
+    // const singleExchangesAssets = await getExchangesAssets([dataObject]);
+    // console.log(singleExchangesAssets);
 
-    let oldExchangesAssets = [...allExchangesAssetsData];
+    // let oldExchangesAssets = [...allExchangesAssetsData];
 
-    oldExchangesAssets.push(...singleExchangesAssets);
+    // oldExchangesAssets.push(...singleExchangesAssets);
 
-    setAllExchangesAssetsData(oldExchangesAssets);
+    // setAllExchangesAssetsData(oldExchangesAssets);
 
     setConnected(true);
     setShowDrawer(false);
@@ -330,29 +337,35 @@ const Wallet = () => {
     const body = [
       ...allExchange,
       {
-        exchangeName: data.get("exchangeName"),
-        name: data.get("name"),
+        exchangeType: data.get("exchangeName"),
+        exchangeName: data.get("name"),
         apiKey: data.get("apiKey"),
         apiSecret: data.get("apiSecret"),
       },
     ];
 
     const response = await fetch(
-      `/api/user/connect-binance?id=${session.user.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}exchanges/${session.user.id}`,
       {
         method: "POST",
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          exchangeType: data.get("exchangeName"),
+          exchangeName: data.get("name"),
+          apiKey: data.get("apiKey"),
+          secretKey: data.get("apiSecret"),
+        }),
         headers: {
           "Content-Type": "application/json",
         },
       }
     );
     const resp = await response.json();
-    setAllExchange(resp.body.exchanges);
+    console.log(resp);
+    setAllExchange([...allExchange, resp]);
     setSelectedExchange(data.get("name"));
 
-    if (resp.body.balances) {
-      setConnectionData(resp.body);
+    if (response.ok) {
+      // setConnectionData(resp.body);
       setConnected(true);
       setShowDrawer(false);
     }
@@ -387,23 +400,24 @@ const Wallet = () => {
   };
 
   const handleDeleteExchange = async (id) => {
-    let session = await getSession();
     const response = await fetch(
-      `/api/user/delete-exchange?id=${session.user.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}exchanges/${id}`,
       {
         method: "DELETE",
-        body: JSON.stringify({ exchangeId: id }),
         headers: {
           "Content-Type": "application/json",
         },
       }
     );
-    const resp = await response.json();
-    console.log(resp);
-    setAllExchangesAssetsData(
-      allExchangesAssetsData.filter((item) => item._id !== id)
-    );
+    if (response.ok) {
+      const newExchanges = allExchange.filter(
+        (item) => item.exchange.id !== id
+      );
+      setAllExchange(newExchanges);
+    }
   };
+
+  console.log("allExchange", selectedAssets);
 
   return (
     <>
@@ -514,70 +528,75 @@ const Wallet = () => {
         </div>
       ) : connected ? (
         <Grid container spacing={1}>
-          {allExchangesAssetsData?.map((data, index) => (
-            <Grid item xs={4} key={index}>
-              <Card
-                sx={{
-                  backgroundImage:
-                    "url(https://i.postimg.cc/K8q3CHyH/Rectangle-18960.png)",
-                  backgroundSize: "100% 100%",
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "center",
-                  backgroundColor: "transparent",
-                  boxShadow: "none",
-                  p: "2vw",
-                }}
-              >
-                <CardContent>
-                  <Typography fontSize={"1.1rem"} fontWeight={500}>
-                    {data.exchangeName}
-                  </Typography>
-                  <Typography color={"#9F90A2"} fontSize={"0.9rem"}>
-                    Assets
-                  </Typography>
-                  <Box my={2}>
-                    <Select
-                      options={data.assets.map((asset) => ({
-                        value: asset,
-                        label: asset.asset,
-                      }))}
-                      onChange={(selectedOption) =>
-                        handleAssetChange(selectedOption, data.exchangeName)
-                      }
-                      value={selectedAssets[data.exchangeName]}
-                      styles={customStyles}
-                      placeholder="Select Asset"
-                    />
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Typography color={"#9F90A2"}>Available</Typography>
+          {allExchange?.map((data, index) => {
+            console.log("exchange card", data);
+            return (
+              <Grid item xs={4} key={index}>
+                <Card
+                  sx={{
+                    backgroundImage:
+                      "url(https://i.postimg.cc/K8q3CHyH/Rectangle-18960.png)",
+                    backgroundSize: "100% 100%",
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                    backgroundColor: "transparent",
+                    boxShadow: "none",
+                    p: "2vw",
+                  }}
+                >
+                  <CardContent>
+                    <Typography fontSize={"1.1rem"} fontWeight={500}>
+                      {`${data.exchange.exchange_name} : ${data.exchange.exchange_type}`}
+                    </Typography>
+                    <Typography color={"#9F90A2"} fontSize={"0.9rem"}>
+                      Assets
+                    </Typography>
+                    <Box my={2}>
+                      <Select
+                        options={data.assets.map((asset) => ({
+                          value: asset,
+                          label: asset.coin_name,
+                        }))}
+                        onChange={(selectedOption) =>
+                          handleAssetChange(
+                            selectedOption,
+                            data.exchange.exchange_name
+                          )
+                        }
+                        value={selectedAssets[data.exchangeName]}
+                        styles={customStyles}
+                        placeholder="Select Asset"
+                      />
+                    </Box>
                     <Box
                       sx={{
                         display: "flex",
-                        justifyContent: "center",
+                        justifyContent: "space-between",
                         alignItems: "center",
-                        gap: 1,
                       }}
                     >
-                      <Typography color={"#9F90A2"} fontWeight={500}>
-                        {selectedAssets[data.exchangeName]
-                          ? selectedAssets[
-                              data.exchangeName
-                            ]?.value?.usdtBal.toFixed(2)
-                          : "0.00"}
-                      </Typography>
-                      <Typography color={"#5D3FA6"} fontWeight={500}>
-                        USDT
-                      </Typography>
+                      <Typography color={"#9F90A2"}>Available</Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          gap: 1,
+                        }}
+                      >
+                        <Typography color={"#9F90A2"} fontWeight={500}>
+                          {selectedAssets[data.exchange.exchange_name]
+                            ? selectedAssets[
+                                data.exchange.exchange_name
+                              ]?.value?.usdt_price.toFixed(2)
+                            : "0.00"}
+                        </Typography>
+                        <Typography color={"#5D3FA6"} fontWeight={500}>
+                          USDT
+                        </Typography>
+                      </Box>
                     </Box>
-                  </Box>
-                  {/* <Box
+                    {/* <Box
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
@@ -604,23 +623,24 @@ const Wallet = () => {
                     </Typography>
                   </Box>
                 </Box> */}
-                  <Button
-                    sx={{
-                      background: "#C8181A",
-                      textTransform: "none",
-                      color: "white",
-                      float: "right",
-                      my: 2,
-                      px: 1.5,
-                    }}
-                    onClick={() => handleDeleteExchange(data?._id)}
-                  >
-                    Remove
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+                    <Button
+                      sx={{
+                        background: "#C8181A",
+                        textTransform: "none",
+                        color: "white",
+                        float: "right",
+                        my: 2,
+                        px: 1.5,
+                      }}
+                      onClick={() => handleDeleteExchange(data?.exchange.id)}
+                    >
+                      Remove
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })}
         </Grid>
       ) : (
         <Box>

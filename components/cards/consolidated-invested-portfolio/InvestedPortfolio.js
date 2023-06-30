@@ -12,7 +12,7 @@ const formatNumber = (num) => {
   }
 };
 
-const InvestedPortfolio = () => {
+const InvestedPortfolio = ({ totalBalance }) => {
   const [width, setWidth] = useState(globalThis?.innerWidth);
 
   useEffect(() => {
@@ -23,13 +23,13 @@ const InvestedPortfolio = () => {
 
   const data = [
     {
-      investedAmount: 61348,
-      pointValue: +0.000212,
-      percentageValue: 0.2,
-      total: 2634,
-      inDeal: 456,
-      inOrder: 987,
-      guageValue: 68,
+      investedAmount: 0,
+      pointValue: +0,
+      percentageValue: 0,
+      total: totalBalance ? totalBalance : 0,
+      inDeal: 0,
+      inOrder: 0,
+      guageValue: 0,
     },
   ];
 

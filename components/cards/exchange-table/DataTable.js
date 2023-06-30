@@ -51,11 +51,11 @@ const customStyles = {
     backgroundColor: "#000000",
   }),
 };
-const options = [
-  { value: "option1", label: "Option 1" },
-  { value: "option2", label: "Option 2" },
-  { value: "option3", label: "Option 3" },
-];
+// const options = [
+//   { value: "option1", label: "Option 1" },
+//   { value: "option2", label: "Option 2" },
+//   { value: "option3", label: "Option 3" },
+// ];
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -77,9 +77,25 @@ class ErrorBoundary extends React.Component {
 }
 
 const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
+  console.log(data);
   const [width, setWidth] = useState(globalThis?.innerWidth);
   const [page, setPage] = useState(0);
   const [sort, setSort] = useState({ field: null, direction: null });
+  const [options, setOptions] = useState([]);
+
+  const [selectedExchange, setSelectedExchange] = useState(
+    data.length > 0 && data[0]
+  );
+
+  useEffect(() => {
+    const updatedOptions = data?.map((item) => {
+      return {
+        label: item.exchange.exchange_name,
+        value: item.exchange.exchange_name,
+      };
+    });
+    setOptions(updatedOptions);
+  }, [data]);
 
   const handleSortClick = (field) => {
     setSort((sortState) => ({
@@ -94,7 +110,7 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
   const sortedData = useMemo(() => {
     console.log(sort);
     if (sort.field) {
-      return [...data].sort((a, b) => {
+      return [...selectedExchange.assets].sort((a, b) => {
         if (a[sort.field] === b[sort.field]) {
           return 0;
         }
@@ -102,8 +118,8 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
         return sort.direction === "asc" ? asc : -asc;
       });
     }
-    return data;
-  }, [data, sort]);
+    return selectedExchange.assets;
+  }, [selectedExchange, sort]);
 
   console.log("sortable", sortedData);
 
@@ -134,6 +150,16 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
     globalThis?.addEventListener("resize", handleResize);
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
+
+  const handleExchangeChange = (value) => {
+    console.log(value);
+    const newExchange = data.find(
+      (item) => item.exchange.exchange_name === value.value
+    );
+    setSelectedExchange(newExchange);
+  };
+
+  console.log(selectedExchange);
 
   return (
     <Box mt={-5}>
@@ -189,9 +215,13 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
           </Box>
           <Select
             options={options}
-            defaultValue={{ value: "allExchange", label: "All Exchange" }}
+            defaultValue={{
+              value: data[0].exchange.exchange_name,
+              label: data[0].exchange.exchange_name,
+            }}
             styles={customStyles}
             isSearchable={false}
+            onChange={handleExchangeChange}
           />
         </Box>
         <Box
@@ -296,112 +326,143 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
             <tbody>
               {sortedData
                 ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => (
-                  <tr
-                    key={index}
-                    style={{
-                      backgroundColor: index % 2 === 0 ? "#323233" : "#2A2A2B",
-                      height: "45px",
-                    }}
-                  >
-                    {columns.map((column) => {
-                      return (
-                        <td
-                          key={column.field}
-                          style={
-                            column.field === "token"
-                              ? firstTableCellStyle
-                              : tableCellStyle
-                          }
-                        >
-                          {column.field === "asset" ? (
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                pl: "15%",
-                                width: "200px",
-                              }}
-                            >
-                              <Box>
-                                <ErrorBoundary>
-                                  <CryptoIcon
-                                    symbol={row[column.field]}
-                                    size={32}
-                                    color="auto"
-                                  />
-                                </ErrorBoundary>
-                              </Box>
-
+                .map((row, index) => {
+                  console.log(row, selectedExchange);
+                  const allocation =
+                    (row.usdt_price / selectedExchange?.portfolios[0].balance) *
+                    100;
+                  console.log(allocation);
+                  return (
+                    <tr
+                      key={index}
+                      style={{
+                        backgroundColor:
+                          index % 2 === 0 ? "#323233" : "#2A2A2B",
+                        height: "45px",
+                      }}
+                    >
+                      {columns.map((column) => {
+                        return (
+                          <td
+                            key={column.field}
+                            style={
+                              column.field === "token"
+                                ? firstTableCellStyle
+                                : tableCellStyle
+                            }
+                          >
+                            {column.field === "asset" ? (
                               <Box
                                 sx={{
-                                  fontFamily: "Barlow,san-serif",
-                                  color: "#D2D2D2",
-                                  ml: 1,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  pl: "15%",
+                                  width: "200px",
                                 }}
                               >
-                                {row[column.field]}
+                                <Box>
+                                  <ErrorBoundary>
+                                    {(() => {
+                                      try {
+                                        return (
+                                          <CryptoIcon
+                                            symbol={
+                                              row[column.field] === "USDC" ||
+                                              row[column.field] === "BUSD"
+                                                ? ""
+                                                : row[column.field]
+                                            }
+                                            size={32}
+                                            color="auto"
+                                          />
+                                        );
+                                      } catch (error) {
+                                        console.error(
+                                          "Error occurred while rendering CryptoIcon:",
+                                          error
+                                        );
+                                        return null; // Render null or an alternative component/error message
+                                      }
+                                    })()}
+                                    {/* <CryptoIcon
+                                      symbol={row[column.field]}
+                                      size={32}
+                                      color="auto"
+                                    /> */}
+                                  </ErrorBoundary>
+                                </Box>
+
+                                <Box
+                                  sx={{
+                                    fontFamily: "Barlow,san-serif",
+                                    color: "#D2D2D2",
+                                    ml: 1,
+                                  }}
+                                >
+                                  {row[column.field]}
+                                </Box>
                               </Box>
-                            </Box>
-                          ) : column.field === "balance" ? (
-                            <Box
-                              sx={{
-                                textAlign: "center",
-                                fontFamily: "Barlow,san-serif",
-                                color:
-                                  row[column.field] !== 0
-                                    ? row[column.field] > 0
-                                      ? "#20A95D"
-                                      : "#EB5757"
-                                    : "#D2D2D2",
-                              }}
-                            >
-                              {row[column.field]}
-                            </Box>
-                          ) : column.field === "change" ? (
-                            <Box
-                              sx={{
-                                textAlign: "center",
-                                fontFamily: "Barlow,san-serif",
-                                color:
-                                  row[column.field] !== 0
-                                    ? row[column.field] > 0
-                                      ? "#20A95D"
-                                      : "#EB5757"
-                                    : "#D2D2D2",
-                              }}
-                            >
-                              {row[column.field] > 0 && row[column.field] !== 0
-                                ? "+"
-                                : ""}
-                              {row[column.field]}%
-                            </Box>
-                          ) : column.field === "crossWalletBalance" ? (
-                            <Box
-                              sx={{
-                                textAlign: "center",
-                                fontFamily: "Barlow,san-serif",
-                                color: "#D2D2D2",
-                              }}
-                            >
-                              {row[column.field]}%
-                            </Box>
-                          ) : (
-                            <Box
-                              sx={{
-                                textAlign: "center",
-                                fontFamily: "Barlow,san-serif",
-                                color: "#D2D2D2",
-                              }}
-                            >
-                              {row[column.field]}
-                            </Box>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
+                            ) : column.field === "balance" ? (
+                              <Box
+                                sx={{
+                                  textAlign: "center",
+                                  fontFamily: "Barlow,san-serif",
+                                  color:
+                                    row[column.field] !== 0
+                                      ? row[column.field] > 0
+                                        ? "#20A95D"
+                                        : "#EB5757"
+                                      : "#D2D2D2",
+                                }}
+                              >
+                                {parseFloat(row["usdt_price"]).toFixed(4)}
+                              </Box>
+                            ) : column.field === "change" ? (
+                              <Box
+                                sx={{
+                                  textAlign: "center",
+                                  fontFamily: "Barlow,san-serif",
+                                  color:
+                                    row[column.field] !== 0
+                                      ? row[column.field] > 0
+                                        ? "#20A95D"
+                                        : "#EB5757"
+                                      : "#D2D2D2",
+                                }}
+                              >
+                                {row[column.field] > 0 &&
+                                row[column.field] !== 0
+                                  ? "+"
+                                  : ""}
+                                {row[column.field]}%
+                              </Box>
+                            ) : column.field === "crossWalletBalance" ? (
+                              <Box
+                                sx={{
+                                  textAlign: "center",
+                                  fontFamily: "Barlow,san-serif",
+                                  color: "#D2D2D2",
+                                }}
+                              >
+                                {parseFloat(allocation).toFixed(4)}%
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  textAlign: "center",
+                                  fontFamily: "Barlow,san-serif",
+                                  color: "#D2D2D2",
+                                }}
+                              >
+                                {parseFloat(row[column.field]).toFixed(4)}
+                              </Box>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
             </tbody>
             <tfoot></tfoot>
           </table>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
 import GraphOfConsolidatedPOrtfolio from "./GraphOfConsolidatedPOrtfolio";
 
-const ConsolidatedPortfolio = () => {
+const ConsolidatedPortfolio = ({ totalAssets }) => {
   const [width, setWidth] = useState(globalThis?.innerWidth);
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
@@ -19,9 +19,12 @@ const ConsolidatedPortfolio = () => {
     { name: "Doge", abbreviation: "DogeCoin", amount: 8, value: 20000 },
   ];
 
-  data.forEach((coin) => (coin.worth = coin.amount * coin.value));
+  // const removeUsdt = totalAssets.filter((item) => item.asset !== "USDT");
 
-  const topThree = data.sort((a, b) => b.worth - a.worth).slice(0, 3);
+  const topThree = totalAssets
+    .sort((a, b) => b.usdt_price - a.usdt_price)
+    .slice(0, 3);
+  console.log(totalAssets, topThree);
 
   const numberFormatter = (num) => {
     if (num >= 1000) {
@@ -67,7 +70,7 @@ const ConsolidatedPortfolio = () => {
 
         <Grid container alignItems={"center"}>
           <Grid item xs={12} sm={7} md={7} lg={6}>
-            <GraphOfConsolidatedPOrtfolio data={data} />
+            <GraphOfConsolidatedPOrtfolio data={totalAssets} />
           </Grid>
           <Grid item xs={12} sm={5} md={5} lg={6}>
             <Box
@@ -96,7 +99,7 @@ const ConsolidatedPortfolio = () => {
                       pl: 1,
                     }}
                   >
-                    {coin.abbreviation}
+                    {coin.asset}
                   </Typography>
                   <Box
                     sx={{
@@ -118,7 +121,7 @@ const ConsolidatedPortfolio = () => {
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {decimalFormatter(coin.amount)} {coin.name} =
+                      {decimalFormatter(coin.availableBalance)} {coin.asset} =
                     </Typography>
                     <Typography
                       sx={{
@@ -132,7 +135,7 @@ const ConsolidatedPortfolio = () => {
                         color: "#ACB2B7",
                       }}
                     >
-                      ${numberFormatter(coin.worth)}
+                      ${numberFormatter(coin.usdt_price)}
                     </Typography>
                   </Box>
                 </Box>

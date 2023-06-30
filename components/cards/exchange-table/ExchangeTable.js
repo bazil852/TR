@@ -7,7 +7,7 @@ import CryptocurrencyData from "../crypto-currencies-data/CryptocurrencyData";
 
 const ccxt = require("ccxt");
 
-const ExchangeTable = (props) => {
+const ExchangeTable = ({ data, loading }) => {
   const exchanges = useSelector((state) => state.exchanges.value);
   const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
   const [tableData, setTableData] = useState([]);
@@ -21,22 +21,10 @@ const ExchangeTable = (props) => {
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
-  console.log(props.allExchangesAssets);
+  console.log(data);
   React.useEffect(() => {
-    let updatedAssets = props.allExchangesAssets[
-      selectedTab
-    ]?.exchangeAssets?.map((item) => {
-      return {
-        ...item,
-        crossWalletBalance: parseFloat(item.crossWalletBalance).toFixed(2),
-        availableBalance: parseFloat(item.availableBalance).toFixed(2),
-        balance: parseFloat(item.balance).toFixed(2),
-      };
-    });
-    setSelectedAssets(updatedAssets);
-  }, [selectedTab, props.allExchangesAssets]);
-
-  console.log("asset", selectedAssets);
+    setSelectedAssets(data[selectedTab]);
+  }, [selectedTab, data]);
 
   const columns = [
     {
@@ -70,12 +58,12 @@ const ExchangeTable = (props) => {
     setValue(newValue);
   };
 
-  const foundTableData = selectedAssets?.filter((item) => {
-    if (!inputSearch) {
-      return true;
-    }
-    return item?.asset.toLowerCase().includes(inputSearch.toLowerCase());
-  });
+  // const foundTableData = selectedAssets?.filter((item) => {
+  //   if (!inputSearch) {
+  //     return true;
+  //   }
+  //   return item?.asset.toLowerCase().includes(inputSearch.toLowerCase());
+  // });
 
   return (
     <Box>
@@ -208,7 +196,7 @@ const ExchangeTable = (props) => {
           mb: 4,
         }}
       >
-        {props?.loading ? (
+        {loading ? (
           <div
             style={{
               display: "flex",
@@ -222,10 +210,10 @@ const ExchangeTable = (props) => {
         ) : (
           <Grid container spacing={1} alignContent={"stretch"}>
             <Grid item xs={12} sm={12} md={isDrawerOpen ? 12 : 6} lg={6}>
-              <DataTable data={foundTableData} columns={columns} />
+              <DataTable data={data} columns={columns} />
             </Grid>
             <Grid item xs={12} sm={12} md={isDrawerOpen ? 12 : 6} lg={6}>
-              <CryptocurrencyData data={selectedAssets} />
+              {/* <CryptocurrencyData data={selectedAssets} /> */}
             </Grid>
           </Grid>
         )}

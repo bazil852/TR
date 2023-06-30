@@ -6,10 +6,12 @@ import Typography from "@mui/material/Typography";
 import GraphOfTotalPortfolioAndInvestedDeals from "./GraphOfTotalPortfolioAndInvestedDeals";
 
 const formatValue = (number) => {
-  return number >= 10000 ? `${(number / 1000).toFixed(1)}k` : number.toFixed(0);
+  return number >= 10000
+    ? `${(number / 1000)?.toFixed(1)}k`
+    : number?.toFixed(0);
 };
 
-const TotalPortfolioAndInvestedDeals = ({ data }) => {
+const TotalPortfolioAndInvestedDeals = ({ data, totalBalance }) => {
   const [width, setWidth] = useState(globalThis?.innerWidth);
 
   useEffect(() => {
@@ -62,7 +64,7 @@ const TotalPortfolioAndInvestedDeals = ({ data }) => {
                 mt: 1,
               }}
             >
-              ${formatValue(item.total)}
+              ${formatValue(totalBalance)}
             </Typography>
             <Box
               sx={{

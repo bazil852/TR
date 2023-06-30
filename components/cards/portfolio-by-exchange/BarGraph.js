@@ -18,24 +18,11 @@ const months = [
   "Dec",
 ];
 
-const dataValues = [
-  2000,
-  2500,
-  3500,
-  4500,
-  5000,
-  5000,
-  7500,
-  4000,
-  4500,
-  5000,
-  6000,
-  10000,
-];
+const dataValues = [0, 0, 0, 0, 0, 70196, 0, 0, 0, 0, 0, 0];
 
-const maxVal = Math.max(...dataValues);
-
-const BarGraph = () => {
+const BarGraph = ({ balanceHistory }) => {
+  console.log(balanceHistory);
+  const maxVal = Math.max(...balanceHistory);
   const [width, setWidth] = useState(globalThis?.innerWidth);
 
   useEffect(() => {
@@ -49,7 +36,7 @@ const BarGraph = () => {
       datasets: [
         {
           label: "$ of Earnings",
-          data: dataValues,
+          data: balanceHistory,
           backgroundColor: (context) => {
             const gradient = context.chart.ctx.createLinearGradient(
               0,
@@ -70,14 +57,14 @@ const BarGraph = () => {
         },
         {
           label: "Transparent Bars",
-          data: dataValues.map((val) => maxVal - val),
+          data: balanceHistory.map((val) => maxVal - val),
           backgroundColor: "rgba(255,255,255,0.1)",
           categoryPercentage: 0.9,
           barPercentage: 0.45,
         },
       ],
     }),
-    []
+    [balanceHistory]
   );
 
   const options = {

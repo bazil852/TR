@@ -10,15 +10,18 @@ const GraphOfConsolidatedPOrtfolio = ({ data }) => {
     globalThis?.addEventListener("resize", handleResize);
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
+  console.log(data);
 
   const chartRef = useRef(null);
 
   useEffect(() => {
     const ctx = chartRef.current.getContext("2d");
 
+    // const removeUsdt = data.filter((item) => item.asset !== "USDT");
+
     const dataWithWorth = data.map((obj) => ({
       ...obj,
-      worth: obj.amount * obj.value,
+      worth: obj.usdt_price,
     }));
 
     const sortedData = dataWithWorth.sort((a, b) => b.worth - a.worth);
@@ -65,7 +68,7 @@ const GraphOfConsolidatedPOrtfolio = ({ data }) => {
             if (ctx.dataIndex === 4) {
               return "Others";
             } else if (obj) {
-              return obj.name;
+              return obj.asset;
             }
             return "";
           },
@@ -78,11 +81,17 @@ const GraphOfConsolidatedPOrtfolio = ({ data }) => {
         },
       },
     };
+    console.log(
+      "top",
+      topFour,
+      topFour.map((obj) => obj?.asset),
+      polarAreaData
+    );
 
     const chart = new Chart(ctx, {
       type: "polarArea",
       data: {
-        labels: topFour.map((obj) => obj.name),
+        labels: topFour.map((obj) => obj?.asset),
         datasets: [
           {
             data: polarAreaData,
@@ -98,7 +107,7 @@ const GraphOfConsolidatedPOrtfolio = ({ data }) => {
     return () => {
       chart.destroy();
     };
-  }, []);
+  }, [data]);
 
   return (
     <div

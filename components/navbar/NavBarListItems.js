@@ -3,9 +3,10 @@ import { Box, Popover, Typography } from "@mui/material";
 import Camera from "./navbarIcons/Camera";
 import Bell from "./navbarIcons/Bell";
 import Eye from "./navbarIcons/Eye";
+import { getSession } from "next-auth/react";
 
 const NavBarListItems = () => {
-  const [name, setName] = useState("R");
+  const [name, setName] = useState("");
   const [windowWidth, setWindowWidth] = useState(globalThis?.innerWidth);
 
   const [CameraHoverAnchorEl, setCameraHoverAnchorEl] = useState(null);
@@ -71,10 +72,15 @@ const NavBarListItems = () => {
   const NameClickOpen = Boolean(NameClickAnchorEl);
 
   useEffect(() => {
+    setUserName();
     const handleResize = () => setWindowWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
+  const setUserName = async () => {
+    const session = await getSession();
+    setName(`${session?.user?.firstName[0]}`);
+  };
   return (
     <Box
       sx={{
