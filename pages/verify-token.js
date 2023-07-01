@@ -66,7 +66,7 @@ export default function VerifyToken() {
       }
     );
     const newData = await response.json();
-    if (response.status == 400) {
+    if (!response.ok) {
       setError("Invalid Code! Try Again.");
     } else {
       const res = await signIn("credentials", {

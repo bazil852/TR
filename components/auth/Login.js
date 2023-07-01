@@ -65,12 +65,17 @@ const Login = () => {
       password: data.get("password"),
       redirect: false,
     });
+    console.log(res);
 
     if (!res.error) {
       const session = await getSession();
       if (session.user.accountVerified === false) {
         // router.push({pathname: '/verify-token', query: {email: session.user.email}});
-        router.push("/verify-token");
+        // router.push("/verify-token");
+        router.push({
+          pathname: "/verify-token",
+          query: { email: session.user.email, password: session.user.password },
+        });
       } else {
         // fetchAssetsFromUserInfo(true);
         router.push("/dashboard?selected=0");

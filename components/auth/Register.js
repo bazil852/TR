@@ -80,7 +80,7 @@ const Register = () => {
     );
     const newData = await response.json();
 
-    if (newData.status == 400) {
+    if (!response.ok) {
       setLoading(false);
 
       setError("Email already exists");

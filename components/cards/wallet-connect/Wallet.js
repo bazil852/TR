@@ -149,11 +149,15 @@ const Wallet = () => {
 
     if (response.ok) {
       setAllExchange(data);
+      if (data.length > 0) {
+        setConnected(true);
+      } else {
+        setConnected(false);
+      }
 
       // const allExchangesAssets = await getExchangesAssets(data.body.exchanges);
       // console.log(allExchangesAssets);
       // setAllExchangesAssetsData(allExchangesAssets);
-      setConnected(true);
       setShowDrawer(false);
       setLoading(false);
     } else {

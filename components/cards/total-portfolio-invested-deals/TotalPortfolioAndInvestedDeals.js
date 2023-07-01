@@ -7,7 +7,7 @@ import GraphOfTotalPortfolioAndInvestedDeals from "./GraphOfTotalPortfolioAndInv
 
 const formatValue = (number) => {
   return number >= 10000
-    ? `${(number / 1000)?.toFixed(1)}k`
+    ? `${(number / 1000)?.toFixed(2)}k`
     : number?.toFixed(0);
 };
 

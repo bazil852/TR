@@ -216,8 +216,8 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
           <Select
             options={options}
             defaultValue={{
-              value: data[0].exchange.exchange_name,
-              label: data[0].exchange.exchange_name,
+              value: data[0]?.exchange?.exchange_name,
+              label: data[0]?.exchange?.exchange_name,
             }}
             styles={customStyles}
             isSearchable={false}
@@ -482,8 +482,11 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
             }}
           >
             Showing {page * rowsPerPage + 1} to{" "}
-            {Math.min((page + 1) * rowsPerPage, sortedData.length)} of{" "}
-            {sortedData.length}
+            {Math.min(
+              (page + 1) * rowsPerPage,
+              sortedData?.length ? sortedData?.length : 0
+            )}{" "}
+            of {sortedData?.length ? sortedData?.length : 0}
           </Typography>
         </Box>
         <Box
