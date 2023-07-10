@@ -8,8 +8,8 @@
 module.exports = {
   env: {
     NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
-    NEXT_AUTH_URL: process.env.NEXT_AUTH_URL,
-    NEXT_AUTH_SECRET: process.env.NEXT_AUTH_SECRET,
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   },
   webpack(config) {
     config.module.rules.push({

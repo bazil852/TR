@@ -86,8 +86,8 @@ const DashboardComponent = () => {
     console.log(
       "ENV",
       process.env.NEXT_PUBLIC_BACKEND_URL,
-      process.env.NEXT_AUTH_URL,
-      process.env.NEXT_AUTH_SECRET
+      process.env.NEXTAUTH_URL,
+      process.env.NEXTAUTH_SECRET
     );
     const { user } = await getSession();
     const response = await fetch(
