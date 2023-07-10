@@ -83,6 +83,12 @@ const DashboardComponent = () => {
   }, []);
 
   const fetchBalanceHistoryFromUserId = async () => {
+    console.log(
+      "ENV",
+      process.env.NEXT_PUBLIC_BACKEND_URL,
+      process.env.NEXT_AUTH_URL,
+      process.env.NEXT_AUTH_SECRET
+    );
     const { user } = await getSession();
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}balance-history/user/${user.id}`,

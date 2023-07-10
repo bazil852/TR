@@ -6,6 +6,11 @@
 // module.exports = nextConfig;
 
 module.exports = {
+  env: {
+    NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
+    NEXT_AUTH_URL: process.env.NEXT_AUTH_URL,
+    NEXT_AUTH_SECRET: process.env.NEXT_AUTH_SECRET,
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,
@@ -16,6 +21,7 @@ module.exports = {
     return config;
   },
 };
+
 // const withTM = require('next-transpile-modules')(['react-d3-speedometer']);
 // const babel = require('@babel/core');
 // const lodashIsEmpty = require.resolve('lodash/isEmpty');
