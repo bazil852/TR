@@ -1,11 +1,10 @@
+import StrategyTabs from "../components/cards/strategy-tabs/StrategyTabs";
 import { Box, Modal, Typography, Backdrop, Fade, Grid } from "@mui/material";
 import PrivateHeader from "../components/layout/PrivateHeader";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { Video } from "../utils/icons";
-import Wallet from "../components/cards/wallet-connect/Wallet";
-
-const MyExchangesComponent = () => {
+const StartegyComponent = () => {
   const [width, setWidth] = useState(globalThis?.innerWidth);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -36,7 +35,7 @@ const MyExchangesComponent = () => {
               fontFamily: "Barlow, san-serif",
             }}
           >
-            My Exchange
+            New Strategy / Edit Strategy
           </Typography>
           <Typography
             sx={{
@@ -47,7 +46,7 @@ const MyExchangesComponent = () => {
               color: "#ACB2B7",
             }}
           >
-            All your accounts in the same place
+            Create, test and save your strategies
           </Typography>
         </Box>
         <Box>
@@ -80,7 +79,7 @@ const MyExchangesComponent = () => {
                   mb: -0.5,
                 }}
               >
-                Exchange
+                Strategy
               </Typography>
               <Typography
                 sx={{
@@ -122,17 +121,19 @@ const MyExchangesComponent = () => {
           </Modal>
         </Box>
       </Box>
-      <Wallet />
+      <StrategyTabs />
     </Box>
   );
 };
 
-export default function MyExchanges() {
+function Startegy() {
   return (
     <PrivateHeader
-      title="My Exchanges"
-      Component={MyExchangesComponent}
+      title="New Strategy / Edit Strategy"
       current="1"
+      Component={StartegyComponent}
     />
   );
 }
+
+export default Startegy;

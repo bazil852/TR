@@ -9,17 +9,6 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
     globalThis?.addEventListener("resize", handleResize);
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
-  const data = [
-    { name: "BTC", abbreviation: "Bitcoin", amount: 16, value: 25678 },
-    { name: "ETH", abbreviation: "Ethereum", amount: 10, value: 20000 },
-    { name: "XRP", abbreviation: "Litecoin", amount: 20, value: 17000 },
-    { name: "MATIC", abbreviation: "MATIC", amount: 4, value: 7000 },
-    { name: "LTC", abbreviation: "LiteCoin", amount: 20, value: 5000 },
-    { name: "ADA", abbreviation: "ADA", amount: 18, value: 15000 },
-    { name: "Doge", abbreviation: "DogeCoin", amount: 8, value: 20000 },
-  ];
-
-  // const removeUsdt = totalAssets.filter((item) => item.asset !== "USDT");
 
   const topThree = totalAssets
     .sort((a, b) => b.usdt_price - a.usdt_price)
@@ -67,82 +56,89 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
         >
           Portfolio distribution
         </Typography>
-
-        <Grid container alignItems={"center"}>
-          <Grid item xs={12} sm={7} md={7} lg={6}>
-            <GraphOfConsolidatedPOrtfolio data={totalAssets} />
-          </Grid>
-          <Grid item xs={12} sm={5} md={5} lg={6}>
-            <Box
+        {totalAssets.length === 0 ? (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginTop: "25%",
+            }}
+          >
+            <Typography
               sx={{
-                display: "flex",
-                flexDirection: width < 961 ? "row" : "column",
-                flexWrap: width < 961 ? "wrap" : "nowrap",
-                float: width < 961 ? "left" : "right",
-                gap: 1.5,
-                mt: width < 961 ? 2 : "",
-                px: width > 1200 ? 5 : "",
+                fontSize: 16,
+                fontFamily: "Barlow, san-serif",
+                color: "#ACB2B7",
+                fontWeight: 600,
               }}
             >
-              {topThree.map((coin) => (
-                <Box>
-                  <Typography
-                    sx={{
-                      fontSize:
-                        width < 1050 && width > 960
-                          ? 14
-                          : width < 961
-                          ? 16
-                          : 14,
-                      fontFamily: "Barlow, san-serif",
-                      color: "#ACB2B7",
-                      pl: 1,
-                    }}
-                  >
-                    {coin.asset}
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
+              No Wallet Connected
+            </Typography>
+          </Box>
+        ) : (
+          <Grid container alignItems={"center"}>
+            <Grid item xs={12} sm={7} md={7} lg={6}>
+              <GraphOfConsolidatedPOrtfolio data={totalAssets} />
+            </Grid>
+            <Grid item xs={12} sm={5} md={5} lg={6}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: width < 961 ? "row" : "column",
+                  flexWrap: width < 961 ? "wrap" : "nowrap",
+                  float: width < 961 ? "left" : "right",
+                  gap: 1.5,
+                  mt: width < 961 ? 2 : "",
+                  px: width > 1200 ? 5 : "",
+                }}
+              >
+                {topThree.map((coin) => (
+                  <Box>
                     <Typography
                       sx={{
-                        fontSize:
-                          width < 1050 && width > 960
-                            ? 14
-                            : width < 961
-                            ? 16
-                            : 14,
-                        fontFamily: "Barlow, san-serif",
-                        fontWeight: 600,
-                        color: "#B3B4B9",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {decimalFormatter(coin.availableBalance)} {coin.asset} =
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize:
-                          width < 1050 && width > 960
-                            ? 14
-                            : width < 961
-                            ? 16
-                            : 14,
+                        fontSize: 14,
                         fontFamily: "Barlow, san-serif",
                         color: "#ACB2B7",
+                        pl: 1,
                       }}
                     >
-                      ${numberFormatter(coin.usdt_price)}
+                      {coin.asset}
                     </Typography>
+                    <Box
+                      sx={{
+                        display: width < 961 && width > 900 ? "" : "flex",
+                        alignItems: "center",
+                        pl: width < 961 && width > 900 ? 1 : "",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: 14,
+                          fontFamily: "Barlow, san-serif",
+                          fontWeight: 600,
+                          color: "#B3B4B9",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {decimalFormatter(coin.availableBalance)} {coin.asset} =
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontSize: 14,
+                          fontFamily: "Barlow, san-serif",
+                          color: "#ACB2B7",
+                        }}
+                      >
+                        ${numberFormatter(coin.usdt_price)}
+                      </Typography>
+                    </Box>
                   </Box>
-                </Box>
-              ))}
-            </Box>
+                ))}
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
+        )}
       </CardContent>
     </Card>
   );

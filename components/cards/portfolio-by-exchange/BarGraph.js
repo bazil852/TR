@@ -1,4 +1,12 @@
 import { Bar } from "react-chartjs-2";
+import { Chart } from "chart.js";
+import * as Chartjs from "chart.js";
+
+const controllers = Object.values(Chartjs).filter(
+  (chart) => chart.id !== undefined
+);
+
+Chart.register(...controllers);
 import { useMemo } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -18,11 +26,9 @@ const months = [
   "Dec",
 ];
 
-const dataValues = [0, 0, 0, 0, 0, 70196, 0, 0, 0, 0, 0, 0];
-
 const BarGraph = ({ balanceHistory }) => {
   console.log(balanceHistory);
-  const maxVal = Math.max(...balanceHistory);
+  const maxVal = Math.max(...balanceHistory) + 2500;
   const [width, setWidth] = useState(globalThis?.innerWidth);
 
   useEffect(() => {

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 
 const GraphSpotfuturePieChart = ({ data }) => {
-  const [dataWithWorth, setDataWithWorth] = useState([]);
+  const [dataWithWorth, setDataWithWorth] = useState([0]);
   const colors = ["#36D2B6", "#1EB1D2", "#4E38D2", "#90BAD2", "#2474D2"];
+  const minPercentage = 0.01;
 
   useEffect(() => {
-    const removeUsdt = data?.filter((item) => item.asset !== "USDT");
-    const computedData = removeUsdt?.map((obj) => ({
+    const computedData = data?.map((obj) => ({
       ...obj,
-      worth: obj.usdt_price,
+      worth: Number(obj.usdt_price) || 0,
     }));
 
     const sortedData = computedData.sort((a, b) => b.worth - a.worth);
@@ -26,6 +26,30 @@ const GraphSpotfuturePieChart = ({ data }) => {
 
   const totalWorth = dataWithWorth.reduce((sum, obj) => sum + obj.worth, 0);
 
+  const adjustedData = dataWithWorth.map((item) => {
+    const worth = item.worth;
+    let percentage = worth / totalWorth;
+
+    if (percentage < minPercentage) {
+      percentage = minPercentage;
+    }
+
+    return {
+      ...item,
+      percentage,
+    };
+  });
+
+  const maxItem = adjustedData.reduce((max, item) =>
+    item.percentage > max.percentage ? item : max
+  );
+
+  const totalPercentage = adjustedData.reduce(
+    (sum, item) => sum + item.percentage,
+    0
+  );
+  maxItem.percentage -= totalPercentage - 1;
+
   let accumulatedWorth = 0;
 
   return (
@@ -38,9 +62,8 @@ const GraphSpotfuturePieChart = ({ data }) => {
         overflow: "visible",
       }}
     >
-      {dataWithWorth.map((item, index) => {
-        const worth = item.worth;
-        const percentage = worth / totalWorth;
+      {adjustedData.map((item, index) => {
+        const percentage = item.percentage;
         const start = accumulatedWorth * 360;
         const end = start + percentage * 360;
 

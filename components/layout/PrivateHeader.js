@@ -147,7 +147,7 @@ export default function PrivateHeader({ title, current, Component }) {
       index: 1,
       title: "Strategy",
       icon: selectedItem === 1 ? Lock : Lock,
-      path: "/my-exchanges",
+      path: "/Startegy",
     },
 
     {
@@ -166,7 +166,7 @@ export default function PrivateHeader({ title, current, Component }) {
       index: 4,
       title: "Exchanges API",
       icon: selectedItem === 5 ? HandShake : HandShake,
-      path: "/AllDeals",
+      path: "/my-exchanges",
     },
     {
       index: 5,
@@ -196,12 +196,12 @@ export default function PrivateHeader({ title, current, Component }) {
   };
 
   return (
-    <Box sx={{ display: windowWidth < 961 ? "absolute" : "flex" }}>
+    <Box sx={{ display: windowWidth < 1000 ? "absolute" : "flex" }}>
       <CssBaseline />
       <Drawer
         PaperProps={{
           sx: {
-            height: windowWidth < 961 ? 60 : "100%",
+            height: windowWidth < 1000 && !open ? 60 : "100%",
             color: "#795BFF",
             border: "none",
             "&::-webkit-scrollbar": {
@@ -303,7 +303,7 @@ export default function PrivateHeader({ title, current, Component }) {
           sx={{
             mt: open ? 2 : 0,
             mb: 6,
-            display: windowWidth < 961 && !open && "none",
+            display: windowWidth < 1000 && !open && "none",
           }}
         >
           {items.map((item) => (

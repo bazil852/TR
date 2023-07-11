@@ -1,36 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { alpha, styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
-
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Drawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { signIn, getSession } from "next-auth/react";
-import Divider from "@mui/material/Divider";
-import SelectInput from "../../widgets/SelectInput";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Autocomplete from "@mui/material/Autocomplete";
-import SearchIcon from "@mui/icons-material/Search";
-import { InputAdornment } from "@mui/material";
 
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import MenuItem from "@mui/material/MenuItem";
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
     marginTop: theme.spacing(3),
   },
   "& .MuiInputBase-input": {
     position: "relative",
-    height: 20,
-    backgroundColor: "#452951",
-    borderRadius: "8px",
-    fontSize: 16,
-    padding: "8px 12px",
+    height: 15,
+    backgroundColor: "#2A2A2A",
+    borderRadius: "6px",
+    fontSize: 15,
+    fontWeight: 400,
+    padding: "8px 5px",
+    color: "#FFFFFF",
     transition: theme.transitions.create([
       "border-color",
       "background-color",
@@ -42,237 +29,233 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(2),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
 
 const GeneralSettings = (props) => {
-  const names = [100, 200, 300, 400, 500];
-  const exchange = ["Binance", "OKX"];
-  const botType = ["Single Pair", "Multiple Pair"];
-  const name = ["Long", "Short"];
-  const listOfPairs = ["BTC/USDT", "ETH/USDT", "DOGE/USDT", "SOL/USDT"];
+  const [width, setWidth] = useState(globalThis?.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <Box
       sx={{
-        // background: "linear-gradient(to right,#3E2146,#371655)",
-        mt: 5,
+        mt: 3,
         borderRadius: "5px",
-        // p: 3,
-        marginBottom: 5,
+        px:
+          width > 1200 && width < 1300
+            ? 5
+            : width > 1300 && width < 1400
+            ? 10
+            : width > 1400
+            ? 15
+            : "",
       }}
-      maxWidth="100%"
     >
-      <Box>
-        <Typography
-          sx={{ mt: 1, fontWeight: 500 }}
-          color="white"
-          component="h1"
-          variant="h5"
-        >
-          General Settings
-        </Typography>
-      </Box>
-      <Box>
-        <Grid
-          container
-          spacing={{ xs: 2, md: 3 }}
-          columns={{ xs: 4, sm: 10, md: 16 }}
-        >
-          <Grid item xs={2} sm={4} md={4}>
+      <Grid container spacing={width < 600 ? 1 : 3}>
+        <Grid item xs={12} sm={6} md={5} lg={5}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              mt: 1,
+              mb: width < 900 ? 1 : 3,
+              gap: width < 900 ? 0 : 5,
+              flexWrap: width < 900 ? "wrap" : "nowrap",
+            }}
+          >
             <Typography
-              sx={{ marginBottom: 1, mt: 2, fontSize: 16, pl: 0.5 }}
-              color="#CCCCCC"
+              sx={{
+                fontWeight: 500,
+                fontSize: 16,
+                fontFamily: "Barlow, san-serif",
+                color: "#CCCCCC",
+                whiteSpace: "nowrap",
+              }}
             >
-              Bot Name
+              Strategy Name
             </Typography>
             <ValidationTextField
               margin="normal"
               required
-              id="botName"
-              placeholder="Name"
-              fullWidth
-              name="botName"
-              value={props.botName}
-              onChange={() => {
-                props.setBotName(event.target.value);
+              id="startegyname"
+              placeholder="Strategy Name"
+              sx={{
+                fontFamily: "Barlow, san-serif",
+                width: "100%",
+              }}
+              name="strategyName"
+              value={props.strategyName[props.index]}
+              onChange={(e) => {
+                const temp = [...props.strategyName];
+                temp[props.index] = e.target.value;
+                props.setStrategyName(temp);
               }}
               disabled={props.editSettings}
             />
-          </Grid>
-          <Grid item xs={2} sm={4} md={4}>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              mt: 1,
+              mb: width < 900 ? 1 : 3,
+              gap: width < 900 ? 0 : 4.5,
+              flexWrap: width < 900 ? "wrap" : "nowrap",
+            }}
+          >
             <Typography
-              sx={{ marginBottom: 1, mt: 2, fontSize: 16, pl: 0.5 }}
-              color="#CCCCCC"
+              sx={{
+                fontWeight: 500,
+                fontSize: 16,
+                fontFamily: "Barlow, san-serif",
+                color: "#CCCCCC",
+                whiteSpace: "nowrap",
+              }}
             >
-              Bot Type
+              Strategy Folder
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "row" }}>
-              <SelectInput
-                placeHolder={"Bot Type"}
-                options={botType}
-                fullWidth
-                keyName={"botType"}
-                value={props.botType}
-                onChange={async (event) => {
-                  props.setBotType(event.target.value);
-                }}
-                disabled={props.editSettings}
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={2} sm={4} md={4}>
+            <ValidationTextField
+              margin="normal"
+              required
+              id="startegyfolder"
+              placeholder="Strategy Folder"
+              sx={{
+                width: "100%",
+                fontFamily: "Barlow, san-serif",
+              }}
+              name="strategyFolder"
+              value={props.strategyFolder[props.index]}
+              onChange={(e) => {
+                const temp = [...props.strategyFolder];
+                temp[props.index] = e.target.value;
+                props.setStrategyFolder(temp);
+              }}
+              disabled={props.editSettings}
+            />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              mt: 1,
+              mb: width < 900 && width > 600 ? 1 : width < 600 ? 0 : 3,
+              gap: width < 900 ? 0 : 10.7,
+              flexWrap: width < 900 ? "wrap" : "nowrap",
+            }}
+          >
             <Typography
-              sx={{ marginBottom: 1, mt: 2, fontSize: 16, pl: 0.5 }}
-              color="#CCCCCC"
+              sx={{
+                fontWeight: 500,
+                fontSize: 16,
+                fontFamily: "Barlow, san-serif",
+                color: "#CCCCCC",
+                whiteSpace: "nowrap",
+              }}
             >
-              Pairs
+              Bot Link
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "row" }}>
-              <Autocomplete
-                id="pairs"
-                freeSolo
-                options={listOfPairs}
-                disableClearable
-                disabled={props.editSettings}
-                fullWidth
-                PaperComponent={({ children }) => (
-                  <Paper
-                    sx={{
-                      backgroundColor: "#452951",
-                      "& .MuiAutocomplete-option.Mui-selected": {
-                        opacity: 0.3,
-                        backgroundColor: "transparent",
-                      },
-                    }}
-                  >
-                    {children}
-                  </Paper>
-                )}
-                renderInput={(params) => {
-                  const { InputLabelProps, InputProps, ...rest } = params;
-                  return (
-                    <ValidationTextField
-                      margin="normal"
-                      required
-                      placeholder={
-                        props.strategyPair ? props.strategyPair : "Search Pair"
-                      }
-                      fullWidth
-                      {...params.InputProps}
-                      {...rest}
-                      value={props.strategyPair}
-                      disabled={props.editSettings}
-                    />
-                  );
-                }}
-                onSelect={async (event) => {
-                  props.setStrategyPair(event.target.value);
-                }}
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={2} sm={4} md={4}>
-            <Typography
-              sx={{ marginBottom: 1, mt: 2, fontSize: 16, pl: 0.5 }}
-              color="#CCCCCC"
-            >
-              Exchange
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "row" }}>
-              <Select
-                name={"exchange"}
-                onChange={async (event) => {
-                  props.setExchangeName(event.target.value);
-                }}
-                input={<OutlinedInput />}
-                value={props.exchangeName}
-                disabled={props.editSettings}
-                MenuProps={{
-                  PaperProps: {
-                    sx: {
-                      backgroundColor: "#452951",
-                      mt: 0.5,
-                      "& .MuiMenuItem-root": {
-                        color: "white",
-                        "&:hover": {
-                          backgroundColor: "#4E2C60",
-                        },
-                      },
-                      "& .Mui-selected": {
-                        opacity: 0.4,
-                        backgroundColor: "transparent",
-                      },
-                      "& .MuiList-root": {
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                      },
-                      "& .MuiMenu-paper": {
-                        marginTop: "8px",
-                      },
-                      "& .MuiListItem-root": {
-                        paddingTop: "10px",
-                        paddingBottom: "10px",
-                        "&:hover": {
-                          backgroundColor: "none",
-                        },
-                      },
-                    },
-                  },
-                }}
-                sx={{
-                  "& .MuiSelect-select .notranslate::after": "Exchange"
-                    ? {
-                        content: `"Exchange"`,
-                        opacity: 0.42,
-                      }
-                    : {},
-                  minWidth: "100%",
-                  height: 37,
-                  borderRadius: "8px",
-                  color: "white",
-                  backgroundColor: "#452951",
-                  boxShadow: "none",
-                  ".MuiOutlinedInput-notchedOutline": {
-                    border: 0,
-                  },
-                }}
-              >
-                {props?.exchangeOptions?.map((item) => (
-                  <MenuItem key={item._id} value={item._id}>
-                    {item.exchangeName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Box>
-          </Grid>
-          <Grid item xs={2} sm={4} md={4}>
-            <Typography
-              sx={{ marginBottom: 1, mt: 2, fontSize: 16, pl: 0.5 }}
-              color="#CCCCCC"
-            >
-              Strategy Type
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "row" }}>
-              <SelectInput
-                placeHolder={"Strategy Type"}
-                options={name}
-                fullWidth
-                keyName={"strategyType"}
-                value={props.strategyType}
-                onChange={async (event) => {
-                  props.setStrategyType(event.target.value);
-                }}
-                disabled={props.editSettings}
-              />
-            </Box>
-          </Grid>
+            <ValidationTextField
+              margin="normal"
+              required
+              id="botlink"
+              placeholder="Bot Link"
+              sx={{ width: "100%", fontFamily: "Barlow, san-serif" }}
+              name="botLink"
+              value={props.BotLink[props.index]}
+              onChange={(e) => {
+                const temp = [...props.BotLink];
+                temp[props.index] = e.target.value;
+                props.setBotLink(temp);
+              }}
+              disabled={props.editSettings}
+            />
+          </Box>
         </Grid>
-      </Box>
+        <Grid item xs={12} sm={6} md={7} lg={7}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              mt: width < 600 ? 0 : 1,
+              mb: width < 900 && width > 600 ? 1.5 : width < 600 ? 1 : 2.5,
+              gap: width < 900 ? 0 : 2,
+              flexWrap: width < 900 ? "wrap" : "nowrap",
+            }}
+          >
+            <Typography
+              sx={{
+                fontWeight: 500,
+                fontSize: 16,
+                fontFamily: "Barlow, san-serif",
+                color: "#CCCCCC",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Strategy Description
+            </Typography>
+            <ValidationTextField
+              margin="normal"
+              required
+              id="startegydescription"
+              placeholder="Strategy Description"
+              sx={{
+                width: "100%",
+                fontFamily: "Barlow, san-serif",
+              }}
+              name="strategyDescription"
+              value={props.strategyDescription[props.index]}
+              onChange={(e) => {
+                const temp = [...props.strategyDescription];
+                temp[props.index] = e.target.value;
+                props.setStrategyDescription(temp);
+              }}
+              disabled={props.editSettings}
+            />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              gap: width < 900 ? 0 : 14.7,
+              flexWrap: width < 900 ? "wrap" : "nowrap",
+            }}
+          >
+            <Typography
+              sx={{
+                fontWeight: 500,
+                fontSize: 16,
+                fontFamily: "Barlow, san-serif",
+                color: "#CCCCCC",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Notes
+            </Typography>
+
+            <ValidationTextField
+              multiline
+              rows={3}
+              margin="normal"
+              required
+              id="notes"
+              placeholder="Notes"
+              sx={{
+                width: "100%",
+                fontFamily: "Barlow, san-serif",
+              }}
+              name="notes"
+              value={props.Notes[props.index]}
+              onChange={(e) => {
+                const temp = [...props.Notes];
+                temp[props.index] = e.target.value;
+                props.setNotes(temp);
+              }}
+              disabled={props.editSettings}
+            />
+          </Box>
+        </Grid>
+      </Grid>
     </Box>
   );
 };

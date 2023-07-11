@@ -67,7 +67,13 @@ import Logo from "../assets/icons/Logo.svg";
 import ClosedMenuIcon from "../assets/icons/MenuIcon.svg";
 import Video from "../assets/icons/video.svg";
 import Gift from "../assets/icons/gift.svg";
+import Plus from "../assets/icons/plus.svg";
+import Clock from "../assets/icons/clock.svg";
+import SmokeWave from "../assets/icons/smoke.svg";
 export {
+  SmokeWave,
+  Clock,
+  Plus,
   Gift,
   Video,
   ClosedMenuIcon,

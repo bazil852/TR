@@ -58,7 +58,8 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
     borderRadius: 4,
     position: "relative",
     backgroundColor: "#292929",
-    border: "1px solid #ced4da",
+    fontFamily: "Barlow,san-serif",
+    border: "1px solid #B3B4B9",
     fontSize: 16,
     color: "#CCCCCC",
     padding: "10px 12px",
@@ -69,7 +70,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
     ]),
     "&:focus": {
       boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
-      borderColor: theme.palette.primary.main,
+      borderColor: "#B3B4B9",
     },
   },
 }));
@@ -82,6 +83,22 @@ const exchangeTypes = [
 
 import CryptoRates from "../crypto-rates/CryptoRates";
 import { Btc } from "../../../utils/icons";
+import GraphOfConsolidatedPOrtfolio from "../consolidated-invested-portfolio/GraphOfConsolidatedPOrtfolio";
+
+const Draw = styled(Drawer)({
+  "& .MuiDrawer-paper": {
+    "&::-webkit-scrollbar": {
+      width: "5px",
+    },
+    "&::-webkit-scrollbar-track": {
+      background: "transparent",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      backgroundColor: "grey",
+      borderRadius: "20px",
+    },
+  },
+});
 
 const Wallet = () => {
   const [showDrawer, setShowDrawer] = useState(false);
@@ -108,26 +125,41 @@ const Wallet = () => {
     control: (provided) => ({
       ...provided,
       cursor: "default",
-      background: "none",
-      border: "1.5px solid #764080",
-      boxShadow: "none",
+      border: "1px solid #B3B4B9",
+      backgroundColor: "#27292A",
     }),
     menu: (provided) => ({
       ...provided,
-      background: "#452951",
+      background: "#27292A",
     }),
     option: (provided, state) => ({
       ...provided,
       color: "white",
-      background: state.isSelected ? "#5D3FA6" : "transparent",
+      background: state.isSelected ? "#27292A" : "transparent",
       cursor: "pointer",
       "&:hover": {
-        background: state.isSelected ? "#5D3FA6" : "transparent",
+        background: state.isSelected ? "#27292A" : "transparent",
       },
     }),
     singleValue: (provided) => ({
       ...provided,
       color: "white",
+    }),
+    menuList: (provided) => ({
+      ...provided,
+      "&::-webkit-scrollbar": {
+        width: "4px",
+      },
+      "&::-webkit-scrollbar-track": {
+        background: "transparent",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        background: "#888",
+        borderRadius: "4px",
+      },
+      "&::-webkit-scrollbar-thumb:hover": {
+        background: "#555",
+      },
     }),
   };
 
@@ -423,12 +455,47 @@ const Wallet = () => {
 
   console.log("allExchange", selectedAssets);
 
-  return (
-    <>
-      <div style={{ margin: "40px 0px" }}>
-        <CryptoRates />
-      </div>
+  const totalAssets = [
+    {
+      asset: "USDT",
+      availableBalance: 26869.36865522,
+      usdt_price: 2682.82340546,
+    },
+    {
+      asset: "BTC",
+      availableBalance: 0.07095732,
+      usdt_price: 247.920650792,
+    },
+    {
+      asset: "BUSD",
+      availableBalance: 2000.80032012,
+      usdt_price: 200.600240087988,
+    },
+    {
+      asset: "ETH",
+      availableBalance: 1.04312268,
+      usdt_price: 1950.4307870639998,
+    },
+    {
+      asset: "BNB",
+      availableBalance: 5.95036998,
+      usdt_price: 1460.81583009,
+    },
+    {
+      asset: "USDC",
+      availableBalance: 0,
+      usdt_price: 0,
+    },
+  ];
+  const [width, setWidth] = useState(globalThis?.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
 
+  return (
+    <Box>
       <Button
         type="submit"
         variant="contained"
@@ -438,6 +505,7 @@ const Wallet = () => {
           textTransform: "none",
           background: "linear-gradient(90deg, #790D83 0%, #7A5CFF 100%)",
           color: "white",
+          fontFamily: "Barlow,san-serif",
           fontWeight: "600",
           "&:hover": {
             background: "linear-gradient(90deg, #790D83 0%, #7A5CFF 100%)",
@@ -449,10 +517,11 @@ const Wallet = () => {
         + Add Exchange
       </Button>
 
-      <Drawer
+      <Draw
         PaperProps={{
           sx: {
             backgroundColor: "black",
+            pb: 10,
           },
         }}
         anchor="right"
@@ -469,9 +538,15 @@ const Wallet = () => {
           onSubmit={handleBinance}
         >
           <Typography
-            variant="h5"
+            variant="h4"
             color="white"
-            sx={{ textAlign: "center", mt: 17, mb: 2 }}
+            sx={{
+              textAlign: "center",
+              mt: 5,
+              mb: 2,
+              fontFamily: "Barlow, san-serif",
+              fontWeight: 600,
+            }}
           >
             Connect Exchange
           </Typography>
@@ -520,126 +595,174 @@ const Wallet = () => {
             name="apiSecret"
             autoFocus
           />
-          <Button type="submit" sx={{ mt: 2 }} fullWidth variant="contained">
+          <Button
+            type="submit"
+            sx={{
+              mt: 2,
+              background: "linear-gradient(90deg, #790D83 0%, #7A5CFF 100%)",
+              fontFamily: "Barlow, san-serif",
+            }}
+            fullWidth
+            variant="contained"
+          >
             Connect
           </Button>
         </Box>
-      </Drawer>
+      </Draw>
 
       {loading ? (
         <div style={{ display: "flex", justifyContent: "center" }}>
           <CircularProgress />
         </div>
       ) : connected ? (
-        <Grid container spacing={1}>
+        <Grid container spacing={1} mb={8}>
           {allExchange?.map((data, index) => {
             console.log("exchange card", data);
             return (
-              <Grid item xs={4} key={index}>
+              <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
                 <Card
                   sx={{
-                    backgroundImage:
-                      "url(https://i.postimg.cc/K8q3CHyH/Rectangle-18960.png)",
-                    backgroundSize: "100% 100%",
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
-                    backgroundColor: "transparent",
+                    background: "#262626",
                     boxShadow: "none",
-                    p: "2vw",
+                    p: "1vw",
+                    minWidth: "100%",
+                    minHeight: 550,
                   }}
                 >
                   <CardContent>
-                    <Typography fontSize={"1.1rem"} fontWeight={500}>
+                    <Typography
+                      fontFamily={"Barlow,san-serif"}
+                      fontWeight={600}
+                      fontSize={20}
+                    >
                       {`${data.exchange.exchange_name} : ${data.exchange.exchange_type}`}
                     </Typography>
-                    <Typography color={"#9F90A2"} fontSize={"0.9rem"}>
+                    <Typography
+                      color={"#ACB2B7"}
+                      fontSize={"0.9rem"}
+                      fontFamily={"Barlow,san-serif"}
+                    >
                       Assets
                     </Typography>
-                    <Box my={2}>
-                      <Select
-                        options={data.assets.map((asset) => ({
-                          value: asset,
-                          label: asset.coin_name,
-                        }))}
-                        onChange={(selectedOption) =>
-                          handleAssetChange(
-                            selectedOption,
-                            data.exchange.exchange_name
-                          )
-                        }
-                        value={selectedAssets[data.exchangeName]}
-                        styles={customStyles}
-                        placeholder="Select Asset"
-                      />
+                    <Box sx={{ display: "flex", flexDirection: "column" }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          pr:
+                            width < 900 && width > 700
+                              ? 13
+                              : width < 700 && width > 600
+                              ? 6
+                              : width < 600 && width > 500
+                              ? 13
+                              : width < 500 && width > 400
+                              ? 8
+                              : width < 400
+                              ? 5
+                              : "",
+                        }}
+                      >
+                        <GraphOfConsolidatedPOrtfolio data={totalAssets} />
+                      </Box>
+                      <Box my={2}>
+                        <Select
+                          options={data.assets.map((asset) => ({
+                            value: asset,
+                            label: asset.coin_name,
+                          }))}
+                          onChange={(selectedOption) =>
+                            handleAssetChange(
+                              selectedOption,
+                              data.exchange.exchange_name
+                            )
+                          }
+                          value={selectedAssets[data.exchangeName]}
+                          styles={customStyles}
+                          placeholder="Select Asset"
+                          isSearchable={false}
+                          menuPortalTarget={document.body}
+                          menuPosition={"fixed"}
+                        />
+                      </Box>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography
+                          color={"#ACB2B7"}
+                          fontFamily={"Barlow,san-serif"}
+                        >
+                          Available
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            gap: 1,
+                          }}
+                        >
+                          <Typography
+                            color={"#ACB2B7"}
+                            fontWeight={500}
+                            fontFamily={"Barlow,san-serif"}
+                          >
+                            {selectedAssets[data.exchange.exchange_name]
+                              ? selectedAssets[
+                                  data.exchange.exchange_name
+                                ]?.value?.usdt_price.toFixed(2)
+                              : "0.00"}
+                          </Typography>
+                          <Typography
+                            color={"#B3B4B9"}
+                            fontWeight={500}
+                            fontFamily={"Barlow,san-serif"}
+                          >
+                            USDT
+                          </Typography>
+                        </Box>
+                      </Box>
                     </Box>
                     <Box
                       sx={{
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
+                        flexWrap: "wrap",
+                        pt: 3,
+                        gap: 1,
                       }}
                     >
-                      <Typography color={"#9F90A2"}>Available</Typography>
-                      <Box
+                      <Button
                         sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          gap: 1,
+                          background:
+                            "linear-gradient(90deg, #790D83 0%, #7A5CFF 100%)",
+                          textTransform: "none",
+                          color: "white",
+                          px: 1.5,
+                          fontFamily: "Barlow,san-serif",
                         }}
                       >
-                        <Typography color={"#9F90A2"} fontWeight={500}>
-                          {selectedAssets[data.exchange.exchange_name]
-                            ? selectedAssets[
-                                data.exchange.exchange_name
-                              ]?.value?.usdt_price.toFixed(2)
-                            : "0.00"}
-                        </Typography>
-                        <Typography color={"#5D3FA6"} fontWeight={500}>
-                          USDT
-                        </Typography>
-                      </Box>
+                        Add to Portfolio
+                      </Button>
+                      <Button
+                        sx={{
+                          background: "#C8181A",
+                          textTransform: "none",
+                          color: "white",
+                          px: 1.5,
+                          fontFamily: "Barlow,san-serif",
+                        }}
+                        onClick={() => handleDeleteExchange(data?.exchange.id)}
+                      >
+                        Remove
+                      </Button>
                     </Box>
-                    {/* <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography color={"#9F90A2"}>Locked Balances</Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      gap: 1,
-                    }}
-                  >
-                    <Typography color={"#9F90A2"} fontWeight={500}>
-                      {selectedAssets[data.exchangeName]
-                        ? selectedAssets[data.exchangeName].value
-                            .crossWalletBalance
-                        : "0.00"}
-                    </Typography>
-                    <Typography color={"#5D3FA6"} fontWeight={500}>
-                      USDT
-                    </Typography>
-                  </Box>
-                </Box> */}
-                    <Button
-                      sx={{
-                        background: "#C8181A",
-                        textTransform: "none",
-                        color: "white",
-                        float: "right",
-                        my: 2,
-                        px: 1.5,
-                      }}
-                      onClick={() => handleDeleteExchange(data?.exchange.id)}
-                    >
-                      Remove
-                    </Button>
                   </CardContent>
                 </Card>
               </Grid>
@@ -648,11 +771,52 @@ const Wallet = () => {
         </Grid>
       ) : (
         <Box>
-          <Typography sx={{ marginBottom: 2 }}>No Wallet Connected</Typography>
+          <Typography
+            sx={{
+              marginBottom: 2,
+              fontSize: 16,
+              fontFamily: "Barlow, san-serif",
+              color: "#ACB2B7",
+              fontWeight: 600,
+              pl: 1,
+            }}
+          >
+            No Wallet Connected
+          </Typography>
         </Box>
       )}
-    </>
+    </Box>
   );
 };
 
 export default Wallet;
+
+{
+  /* <Box
+sx={{
+display: "flex",
+justifyContent: "space-between",
+alignItems: "center",
+}}
+>
+<Typography color={"#9F90A2"}>Locked Balances</Typography>
+<Box
+sx={{
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: 1,
+}}
+>
+<Typography color={"#9F90A2"} fontWeight={500}>
+  {selectedAssets[data.exchangeName]
+    ? selectedAssets[data.exchangeName].value
+        .crossWalletBalance
+    : "0.00"}
+</Typography>
+<Typography color={"#5D3FA6"} fontWeight={500}>
+  USDT
+</Typography>
+</Box>
+</Box> */
+}

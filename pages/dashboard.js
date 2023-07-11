@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 import AggregateAccountBalance from "../components/charts/AggregateAccountBalance";
 import { Box, Modal, Typography, Backdrop, Fade, Grid } from "@mui/material";
 import ReactPlayer from "react-player";
+import { Video } from "../utils/icons";
 import ExchangeTable from "../components/cards/exchange-table/ExchangeTable";
 
 import { getSession } from "next-auth/react";
 import TotalPortfolioAndInvestedDeals from "../components/cards/total-portfolio-invested-deals/TotalPortfolioAndInvestedDeals";
 
-import { Video } from "../utils/icons";
 import TotalAndInvestedDeals from "../components/cards/total-deals-total-invested-deals/TotalAndInvestedDeals";
 import { useSelector } from "react-redux";
 import ConsolidatedPortfolio from "../components/cards/consolidated-invested-portfolio/ConsolidatedPortfolio";
@@ -151,9 +151,9 @@ const DashboardComponent = () => {
     const newExchanges = data.map((item) => {
       return { exchange_type: item.exchange.exchange_type, profitOrLoss: 0 };
     });
-    console.log(newExchanges);
+    console.log("exchange",newExchanges);
     setExchangeList(newExchanges);
-
+    console.log("data", data);
     const newArray = data.map((item) => {
       return [...item.assets];
     });
@@ -665,10 +665,22 @@ const DashboardComponent = () => {
       </Grid>
 
       <Grid container spacing={1} mt={1}>
-        <Grid item xs={12} sm={12} md={isDrawerOpen ? 6 : 5} lg={5}>
+        <Grid
+          item
+          xs={12}
+          sm={12}
+          md={isDrawerOpen && width > 1000 ? 6 : 5}
+          lg={5}
+        >
           <ConsolidatedPortfolio totalAssets={totalAssets} />
         </Grid>
-        <Grid item xs={12} sm={12} md={isDrawerOpen ? 6 : 7} lg={7}>
+        <Grid
+          item
+          xs={12}
+          sm={12}
+          md={isDrawerOpen && width > 1000 ? 6 : 7}
+          lg={7}
+        >
           <InvestedPortfolio totalBalance={totalPortfolioValue} />
         </Grid>
       </Grid>

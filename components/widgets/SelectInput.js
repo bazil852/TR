@@ -19,12 +19,12 @@ const SelectInput = (props) => {
       MenuProps={{
         PaperProps: {
           sx: {
-            backgroundColor: "#452951",
+            backgroundColor: "#000000",
             mt: 0.5,
             "& .MuiMenuItem-root": {
               color: "white",
               "&:hover": {
-                backgroundColor: "#4E2C60",
+                backgroundColor: "#000000",
               },
             },
             "& .Mui-selected": {
@@ -57,9 +57,10 @@ const SelectInput = (props) => {
           : {},
         minWidth: "100%",
         height: 37,
-        borderRadius: "8px",
         color: "white",
-        backgroundColor: "#452951",
+        backgroundColor: "#292929",
+        fontFamily: "Barlow,san-serif",
+        border: "1px solid #B3B4B9",
         boxShadow: "none",
         ".MuiOutlinedInput-notchedOutline": {
           border: 0,

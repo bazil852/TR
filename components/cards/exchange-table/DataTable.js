@@ -51,11 +51,6 @@ const customStyles = {
     backgroundColor: "#000000",
   }),
 };
-// const options = [
-//   { value: "option1", label: "Option 1" },
-//   { value: "option2", label: "Option 2" },
-//   { value: "option3", label: "Option 3" },
-// ];
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -159,7 +154,7 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
     setSelectedExchange(newExchange);
   };
 
-  console.log(selectedExchange);
+  console.log(sortedData);
 
   return (
     <Box mt={-5}>
@@ -217,11 +212,15 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
             options={options}
             defaultValue={{
               value: data[0]?.exchange?.exchange_name,
-              label: data[0]?.exchange?.exchange_name,
+              label:
+                data[0]?.exchange?.exchange_name === undefined
+                  ? "No Exchange"
+                  : data[0]?.exchange?.exchange_name,
             }}
             styles={customStyles}
             isSearchable={false}
             onChange={handleExchangeChange}
+            placeholder="Exchange"
           />
         </Box>
         <Box
@@ -381,14 +380,9 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
                                           "Error occurred while rendering CryptoIcon:",
                                           error
                                         );
-                                        return null; // Render null or an alternative component/error message
+                                        return null;
                                       }
                                     })()}
-                                    {/* <CryptoIcon
-                                      symbol={row[column.field]}
-                                      size={32}
-                                      color="auto"
-                                    /> */}
                                   </ErrorBoundary>
                                 </Box>
 

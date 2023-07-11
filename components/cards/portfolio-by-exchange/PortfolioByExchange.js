@@ -12,13 +12,6 @@ import { useEffect } from "react";
 import { useState } from "react";
 
 const PortfolioByExchange = ({ coins, balanceHistory }) => {
-  // const coins = [
-  //   { exchange_type: "Binance Spot", profitOrLoss: 0 },
-  //   { exchange_type: "Binance Futures", profitOrLoss: 0 },
-  //   { exchange_type: "OKX Spot", profitOrLoss: 0 },
-  //   { exchange_type: "OKX Futures", profitOrLoss: 0 },
-  //   { exchange_type: "Bitfinix", profitOrLoss: 0 },
-  // ];
   const [width, setWidth] = useState(globalThis?.innerWidth);
 
   useEffect(() => {
@@ -146,7 +139,7 @@ const PortfolioByExchange = ({ coins, balanceHistory }) => {
                 overflowX: "auto",
               }}
             >
-              <BarGraph balanceHistory={balanceHistory}/>
+              <BarGraph balanceHistory={balanceHistory} />
             </Grid>
             <Grid item xs={12} sm={12} md={4} lg={4}>
               <Box
@@ -156,82 +149,102 @@ const PortfolioByExchange = ({ coins, balanceHistory }) => {
                   justifyContent: "space-between",
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                  }}
-                >
-                  {coins.map((coin, index) => {
-                    return (
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                      >
-                        <Box
-                          sx={{
-                            borderRadius: "50%",
-                            background: "#313432",
-                            px: 1,
-                          }}
-                        >
-                          <Typography
+                {coins.length === 0 ? (
+                  <Box sx={{ my: "auto" }}>
+                    <Typography
+                      sx={{
+                        fontFamily: "Barlow, san-serif",
+                        color: "#B3B4B9",
+                        fontSize: 16,
+                      }}
+                    >
+                      Wallet Balance is Empty!
+                    </Typography>
+                  </Box>
+                ) : (
+                  <>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                      }}
+                    >
+                      {coins.map((coin, index) => {
+                        return (
+                          <Box
                             sx={{
-                              fontFamily: "Barlow, san-serif",
-                              color: "#B3B4B9",
-                              fontSize: 16,
-                              textAlign: "center",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
                             }}
                           >
-                            {index + 1}
-                          </Typography>
-                        </Box>
-                        <Typography
-                          sx={{
-                            fontFamily: "Barlow, san-serif",
-                            color: "#B3B4B9",
-                            fontSize: 16,
-                          }}
-                        >
-                          {coin.exchange_type}
-                        </Typography>
-                      </Box>
-                    );
-                  })}
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 3,
-                  }}
-                >
-                  {coins.map((coin, index) => {
-                    return (
-                      <Box
-                        key={index}
-                        sx={{
-                          px: 1,
-                          borderRadius: 9,
-                          background:
-                            coin.profitOrLoss < 0 ? "#462E2D" : "#243A32",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            color:
-                              coin.profitOrLoss < 0 ? "#D05451" : "#27966A",
-                            textAlign: "center",
-                            fontSize: 12,
-                          }}
-                        >
-                          {coin.profitOrLoss < 0 ? "" : "+"} {coin.profitOrLoss}
-                          %
-                        </Typography>
-                      </Box>
-                    );
-                  })}
-                </Box>
+                            <Box
+                              sx={{
+                                borderRadius: "50%",
+                                background: "#313432",
+                                px: 1,
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  fontFamily: "Barlow, san-serif",
+                                  color: "#B3B4B9",
+                                  fontSize: 16,
+                                  textAlign: "center",
+                                }}
+                              >
+                                {index + 1}
+                              </Typography>
+                            </Box>
+                            <Typography
+                              sx={{
+                                fontFamily: "Barlow, san-serif",
+                                color: "#B3B4B9",
+                                fontSize: 16,
+                              }}
+                            >
+                              {coin.exchange_type}
+                            </Typography>
+                          </Box>
+                        );
+                      })}
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 3,
+                      }}
+                    >
+                      {coins.map((coin, index) => {
+                        return (
+                          <Box
+                            key={index}
+                            sx={{
+                              px: 1,
+                              borderRadius: 9,
+                              background:
+                                coin.profitOrLoss < 0 ? "#462E2D" : "#243A32",
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                color:
+                                  coin.profitOrLoss < 0 ? "#D05451" : "#27966A",
+                                textAlign: "center",
+                                fontSize: 12,
+                              }}
+                            >
+                              {coin.profitOrLoss < 0 ? "" : "+"}{" "}
+                              {coin.profitOrLoss}%
+                            </Typography>
+                          </Box>
+                        );
+                      })}
+                    </Box>
+                  </>
+                )}
               </Box>
             </Grid>
           </Grid>
