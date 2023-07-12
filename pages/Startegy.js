@@ -4,6 +4,7 @@ import PrivateHeader from "../components/layout/PrivateHeader";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { Video } from "../utils/icons";
+import StrategyThreeBoxes from "../components/cards/strategy-three-boxes/StrategyThreeBoxes";
 const StartegyComponent = () => {
   const [width, setWidth] = useState(globalThis?.innerWidth);
   const [open, setOpen] = useState(false);
@@ -120,6 +121,9 @@ const StartegyComponent = () => {
             </Fade>
           </Modal>
         </Box>
+      </Box>
+      <Box mt={4}>
+        <StrategyThreeBoxes />
       </Box>
       <StrategyTabs />
     </Box>

@@ -155,12 +155,12 @@ const CandleStickGraph = () => {
                 sx={{
                   background: "#191919",
                   borderTop: "2px solid #2D2D30",
-                  borderRadius: 1,
+                  borderRadius: 1.5,
                   height: 100,
                   minWidth: "100%",
                   display: "flex",
                   flexDirection: "column",
-                  pl: 2,
+                  pl: 1,
                   gap: 0.5,
                 }}
               >

@@ -119,13 +119,13 @@ const StrategyTabsComponent = (props) => {
   const [strategyDescription, setStrategyDescription] = useState([""]);
   const [BotLink, setBotLink] = useState([""]);
   const [Notes, setNotes] = useState([""]);
-  const [botName, setBotName] = useState("");
-  const [exchange, setExchange] = useState("");
-  const [botType, setBotType] = useState("");
+  const [botName, setBotName] = useState([""]);
+  const [exchange, setExchange] = useState([""]);
+  const [botType, setBotType] = useState([""]);
   const [strategyType, setStrategyType] = useState("");
   const [strategyPair, setStrategyPair] = useState("");
   const [chartData, setChartData] = useState({});
-  const [orderType, setOrderType] = useState("");
+  const [orderType, setOrderType] = useState([""]);
   const [baseOrderSize, setBaseOrderSize] = useState("");
   const [safetyOrderMul, setSafetyOrderMul] = useState("");
   const [safetyOrder, setSafetyOrder] = useState("");
@@ -152,8 +152,8 @@ const StrategyTabsComponent = (props) => {
   const [exchangeOptions, setExchangeOptions] = useState([]);
   const [value, setvalue] = useState(["general"]);
   const [firstOrderSize, setFirstOrderSize] = useState([""]);
-  const [extraOrderSize, setExtraOrderSize] = useState("");
-  const [Pairs, setPairs] = useState("");
+  const [extraOrderSize, setExtraOrderSize] = useState([""]);
+  const [Pairs, setPairs] = useState([""]);
 
   const [DCAType, setDCAType] = useState([""]);
   const [volumeMultiplier, setVolumeMultiplier] = useState([""]);
@@ -163,7 +163,7 @@ const StrategyTabsComponent = (props) => {
   const [stopMultiplier, setStopMultiplier] = useState([""]);
 
   const [takeProfit, setTakeProfit] = useState([""]);
-  const [minTakeProfit, setMinTakeProfit] = useState("");
+  const [minTakeProfit, setMinTakeProfit] = useState([]);
 
   const [stopLoss, setStopLoss] = useState([""]);
 
@@ -463,7 +463,7 @@ const StrategyTabsComponent = (props) => {
       }
     }
   };
-  console.log(indicatorArray);
+
   const [width, setWidth] = useState(globalThis?.innerWidth);
   const handleTabClick = (tab, i) => {
     const newArray = [...value];
@@ -479,16 +479,98 @@ const StrategyTabsComponent = (props) => {
   const arrowButtonStyle = {
     fontSize: "2em",
   };
+  const [AllStrategyData, setAllStartegyData] = useState([]);
+  const handleSave = () => {
+    const temp = [...AllStrategyData];
+    value.map((item, index) => {
+      temp[index] = {
+        GeneralSettings: {
+          strategyName: strategyName[index],
+          strategyFolder: strategyFolder[index],
+          BotLink: BotLink[index],
+          strategyDescription: strategyDescription[index],
+          Notes: Notes[index],
+        },
+        Ordres: {
+          firstOrderSize: firstOrderSize[index],
+          extraOrderSize: extraOrderSize[index],
+          orderType: orderType[index],
+          Pairs: Pairs[index],
+        },
+        DCA: {
+          DCAType: DCAType[index],
+          volumeMultiplier: volumeMultiplier[index],
+          maxExtraOrders: maxExtraOrders[index],
+          minDistBetweenOrders: minDistBetweenOrders[index],
+          startExtraOrder: startExtraOrder[index],
+          stopMultiplier: stopMultiplier[index],
+        },
+        TakeProfit: {
+          takeProfit: takeProfit[index],
+          minTakeProfit: minTakeProfit[index],
+        },
+        StopLoss: {
+          stopLoss: stopLoss[index],
+        },
+      };
+    });
+    setAllStartegyData([...temp]);
+    console.log("all the data", AllStrategyData);
+  };
+
+  const handleRemove = (i) => {
+    var temp = [];
+    temp = value.filter((item, index) => index !== i);
+    setvalue(temp);
+    temp = strategyName.filter((item, index) => index !== i);
+    setStrategyName(temp);
+    temp = strategyFolder.filter((item, index) => index !== i);
+    setStrategyFolder(temp);
+    temp = BotLink.filter((item, index) => index !== i);
+    setBotLink(temp);
+    temp = strategyDescription.filter((item, index) => index !== i);
+    setStrategyDescription(temp);
+    temp = Notes.filter((item, index) => index !== i);
+    setNotes(temp);
+    temp = firstOrderSize.filter((item, index) => index !== i);
+    setFirstOrderSize(temp);
+    temp = extraOrderSize.filter((item, index) => index !== i);
+    setBaseOrderSize(temp);
+    temp = orderType.filter((item, index) => index !== i);
+    setOrderType(temp);
+    temp = Pairs.filter((item, index) => index !== i);
+    setPairs(temp);
+    temp = DCAType.filter((item, index) => index !== i);
+    setDCAType(temp);
+    temp = volumeMultiplier.filter((item, index) => index !== i);
+    setVolumeMultiplier(temp);
+    temp = maxExtraOrders.filter((item, index) => index !== i);
+    setMaxOrder(temp);
+    temp = minDistBetweenOrders.filter((item, index) => index !== i);
+    setMinDistBetweenOrders(temp);
+    temp = extraOrderSize.filter((item, index) => index !== i);
+    setExtraOrderSize(temp);
+    temp = stopMultiplier.filter((item, index) => index !== i);
+    setStopMultiplier(temp);
+    temp = takeProfit.filter((item, index) => index !== i);
+    setTakeProfit(temp);
+    temp = minTakeProfit.filter((item, index) => index !== i);
+    setMinTakeProfit(temp);
+    temp = stopLoss.filter((item, index) => index !== i);
+    setStopLoss(temp);
+    temp = AllStrategyData.filter((item, index) => index !== i);
+    setAllStartegyData(temp);
+  };
   return (
     <>
       <Box
         sx={{
           background: "#131313",
-          mt: 2,
-          p: 3,
+          px: 3,
+          pt: 1,
           borderRadius: "5px",
           marginBottom: 5,
-          minHeight: 310,
+          pb: 2,
         }}
       >
         {value.map((item, index) => (
@@ -514,9 +596,17 @@ const StrategyTabsComponent = (props) => {
               </Typography>
 
               <Tabs
+                value={0}
                 variant="scrollable"
                 scrollButtons="auto"
-                sx={{ "& .MuiSvgIcon-root": arrowButtonStyle, width: "80%" }}
+                sx={{
+                  "& .MuiSvgIcon-root": arrowButtonStyle,
+                  width: "80%",
+                  pt: 1,
+                  "& .MuiTabs-indicator": {
+                    display: "none",
+                  },
+                }}
               >
                 <Box
                   sx={{
@@ -536,9 +626,9 @@ const StrategyTabsComponent = (props) => {
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
-                      height: width < 601 ? 30 : 40,
+                      height: width < 601 ? 30 : 38,
+                      pt: 0.35,
                       px: 2.5,
-                      pt: 0.5,
                       background:
                         item === "general"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -558,9 +648,9 @@ const StrategyTabsComponent = (props) => {
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
-                      height: width < 601 ? 30 : 40,
+                      height: width < 601 ? 30 : 38,
+                      pt: 0.35,
                       px: 2.5,
-                      pt: 0.5,
                       background:
                         item === "orders"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -580,9 +670,9 @@ const StrategyTabsComponent = (props) => {
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
-                      height: width < 601 ? 30 : 40,
+                      height: width < 601 ? 30 : 38,
+                      pt: 0.35,
                       px: 2.5,
-                      pt: 0.5,
                       background:
                         item === "parameters"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -602,9 +692,9 @@ const StrategyTabsComponent = (props) => {
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
-                      height: width < 601 ? 30 : 40,
+                      height: width < 601 ? 30 : 38,
+                      pt: 0.35,
                       px: 2.5,
-                      pt: 0.5,
                       background:
                         item === "dca"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -624,9 +714,9 @@ const StrategyTabsComponent = (props) => {
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
-                      height: width < 601 ? 30 : 40,
+                      height: width < 601 ? 30 : 38,
+                      pt: 0.35,
                       px: 2.5,
-                      pt: 0.5,
                       background:
                         item === "take profit"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -647,9 +737,9 @@ const StrategyTabsComponent = (props) => {
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
-                      height: width < 601 ? 30 : 40,
+                      height: width < 601 ? 30 : 38,
+                      pt: 0.35,
                       px: 2.5,
-                      pt: 0.5,
                       background:
                         item === "stop loss"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -669,9 +759,9 @@ const StrategyTabsComponent = (props) => {
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
-                      height: width < 601 ? 30 : 40,
+                      height: width < 601 ? 30 : 38,
+                      pt: 0.35,
                       px: 2.5,
-                      pt: 0.5,
                       background:
                         item === "advanced"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -691,9 +781,9 @@ const StrategyTabsComponent = (props) => {
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
-                      height: width < 601 ? 30 : 40,
+                      height: width < 601 ? 30 : 38,
+                      pt: 0.35,
                       px: 2.5,
-                      pt: 0.5,
                       background:
                         item === "stop  resume"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -705,7 +795,7 @@ const StrategyTabsComponent = (props) => {
                   </Typography>
                 </Box>
               </Tabs>
-              {index === 0 && (
+              {index + 1 === value.length ? (
                 <Box
                   sx={{
                     display: "flex",
@@ -758,12 +848,38 @@ const StrategyTabsComponent = (props) => {
                     />
                   </Box>
                 </Box>
+              ) : (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    mb: width < 601 ? 2 : 0,
+                    borderRadius: "3px",
+                    background: "linear-gradient(to right,#790F87,#794AE3)",
+                    height: "18px",
+                    width: "18px",
+                    marginLeft: "auto",
+                  }}
+                  onClick={() => handleRemove(index)}
+                >
+                  <Typography
+                    sx={{
+                      fontFamily: "Barlow, san-serif",
+                      fontSize: 35,
+                      mt: -0.5,
+                    }}
+                  >
+                    -
+                  </Typography>
+                </Box>
               )}
             </Box>
             <Divider
               sx={{
                 background: "linear-gradient(to right,#790F87,#794AE3)",
-                height: "1.5px",
+                height: "2px",
               }}
             />
             {item === "general" && (
@@ -900,7 +1016,7 @@ const StrategyTabsComponent = (props) => {
                           placeholder="150"
                           id="extraordersize"
                           name="extraOrderSize"
-                          value={extraOrderSize}
+                          value={extraOrderSize[index]}
                           sx={{
                             width:
                               width < 769 && width > 600
@@ -911,7 +1027,9 @@ const StrategyTabsComponent = (props) => {
                             fontFamily: "Barlow, san-serif",
                           }}
                           onChange={async (event) => {
-                            setExtraOrderSize(event.target.value);
+                            const temp = [...extraOrderSize];
+                            temp[index] = event.target.value;
+                            setExtraOrderSize(temp);
                           }}
                         />
                       </Box>
@@ -952,7 +1070,7 @@ const StrategyTabsComponent = (props) => {
                           id="ordertype"
                           name="orderType"
                           placeholder="Market"
-                          value={orderType}
+                          value={orderType[index]}
                           sx={{
                             width:
                               width < 769 && width > 600
@@ -963,7 +1081,9 @@ const StrategyTabsComponent = (props) => {
                             fontFamily: "Barlow, san-serif",
                           }}
                           onChange={async (event) => {
-                            setOrderType(event.target.value);
+                            const temp = [...orderType];
+                            temp[index] = event.target.value;
+                            setOrderType(temp);
                           }}
                         />
                       </Box>
@@ -1001,13 +1121,15 @@ const StrategyTabsComponent = (props) => {
                           id="pairs"
                           name="pairs"
                           placeholder="BTC/USDT"
-                          value={Pairs}
+                          value={Pairs[index]}
                           sx={{
                             fontFamily: "Barlow, san-serif",
                             width: width < 600 ? "100%" : "10rem",
                           }}
                           onChange={async (event) => {
-                            setPairs(event.target.value);
+                            const temp = [...Pairs];
+                            temp[index] = event.target.value;
+                            setPairs(temp);
                           }}
                         />
                       </Box>
@@ -1020,6 +1142,7 @@ const StrategyTabsComponent = (props) => {
               <Box
                 sx={{
                   mt: 5,
+                  pb: 4,
                 }}
               >
                 <Grid container spacing={3}>
@@ -1981,9 +2104,33 @@ const StrategyTabsComponent = (props) => {
                 </Grid>
               </Box>
             )}
+            {index + 1 === value.length && (
+              <Box sx={{ display: "flex" }}>
+                <Button
+                  sx={{
+                    background: "linear-gradient(to right,#790F87,#794AE3)",
+                    cursor: "pointer",
+                    border: "none",
+                    px: 1,
+                    marginLeft: "auto",
+                  }}
+                  onClick={() => handleSave()}
+                >
+                  <Typography
+                    color={"white"}
+                    fontSize={14}
+                    fontFamily={"Barlow, san-serif"}
+                    fontWeight={500}
+                  >
+                    Save Strategy
+                  </Typography>
+                </Button>
+              </Box>
+            )}
           </Box>
         ))}
       </Box>
+
       <CandleStickGraph />
     </>
   );
