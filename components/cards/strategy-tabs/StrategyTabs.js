@@ -1,24 +1,18 @@
 import React, { useEffect, useState } from "react";
-// import SelectInput from "../../widgets/SelectInput";
-// import Plus from "../../../assets/icons/Vector.png";
-import { alpha, styled } from "@mui/material/styles";
-import { InputBase, InputAdornment, Tabs, Tab } from "@mui/material";
 import { Plus } from "../../../utils/icons";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Divider from "@mui/material/Divider";
+import { alpha, styled } from "@mui/material/styles";
+import {
+  InputBase,
+  Tabs,
+  Button,
+  Box,
+  Grid,
+  Typography,
+  Divider,
+} from "@mui/material";
 import GeneralSettings from "../../../components/cards/general-settings/GeneralSettings";
 import { getSession } from "next-auth/react";
-import Chart from "../../deal-page/Chart";
 import CandleStickGraph from "../../../components/cards/candleStick-strategy/CandleStickGraph";
-// import CandlestickChart from "../../deal-page/Chart";
-// import Indicators from "../indicators/Indicators";
-import { Note } from "@mui/icons-material";
-import Image from "next/image";
-import { idex } from "ccxt";
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -45,19 +39,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const orderTypeOptions = ["Market", "Limit"];
-
-const avgPriceCondition = ["Above", "Below"];
-const stopLoss = ["Fixed", "At candle body w % up or down", "Trailing SL"];
-const takeProfit = [
-  "Fixed",
-  "At candle body",
-  "At candle wick w % up or down",
-  "Trailing TP",
-];
-
 const StrategyTabs = () => {
-  const [count, setCount] = useState(1);
   const [botName, setBotName] = useState("");
   const [exchange, setExchange] = useState("");
   const [botType, setBotType] = useState("");
@@ -87,11 +69,6 @@ const StrategyTabs = () => {
     console.log(newData);
   };
 
-  const handleCount = () => {
-    setCount(count + 1);
-    console.log(count);
-  };
-
   return (
     <Box
       sx={{
@@ -107,73 +84,63 @@ const StrategyTabs = () => {
 export default StrategyTabs;
 
 const StrategyTabsComponent = (props) => {
-
-  const [AllStrategyData, setAllStartegyData] = useState([]);
-
-  const [maPercentage, setMaPercentage] = useState("");
-  const [dynamicPercentage, setDynamicPercentage] = useState("");
-  const [error, setError] = useState(false);
-
-  const [showTPPercentageTab, setShowTPPercentageTab] = useState(false);
-  const [showSLPercentageTab, setShowSLPercentageTab] = useState(false);
-
-  const [strategyName, setStrategyName] = useState([""]);
-  const [strategyFolder, setStrategyFolder] = useState([""]);
-  const [strategyDescription, setStrategyDescription] = useState([""]);
-  const [BotLink, setBotLink] = useState([""]);
-  const [Notes, setNotes] = useState([""]);
-  const [botName, setBotName] = useState([""]);
-  const [exchange, setExchange] = useState([""]);
-  const [botType, setBotType] = useState([""]);
-  const [strategyType, setStrategyType] = useState("");
-  const [strategyPair, setStrategyPair] = useState("");
-  const [chartData, setChartData] = useState({});
-  const [orderType, setOrderType] = useState([""]);
-  const [baseOrderSize, setBaseOrderSize] = useState("");
-  const [safetyOrderMul, setSafetyOrderMul] = useState("");
-  const [safetyOrder, setSafetyOrder] = useState("");
-  const [maxOrder, setMaxOrder] = useState("");
-  const [maxOrderPercent, setMaxOrderPercent] = useState("");
-  const [maxVol, setMaxVol] = useState("");
-  const [maxVolPercent, setMaxVolPercent] = useState("");
-
-  const [indicatorArray, setIndicatorArray] = useState([]);
-
-  const [takeProfitValue, setTakeProfitValue] = useState("");
-  const [takeProfitPercent, setTakeProfitPercent] = useState("");
-
-  const [stopLossValue, setStopLossValue] = useState("");
-  const [stopLossPercent, setStopLossPercent] = useState("");
-
-  const [buyOnCondition, setBuyOnCondition] = useState("");
-  const [buyOnConditionX, setBuyOnConditionX] = useState("");
-  const [avgPrice, setAvgPrice] = useState("");
-  const [avgPricePercent, setAvgPricePercent] = useState("");
-  const [ignoreCondition, setIgnoreCondition] = useState("");
-  const [ignoreConditionX, setIgnoreConditionX] = useState("");
-
-  const [exchangeOptions, setExchangeOptions] = useState([]);
   const [value, setvalue] = useState(["general"]);
-  const [firstOrderSize, setFirstOrderSize] = useState([""]);
-  const [extraOrderSize, setExtraOrderSize] = useState([""]);
   const [Pairs, setPairs] = useState([""]);
+  const [width, setWidth] = useState(globalThis?.innerWidth);
 
-  const [DCAType, setDCAType] = useState([""]);
-  const [volumeMultiplier, setVolumeMultiplier] = useState([""]);
-  const [maxExtraOrders, setMaxExtraOrders] = useState([""]);
-  const [minDistBetweenOrders, setMinDistBetweenOrders] = useState([""]);
-  const [startExtraOrder, setStratExtraOrder] = useState([""]);
-  const [stopMultiplier, setStopMultiplier] = useState([""]);
-
-  const [takeProfit, setTakeProfit] = useState([""]);
-  const [minTakeProfit, setMinTakeProfit] = useState([]);
-
-  const [stopLoss, setStopLoss] = useState([""]);
-
-  useEffect(()=>{
+  const [GeneralSettingsData, setGeneralSettingsData] = useState([
+    {
+      "Strategy Name": "",
+      "Strategy Folder": "",
+      "Strategy Description": "",
+      BotLink: "",
+      Notes: "",
+    },
+  ]);
+  const [OrdersData, setOrdersData] = useState([
+    {
+      "First Order Size": "",
+      "Extra Order Size": "",
+      "Order Type": "",
+      Pairs: "",
+    },
+  ]);
+  const [DCAData, setDCAData] = useState([
+    {
+      "DCA Type": "",
+      "Volume Multiplier": "",
+      "Max Extra Orders": "",
+      "Min Dist Between Orders": "",
+      "Start Extra Order": "",
+      "Step Multiplier": "",
+    },
+  ]);
+  const [TakeProfitData, setTakeProfitData] = useState([
+    {
+      "Take Profit": "",
+      "Min Take Profit": "",
+    },
+  ]);
+  const [StopLossData, setStopLossData] = useState([
+    {
+      "Stop Loss": "",
+    },
+  ]);
+  const [AllStrategyData, setAllStartegyData] = useState([
+    {
+      "General Settings Data": {},
+      "Orders Data": {},
+      "DCA Data": {},
+      "Take Profit Data": {},
+      "Stop Loss Data": {},
+    },
+  ]);
+  useEffect(() => {
     fetchStrategiesByUserId();
-  },[])
-  
+  }, []);
+  useEffect(() => console.log("Updated State:", AllStrategyData), [
+    AllStrategyData,
+  ]);
   const fetchStrategiesByUserId = async () => {
     let session = await getSession();
     const response = await fetch(
@@ -187,103 +154,59 @@ const StrategyTabsComponent = (props) => {
     );
 
     const newData = await response.json();
-    console.log(newData);
-  }
+    console.log("response data", newData);
+  };
 
   const handleAdd = () => {
-    // const temp1 = [...firstOrderSize, ""];
-    // setFirstOrderSize(temp1);
     const temp = [...value, "general"];
     setvalue(temp);
-    console.log(firstOrderSize);
+    setGeneralSettingsData([
+      ...GeneralSettingsData,
+      {
+        "Strategy Name": "",
+        "Strategy Folder": "",
+        "Strategy Description": "",
+        BotLink: "",
+        Notes: "",
+      },
+    ]);
+    setOrdersData([
+      ...OrdersData,
+      {
+        "First Order Size": "",
+        "Extra Order Size": "",
+        "Order Type": "",
+        Pairs: "",
+      },
+    ]);
+    setDCAData([
+      ...DCAData,
+      {
+        "DCA Type": "",
+        "Volume Multiplier": "",
+        "Max Extra Orders": "",
+        "Min Dist Between Orders": "",
+        "Start Extra Order": "",
+        "Step Multiplier": "",
+      },
+    ]);
+    setTakeProfitData([
+      ...TakeProfitData,
+      { "Take Profit": "", "Min Take Profit": "" },
+    ]);
+    setStopLossData([...StopLossData, { "Stop Loss": "" }]);
+    setAllStartegyData([
+      ...AllStrategyData,
+      {
+        "General Settings Data": {},
+        "Orders Data": {},
+        "DCA Data": {},
+        "Take Profit Data": {},
+        "Stop Loss Data": {},
+      },
+    ]);
   };
 
-  const handleChangeMaPercentage = (event) => {
-    if (event.target.value.match(/^(100|[1-9]?[0-9])$/)) {
-      setAvgPricePercent(event.target.value);
-      setError(false);
-    } else {
-      setError(true);
-    }
-  };
-  const handleChangeTakeProfitPercent = (event) => {
-    if (event.target.value.match(/^(100|[1-9]?[0-9])$/)) {
-      setTakeProfitPercent(event.target.value);
-      setError(false);
-    } else {
-      setError(true);
-    }
-  };
-  const handleChangeStopLossPercent = (event) => {
-    if (event.target.value.match(/^(100|[1-9]?[0-9])$/)) {
-      setStopLossPercent(event.target.value);
-      setError(false);
-    } else {
-      setError(true);
-    }
-  };
-  const handleChangeXcondition = () => {
-    if (event.target.value.match(/^(100|[1-9]?[0-9])$/)) {
-      setBuyOnConditionX(event.target.value);
-      setError(false);
-    } else {
-      setError(true);
-    }
-    console.log("happy");
-  };
-  const handleChangeFirstXcondition = () => {
-    if (event.target.value.match(/^(100|[1-9]?[0-9])$/)) {
-      setIgnoreConditionX(event.target.value);
-      setError(false);
-    } else {
-      setError(true);
-    }
-    console.log("happy");
-  };
-
-  const handleOnChange = async (event) => {
-    if (
-      event.target.value === "Fixed" ||
-      event.target.value === "At candle wick w % up or down"
-    ) {
-      setShowTPPercentageTab(true);
-    } else {
-      setShowTPPercentageTab(false);
-      setTakeProfitPercent("");
-    }
-    setTakeProfitValue(event.target.value);
-  };
-
-  const handleStopLossOnChange = async (event) => {
-    if (event.target.value === "Fixed") {
-      setShowSLPercentageTab(true);
-    } else {
-      setShowSLPercentageTab(false);
-      setStopLossPercent("");
-    }
-    setStopLossValue(event.target.value);
-  };
-
-  const handleMaxVolume = () => {
-    if (event.target.value.match(/^(100|[1-9]?[0-9])$/)) {
-      setMaxVolPercent(event.target.value);
-      setError(false);
-    } else {
-      setError(true);
-    }
-    console.log("handleMaxVolume");
-  };
-  const handleMaxOrder = () => {
-    if (event.target.value.match(/^(100|[1-9]?[0-9])$/)) {
-      setMaxOrderPercent(event.target.value);
-      setError(false);
-    } else {
-      setError(true);
-    }
-    console.log("handleMaxOrder");
-  };
-
-  const [width, setWidth] = useState(globalThis?.innerWidth);
   const handleTabClick = (tab, i) => {
     const newArray = [...value];
     newArray[i] = tab;
@@ -301,56 +224,29 @@ const StrategyTabsComponent = (props) => {
 
   const handleSave = async () => {
     const { user } = await getSession();
-    const temp = [...AllStrategyData];
-    value.map((item, index) => {
-      temp[index] = {
-        generalSettings: {
-          strategyName: strategyName[index],
-          strategyFolder: strategyFolder[index],
-          botLink: BotLink[index],
-          strategyDescription: strategyDescription[index],
-          notes: Notes[index],
-        },
-        orders: {
-          firstOrderSize: firstOrderSize[index],
-          extraOrderSize: extraOrderSize[index],
-          orderType: orderType[index],
-          pairs: Pairs[index],
-        },
-        dca: {
-          dcaType: DCAType[index],
-          volumeMultiplier: volumeMultiplier[index],
-          maxExtraOrders: maxExtraOrders[index],
-          minDistBetweenOrders: minDistBetweenOrders[index],
-          startExtraOrder: startExtraOrder[index],
-          stopMultiplier: stopMultiplier[index],
-        },
-        takeProfit: {
-          takeProfit: takeProfit[index],
-          minTakeProfit: minTakeProfit[index],
-        },
-        stopLoss: {
-          stopLoss: stopLoss[index],
-        },
+    const temp = AllStrategyData.map((item, index) => {
+      return {
+        ...item,
+        "General Settings Data": GeneralSettingsData[index],
+        "DCA Data": DCAData[index],
+        "Orders Data": OrdersData[index],
+        "Stop Loss Data": StopLossData[index],
+        "Take Profit Data": TakeProfitData[index],
         user,
       };
     });
     setAllStartegyData([...temp]);
-    console.log("all the data", AllStrategyData);
-    const response = await fetch(
-      `/api/strategy/create-strategy`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify([...temp]),
-      }
-    );
-    if(response.ok){
-      alert("Strategy Saved")
-    }else{
-      alert("Strategy Not Saved")
+    const response = await fetch(`/api/strategy/create-strategy`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([...temp]),
+    });
+    if (response.ok) {
+      alert("Strategy Saved");
+    } else {
+      alert("Strategy Not Saved");
     }
   };
 
@@ -358,42 +254,16 @@ const StrategyTabsComponent = (props) => {
     var temp = [];
     temp = value.filter((item, index) => index !== i);
     setvalue(temp);
-    temp = strategyName.filter((item, index) => index !== i);
-    setStrategyName(temp);
-    temp = strategyFolder.filter((item, index) => index !== i);
-    setStrategyFolder(temp);
-    temp = BotLink.filter((item, index) => index !== i);
-    setBotLink(temp);
-    temp = strategyDescription.filter((item, index) => index !== i);
-    setStrategyDescription(temp);
-    temp = Notes.filter((item, index) => index !== i);
-    setNotes(temp);
-    temp = firstOrderSize.filter((item, index) => index !== i);
-    setFirstOrderSize(temp);
-    temp = extraOrderSize.filter((item, index) => index !== i);
-    setBaseOrderSize(temp);
-    temp = orderType.filter((item, index) => index !== i);
-    setOrderType(temp);
-    temp = Pairs.filter((item, index) => index !== i);
-    setPairs(temp);
-    temp = DCAType.filter((item, index) => index !== i);
-    setDCAType(temp);
-    temp = volumeMultiplier.filter((item, index) => index !== i);
-    setVolumeMultiplier(temp);
-    temp = maxExtraOrders.filter((item, index) => index !== i);
-    setMaxOrder(temp);
-    temp = minDistBetweenOrders.filter((item, index) => index !== i);
-    setMinDistBetweenOrders(temp);
-    temp = extraOrderSize.filter((item, index) => index !== i);
-    setExtraOrderSize(temp);
-    temp = stopMultiplier.filter((item, index) => index !== i);
-    setStopMultiplier(temp);
-    temp = takeProfit.filter((item, index) => index !== i);
-    setTakeProfit(temp);
-    temp = minTakeProfit.filter((item, index) => index !== i);
-    setMinTakeProfit(temp);
-    temp = stopLoss.filter((item, index) => index !== i);
-    setStopLoss(temp);
+    temp = GeneralSettingsData.filter((item, index) => index !== i);
+    setGeneralSettingsData(temp);
+    temp = OrdersData.filter((item, index) => index !== i);
+    setOrdersData(temp);
+    temp = DCAData.filter((item, index) => index !== i);
+    setDCAData(temp);
+    temp = TakeProfitData.filter((item, index) => index !== i);
+    setTakeProfitData(temp);
+    temp = StopLossData.filter((item, index) => index !== i);
+    setStopLossData(temp);
     temp = AllStrategyData.filter((item, index) => index !== i);
     setAllStartegyData(temp);
   };
@@ -401,7 +271,7 @@ const StrategyTabsComponent = (props) => {
     <>
       <Box
         sx={{
-          background: "#131313",
+          background: "#191919",
           px: 3,
           pt: 1,
           borderRadius: "5px",
@@ -721,16 +591,8 @@ const StrategyTabsComponent = (props) => {
             {item === "general" && (
               <GeneralSettings
                 index={index}
-                strategyName={strategyName}
-                setStrategyName={setStrategyName}
-                strategyFolder={strategyFolder}
-                setStrategyFolder={setStrategyFolder}
-                BotLink={BotLink}
-                setBotLink={setBotLink}
-                strategyDescription={strategyDescription}
-                setStrategyDescription={setStrategyDescription}
-                Notes={Notes}
-                setNotes={setNotes}
+                GeneralSettingsData={GeneralSettingsData}
+                setGeneralSettingsData={setGeneralSettingsData}
               />
             )}
             {item === "orders" && (
@@ -801,7 +663,7 @@ const StrategyTabsComponent = (props) => {
                           id="firstorderSize"
                           name="firstOrderSize"
                           placeholder="100"
-                          value={firstOrderSize[index]}
+                          value={OrdersData[index]["First Order Size"]}
                           sx={{
                             width:
                               width < 769 && width > 600
@@ -812,9 +674,10 @@ const StrategyTabsComponent = (props) => {
                             fontFamily: "Barlow, san-serif",
                           }}
                           onChange={async (event) => {
-                            const temp = [...firstOrderSize];
-                            temp[index] = event.target.value;
-                            setFirstOrderSize(temp);
+                            const temp = [...OrdersData];
+                            temp[index]["First Order Size"] =
+                              event.target.value;
+                            setOrdersData(temp);
                           }}
                         />
                       </Box>
@@ -852,7 +715,7 @@ const StrategyTabsComponent = (props) => {
                           placeholder="150"
                           id="extraordersize"
                           name="extraOrderSize"
-                          value={extraOrderSize[index]}
+                          value={OrdersData[index]["Extra Order Size"]}
                           sx={{
                             width:
                               width < 769 && width > 600
@@ -863,9 +726,10 @@ const StrategyTabsComponent = (props) => {
                             fontFamily: "Barlow, san-serif",
                           }}
                           onChange={async (event) => {
-                            const temp = [...extraOrderSize];
-                            temp[index] = event.target.value;
-                            setExtraOrderSize(temp);
+                            const temp = [...OrdersData];
+                            temp[index]["Extra Order Size"] =
+                              event.target.value;
+                            setOrdersData(temp);
                           }}
                         />
                       </Box>
@@ -906,7 +770,7 @@ const StrategyTabsComponent = (props) => {
                           id="ordertype"
                           name="orderType"
                           placeholder="Market"
-                          value={orderType[index]}
+                          value={OrdersData[index]["Order Type"]}
                           sx={{
                             width:
                               width < 769 && width > 600
@@ -917,9 +781,9 @@ const StrategyTabsComponent = (props) => {
                             fontFamily: "Barlow, san-serif",
                           }}
                           onChange={async (event) => {
-                            const temp = [...orderType];
-                            temp[index] = event.target.value;
-                            setOrderType(temp);
+                            const temp = [...OrdersData];
+                            temp[index]["Order Type"] = event.target.value;
+                            setOrdersData(temp);
                           }}
                         />
                       </Box>
@@ -957,15 +821,15 @@ const StrategyTabsComponent = (props) => {
                           id="pairs"
                           name="pairs"
                           placeholder="BTC/USDT"
-                          value={Pairs[index]}
+                          value={OrdersData[index].Pairs}
                           sx={{
                             fontFamily: "Barlow, san-serif",
                             width: width < 600 ? "100%" : "10rem",
                           }}
                           onChange={async (event) => {
-                            const temp = [...Pairs];
-                            temp[index] = event.target.value;
-                            setPairs(temp);
+                            const temp = [...OrdersData];
+                            temp[index].Pairs = event.target.value;
+                            setOrdersData(temp);
                           }}
                         />
                       </Box>
@@ -1495,11 +1359,11 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={DCAType[index]}
+                        value={DCAData[index]["DCA Type"]}
                         onChange={async (event) => {
-                          const temp = [...DCAType];
-                          temp[index] = event.target.value;
-                          setDCAType(temp);
+                          const temp = [...DCAData];
+                          temp[index]["DCA Type"] = event.target.value;
+                          setDCAData(temp);
                         }}
                       />
                     </Box>
@@ -1539,11 +1403,11 @@ const StrategyTabsComponent = (props) => {
                           fontFamily: "Barlow, san-serif",
                         }}
                         name="volMultiplier"
-                        value={volumeMultiplier[index]}
+                        value={DCAData[index]["Volume Multiplier"]}
                         onChange={async (event) => {
-                          const temp = [...volumeMultiplier];
-                          temp[index] = event.target.value;
-                          setVolumeMultiplier(temp);
+                          const temp = [...DCAData];
+                          temp[index]["Volume Multiplier"] = event.target.value;
+                          setDCAData(temp);
                         }}
                       />
                     </Box>
@@ -1588,11 +1452,11 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={maxExtraOrders[index]}
+                        value={DCAData[index]["Max Extra Orders"]}
                         onChange={async (event) => {
-                          const temp = [...maxExtraOrders];
-                          temp[index] = event.target.value;
-                          setMaxExtraOrders(temp);
+                          const temp = [...DCAData];
+                          temp[index]["Max Extra Orders"] = event.target.value;
+                          setDCAData(temp);
                         }}
                       />
                     </Box>
@@ -1634,11 +1498,12 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={minDistBetweenOrders[index]}
+                        value={DCAData[index]["Min Dist Between Orders"]}
                         onChange={async (event) => {
-                          const temp = [...minDistBetweenOrders];
-                          temp[index] = event.target.value;
-                          setMinDistBetweenOrders(temp);
+                          const temp = [...DCAData];
+                          temp[index]["Min Dist Between Orders"] =
+                            event.target.value;
+                          setDCAData(temp);
                         }}
                       />
                     </Box>
@@ -1678,11 +1543,11 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={startExtraOrder[index]}
+                        value={DCAData[index]["Start Extra Order"]}
                         onChange={async (event) => {
-                          const temp = [...startExtraOrder];
-                          temp[index] = event.target.value;
-                          setStratExtraOrder(temp);
+                          const temp = [...DCAData];
+                          temp[index]["Start Extra Order"] = event.target.value;
+                          setDCAData(temp);
                         }}
                       />
                     </Box>
@@ -1713,7 +1578,6 @@ const StrategyTabsComponent = (props) => {
                         id="stepmultiplier"
                         name="stepMultiplier"
                         placeholder="1.05"
-                        value={stopMultiplier[index]}
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1723,10 +1587,11 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
+                        value={DCAData[index]["Step Multiplier"]}
                         onChange={async (event) => {
-                          const temp = [...stopMultiplier];
-                          temp[index] = event.target.value;
-                          setStopMultiplier(temp);
+                          const temp = [...DCAData];
+                          temp[index]["Step Multiplier"] = event.target.value;
+                          setDCAData(temp);
                         }}
                       />
                     </Box>
@@ -1794,7 +1659,7 @@ const StrategyTabsComponent = (props) => {
                         id="takeprofit"
                         name="takeProfit"
                         placeholder="Signal"
-                        value={takeProfit[index]}
+                        value={TakeProfitData[index]["Take Profit"]}
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1805,9 +1670,9 @@ const StrategyTabsComponent = (props) => {
                           fontFamily: "Barlow, san-serif",
                         }}
                         onChange={async (event) => {
-                          const temp = [...takeProfit];
-                          temp[index] = event.target.value;
-                          setTakeProfit(temp);
+                          const temp = [...TakeProfitData];
+                          temp[index]["Take Profit"] = event.target.value;
+                          setTakeProfitData(temp);
                         }}
                       />
                     </Box>
@@ -1838,7 +1703,7 @@ const StrategyTabsComponent = (props) => {
                         id="mintakeprofit"
                         name="minTakeProfit"
                         placeholder="1.5%"
-                        value={minTakeProfit[index]}
+                        value={TakeProfitData[index]["Min Take Profit"]}
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1849,9 +1714,9 @@ const StrategyTabsComponent = (props) => {
                           fontFamily: "Barlow, san-serif",
                         }}
                         onChange={async (event) => {
-                          const temp = [...minTakeProfit];
-                          temp[index] = event.target.value;
-                          setMinTakeProfit(temp);
+                          const temp = [...TakeProfitData];
+                          temp[index]["Min Take Profit"] = event.target.value;
+                          setTakeProfitData(temp);
                         }}
                       />
                     </Box>
@@ -1919,7 +1784,7 @@ const StrategyTabsComponent = (props) => {
                         id="stoploss"
                         name="stopLoss"
                         placeholder="1.5%"
-                        value={stopLoss[index]}
+                        value={StopLossData[index]["Stop Loss"]}
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1930,9 +1795,9 @@ const StrategyTabsComponent = (props) => {
                           fontFamily: "Barlow, san-serif",
                         }}
                         onChange={async (event) => {
-                          const temp = [...stopLoss];
-                          temp[index] = event.target.value;
-                          setStopLoss(temp);
+                          const temp = [...StopLossData];
+                          temp[index]["Stop Loss"] = event.target.value;
+                          setStopLossData(temp);
                         }}
                       />
                     </Box>
@@ -1966,7 +1831,6 @@ const StrategyTabsComponent = (props) => {
           </Box>
         ))}
       </Box>
-
       <CandleStickGraph />
     </>
   );

@@ -86,11 +86,11 @@ const GeneralSettings = (props) => {
                 width: "100%",
               }}
               name="strategyName"
-              value={props.strategyName[props.index]}
+              value={props.GeneralSettingsData[props.index]["Strategy Name"]}
               onChange={(e) => {
-                const temp = [...props.strategyName];
-                temp[props.index] = e.target.value;
-                props.setStrategyName(temp);
+                const temp = [...props.GeneralSettingsData];
+                temp[props.index]["Strategy Name"] = e.target.value;
+                props.setGeneralSettingsData(temp);
               }}
               disabled={props.editSettings}
             />
@@ -126,11 +126,11 @@ const GeneralSettings = (props) => {
                 fontFamily: "Barlow, san-serif",
               }}
               name="strategyFolder"
-              value={props.strategyFolder[props.index]}
+              value={props.GeneralSettingsData[props.index]["Strategy Folder"]}
               onChange={(e) => {
-                const temp = [...props.strategyFolder];
-                temp[props.index] = e.target.value;
-                props.setStrategyFolder(temp);
+                const temp = [...props.GeneralSettingsData];
+                temp[props.index]["Strategy Folder"] = e.target.value;
+                props.setGeneralSettingsData(temp);
               }}
               disabled={props.editSettings}
             />
@@ -163,11 +163,11 @@ const GeneralSettings = (props) => {
               placeholder="Bot Link"
               sx={{ width: "100%", fontFamily: "Barlow, san-serif" }}
               name="botLink"
-              value={props.BotLink[props.index]}
+              value={props.GeneralSettingsData[props.index].BotLink}
               onChange={(e) => {
-                const temp = [...props.BotLink];
-                temp[props.index] = e.target.value;
-                props.setBotLink(temp);
+                const temp = [...props.GeneralSettingsData];
+                temp[props.index].BotLink = e.target.value;
+                props.setGeneralSettingsData(temp);
               }}
               disabled={props.editSettings}
             />
@@ -205,11 +205,13 @@ const GeneralSettings = (props) => {
                 fontFamily: "Barlow, san-serif",
               }}
               name="strategyDescription"
-              value={props.strategyDescription[props.index]}
+              value={
+                props.GeneralSettingsData[props.index]["Strategy Description"]
+              }
               onChange={(e) => {
-                const temp = [...props.strategyDescription];
-                temp[props.index] = e.target.value;
-                props.setStrategyDescription(temp);
+                const temp = [...props.GeneralSettingsData];
+                temp[props.index]["Strategy Description"] = e.target.value;
+                props.setGeneralSettingsData(temp);
               }}
               disabled={props.editSettings}
             />
@@ -245,11 +247,11 @@ const GeneralSettings = (props) => {
                 fontFamily: "Barlow, san-serif",
               }}
               name="notes"
-              value={props.Notes[props.index]}
+              value={props.GeneralSettingsData[props.index].Notes}
               onChange={(e) => {
-                const temp = [...props.Notes];
-                temp[props.index] = e.target.value;
-                props.setNotes(temp);
+                const temp = [...props.GeneralSettingsData];
+                temp[props.index].Notes = e.target.value;
+                props.setGeneralSettingsData(temp);
               }}
               disabled={props.editSettings}
             />

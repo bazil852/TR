@@ -52,7 +52,7 @@ const CandleStick = () => {
     },
   });
 
-  for (let i = 0; i < 27; i++) {
+  for (let i = 0; i < 200; i++) {
     const date = new Date(2023, 6, 14 + i);
     const randomValues = Array.from({ length: 4 }, () => Math.random() * 10);
     const newDataPoint = {

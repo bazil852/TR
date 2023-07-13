@@ -9,6 +9,7 @@ import {
 import { CheckBox } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
+import MeterChart from "./MeterChart";
 
 const StrategyThreeBoxes = () => {
   const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
@@ -103,18 +104,38 @@ const StrategyThreeBoxes = () => {
         <Box
           sx={{
             background: "#191919",
-            pt: 3,
-            pl: 2,
+            pt: 2,
             borderRadius: 1,
             minHeight: 350,
           }}
-        ></Box>
+        >
+          <Typography
+            sx={{
+              fontWeight: 600,
+              fontSize: 14,
+              fontFamily: "Barlow, san-serif",
+              pb: 2,
+              pl: 2,
+            }}
+          >
+            VOLUME REQUIRED VS VOLUME AVAILABLE
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <MeterChart />
+          </Box>
+        </Box>
       </Grid>
       <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 3.5} lg={3.5}>
         <Box
           sx={{
             background: "#191919",
-            pt: 3,
+            pt: 2,
             pl: 2,
             borderRadius: 1,
             minHeight: 350,
@@ -125,7 +146,6 @@ const StrategyThreeBoxes = () => {
               fontWeight: 600,
               fontSize: 14,
               fontFamily: "Barlow, san-serif",
-
               pb: 2,
             }}
           >
@@ -348,7 +368,7 @@ const StrategyThreeBoxes = () => {
           <Box
             sx={{
               background: "#191919",
-              pt: 3,
+              pt: 2,
               pl: 2,
               borderRadius: 1,
               minHeight: 350,
