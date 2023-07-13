@@ -1,8 +1,5 @@
 import connectMongo from "../../../../utils/connectMongo";
 import Strategy from "../../../../models/strategy";
-import Users from "../../../../models/users";
-import * as bcrypt from "bcrypt";
-import { Spot } from "@binance/connector";
 
 export default async function handler(req, res) {
   const { method, query } = req;
@@ -11,9 +8,11 @@ export default async function handler(req, res) {
   switch (method) {
     case "GET":
       try {
-        console.log("api-state", req.body);
+        console.log("api-state", id);
         await connectMongo();
-        const strategy = await Strategy.find({ userId: id });
+        const idNumber = Number(id);
+        const strategy = await Strategy.find({ "user.id": idNumber });
+        console.log(strategy);
         res.status(200).json({ status: 200, body: strategy });
       } catch (error) {
         res.status(500).json({

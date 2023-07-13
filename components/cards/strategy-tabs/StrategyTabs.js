@@ -107,6 +107,9 @@ const StrategyTabs = () => {
 export default StrategyTabs;
 
 const StrategyTabsComponent = (props) => {
+
+  const [AllStrategyData, setAllStartegyData] = useState([]);
+
   const [maPercentage, setMaPercentage] = useState("");
   const [dynamicPercentage, setDynamicPercentage] = useState("");
   const [error, setError] = useState(false);
@@ -167,20 +170,14 @@ const StrategyTabsComponent = (props) => {
 
   const [stopLoss, setStopLoss] = useState([""]);
 
-  useEffect(() => {
-    fetchUserAndSetExchanges();
-  }, []);
-  const handleAdd = () => {
-    // const temp1 = [...firstOrderSize, ""];
-    // setFirstOrderSize(temp1);
-    const temp = [...value, "general"];
-    setvalue(temp);
-    console.log(firstOrderSize);
-  };
-  const fetchUserAndSetExchanges = async () => {
+  useEffect(()=>{
+    fetchStrategiesByUserId();
+  },[])
+  
+  const fetchStrategiesByUserId = async () => {
     let session = await getSession();
     const response = await fetch(
-      `/api/user/get-user-info?id=${session?.user?.id}`,
+      `/api/strategy/get-strategy?id=${session?.user?.id}`,
       {
         method: "GET",
         headers: {
@@ -191,7 +188,14 @@ const StrategyTabsComponent = (props) => {
 
     const newData = await response.json();
     console.log(newData);
-    setExchangeOptions(newData?.body?.exchanges);
+  }
+
+  const handleAdd = () => {
+    // const temp1 = [...firstOrderSize, ""];
+    // setFirstOrderSize(temp1);
+    const temp = [...value, "general"];
+    setvalue(temp);
+    console.log(firstOrderSize);
   };
 
   const handleChangeMaPercentage = (event) => {
@@ -278,191 +282,6 @@ const StrategyTabsComponent = (props) => {
     }
     console.log("handleMaxOrder");
   };
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-
-    let session = await getSession();
-    let formData = {
-      orderSize: data.get("orderSize"),
-      availablePercentage: data.get("availablePercentage"),
-      safetyOrderSize: data.get("safetyOrderSize"),
-      candleSizeAndVol: data.get("candleSizeAndVol"),
-      orderType: data.get("orderType"),
-      profitCurrency: data.get("profitCurrency"),
-      indicator: data.get("indicator"),
-
-      indicatorValues: {
-        redAction: data.get("redAction"),
-        purpleAction: data.get("purpleAction"),
-        blueAction: data.get("blueAction"),
-        greenAction: data.get("greenAction"),
-        minimumTp: data.get("minimumTp"),
-      },
-
-      buyOnCondition: data.get("buyOnCondition"),
-      avgPrice: data.get("avgPrice"),
-      avgPricePercent: data.get("avgPricePercent"),
-      ignoreCondition: data.get("ignoreCondition"),
-      maxOrders: data.get("maxOrders"),
-      maxVol: data.get("maxVol"),
-      stopLoss: data.get("stopLoss"),
-      takeProfit: data.get("takeProfit"),
-      takeProfitPercent: data.get("takeProfitPercent"),
-      userId: session.user.id,
-    };
-
-    console.log(formData);
-
-    props.setBotSettings(formData);
-  };
-
-  const handleTestStrategy = async () => {
-    if (
-      botName === "" ||
-      exchange === "" ||
-      botType === "" ||
-      strategyType === "" ||
-      strategyPair === ""
-    ) {
-      alert("Please Fill out the General Settings Section");
-    } else if (orderType === "" || baseOrderSize === "") {
-      alert("Please Fill out the required fields in Orders Section");
-    } else if (
-      indicatorArray.length === 0 ||
-      indicatorArray[0]?.chooseIndicatorValue === "" ||
-      indicatorArray[0]?.timeFrameValue === ""
-    ) {
-      alert("Please Fill out the required fields in Indicators Section");
-    } else {
-      let session = await getSession();
-      const body = {
-        botName,
-        exchange,
-        botType,
-        strategyType,
-        strategyPair,
-        orderSize: baseOrderSize,
-        // availablePercentage,
-        safetyOrderSize: safetyOrder,
-        candleSizeAndVol: safetyOrderMul,
-        orderType,
-        indicators: indicatorArray,
-        buyOnCondition,
-        buyOnConditionPercent: buyOnConditionX,
-        avgPrice,
-        avgPricePercent,
-        ignoreCondition,
-        ignoreConditionPercent: ignoreConditionX,
-        maxOrders: maxOrder,
-        maxOrderPercent,
-        maxVol,
-        maxVolPercent,
-        stopLoss: stopLossValue,
-        stopLossPercent,
-        takeProfit: takeProfitValue,
-        takeProfitPercent,
-        logs: "",
-        state: "off",
-        userId: session.user.id,
-      };
-      console.log(body);
-      const response = await fetch("/api/user/create-strategy", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const newData = await response.json();
-      console.log(newData);
-      alert("Saved");
-    }
-  };
-
-  const handlebacktest = async () => {
-    if (
-      botName === "" ||
-      exchange === "" ||
-      botType === "" ||
-      strategyType === "" ||
-      strategyPair === ""
-    ) {
-      alert("Please Fill out the General Settings Section");
-    } else if (orderType === "" || baseOrderSize === "") {
-      alert("Please Fill out the required fields in Orders Section");
-    } else if (
-      indicatorArray.length === 0 ||
-      indicatorArray[0]?.chooseIndicatorValue === "" ||
-      indicatorArray[0]?.timeFrameValue === ""
-    ) {
-      alert("Please Fill out the required fields in Indicators Section");
-    } else {
-      let session = await getSession();
-      const body = {
-        botName,
-        exchange,
-        botType,
-        strategyType,
-        strategyPair,
-        orderSize: baseOrderSize,
-        // availablePercentage,
-        safetyOrderSize: safetyOrder,
-        candleSizeAndVol: safetyOrderMul,
-        orderType,
-        indicators: indicatorArray,
-        buyOnCondition,
-        buyOnConditionPercent: buyOnConditionX,
-        avgPrice,
-        avgPricePercent,
-        ignoreCondition,
-        ignoreConditionPercent: ignoreConditionX,
-        maxOrders: maxOrder,
-        maxOrderPercent,
-        maxVol,
-        maxVolPercent,
-        stopLoss: stopLossValue,
-        stopLossPercent,
-        takeProfit: takeProfitValue,
-        takeProfitPercent,
-        logs: "",
-        state: "off",
-        userId: session.user.id,
-      };
-      console.log(body);
-      // const response = await fetch("/api/user/create-strategy", {
-      //   method: "POST",
-      //   body: JSON.stringify(body),
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-
-      // const newData = await response.json();
-      // console.log(newData);
-      // alert("Saved");
-      try {
-        const response = await fetch("https://dcabot1.herokuapp.com/backtest", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Success:", data);
-          setChartData(data);
-        } else {
-          console.error("Error:", response.status, response.statusText);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    }
-  };
 
   const [width, setWidth] = useState(globalThis?.innerWidth);
   const handleTabClick = (tab, i) => {
@@ -479,43 +298,60 @@ const StrategyTabsComponent = (props) => {
   const arrowButtonStyle = {
     fontSize: "2em",
   };
-  const [AllStrategyData, setAllStartegyData] = useState([]);
-  const handleSave = () => {
+
+  const handleSave = async () => {
+    const { user } = await getSession();
     const temp = [...AllStrategyData];
     value.map((item, index) => {
       temp[index] = {
-        GeneralSettings: {
+        generalSettings: {
           strategyName: strategyName[index],
           strategyFolder: strategyFolder[index],
-          BotLink: BotLink[index],
+          botLink: BotLink[index],
           strategyDescription: strategyDescription[index],
-          Notes: Notes[index],
+          notes: Notes[index],
         },
-        Ordres: {
+        orders: {
           firstOrderSize: firstOrderSize[index],
           extraOrderSize: extraOrderSize[index],
           orderType: orderType[index],
-          Pairs: Pairs[index],
+          pairs: Pairs[index],
         },
-        DCA: {
-          DCAType: DCAType[index],
+        dca: {
+          dcaType: DCAType[index],
           volumeMultiplier: volumeMultiplier[index],
           maxExtraOrders: maxExtraOrders[index],
           minDistBetweenOrders: minDistBetweenOrders[index],
           startExtraOrder: startExtraOrder[index],
           stopMultiplier: stopMultiplier[index],
         },
-        TakeProfit: {
+        takeProfit: {
           takeProfit: takeProfit[index],
           minTakeProfit: minTakeProfit[index],
         },
-        StopLoss: {
+        stopLoss: {
           stopLoss: stopLoss[index],
         },
+        user,
       };
     });
     setAllStartegyData([...temp]);
     console.log("all the data", AllStrategyData);
+    const response = await fetch(
+      `/api/strategy/create-strategy`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([...temp]),
+      }
+    );
+    if(response.ok){
+      alert("Strategy Saved")
+    }else{
+      alert("Strategy Not Saved")
+    }
   };
 
   const handleRemove = (i) => {
