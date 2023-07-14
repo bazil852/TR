@@ -135,9 +135,9 @@ const StrategyTabsComponent = (props) => {
       stopLoss: {},
     },
   ]);
-  useEffect(() => {
-    fetchStrategiesByUserId();
-  }, []);
+  // useEffect(() => {
+  //   fetchStrategiesByUserId();
+  // }, []);
   useEffect(() => console.log("Updated State:", AllStrategyData), [
     AllStrategyData,
   ]);
