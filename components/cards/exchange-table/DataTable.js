@@ -327,9 +327,21 @@ const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
                 ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   console.log(row, selectedExchange);
-                  const allocation =
-                    (row.usdt_price / selectedExchange?.portfolios[0].balance) *
-                    100;
+                  let allocation;
+                  if (
+                    selectedExchange?.portfolios[0]?.balance &&
+                    selectedExchange?.portfolios[0]?.balance !== 0
+                  ) {
+                    allocation =
+                      (row.usdt_price /
+                        selectedExchange.portfolios[0].balance) *
+                      100;
+                  } else {
+                    allocation = 0; // or whatever default value you want
+                  }
+                  // const allocation =
+                  //   (row.usdt_price / selectedExchange?.portfolios[0].balance) *
+                  //   100;
                   console.log(allocation);
                   return (
                     <tr
