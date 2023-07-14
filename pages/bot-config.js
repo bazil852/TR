@@ -12,12 +12,7 @@ import {
   TradingBotsIcon,
   TotalTime,
 } from "../utils/icons";
-import SummaryProfit from "../components/charts/SummaryProfit";
-import ProfitByDay from "../components/charts/ProfitByDay";
-import ProfitCalendar from "../components/calendar/ProfitCalendar";
 import AddBlock from "../components/cards/add-block/AddBlock";
-import GeneralSettings from "../components/cards/general-settings/GeneralSettings";
-import Strategy from "../components/cards/strategy/Strategy";
 import CryptoRates from "../components/cards/crypto-rates/CryptoRates";
 
 const profitCards = [
@@ -57,16 +52,6 @@ const profitCards = [
 
 const BotConfig = () => {
   var formRef = useRef(null);
-
-  const handleClick = () => {
-    const form = formRef.current;
-    console.log(form);
-    if (form) {
-      form.submit();
-    }
-    // formRef.current.dispatchEvent(new Event("submit", { cancelable: true }));
-    // formRef.current.submit();
-  };
   return (
     <>
       <div style={{ margin: "40px 0px" }}>
@@ -85,22 +70,9 @@ const BotConfig = () => {
           );
         })}
       </Grid>
-      {/* <Grid sx={{ mt: 2 }} container rowSpacing={3} columnSpacing={3}>
-        <Grid xs={12} md={6} xl={4} item>
-          <SummaryProfit />
-        </Grid>
-        <Grid xs={12} md={6} xl={4} item>
-          <ProfitByDay />
-        </Grid>
-        <Grid xs={12} md={6} xl={4} item>
-          <ProfitCalendar />
-        </Grid>
-      </Grid> */}
-      {/* <GeneralSettings />
-      <Strategy /> */}
       <Grid container>
         <Grid item xs={12}>
-          <AddBlock formRef={formRef} />
+          {/* <AddBlock formRef={formRef} /> */}
         </Grid>
       </Grid>
     </>

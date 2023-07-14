@@ -86,13 +86,13 @@ const GeneralSettings = (props) => {
                 width: "100%",
               }}
               name="strategyName"
-              value={props.GeneralSettingsData[props.index]["strategyName"]}
+              value={props?.GeneralSettingsData[props?.index]?.strategyName}
               onChange={(e) => {
-                const temp = [...props.GeneralSettingsData];
-                temp[props.index]["strategyName"] = e.target.value;
-                props.setGeneralSettingsData(temp);
+                const temp = [...props?.GeneralSettingsData];
+                temp[props?.index]["strategyName"] = e.target.value;
+                props?.setGeneralSettingsData(temp);
               }}
-              disabled={props.editSettings}
+              disabled={props?.editSettings}
             />
           </Box>
           <Box
@@ -126,13 +126,13 @@ const GeneralSettings = (props) => {
                 fontFamily: "Barlow, san-serif",
               }}
               name="strategyFolder"
-              value={props.GeneralSettingsData[props.index]["strategyFolder"]}
+              value={props?.GeneralSettingsData[props?.index]?.strategyFolder}
               onChange={(e) => {
-                const temp = [...props.GeneralSettingsData];
-                temp[props.index]["strategyFolder"] = e.target.value;
-                props.setGeneralSettingsData(temp);
+                const temp = [...props?.GeneralSettingsData];
+                temp[props?.index]["strategyFolder"] = e.target.value;
+                props?.setGeneralSettingsData(temp);
               }}
-              disabled={props.editSettings}
+              disabled={props?.editSettings}
             />
           </Box>
           <Box
@@ -163,13 +163,13 @@ const GeneralSettings = (props) => {
               placeholder="Bot Link"
               sx={{ width: "100%", fontFamily: "Barlow, san-serif" }}
               name="botLink"
-              value={props.GeneralSettingsData[props.index].botLink}
+              value={props?.GeneralSettingsData[props?.index]?.botLink}
               onChange={(e) => {
-                const temp = [...props.GeneralSettingsData];
-                temp[props.index].botLink = e.target.value;
-                props.setGeneralSettingsData(temp);
+                const temp = [...props?.GeneralSettingsData];
+                temp[props?.index].botLink = e.target.value;
+                props?.setGeneralSettingsData(temp);
               }}
-              disabled={props.editSettings}
+              disabled={props?.editSettings}
             />
           </Box>
         </Grid>
@@ -206,14 +206,14 @@ const GeneralSettings = (props) => {
               }}
               name="strategyDescription"
               value={
-                props.GeneralSettingsData[props.index]["strategyDescription"]
+                props?.GeneralSettingsData[props?.index]?.strategyDescription
               }
               onChange={(e) => {
-                const temp = [...props.GeneralSettingsData];
-                temp[props.index]["strategyDescription"] = e.target.value;
-                props.setGeneralSettingsData(temp);
+                const temp = [...props?.GeneralSettingsData];
+                temp[props?.index]["strategyDescription"] = e.target.value;
+                props?.setGeneralSettingsData(temp);
               }}
-              disabled={props.editSettings}
+              disabled={props?.editSettings}
             />
           </Box>
           <Box
@@ -247,13 +247,13 @@ const GeneralSettings = (props) => {
                 fontFamily: "Barlow, san-serif",
               }}
               name="notes"
-              value={props.GeneralSettingsData[props.index].notes}
+              value={props?.GeneralSettingsData[props?.index]?.notes}
               onChange={(e) => {
-                const temp = [...props.GeneralSettingsData];
-                temp[props.index].notes = e.target.value;
-                props.setGeneralSettingsData(temp);
+                const temp = [...props?.GeneralSettingsData];
+                temp[props?.index].notes = e.target.value;
+                props?.setGeneralSettingsData(temp);
               }}
-              disabled={props.editSettings}
+              disabled={props?.editSettings}
             />
           </Box>
         </Grid>
