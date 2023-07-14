@@ -6,7 +6,9 @@ import { Auth, NavBarLogo } from "../utils/icons";
 
 export default function LoginPage() {
   const [width, setWidth] = useState(globalThis?.innerWidth);
-
+  console.log("URLS:")
+  console.log(process.env.NEXTAUTH_URL)
+  console.log(process.env.NEXTAUTH_SECRET)
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
