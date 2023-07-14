@@ -200,10 +200,10 @@ const BotConfigEdit = () => {
       </Grid>
       <Grid sx={{ mt: 2 }} container rowSpacing={3} columnSpacing={3}>
         <Grid xs={12} md={6} xl={4} item>
-          <SummaryProfit />
+          {/* <SummaryProfit /> */}
         </Grid>
         <Grid xs={12} md={6} xl={4} item>
-          <ProfitByDay />
+          {/* <ProfitByDay /> */}
         </Grid>
         {/* <Grid xs={12} md={6} xl={4} item>
           <ProfitCalendar />
@@ -213,7 +213,7 @@ const BotConfigEdit = () => {
       <Strategy /> */}
       <Grid container>
         <Grid item xs={12}>
-          <EditBlock />
+          {/* <EditBlock /> */}
         </Grid>
       </Grid>
     </>
