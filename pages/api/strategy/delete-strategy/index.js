@@ -5,16 +5,15 @@ import * as bcrypt from "bcrypt";
 import { Spot } from "@binance/connector";
 
 export default async function handler(req, res) {
-  const { method } = req;
+  const { method, query } = req;
+  const { id } = query;
 
   switch (method) {
     case "DELETE":
       try {
         console.log("api-state", req.body);
         await connectMongo();
-        const strategy = await Strategy.findByIdAndDelete(
-          req?.body?.strategyId
-        );
+        const strategy = await Strategy.findByIdAndDelete(id);
         res.status(200).json({ status: 200, body: strategy });
       } catch (error) {
         res.status(500).json({

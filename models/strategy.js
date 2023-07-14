@@ -5,7 +5,7 @@ const strategySchema = new Schema({
   generalSettings: {
     strategyName: String,
     strategyFolder: String,
-    BotLink: String,
+    botLink: String,
     strategyDescription: String,
     notes: String,
   },
@@ -17,7 +17,7 @@ const strategySchema = new Schema({
   },
   parameters: Object,
   dca: {
-    DCAType: String,
+    dcaType: String,
     volumeMultiplier: String,
     maxExtraOrders: String,
     minDistBetweenOrders: String,
