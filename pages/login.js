@@ -9,6 +9,7 @@ export default function LoginPage() {
   console.log("URLS:")
   console.log(process.env.NEXTAUTH_URL)
   console.log(process.env.NEXTAUTH_SECRET)
+  console.log(process.env.NEXT_PUBLIC_BACKEND_URL)
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);

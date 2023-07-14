@@ -47,18 +47,7 @@ export default NextAuth({
     }),
   ],
   callbacks: {
-    // async session(session, user) {
-    //   if (user && user.id) {
-    //     session.user.id = user.id;
-    //   }
-    //   return session;
-    // },
-    // async jwt(token, user, account, profile, isNewUser) {
-    //   if (user && user.id) {
-    //     token.id = user.id;
-    //   }
-    //   return token;
-    // },
+
     async jwt({ token, user, profile }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
       if (user) {
