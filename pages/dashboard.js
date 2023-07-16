@@ -151,7 +151,7 @@ const DashboardComponent = () => {
     const newExchanges = data.map((item) => {
       return { exchange_type: item.exchange.exchange_type, profitOrLoss: 0 };
     });
-    console.log("exchange",newExchanges);
+    console.log("exchange", newExchanges);
     setExchangeList(newExchanges);
     console.log("data", data);
     const newArray = data.map((item) => {
@@ -573,17 +573,16 @@ const DashboardComponent = () => {
         <Box>
           <Box
             sx={{
-              mt: 2.5,
+              mt: 3,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               background: "#2A2C2D",
-              p: 1,
               borderRadius: 2,
               border: "1px solid #393B3C",
               gap: 1,
-              width: 120,
-              height: 42,
+              width: 155,
+              height: 35,
               cursor: "pointer",
               "&:active": {
                 backgroundColor: "#434546",
@@ -592,27 +591,18 @@ const DashboardComponent = () => {
             onClick={handleOpen}
           >
             <Video />
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography
-                sx={{
-                  color: "white",
-                  fontFamily: "Barlow, san-serif",
-                  mb: -0.5,
-                }}
-              >
-                Dashboard
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: "Barlow, san-serif",
-                  color: "white",
-                  mt: -0.5,
-                }}
-              >
-                Guide
-              </Typography>
-            </Box>
+            <Typography
+              sx={{
+                color: "white",
+                fontFamily: "Barlow, san-serif",
+                whiteSpace: "nowrap",
+                mt: -0.3,
+              }}
+            >
+              Dashboard Guide
+            </Typography>
           </Box>
+
           <Modal
             open={open}
             onClose={handleClose}
@@ -664,23 +654,17 @@ const DashboardComponent = () => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={1} mt={1}>
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          md={isDrawerOpen && width > 1000 ? 6 : 5}
-          lg={5}
-        >
+      <Grid
+        container
+        spacing={1}
+        mt={1}
+        alignContent={"stretch"}
+        minHeight={320}
+      >
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <ConsolidatedPortfolio totalAssets={totalAssets} />
         </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          md={isDrawerOpen && width > 1000 ? 6 : 7}
-          lg={7}
-        >
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <InvestedPortfolio totalBalance={totalPortfolioValue} />
         </Grid>
       </Grid>

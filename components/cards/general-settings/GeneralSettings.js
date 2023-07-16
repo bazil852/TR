@@ -4,6 +4,7 @@ import InputBase from "@mui/material/InputBase";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import SelectInputParameters from "../../widgets/SelectInputParameters";
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -37,7 +38,11 @@ const GeneralSettings = (props) => {
     globalThis?.addEventListener("resize", handleResize);
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
-
+  const ParametersOptions = [
+    { value: "Dummy1", label: "Dummy1" },
+    { value: "Dummy2", label: "Dummy2" },
+    { value: "Dummy3", label: "Dummy3" },
+  ];
   return (
     <Box
       sx={{
@@ -76,23 +81,15 @@ const GeneralSettings = (props) => {
             >
               Strategy Name
             </Typography>
-            <ValidationTextField
-              margin="normal"
-              required
-              id="startegyname"
-              placeholder="Strategy Name"
-              sx={{
-                fontFamily: "Barlow, san-serif",
-                width: "100%",
-              }}
-              name="strategyName"
-              value={props?.GeneralSettingsData[props?.index]?.strategyName}
+            <SelectInputParameters
+              placeHolder={"Strategy Name"}
+              value={props.GeneralSettingsData[props.index]["Strategy Name"]}
               onChange={(e) => {
-                const temp = [...props?.GeneralSettingsData];
-                temp[props?.index]["strategyName"] = e.target.value;
-                props?.setGeneralSettingsData(temp);
+                const temp = [...props.GeneralSettingsData];
+                temp[props.index]["Strategy Name"] = e.value;
+                props.setGeneralSettingsData(temp);
               }}
-              disabled={props?.editSettings}
+              options={ParametersOptions}
             />
           </Box>
           <Box
@@ -116,23 +113,16 @@ const GeneralSettings = (props) => {
             >
               Strategy Folder
             </Typography>
-            <ValidationTextField
-              margin="normal"
-              required
-              id="startegyfolder"
-              placeholder="Strategy Folder"
-              sx={{
-                width: "100%",
-                fontFamily: "Barlow, san-serif",
-              }}
-              name="strategyFolder"
-              value={props?.GeneralSettingsData[props?.index]?.strategyFolder}
+            <SelectInputParameters
+              placeHolder="Strategy Folder"
+              value={props.GeneralSettingsData[props.index]["Strategy Folder"]}
               onChange={(e) => {
-                const temp = [...props?.GeneralSettingsData];
-                temp[props?.index]["strategyFolder"] = e.target.value;
-                props?.setGeneralSettingsData(temp);
+                const temp = [...props.GeneralSettingsData];
+                temp[props.index]["Strategy Folder"] = e.value;
+                props.setGeneralSettingsData(temp);
               }}
-              disabled={props?.editSettings}
+              options={ParametersOptions}
+              Width={"100%"}
             />
           </Box>
           <Box
@@ -156,20 +146,16 @@ const GeneralSettings = (props) => {
             >
               Bot Link
             </Typography>
-            <ValidationTextField
-              margin="normal"
-              required
-              id="botlink"
-              placeholder="Bot Link"
-              sx={{ width: "100%", fontFamily: "Barlow, san-serif" }}
-              name="botLink"
-              value={props?.GeneralSettingsData[props?.index]?.botLink}
+            <SelectInputParameters
+              placeHolder="Bot Link"
+              value={props.GeneralSettingsData[props.index].BotLink}
               onChange={(e) => {
-                const temp = [...props?.GeneralSettingsData];
-                temp[props?.index].botLink = e.target.value;
-                props?.setGeneralSettingsData(temp);
+                const temp = [...props.GeneralSettingsData];
+                temp[props.index].BotLink = e.value;
+                props.setGeneralSettingsData(temp);
               }}
-              disabled={props?.editSettings}
+              options={ParametersOptions}
+              Width={"100%"}
             />
           </Box>
         </Grid>
@@ -206,14 +192,14 @@ const GeneralSettings = (props) => {
               }}
               name="strategyDescription"
               value={
-                props?.GeneralSettingsData[props?.index]?.strategyDescription
+                props.GeneralSettingsData[props.index]["Strategy Description"]
               }
               onChange={(e) => {
-                const temp = [...props?.GeneralSettingsData];
-                temp[props?.index]["strategyDescription"] = e.target.value;
-                props?.setGeneralSettingsData(temp);
+                const temp = [...props.GeneralSettingsData];
+                temp[props.index]["Strategy Description"] = e.target.value;
+                props.setGeneralSettingsData(temp);
               }}
-              disabled={props?.editSettings}
+              disabled={props.editSettings}
             />
           </Box>
           <Box
@@ -247,13 +233,13 @@ const GeneralSettings = (props) => {
                 fontFamily: "Barlow, san-serif",
               }}
               name="notes"
-              value={props?.GeneralSettingsData[props?.index]?.notes}
+              value={props.GeneralSettingsData[props.index].Notes}
               onChange={(e) => {
-                const temp = [...props?.GeneralSettingsData];
-                temp[props?.index].notes = e.target.value;
-                props?.setGeneralSettingsData(temp);
+                const temp = [...props.GeneralSettingsData];
+                temp[props.index].Notes = e.target.value;
+                props.setGeneralSettingsData(temp);
               }}
-              disabled={props?.editSettings}
+              disabled={props.editSettings}
             />
           </Box>
         </Grid>

@@ -16,27 +16,33 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
   console.log(totalAssets, topThree);
 
   const numberFormatter = (num) => {
-    if (num >= 1000) {
-      if (num % 1000 === 0) {
-        return num / 1000 + "k";
-      } else {
-        return (num / 1000).toFixed(1) + "k";
-      }
+    if (num >= 1e9) {
+      return (num / 1e9).toFixed(2) + "B";
+    } else if (num >= 1e6) {
+      return (num / 1e6).toFixed(2) + "M";
+    } else if (num >= 1e3) {
+      return (num / 1e3).toFixed(2) + "K";
     } else {
-      return num;
+      return num.toFixed(2);
     }
   };
 
   const decimalFormatter = (num) => {
     if (num % 1 !== 0) {
-      return num.toFixed(3);
+      return num.toFixed(2);
     } else {
-      return num;
+      return num.toFixed(0);
     }
   };
 
   return (
-    <Card sx={{ background: "#242424", minHeight: 320, minWidth: "100%" }}>
+    <Card
+      sx={{
+        background: "#242424",
+        minHeight: "100%",
+        minWidth: "100%",
+      }}
+    >
       <CardContent sx={{ position: "relative" }}>
         <Typography
           sx={{
@@ -62,7 +68,7 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              marginTop: "25%",
+              minHeight: 200,
             }}
           >
             <Typography
@@ -71,6 +77,7 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
                 fontFamily: "Barlow, san-serif",
                 color: "#ACB2B7",
                 fontWeight: 600,
+                whiteSpace: "nowrap",
               }}
             >
               No Wallet Connected

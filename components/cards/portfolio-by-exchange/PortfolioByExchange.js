@@ -58,9 +58,9 @@ const PortfolioByExchange = ({ coins, balanceHistory }) => {
               display: "flex",
               alignItems: "center",
               gap: 1,
-              float: "right",
-              pr: width > 600 && 15,
               mt: -2.5,
+              float: "right",
+              mr: width < 600 ? 0 : 15,
             }}
           >
             <Box

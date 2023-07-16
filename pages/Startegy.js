@@ -53,17 +53,16 @@ const StartegyComponent = () => {
         <Box>
           <Box
             sx={{
-              mt: 2.5,
+              mt: 3,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               background: "#2A2C2D",
-              p: 1,
               borderRadius: 2,
               border: "1px solid #393B3C",
               gap: 1,
-              width: 120,
-              height: 42,
+              width: 140,
+              height: 35,
               cursor: "pointer",
               "&:active": {
                 backgroundColor: "#434546",
@@ -72,27 +71,18 @@ const StartegyComponent = () => {
             onClick={handleOpen}
           >
             <Video />
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography
-                sx={{
-                  color: "white",
-                  fontFamily: "Barlow, san-serif",
-                  mb: -0.5,
-                }}
-              >
-                Strategy
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: "Barlow, san-serif",
-                  color: "white",
-                  mt: -0.5,
-                }}
-              >
-                Guide
-              </Typography>
-            </Box>
+            <Typography
+              sx={{
+                color: "white",
+                fontFamily: "Barlow, san-serif",
+                whiteSpace: "nowrap",
+                mt: -0.3,
+              }}
+            >
+              Strategy Guide
+            </Typography>
           </Box>
+
           <Modal
             open={open}
             onClose={handleClose}
@@ -122,6 +112,7 @@ const StartegyComponent = () => {
           </Modal>
         </Box>
       </Box>
+      
       <Box mt={4}>
         <StrategyThreeBoxes />
       </Box>
@@ -134,7 +125,7 @@ function Startegy() {
   return (
     <PrivateHeader
       title="New Strategy / Edit Strategy"
-      current="1"
+      current="2"
       Component={StartegyComponent}
     />
   );

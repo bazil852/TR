@@ -13,12 +13,11 @@ import {
   Button,
 } from "@mui/material";
 
-import LogoutIcon from "@mui/icons-material/Logout";
-import SettingsIcon from "@mui/icons-material/Settings";
 import CloseIcon from "@mui/icons-material/Close";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import MenuIcon from "@mui/icons-material/Menu";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 import { useDispatch } from "react-redux";
 import { setWidth } from "../../slices/dashboardWidthController-slice";
@@ -27,18 +26,12 @@ import {
   Gift,
   Dash,
   BlueDash,
-  ClosedMenuIcon,
   HandShake,
   VgridBot,
   VdcaBot,
   Lock,
-  BlueLock,
-  BlueHandShake,
   TradingBotsIcon,
 } from "../../utils/icons";
-import { signOut } from "next-auth/react";
-
-import AdminProfileCardSideBar from "../cards/admin-profile-card/AdminProfileCardSideBar";
 import NavBar from "../navbar/NavBar";
 
 const drawerWidth = 240;
@@ -112,13 +105,13 @@ export default function PrivateHeader({ title, current, Component }) {
   const getListItemStyle = (index) => {
     return {
       color: selectedItem === index ? "#9079F6" : "white",
-      width: "100%",
+      width: index === 1 ? "80%" : "100%",
       pl: 1,
       minHeight: 45,
       cursor: "pointer",
       "&::before": {
         content: '""',
-        backgroundColor: "#CDC4F6",
+        backgroundColor: "#FFFFFF",
         minHeight: 30,
         width: "5px",
         position: "absolute",
@@ -132,6 +125,8 @@ export default function PrivateHeader({ title, current, Component }) {
       "&:hover": {
         backgroundColor: !open ? "none" : "rgba(255,255,255,0.1)",
         borderRadius: "0px",
+        borderTopRightRadius: index === 1 ? "10px" : "",
+        borderBottomRightRadius: index === 1 ? "10px" : "",
       },
     };
   };
@@ -145,16 +140,16 @@ export default function PrivateHeader({ title, current, Component }) {
     },
     {
       index: 1,
-      title: "Strategy",
+      title: "Strategy Library",
       icon: selectedItem === 1 ? Lock : Lock,
-      path: "/Startegy",
+      path: "/StrategyLibrary",
     },
 
     {
       index: 2,
-      title: "DCA Bot",
+      title: "VDCA",
       icon: selectedItem === 2 ? VdcaBot : VdcaBot,
-      path: "/dca-bots",
+      path: "/bot-config",
     },
     {
       index: 3,
@@ -308,101 +303,91 @@ export default function PrivateHeader({ title, current, Component }) {
         >
           {items.map((item) => (
             <div key={item.index}>
-              <ListItem
-                sx={getListItemStyle(item.index)}
-                onClick={() => handleClick(item)}
-              >
-                <ListItemIcon
-                  sx={{
-                    display: "flex",
-                    justifyContent: open ? "center" : "center",
-                    alignItems: "center",
-                    pr: !open ? 3 : "",
-                  }}
+              {item.title === "Strategy Library" ? (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <ListItem
+                    sx={getListItemStyle(item.index)}
+                    onClick={() => handleClick(item)}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        display: "flex",
+                        justifyContent: open ? "center" : "center",
+                        alignItems: "center",
+                        pr: !open ? 3 : "",
+                      }}
+                    >
+                      <item.icon />
+                    </ListItemIcon>
+                    <Typography
+                      sx={{
+                        display: open ? "flex" : "none",
+                        fontFamily: "Barlow, san-serif",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {item.title}
+                    </Typography>
+                  </ListItem>
+                  <Box
+                    sx={{
+                      background: "linear-gradient(to right,#790D83,#7A5CFF)",
+                      display: open ? "flex" : "none",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: 1,
+                      cursor: "pointer",
+                      height: 20,
+                      width: 20,
+                    }}
+                    onClick={() => {
+                      router.push("Startegy");
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontFamily: "Barlow, san-serif",
+                        fontSize: 20,
+                        fontWeight: 600,
+                        mt: -0.5,
+                        color: "#FFFFFF",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      +
+                    </Typography>
+                  </Box>
+                </Box>
+              ) : (
+                <ListItem
+                  sx={getListItemStyle(item.index)}
+                  onClick={() => handleClick(item)}
                 >
-                  <item.icon />
-                </ListItemIcon>
-                {item.title === "Strategy" ? (
-                  <Box
+                  <ListItemIcon
                     sx={{
                       display: "flex",
-                      justifyContent: "center",
+                      justifyContent: open ? "center" : "center",
                       alignItems: "center",
+                      pr: !open ? 3 : "",
                     }}
                   >
-                    <Typography
-                      sx={{
-                        display: open ? "flex" : "none",
-                        fontFamily: "Barlow, san-serif",
-                      }}
-                    >
-                      {item.title}
-                    </Typography>
-                    <Box
-                      sx={{
-                        background: "linear-gradient(to right,#790D83,#7A5CFF)",
-                        fontWeight: "bold",
-                        display: open ? "flex" : "none",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderRadius: 1,
-                        cursor: "pointer",
-                        ml: 4,
-                        height: 20,
-                        width: 20,
-                      }}
-                    >
-                      +
-                    </Box>
-                  </Box>
-                ) : item.title === "DCA Bot" ? (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        display: open ? "flex" : "none",
-                        fontFamily: "Barlow, san-serif",
-                      }}
-                    >
-                      {item.title}
-                    </Typography>
-                    <Box
-                      sx={{
-                        background: "linear-gradient(to right,#790D83,#7A5CFF)",
-                        fontWeight: "bold",
-                        display: open ? "flex" : "none",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderRadius: 1,
-                        cursor: "pointer",
-                        ml: 4,
-                        height: 20,
-                        width: 20,
-                      }}
-                    >
-                      +
-                    </Box>
-                  </Box>
-                ) : (
+                    <item.icon />
+                  </ListItemIcon>
                   <Typography
                     sx={{
                       display: open ? "flex" : "none",
                       fontFamily: "Barlow, san-serif",
+                      fontWeight: 500,
                     }}
                   >
                     {item.title}
                   </Typography>
-                )}
-              </ListItem>
+                </ListItem>
+              )}
             </div>
           ))}
         </List>
-        <Box mb={"40vh"} display={open ? "inline-block" : "none"}>
+        <Box mb={"20vh"} display={open ? "inline-block" : "none"}>
           <Box
             sx={{
               display: "flex",
@@ -496,82 +481,31 @@ export default function PrivateHeader({ title, current, Component }) {
               </Typography>
             </Button>
           </Box>
-        </Box>
-        {/* <List>
-          <ListItem
-            sx={{
-              display: `${open ? "flex" : "none"}`,
-              pl: 2,
-              minHeight: 45,
-              cursor: "pointer",
-              "&::before": {
-                content: '""',
-                backgroundColor: "#CDC4F6",
-                minHeight: 30,
-                width: "5px",
-                position: "absolute",
-                left: 0,
-                opacity: 0,
-                borderRadius: "1px",
-              },
-              "&:hover::before": {
-                opacity: 1,
-              },
-              "&:hover": {
-                backgroundColor: "#473956",
-              },
-            }}
-          >
-            <SettingsIcon style={{ color: "white" }} />
-            <Typography sx={{ pl: 1, fontSize: "15px", color: "white" }}>
-              Settings
-            </Typography>
-          </ListItem>
-          <ListItem
-            sx={{
-              display: `${open ? "flex" : "none"}`,
-              pl: 1.5,
-              minHeight: 45,
-              cursor: "pointer",
-              "&::before": {
-                content: '""',
-                backgroundColor: "white",
-                minHeight: 30,
-                width: "5px",
-                position: "absolute",
-                left: 0,
-                opacity: 0,
-                borderRadius: "1px",
-              },
-              "&:hover::before": {
-                opacity: 1,
-              },
-              "&:hover": {
-                backgroundColor: "#473956",
-              },
-            }}
-          >
-            <Button
-              sx={{
-                textTransform: "none",
-                "&:hover": {
-                  background: "none",
-                },
-              }}
-              onClick={() => {
-                signOut({ callbackUrl: "http://localhost:3000/login" });
-              }}
-            >
-              <LogoutIcon style={{ color: "white" }} />
-              <Typography sx={{ pl: 1, fontSize: "14px", color: "#FFFFFF" }}>
-                Log Out
+          <Box mt={5}>
+            <ListItem sx={getListItemStyle(6)}>
+              <ListItemIcon
+                sx={{
+                  display: "flex",
+                  justifyContent: open ? "center" : "center",
+                  alignItems: "center",
+                  pr: !open ? 3 : "",
+                }}
+              >
+                <LogoutIcon />
+              </ListItemIcon>
+              <Typography
+                sx={{
+                  display: open ? "flex" : "none",
+                  fontFamily: "Barlow, san-serif",
+                  fontWeight: 500,
+                  color: "#FFFFFF",
+                }}
+              >
+                LogOut
               </Typography>
-            </Button>
-          </ListItem>
-          <ListItem sx={{ display: `${open ? "block" : "none"}`, mt: 4 }}>
-            <AdminProfileCardSideBar />
-          </ListItem>
-        </List> */}
+            </ListItem>
+          </Box>
+        </Box>
       </Drawer>
       <Box sx={{ position: "fixed", minWidth: "100%", zIndex: 1000 }}>
         <NavBar />

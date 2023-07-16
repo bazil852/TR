@@ -13,6 +13,7 @@ import {
 import GeneralSettings from "../../../components/cards/general-settings/GeneralSettings";
 import { getSession } from "next-auth/react";
 import CandleStickGraph from "../../../components/cards/candleStick-strategy/CandleStickGraph";
+import SelectInputParameters from "../../widgets/SelectInputParameters";
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -35,6 +36,10 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
     "&:focus": {
       boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
       borderColor: theme.palette.primary.main,
+    },
+    "::placeholder": {
+      zIndex: "10px",
+      color: "#FFFFFF !important",
     },
   },
 }));
@@ -85,55 +90,57 @@ export default StrategyTabs;
 
 const StrategyTabsComponent = (props) => {
   const [value, setvalue] = useState(["general"]);
-  const [Pairs, setPairs] = useState([""]);
-  const [width, setWidth] = useState(globalThis?.innerWidth);
-
+  const [ANDToggle, setANDToggle] = useState([[true]]);
   const [GeneralSettingsData, setGeneralSettingsData] = useState([
     {
-      strategyName: "",
-      strategyFolder: "",
-      strategyDescription: "",
-      botLink: "",
-      notes: "",
+      "Strategy Name": "",
+      "Strategy Folder": "",
+      "Strategy Description": "",
+      BotLink: "",
+      Notes: "",
     },
   ]);
   const [OrdersData, setOrdersData] = useState([
     {
-      firstOrderSize: "",
-      extraOrderSize: "",
-      orderType: "",
-      pairs: "",
+      "First Order Size": "",
+      "Extra Order Size": "",
+      "Order Type": "",
+      Pairs: "",
     },
   ]);
   const [DCAData, setDCAData] = useState([
     {
-      dcaType: "",
-      volumeMultiplier: "",
-      maxExtraOrders: "",
-      minDistBetweenOrders: "",
-      startExtraOrder: "",
-      stopMultiplier: "",
+      "DCA Type": "",
+      "Volume Multiplier": "",
+      "Max Extra Orders": "",
+      "Min Dist Between Orders": "",
+      "Start Extra Order": "",
+      "Step Multiplier": "",
     },
   ]);
   const [TakeProfitData, setTakeProfitData] = useState([
     {
-      takeProfit: "",
-      minTakeProfit: "",
+      "Take Profit": "",
+      "Min Take Profit": "",
     },
   ]);
   const [StopLossData, setStopLossData] = useState([
     {
-      stopLoss: "",
+      "Stop Loss": "",
     },
   ]);
-  const [AllStrategyData, setAllStrategyData] = useState([
+  const [AllStrategyData, setAllStartegyData] = useState([
     {
-      generalSettings: {},
-      orders: {},
-      dca: {},
-      takeProfit: {},
-      stopLoss: {},
+      "General Settings Data": {},
+      "Orders Data": {},
+      "DCA Data": {},
+      "Take Profit Data": {},
+      "Stop Loss Data": {},
+      "Parameters Data": [],
     },
+  ]);
+  const [ParametersData, setParametersData] = useState([
+    [{ 1: "", Operator: "", 2: "" }],
   ]);
   useEffect(() => {
     fetchStrategiesByUserId();
@@ -154,80 +161,87 @@ const StrategyTabsComponent = (props) => {
     );
 
     const newData = await response.json();
-    console.log("response data", newData);
-    setAllStrategyData(newData.body);
-
-    const generalSettingsArray = newData.body.map(
-      (item) => item.generalSettings
-    );
-    const ordersArray = newData.body.map((item) => item.orders);
-    const dcaArray = newData.body.map((item) => item.dca);
-    const takeProfitArray = newData.body.map((item) => item.takeProfit);
-    const stopLossArray = newData.body.map((item) => item.stopLoss);
-
-    setGeneralSettingsData(generalSettingsArray);
-    setOrdersData(ordersArray);
-    setDCAData(dcaArray);
-    setTakeProfitData(takeProfitArray);
-    setStopLossData(stopLossArray);
-
-    const count = newData.body?.length;
-    if (count > 0) {
-      const temp = new Array(count).fill("general");
-      setvalue(temp);
-    }
+    console.log(newData);
   };
-  console.log(value);
+
   const handleAdd = () => {
     const temp = [...value, "general"];
     setvalue(temp);
     setGeneralSettingsData([
       ...GeneralSettingsData,
       {
-        strategyName: "",
-        strategyFolder: "",
-        strategyDescription: "",
-        botLink: "",
-        notes: "",
+        "Strategy Name": "",
+        "Strategy Folder": "",
+        "Strategy Description": "",
+        BotLink: "",
+        Notes: "",
       },
     ]);
     setOrdersData([
       ...OrdersData,
       {
-        firstOrderSize: "",
-        extraOrderSize: "",
-        orderType: "",
-        pairs: "",
+        "First Order Size": "",
+        "Extra Order Size": "",
+        "Order Type": "",
+        Pairs: "",
       },
     ]);
     setDCAData([
       ...DCAData,
       {
-        dcaType: "",
-        volumeMultiplier: "",
-        maxExtraOrders: "",
-        minDistBetweenOrders: "",
-        startExtraOrder: "",
-        stopMultiplier: "",
+        "DCA Type": "",
+        "Volume Multiplier": "",
+        "Max Extra Orders": "",
+        "Min Dist Between Orders": "",
+        "Start Extra Order": "",
+        "Step Multiplier": "",
       },
     ]);
     setTakeProfitData([
       ...TakeProfitData,
-      { takeProfit: "", minTakeProfit: "" },
+      { "Take Profit": "", "Min Take Profit": "" },
     ]);
-    setStopLossData([...StopLossData, { stopLoss: "" }]);
-    setAllStrategyData([
+    setStopLossData([...StopLossData, { "Stop Loss": "" }]);
+    setAllStartegyData([
       ...AllStrategyData,
       {
-        generalSettings: {},
-        orders: {},
-        dca: {},
-        takeProfit: {},
-        stopLoss: {},
+        "General Settings Data": {},
+        "Orders Data": {},
+        "DCA Data": {},
+        "Take Profit Data": {},
+        "Stop Loss Data": {},
       },
     ]);
+    setParametersData([...ParametersData, [{ 1: "", Operator: "", 2: "" }]]);
+    setANDToggle([...ANDToggle, [true]]);
+  };
+  const ParametersOptions = [
+    { value: "Dummy1", label: "Dummy1" },
+    { value: "Dummy2", label: "Dummy2" },
+    { value: "Dummy3", label: "Dummy3" },
+  ];
+  const OrderTypeOptions = [
+    { value: "Market", label: "Market" },
+    { value: "Limit", label: "Limit" },
+  ];
+  const handleAddParameter = (index) => {
+    var len = 0;
+    const temp2 = [...ParametersData];
+    temp2[index].map((item) => {
+      len = Object.keys(item)[1];
+    });
+    temp2[index] = [
+      ...temp2[index],
+      { [parseInt(len) + 1]: "", Operator: "", [parseInt(len) + 2]: "" },
+    ];
+
+    setParametersData(temp2);
+    const temp3 = [...ANDToggle];
+    temp3[index] = [...temp3[index], true];
+    setANDToggle(temp3);
   };
 
+  const [width, setWidth] = useState(globalThis?.innerWidth);
   const handleTabClick = (tab, i) => {
     const newArray = [...value];
     newArray[i] = tab;
@@ -242,23 +256,23 @@ const StrategyTabsComponent = (props) => {
   const arrowButtonStyle = {
     fontSize: "2em",
   };
-  console.log(AllStrategyData);
 
   const handleSave = async () => {
     const { user } = await getSession();
     const temp = AllStrategyData.map((item, index) => {
       return {
         ...item,
-        generalSettings: GeneralSettingsData[index],
-        dca: DCAData[index],
-        orders: OrdersData[index],
-        stopLoss: StopLossData[index],
-        takeProfit: TakeProfitData[index],
+        "General Settings Data": GeneralSettingsData[index],
+        "DCA Data": DCAData[index],
+        "Orders Data": OrdersData[index],
+        "Stop Loss Data": StopLossData[index],
+        "Take Profit Data": TakeProfitData[index],
+        "Parameters Data": ParametersData[index],
         user,
       };
     });
-    setAllStrategyData([...temp]);
-    console.log(temp);
+    setAllStartegyData([...temp]);
+    console.log("all the data", AllStrategyData);
     const response = await fetch(`/api/strategy/create-strategy`, {
       method: "POST",
       headers: {
@@ -273,19 +287,7 @@ const StrategyTabsComponent = (props) => {
     }
   };
 
-  const handleRemove = async (i) => {
-    console.log(i);
-    if (AllStrategyData[i]?._id) {
-      const response = await fetch(
-        `/api/strategy/delete-strategy?id=${AllStrategyData[i]?._id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
+  const handleRemove = (i) => {
     var temp = [];
     temp = value.filter((item, index) => index !== i);
     setvalue(temp);
@@ -299,14 +301,18 @@ const StrategyTabsComponent = (props) => {
     setTakeProfitData(temp);
     temp = StopLossData.filter((item, index) => index !== i);
     setStopLossData(temp);
+    temp = ParametersData.filter((item, index) => index !== i);
+    setParametersData(temp);
     temp = AllStrategyData.filter((item, index) => index !== i);
-    setAllStrategyData(temp);
+    setAllStartegyData(temp);
+    temp = ANDToggle.filter((item, index) => index !== i);
+    setANDToggle(temp);
   };
   return (
     <>
       <Box
         sx={{
-          background: "#191919",
+          background: "#131313",
           px: 3,
           pt: 1,
           borderRadius: "5px",
@@ -624,11 +630,13 @@ const StrategyTabsComponent = (props) => {
               }}
             />
             {item === "general" && (
-              <GeneralSettings
-                index={index}
-                GeneralSettingsData={GeneralSettingsData}
-                setGeneralSettingsData={setGeneralSettingsData}
-              />
+              <Box sx={{ minHeight: 200 }}>
+                <GeneralSettings
+                  index={index}
+                  GeneralSettingsData={GeneralSettingsData}
+                  setGeneralSettingsData={setGeneralSettingsData}
+                />
+              </Box>
             )}
             {item === "orders" && (
               <>
@@ -636,6 +644,7 @@ const StrategyTabsComponent = (props) => {
                   sx={{
                     mt: 3,
                     borderRadius: "5px",
+                    minHeight: 184,
                     px:
                       width > 1200 && width < 1300
                         ? 5
@@ -698,7 +707,7 @@ const StrategyTabsComponent = (props) => {
                           id="firstorderSize"
                           name="firstOrderSize"
                           placeholder="100"
-                          value={OrdersData[index]["firstOrderSize"]}
+                          value={OrdersData[index]["First Order Size"]}
                           sx={{
                             width:
                               width < 769 && width > 600
@@ -710,7 +719,8 @@ const StrategyTabsComponent = (props) => {
                           }}
                           onChange={async (event) => {
                             const temp = [...OrdersData];
-                            temp[index]["firstOrderSize"] = event.target.value;
+                            temp[index]["First Order Size"] =
+                              event.target.value;
                             setOrdersData(temp);
                           }}
                         />
@@ -749,7 +759,7 @@ const StrategyTabsComponent = (props) => {
                           placeholder="150"
                           id="extraordersize"
                           name="extraOrderSize"
-                          value={OrdersData[index]["extraOrderSize"]}
+                          value={OrdersData[index]["Extra Order Size"]}
                           sx={{
                             width:
                               width < 769 && width > 600
@@ -761,7 +771,8 @@ const StrategyTabsComponent = (props) => {
                           }}
                           onChange={async (event) => {
                             const temp = [...OrdersData];
-                            temp[index]["extraOrderSize"] = event.target.value;
+                            temp[index]["Extra Order Size"] =
+                              event.target.value;
                             setOrdersData(temp);
                           }}
                         />
@@ -798,26 +809,22 @@ const StrategyTabsComponent = (props) => {
                         >
                           Order type
                         </Typography>
-                        <ValidationTextField
-                          margin="normal"
-                          id="ordertype"
-                          name="orderType"
-                          placeholder="Market"
-                          value={OrdersData[index]["orderType"]}
-                          sx={{
-                            width:
-                              width < 769 && width > 600
-                                ? "7rem"
-                                : width < 600
-                                ? "100%"
-                                : "5rem",
-                            fontFamily: "Barlow, san-serif",
-                          }}
+                        <SelectInputParameters
+                          placeHolder="Market"
+                          value={OrdersData[index]["Order Type"]}
                           onChange={async (event) => {
                             const temp = [...OrdersData];
-                            temp[index]["orderType"] = event.target.value;
+                            temp[index]["Order Type"] = event.value;
                             setOrdersData(temp);
                           }}
+                          Width={
+                            width < 769 && width > 600
+                              ? "7rem"
+                              : width < 600
+                              ? "100%"
+                              : "5rem"
+                          }
+                          options={OrderTypeOptions}
                         />
                       </Box>
                     </Grid>
@@ -849,21 +856,16 @@ const StrategyTabsComponent = (props) => {
                         >
                           Pairs
                         </Typography>
-                        <ValidationTextField
-                          margin="normal"
-                          id="pairs"
-                          name="pairs"
-                          placeholder="BTC/USDT"
-                          value={OrdersData[index].pairs}
-                          sx={{
-                            fontFamily: "Barlow, san-serif",
-                            width: width < 600 ? "100%" : "10rem",
-                          }}
+                        <SelectInputParameters
+                          placeHolder="BTC/USDT"
+                          value={OrdersData[index].Pairs}
+                          Width={width < 600 ? "100%" : "10rem"}
                           onChange={async (event) => {
                             const temp = [...OrdersData];
-                            temp[index].pairs = event.target.value;
+                            temp[index].Pairs = event.value;
                             setOrdersData(temp);
                           }}
+                          options={ParametersOptions}
                         />
                       </Box>
                     </Grid>
@@ -879,447 +881,191 @@ const StrategyTabsComponent = (props) => {
                 }}
               >
                 <Grid container spacing={3}>
-                  <Grid item xs={12} sm={12} md={4} lg={4}>
-                    <Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          mb: 2,
-                          gap: width < 900 ? 0 : 2,
-                          flexWrap: width < 900 ? "wrap" : "nowrap",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            fontWeight: 500,
-                            fontSize: 16,
-                            fontFamily: "Barlow, san-serif",
-                            color: "#CCCCCC",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          Parameters 1
-                        </Typography>
-                        <ValidationTextField
-                          margin="normal"
-                          id="parameters1"
-                          name="parameters1"
-                          placeholder="Bullish Green Vector (Vol.>200%)"
-                          value={Pairs}
-                          onChange={async (event) => {
-                            setPairs(event.target.value);
-                          }}
-                          sx={{
-                            fontFamily: "Barlow, san-serif",
-                            width: "100%",
-                          }}
-                        />
-                      </Box>
-                      <ValidationTextField
-                        sx={{
-                          width: "7rem",
-                          fontFamily: "Barlow, san-serif",
-                          ml:
-                            width < 900 && width > 600
-                              ? "35vw"
-                              : width < 600 && width > 500
-                              ? "33vw"
-                              : width < 500
-                              ? "28vw"
-                              : 13.5,
-                        }}
-                        margin="normal"
-                        id="parameters1"
-                        name="parameters1"
-                        placeholder="Greater Than"
-                        value={Pairs}
-                        onChange={async (event) => {
-                          setPairs(event.target.value);
-                        }}
-                      />
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          mt: width < 900 ? 0 : 2,
-                          gap: width < 900 ? 0 : 2,
-                          flexWrap: width < 900 ? "wrap" : "nowrap",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            fontWeight: 500,
-                            fontSize: 16,
-                            fontFamily: "Barlow, san-serif",
-                            color: "#CCCCCC",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          Parameters 2
-                        </Typography>
-                        <ValidationTextField
-                          margin="normal"
-                          id="parameters2"
-                          name="parameters2"
-                          placeholder="Exponential Moving Average 50"
-                          value={Pairs}
-                          onChange={async (event) => {
-                            setPairs(event.target.value);
-                          }}
-                          sx={{
-                            fontFamily: "Barlow, san-serif",
-                            width: "100%",
-                          }}
-                        />
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          mt: 2,
-                        }}
-                      >
-                        <Box>
-                          <Typography
-                            sx={{
-                              fontSize: "12px",
-                              fontFamily: "Barlow, san-serif",
-                              fontWeight: 100,
-                              color: "#CCCCCC",
-                            }}
-                          >
-                            Add Parameters
-                          </Typography>
-                        </Box>
-                        <Box onClick={() => handleAdd()}>
-                          <Plus
-                            style={{
-                              borderRadius: "3px",
-                              background:
-                                "linear-gradient(to right,#790F87,#794AE3)",
-                              height: "15px",
-                              width: "15px",
-                              paddingLeft: "1.5px",
-                              paddingTop: "1px",
-                            }}
-                          />
-                        </Box>
-                      </Box>
-                    </Box>
-                  </Grid>
+                  {ParametersData[index].map(
+                    (ParameterItem, ParametersIndex) => (
+                      <>
+                        {ParametersIndex !== 0 && (
+                          <Grid item xs={12} sm={12} md={1.2} lg={1.2}>
+                            <Box
+                              sx={{
+                                background:
+                                  "linear-gradient(to right,#790F87,#794AE3)",
+                                borderRadius: "6px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                                height: 123,
+                                width: width < 601 ? 66 : 66,
+                                ml: width < 900 ? "45%" : "",
+                                fontFamily: "Barlow, san-serif",
+                                fontSize: 20,
+                                fontWeight: 400,
+                                transition: "transform .01s ease-in-out",
+                                "&:hover": {
+                                  transform: "scale(0.98)",
+                                },
+                              }}
+                              onClick={() => {
+                                const temp = [...ANDToggle];
+                                temp[index][ParametersIndex] = !ANDToggle[
+                                  index
+                                ][ParametersIndex];
 
-                  <Grid item xs={12} sm={12} md={1.2} lg={1.2}>
-                    <Box
-                      sx={{
-                        background: "linear-gradient(to right,#790F87,#794AE3)",
-                        borderRadius: "6px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        height: 125,
-                        width: width < 601 ? 66 : 66,
-                        ml: width < 900 ? "45%" : "",
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontFamily: "Barlow, san-serif",
-                          fontSize: 20,
-                        }}
-                      >
-                        AND
-                      </Typography>
-                    </Box>
-                  </Grid>
+                                setANDToggle(temp);
+                              }}
+                            >
+                              {ANDToggle[index][ParametersIndex] ? "AND" : "OR"}
+                            </Box>
+                          </Grid>
+                        )}
+                        <Grid item xs={12} sm={12} md={4} lg={4}>
+                          <Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                mb: 2,
+                                gap: width < 900 ? 0 : 2,
+                                flexWrap: width < 900 ? "wrap" : "nowrap",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  fontWeight: 500,
+                                  fontSize: 16,
+                                  fontFamily: "Barlow, san-serif",
+                                  color: "#CCCCCC",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                Parameters {Object.keys(ParameterItem)[0]}
+                              </Typography>
+                              <SelectInputParameters
+                                placeHolder="Bullish Green Vector (Vol.>200%)"
+                                value={
+                                  ParametersData[index][ParametersIndex][
+                                    Object.keys(ParameterItem)[0]
+                                  ]
+                                }
+                                onChange={(selectedOption) => {
+                                  const temp = [...ParametersData];
+                                  temp[index][ParametersIndex][
+                                    Object.keys(ParameterItem)[0]
+                                  ] = selectedOption.value;
+                                  setParametersData(temp);
+                                }}
+                                options={ParametersOptions}
+                                keyName={"Parameter"}
+                              />
+                            </Box>
 
-                  <Grid item xs={12} sm={12} md={4} lg={4}>
-                    <Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          mb: 2,
-                          gap: width < 900 ? 0 : 2,
-                          flexWrap: width < 900 ? "wrap" : "nowrap",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            fontWeight: 500,
-                            fontSize: 16,
-                            fontFamily: "Barlow, san-serif",
-                            color: "#CCCCCC",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          Parameters 3
-                        </Typography>
-                        <ValidationTextField
-                          margin="normal"
-                          id="parameters3"
-                          name="parameters3"
-                          placeholder="Bullish Green Vector (Vol.>200%)"
-                          value={Pairs}
-                          onChange={async (event) => {
-                            setPairs(event.target.value);
-                          }}
-                          sx={{
-                            fontFamily: "Barlow, san-serif",
-                            width: "100%",
-                          }}
-                        />
-                      </Box>
-                      <ValidationTextField
-                        sx={{
-                          width: "7rem",
-                          fontFamily: "Barlow, san-serif",
-                          ml:
-                            width < 900 && width > 600
-                              ? "35vw"
-                              : width < 600 && width > 500
-                              ? "33vw"
-                              : width < 500
-                              ? "28vw"
-                              : 13.5,
-                        }}
-                        margin="normal"
-                        id="parameters2"
-                        name="parameters2"
-                        placeholder="Greater Than"
-                        value={Pairs}
-                        onChange={async (event) => {
-                          setPairs(event.target.value);
-                        }}
-                      />
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          mt: width < 900 ? 0 : 2,
-                          gap: width < 900 ? 0 : 2,
-                          flexWrap: width < 900 ? "wrap" : "nowrap",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            fontWeight: 500,
-                            fontSize: 16,
-                            fontFamily: "Barlow, san-serif",
-                            color: "#CCCCCC",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          Parameters 4
-                        </Typography>
-                        <ValidationTextField
-                          margin="normal"
-                          id="parameters4"
-                          name="parameters4"
-                          placeholder="Exponential Moving Average 50"
-                          value={Pairs}
-                          onChange={async (event) => {
-                            setPairs(event.target.value);
-                          }}
-                          sx={{
-                            fontFamily: "Barlow, san-serif",
-                            width: "100%",
-                          }}
-                        />
-                      </Box>
-
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          mt: 2,
-                        }}
-                      >
-                        <Box>
-                          <Typography
-                            sx={{
-                              fontSize: "12px",
-                              fontFamily: "Barlow, san-serif",
-                              fontWeight: 100,
-                              color: "#CCCCCC",
-                            }}
-                          >
-                            Add Parameters
-                          </Typography>
-                        </Box>
-                        <Box onClick={() => handleAdd()}>
-                          <Plus
-                            style={{
-                              borderRadius: "3px",
-                              background:
-                                "linear-gradient(to right,#790F87,#794AE3)",
-                              height: "15px",
-                              width: "15px",
-                              paddingLeft: "1.5px",
-                              paddingTop: "1px",
-                            }}
-                          />
-                        </Box>
-                      </Box>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={12} sm={12} md={1.2} lg={1.2}>
-                    <Box
-                      sx={{
-                        background: "linear-gradient(to right,#790F87,#794AE3)",
-                        borderRadius: "6px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        height: 125,
-                        width: width < 601 ? 66 : 66,
-                        ml: width < 900 ? "45%" : "",
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontFamily: "Barlow, san-serif",
-                          fontSize: 20,
-                        }}
-                      >
-                        AND
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={12} sm={12} md={4} lg={4}>
-                    <Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          mb: 2,
-                          gap: width < 900 ? 0 : 2,
-                          flexWrap: width < 900 ? "wrap" : "nowrap",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            fontWeight: 500,
-                            fontSize: 16,
-                            fontFamily: "Barlow, san-serif",
-                            color: "#CCCCCC",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          Parameters 5
-                        </Typography>
-                        <ValidationTextField
-                          margin="normal"
-                          id="parameters5"
-                          name="parameters5"
-                          placeholder="Bullish Green Vector (Vol.>200%)"
-                          value={Pairs}
-                          onChange={async (event) => {
-                            setPairs(event.target.value);
-                          }}
-                          sx={{
-                            fontFamily: "Barlow, san-serif",
-                            width: "100%",
-                          }}
-                        />
-                      </Box>
-                      <ValidationTextField
-                        sx={{
-                          width: "7rem",
-                          fontFamily: "Barlow, san-serif",
-                          ml:
-                            width < 900 && width > 600
-                              ? "35vw"
-                              : width < 600 && width > 500
-                              ? "33vw"
-                              : width < 500
-                              ? "28vw"
-                              : 13.5,
-                        }}
-                        margin="normal"
-                        id="parameters1"
-                        name="parameters1"
-                        placeholder="Greater Than"
-                        value={Pairs}
-                        onChange={async (event) => {
-                          setPairs(event.target.value);
-                        }}
-                      />
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          mt: width < 900 ? 0 : 2,
-                          gap: width < 900 ? 0 : 2,
-                          flexWrap: width < 900 ? "wrap" : "nowrap",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            fontWeight: 500,
-                            fontSize: 16,
-                            fontFamily: "Barlow, san-serif",
-                            color: "#CCCCCC",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          Parameters 6
-                        </Typography>
-                        <ValidationTextField
-                          margin="normal"
-                          id="parameters6"
-                          name="parameters6"
-                          placeholder="Exponential Moving Average 50"
-                          value={Pairs}
-                          onChange={async (event) => {
-                            setPairs(event.target.value);
-                          }}
-                          sx={{
-                            fontFamily: "Barlow, san-serif",
-                            width: "100%",
-                          }}
-                        />
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          mt: 2,
-                        }}
-                      >
-                        <Box>
-                          <Typography
-                            sx={{
-                              fontSize: "12px",
-                              fontFamily: "Barlow, san-serif",
-                              fontWeight: 100,
-                              color: "#CCCCCC",
-                            }}
-                          >
-                            Add Parameters
-                          </Typography>
-                        </Box>
-                        <Box onClick={() => handleAdd()}>
-                          <Plus
-                            style={{
-                              borderRadius: "3px",
-                              background:
-                                "linear-gradient(to right,#790F87,#794AE3)",
-                              height: "15px",
-                              width: "15px",
-                              paddingLeft: "1.5px",
-                              paddingTop: "1px",
-                            }}
-                          />
-                        </Box>
-                      </Box>
-                    </Box>
-                  </Grid>
+                            <SelectInputParameters
+                              value={
+                                ParametersData[index][ParametersIndex].Operator
+                              }
+                              onChange={(selectedOption) => {
+                                const temp = [...ParametersData];
+                                temp[index][ParametersIndex].Operator =
+                                  selectedOption.value;
+                                setParametersData(temp);
+                              }}
+                              options={ParametersOptions}
+                              keyName={"Operator"}
+                              placeHolder={"Greater than"}
+                              Width={"50%"}
+                              margin={
+                                width < 900 && width > 600
+                                  ? "35vw"
+                                  : width < 600 && width > 500
+                                  ? "33vw"
+                                  : width < 500
+                                  ? "28vw"
+                                  : 13.5
+                              }
+                            />
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                mt: width < 900 ? 0 : 2,
+                                gap: width < 900 ? 0 : 2,
+                                flexWrap: width < 900 ? "wrap" : "nowrap",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  fontWeight: 500,
+                                  fontSize: 16,
+                                  fontFamily: "Barlow, san-serif",
+                                  color: "#CCCCCC",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                Parameters {Object.keys(ParameterItem)[1]}
+                              </Typography>
+                              <SelectInputParameters
+                                placeHolder="Bullish Green Vector (Vol.>200%)"
+                                value={
+                                  ParametersData[index][ParametersIndex][
+                                    Object.keys(ParameterItem)[1]
+                                  ]
+                                }
+                                onChange={(selectedOption) => {
+                                  const temp = [...ParametersData];
+                                  temp[index][ParametersIndex][
+                                    Object.keys(ParameterItem)[1]
+                                  ] = selectedOption.value;
+                                  setParametersData(temp);
+                                }}
+                                options={ParametersOptions}
+                                keyName={"Parameter"}
+                              />
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                                mt: 2,
+                              }}
+                            >
+                              <Box>
+                                <Typography
+                                  sx={{
+                                    fontSize: "12px",
+                                    fontFamily: "Barlow, san-serif",
+                                    fontWeight: 100,
+                                    color: "#CCCCCC",
+                                  }}
+                                >
+                                  Add Parameters
+                                </Typography>
+                              </Box>
+                              <Box
+                                onClick={() => handleAddParameter(index)}
+                                sx={{
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <Plus
+                                  style={{
+                                    borderRadius: "3px",
+                                    background:
+                                      "linear-gradient(to right,#790F87,#794AE3)",
+                                    height: "15px",
+                                    width: "15px",
+                                    paddingLeft: "1.5px",
+                                    paddingTop: "1px",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                          </Box>
+                        </Grid>
+                      </>
+                    )
+                  )}
                 </Grid>
               </Box>
             )}
@@ -1328,6 +1074,7 @@ const StrategyTabsComponent = (props) => {
                 sx={{
                   mt: 3,
                   borderRadius: "5px",
+                  minHeight: 184,
                   px:
                     width > 1200 && width < 1300
                       ? 5
@@ -1378,26 +1125,22 @@ const StrategyTabsComponent = (props) => {
                       >
                         DCA Type
                       </Typography>
-                      <ValidationTextField
-                        margin="normal"
-                        id="dcatype"
-                        name="dcaType"
-                        placeholder="Signal"
-                        sx={{
-                          width:
-                            width < 900 && width > 600
-                              ? "7rem"
-                              : width < 600
-                              ? "100%"
-                              : "5rem",
-                          fontFamily: "Barlow, san-serif",
-                        }}
-                        value={DCAData[index]["dcaType"]}
+                      <SelectInputParameters
+                        placeHolder="Signal"
+                        Width={
+                          width < 900 && width > 600
+                            ? "7rem"
+                            : width < 600
+                            ? "100%"
+                            : "5rem"
+                        }
+                        value={DCAData[index]["DCA Type"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["dcaType"] = event.target.value;
+                          temp[index]["DCA Type"] = event.value;
                           setDCAData(temp);
                         }}
+                        options={ParametersOptions}
                       />
                     </Box>
                     <Box
@@ -1436,10 +1179,10 @@ const StrategyTabsComponent = (props) => {
                           fontFamily: "Barlow, san-serif",
                         }}
                         name="volMultiplier"
-                        value={DCAData[index]["volumeMultiplier"]}
+                        value={DCAData[index]["Volume Multiplier"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["volumeMultiplier"] = event.target.value;
+                          temp[index]["Volume Multiplier"] = event.target.value;
                           setDCAData(temp);
                         }}
                       />
@@ -1485,10 +1228,10 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={DCAData[index]["maxExtraOrders"]}
+                        value={DCAData[index]["Max Extra Orders"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["maxExtraOrders"] = event.target.value;
+                          temp[index]["Max Extra Orders"] = event.target.value;
                           setDCAData(temp);
                         }}
                       />
@@ -1531,10 +1274,10 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={DCAData[index]["minDistBetweenOrders"]}
+                        value={DCAData[index]["Min Dist Between Orders"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["minDistBetweenOrders"] =
+                          temp[index]["Min Dist Between Orders"] =
                             event.target.value;
                           setDCAData(temp);
                         }}
@@ -1576,10 +1319,10 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={DCAData[index]["startExtraOrder"]}
+                        value={DCAData[index]["Start Extra Order"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["startExtraOrder"] = event.target.value;
+                          temp[index]["Start Extra Order"] = event.target.value;
                           setDCAData(temp);
                         }}
                       />
@@ -1620,10 +1363,10 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={DCAData[index]["stopMultiplier"]}
+                        value={DCAData[index]["Step Multiplier"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["stopMultiplier"] = event.target.value;
+                          temp[index]["Step Multiplier"] = event.target.value;
                           setDCAData(temp);
                         }}
                       />
@@ -1637,6 +1380,7 @@ const StrategyTabsComponent = (props) => {
                 sx={{
                   mt: 3,
                   borderRadius: "5px",
+                  minHeight: 184,
                   px:
                     width > 1200 && width < 1300
                       ? 5
@@ -1687,26 +1431,22 @@ const StrategyTabsComponent = (props) => {
                       >
                         Take profit
                       </Typography>
-                      <ValidationTextField
-                        margin="normal"
-                        id="takeprofit"
-                        name="takeProfit"
-                        placeholder="Signal"
-                        value={TakeProfitData[index]["takeProfit"]}
-                        sx={{
-                          width:
-                            width < 900 && width > 600
-                              ? "7rem"
-                              : width < 600
-                              ? "100%"
-                              : "5rem",
-                          fontFamily: "Barlow, san-serif",
-                        }}
+                      <SelectInputParameters
+                        placeHolder="Signal"
+                        value={TakeProfitData[index]["Take Profit"]}
+                        Width={
+                          width < 900 && width > 600
+                            ? "7rem"
+                            : width < 600
+                            ? "100%"
+                            : "5rem"
+                        }
                         onChange={async (event) => {
                           const temp = [...TakeProfitData];
-                          temp[index]["takeProfit"] = event.target.value;
+                          temp[index]["Take Profit"] = event.value;
                           setTakeProfitData(temp);
                         }}
+                        options={ParametersOptions}
                       />
                     </Box>
                     <Box
@@ -1736,7 +1476,7 @@ const StrategyTabsComponent = (props) => {
                         id="mintakeprofit"
                         name="minTakeProfit"
                         placeholder="1.5%"
-                        value={TakeProfitData[index]["minTakeProfit"]}
+                        value={TakeProfitData[index]["Min Take Profit"]}
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1748,7 +1488,7 @@ const StrategyTabsComponent = (props) => {
                         }}
                         onChange={async (event) => {
                           const temp = [...TakeProfitData];
-                          temp[index]["minTakeProfit"] = event.target.value;
+                          temp[index]["Min Take Profit"] = event.target.value;
                           setTakeProfitData(temp);
                         }}
                       />
@@ -1762,6 +1502,7 @@ const StrategyTabsComponent = (props) => {
                 sx={{
                   mt: 3,
                   borderRadius: "5px",
+                  minHeight: 184,
                   px:
                     width > 1200 && width < 1300
                       ? 5
@@ -1817,7 +1558,7 @@ const StrategyTabsComponent = (props) => {
                         id="stoploss"
                         name="stopLoss"
                         placeholder="1.5%"
-                        value={StopLossData[index]["stopLoss"]}
+                        value={StopLossData[index]["Stop Loss"]}
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1829,7 +1570,7 @@ const StrategyTabsComponent = (props) => {
                         }}
                         onChange={async (event) => {
                           const temp = [...StopLossData];
-                          temp[index]["stopLoss"] = event.target.value;
+                          temp[index]["Stop Loss"] = event.target.value;
                           setStopLossData(temp);
                         }}
                       />
@@ -1864,6 +1605,7 @@ const StrategyTabsComponent = (props) => {
           </Box>
         ))}
       </Box>
+
       <CandleStickGraph />
     </>
   );

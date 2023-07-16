@@ -71,7 +71,7 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-const DataTable = ({ data, columns, rowsPerPage = 15 }) => {
+const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
   console.log(data);
   const [width, setWidth] = useState(globalThis?.innerWidth);
   const [page, setPage] = useState(0);

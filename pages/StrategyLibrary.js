@@ -1,11 +1,13 @@
-import { Box, Modal, Typography, Backdrop, Fade, Grid } from "@mui/material";
 import PrivateHeader from "../components/layout/PrivateHeader";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Box, Modal, Typography, Backdrop, Fade, Button } from "@mui/material";
 import ReactPlayer from "react-player";
+import StrategyFolders from "../components/cards/strategy-library/StrategyFolders";
+import MyStrategies from "../components/cards/strategy-library/MyStrategies";
+import CommunityStrategies from "../components/cards/strategy-library/CommunityStrategies";
 import { Video } from "../utils/icons";
-import Wallet from "../components/cards/wallet-connect/Wallet";
 
-const MyExchangesComponent = () => {
+const StrategyLibrary = () => {
   const [width, setWidth] = useState(globalThis?.innerWidth);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -36,7 +38,7 @@ const MyExchangesComponent = () => {
               fontFamily: "Barlow, san-serif",
             }}
           >
-            My Exchange
+            Strategy Library
           </Typography>
           <Typography
             sx={{
@@ -47,7 +49,7 @@ const MyExchangesComponent = () => {
               color: "#ACB2B7",
             }}
           >
-            All your accounts in the same place
+            Create, test and save your strategies
           </Typography>
         </Box>
         <Box>
@@ -61,7 +63,7 @@ const MyExchangesComponent = () => {
               borderRadius: 2,
               border: "1px solid #393B3C",
               gap: 1,
-              width: 150,
+              width: 140,
               height: 35,
               cursor: "pointer",
               "&:active": {
@@ -79,7 +81,7 @@ const MyExchangesComponent = () => {
                 mt: -0.3,
               }}
             >
-              Exchange Guide
+              Strategy Guide
             </Typography>
           </Box>
 
@@ -112,17 +114,54 @@ const MyExchangesComponent = () => {
           </Modal>
         </Box>
       </Box>
-      <Wallet />
+
+      <Box sx={{ display: "flex", mt: 4, gap: "0.7rem" }}>
+        <Button
+          sx={{
+            height: "40px",
+            width: "150px",
+            fontSize: 16,
+            fontWeight: 500,
+            color: "#FFFFFF",
+            fontFamily: "Barlow, san-serif",
+            textTransform: "none",
+            background:
+              "linear-gradient(93.46deg, #350B41 -12.4%, #35256A 105.26%)",
+          }}
+        >
+          New Folder
+        </Button>
+        <Button
+          sx={{
+            height: "40px",
+            width: "150px",
+            fontSize: 16,
+            fontWeight: 500,
+            color: "#FFFFFF",
+            fontFamily: "Barlow, san-serif",
+            textTransform: "none",
+            background:
+              "linear-gradient(93.46deg, #1E0625 -12.4%, #1E153D 105.26%)",
+          }}
+        >
+          New Strategy
+        </Button>
+      </Box>
+      <StrategyFolders />
+      <MyStrategies />
+      <CommunityStrategies />
     </Box>
   );
 };
 
-export default function MyExchanges() {
+export default function Strategy() {
   return (
-    <PrivateHeader
-      title="My Exchanges"
-      Component={MyExchangesComponent}
-      current="1"
-    />
+    <>
+      <PrivateHeader
+        current="1"
+        Component={StrategyLibrary}
+        title=" Strategy Library"
+      />
+    </>
   );
 }

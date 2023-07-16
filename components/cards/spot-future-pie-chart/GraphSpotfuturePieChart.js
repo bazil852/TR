@@ -1,28 +1,58 @@
 import React, { useEffect, useState } from "react";
 
 const GraphSpotfuturePieChart = ({ data }) => {
-  const [dataWithWorth, setDataWithWorth] = useState([0]);
+  const [dataWithWorth, setDataWithWorth] = useState([]);
   const colors = ["#36D2B6", "#1EB1D2", "#4E38D2", "#90BAD2", "#2474D2"];
-  const minPercentage = 0.01;
+  const minPercentage = 0.05;
 
   useEffect(() => {
-    const computedData = data?.map((obj) => ({
-      ...obj,
-      worth: Number(obj.usdt_price) || 0,
-    }));
-
-    const sortedData = computedData.sort((a, b) => b.worth - a.worth);
-
-    const topFour = sortedData.slice(0, 4);
-    const remainingData = sortedData.slice(4);
-
-    const remainingWorth = remainingData.reduce(
-      (sum, obj) => sum + obj.worth,
-      0
+    const hasAllElementsZeroOrUndefined = data?.every(
+      (obj) => Number(obj.usdt_price) === 0 || isNaN(Number(obj.usdt_price))
     );
 
-    setDataWithWorth([...topFour, { asset: "Others", worth: remainingWorth }]);
+    if (hasAllElementsZeroOrUndefined) {
+      setDataWithWorth([]);
+    } else {
+      const computedData = data?.map((obj) => ({
+        ...obj,
+        worth: Number(obj.usdt_price) || 0,
+      }));
+
+      const sortedData = computedData.sort((a, b) => b.worth - a.worth);
+
+      const topFour = sortedData.slice(0, 4);
+      const remainingData = sortedData.slice(4);
+
+      const remainingWorth = remainingData.reduce(
+        (sum, obj) => sum + obj.worth,
+        0
+      );
+
+      setDataWithWorth([
+        ...topFour,
+        { asset: "Others", worth: remainingWorth },
+      ]);
+    }
   }, [data]);
+
+  if (dataWithWorth.length === 0) {
+    return (
+      <div
+        style={{
+          height: "160px",
+          fontSize: "16px",
+          fontFamily: "Barlow, sans-serif",
+          fontWeight: "600",
+          color: "#ACB2B7",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        No data to show
+      </div>
+    );
+  }
 
   const totalWorth = dataWithWorth.reduce((sum, obj) => sum + obj.worth, 0);
 

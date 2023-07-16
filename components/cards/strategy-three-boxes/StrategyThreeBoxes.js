@@ -6,7 +6,6 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import { CheckBox } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import MeterChart from "./MeterChart";
@@ -42,11 +41,7 @@ const StrategyThreeBoxes = () => {
     border: "1.5px solid #363636",
 
     "input:disabled ~ &": {
-      boxShadow: "none",
-      background:
-        theme.palette.mode === "dark"
-          ? "rgba(57,75,89,.5)"
-          : "rgba(206,217,224,.5)",
+      color: "#FFFFFF !important",
     },
   }));
 
@@ -65,8 +60,6 @@ const StrategyThreeBoxes = () => {
       content: '""',
     },
   });
-
-  // Inspired by blueprintjs
   function BpCheckbox(props) {
     return (
       <Checkbox
@@ -160,18 +153,13 @@ const StrategyThreeBoxes = () => {
           >
             <FormControlLabel
               control={
-                <BpCheckbox
-                  checked={AllToggles["Strategy Name"]}
-                  onChange={() =>
-                    setAllToggles({
-                      ...AllToggles,
-                      "Strategy Name": !AllToggles["Strategy Name"],
-                    })
-                  }
-                />
+                <BpCheckbox checked={AllToggles["Strategy Name"]} disabled />
               }
               label="Strategy Name"
               sx={{
+                "& .Mui-disabled": {
+                  color: "#FFFFFF !important",
+                },
                 "& .MuiTypography-root": {
                   fontWeight: 400,
                   fontSize: "12px",
@@ -181,16 +169,12 @@ const StrategyThreeBoxes = () => {
               }}
             />
             <FormControlLabel
-              control={
-                <BpCheckbox
-                  checked={AllToggles.Pairs}
-                  onChange={() =>
-                    setAllToggles({ ...AllToggles, Pairs: !AllToggles.Pairs })
-                  }
-                />
-              }
+              control={<BpCheckbox checked={AllToggles.Pairs} disabled />}
               label="Pairs"
               sx={{
+                "& .Mui-disabled": {
+                  color: "#FFFFFF !important",
+                },
                 "& .MuiTypography-root": {
                   fontWeight: 400,
                   fontSize: "12px",
@@ -201,18 +185,13 @@ const StrategyThreeBoxes = () => {
             />
             <FormControlLabel
               control={
-                <BpCheckbox
-                  checked={AllToggles["First Order Size"]}
-                  onChange={() =>
-                    setAllToggles({
-                      ...AllToggles,
-                      "First Order Size": !AllToggles["First Order Size"],
-                    })
-                  }
-                />
+                <BpCheckbox checked={AllToggles["First Order Size"]} disabled />
               }
               label="First order size"
               sx={{
+                "& .Mui-disabled": {
+                  color: "#FFFFFF !important",
+                },
                 "& .MuiTypography-root": {
                   fontWeight: 400,
                   fontSize: "12px",
@@ -223,18 +202,13 @@ const StrategyThreeBoxes = () => {
             />
             <FormControlLabel
               control={
-                <BpCheckbox
-                  checked={AllToggles["Order Type"]}
-                  onChange={() =>
-                    setAllToggles({
-                      ...AllToggles,
-                      "Order Type": !AllToggles["Order Type"],
-                    })
-                  }
-                />
+                <BpCheckbox checked={AllToggles["Order Type"]} disabled />
               }
               label="Order type"
               sx={{
+                "& .Mui-disabled": {
+                  color: "#FFFFFF !important",
+                },
                 "& .MuiTypography-root": {
                   fontWeight: 400,
                   fontSize: "12px",
@@ -244,19 +218,12 @@ const StrategyThreeBoxes = () => {
               }}
             />
             <FormControlLabel
-              control={
-                <BpCheckbox
-                  checked={AllToggles.Parameters}
-                  onChange={() =>
-                    setAllToggles({
-                      ...AllToggles,
-                      Parameters: !AllToggles.Parameters,
-                    })
-                  }
-                />
-              }
+              control={<BpCheckbox checked={AllToggles.Parameters} disabled />}
               label="Parameters"
               sx={{
+                "& .Mui-disabled": {
+                  color: "#FFFFFF !important",
+                },
                 "& .MuiTypography-root": {
                   fontWeight: 400,
                   fontSize: "12px",
@@ -266,19 +233,12 @@ const StrategyThreeBoxes = () => {
               }}
             />
             <FormControlLabel
-              control={
-                <BpCheckbox
-                  checked={AllToggles["DCA Type"]}
-                  onChange={() =>
-                    setAllToggles({
-                      ...AllToggles,
-                      "DCA Type": !AllToggles["DCA Type"],
-                    })
-                  }
-                />
-              }
+              control={<BpCheckbox checked={AllToggles["DCA Type"]} disabled />}
               label="DCA Type"
               sx={{
+                "& .Mui-disabled": {
+                  color: "#FFFFFF !important",
+                },
                 "& .MuiTypography-root": {
                   fontWeight: 400,
                   fontSize: "12px",
@@ -291,16 +251,14 @@ const StrategyThreeBoxes = () => {
               control={
                 <BpCheckbox
                   checked={AllToggles["Volume Multiplier"]}
-                  onChange={() =>
-                    setAllToggles({
-                      ...AllToggles,
-                      "Volume Multiplier": !AllToggles["Volume Multiplier"],
-                    })
-                  }
+                  disabled
                 />
               }
               label="Volume multiplier:"
               sx={{
+                "& .Mui-disabled": {
+                  color: "#FFFFFF !important",
+                },
                 "& .MuiTypography-root": {
                   fontWeight: 400,
                   fontSize: "12px",
@@ -313,16 +271,14 @@ const StrategyThreeBoxes = () => {
               control={
                 <BpCheckbox
                   checked={AllToggles["Max. Extra Orders"]}
-                  onChange={() =>
-                    setAllToggles({
-                      ...AllToggles,
-                      "Max. Extra Orders": !AllToggles["Max. Extra Orders"],
-                    })
-                  }
+                  disabled
                 />
               }
               label="Max. extra orders"
               sx={{
+                "& .Mui-disabled": {
+                  color: "#FFFFFF !important",
+                },
                 "& .MuiTypography-root": {
                   fontWeight: 400,
                   fontSize: "12px",
@@ -333,18 +289,13 @@ const StrategyThreeBoxes = () => {
             />
             <FormControlLabel
               control={
-                <BpCheckbox
-                  checked={AllToggles["Take Profit"]}
-                  onChange={() =>
-                    setAllToggles({
-                      ...AllToggles,
-                      "Take Profit": !AllToggles["Take Profit"],
-                    })
-                  }
-                />
+                <BpCheckbox checked={AllToggles["Take Profit"]} disabled />
               }
               label="Take Profit"
               sx={{
+                "& .Mui-disabled": {
+                  color: "#FFFFFF !important",
+                },
                 "& .MuiTypography-root": {
                   fontWeight: 400,
                   fontSize: "12px",

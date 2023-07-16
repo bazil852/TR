@@ -39,6 +39,11 @@ a {
   box-sizing: border-box;
 }
 
+.folder2 {
+  background: url("../assets/icons/folderIcon.svg") #6b569c !important ;
+  background-position: bottom right !important;
+  background-repeat: no-repeat !important;
+}
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

@@ -42,7 +42,7 @@ const SpotFuturePieChart = ({ data }) => {
             key={index}
           >
             <Card sx={{ background: "#242424", height: 320, minWidth: "100%" }}>
-              <Box pl={2} pt={2}>
+              <Box pl={2} pt={2} height={100}>
                 <Typography
                   sx={{
                     fontFamily: "Barlow, san-serif",

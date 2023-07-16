@@ -37,7 +37,7 @@ const InvestedPortfolio = ({ totalBalance }) => {
     <Card
       sx={{
         background: "#242424",
-        minHeight: 320,
+        minHeight: "100%",
         minWidth: "100%",
       }}
     >

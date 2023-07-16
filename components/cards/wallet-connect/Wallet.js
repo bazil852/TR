@@ -1,53 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { alpha, styled } from "@mui/material/styles";
-import InputBase from "@mui/material/InputBase";
 import Select from "react-select";
-import emailjs from "@emailjs/browser";
-import nc from "next-connect";
-import { createProxyMiddleware } from "http-proxy-middleware";
-import TextField from "@mui/material/TextField";
-import Drawer from "@mui/material/Drawer";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import InputLabel from "@mui/material/InputLabel";
-import { signIn, getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import SelectInput from "../../widgets/SelectInput";
-import { useSelector, useDispatch } from "react-redux";
-import { setExchange } from "../../../slices/exchange-slice";
-import MenuItem from "@mui/material/MenuItem";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import {
+  InputBase,
+  Box,
+  Drawer,
   Grid,
   Card,
   CardContent,
   Typography,
   Button,
   CircularProgress,
+  Switch,
 } from "@mui/material";
 
 const ccxt = require("ccxt");
 
 const cryptoSymbols = [
-  "BTC", // Bitcoin
-  "ETH", // Ethereum
-  "XRP", // Ripple
-  "BCH", // Bitcoin Cash
-  "LTC", // Litecoin
-  "ADA", // Cardano
-  "DOT", // Polkadot
-  "LINK", // Chainlink
-  "XLM", // Stellar
-  "DOGE", // Dogecoin
-  "USDT", // Tether
-  "BNB", // Binance Coin
-  "XMR", // Monero
-  "UNI", // Uniswap
-  "EOS", // EOS
-  "TRX", // TRON
-  "XTZ", // Tezos
-  "VET", // VeChain
-  "DASH", // Dash
-  "ZEC", // Zcash
+  "BTC",
+  "ETH",
+  "XRP",
+  "BCH",
+  "LTC",
+  "ADA",
+  "DOT",
+  "LINK",
+  "XLM",
+  "DOGE",
+  "USDT",
+  "BNB",
+  "XMR",
+  "UNI",
+  "EOS",
+  "TRX",
+  "XTZ",
+  "VET",
+  "DASH",
+  "ZEC",
 ];
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
@@ -74,15 +65,11 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
-
 const exchangeTypes = [
   "Binance Futures Testnet",
   "Binance Futures",
   "Binance Spot",
 ];
-
-import CryptoRates from "../crypto-rates/CryptoRates";
-import { Btc } from "../../../utils/icons";
 import GraphOfConsolidatedPOrtfolio from "../consolidated-invested-portfolio/GraphOfConsolidatedPOrtfolio";
 
 const Draw = styled(Drawer)({
@@ -104,15 +91,19 @@ const Wallet = () => {
   const [showDrawer, setShowDrawer] = useState(false);
   const [connected, setConnected] = useState(false);
   const [connectionData, setConnectionData] = useState();
-
   const [loading, setLoading] = useState(true);
   const [selectedExchange, setSelectedExchange] = useState("Select Exchange");
-
-  const [allExchangesAssetsData, setAllExchangesAssetsData] = useState([]);
-
   const [allExchange, setAllExchange] = useState([]);
-
   const [selectedAssets, setSelectedAssets] = useState({});
+  const [switchStates, setSwitchStates] = useState(
+    allExchange.map(() => false)
+  );
+
+  const handleChange = (index) => {
+    const newSwitchStates = [...switchStates];
+    newSwitchStates[index] = !newSwitchStates[index];
+    setSwitchStates(newSwitchStates);
+  };
 
   const handleAssetChange = (selectedOption, exchangeName) => {
     console.log(selectedOption, exchangeName);
@@ -230,16 +221,7 @@ const Wallet = () => {
           client = new MainClient();
         }
 
-        // const { USDMClient } = require("binance");
-        // const baseUrl = "https://testnet.binancefuture.com";
-        // const client = new USDMClient({
-        //   api_key: item?.apiKey,
-        //   api_secret: item?.apiSecret,
-        //   baseUrl,
-        // });
-
         const binance = new ccxt.binance();
-        // console.log("client is ", client);
         try {
           let result;
           if (item?.exchangeName === "Binance Spot") {
@@ -256,7 +238,6 @@ const Wallet = () => {
                 result = data.filter((item) =>
                   cryptoSymbols.includes(item.coin)
                 );
-                // result = data;
                 console.log("Result from server: ", data);
               })
               .catch((error) => {
@@ -268,17 +249,13 @@ const Wallet = () => {
             result = await client.getBalance();
             console.log("getBalance result: ", result);
           }
-          // const result = await client.getBalance();
-          // console.log("getBalance result: ", result);
           if (item?.exchangeName === "Binance Spot") {
             console.log("spot is", result);
-            // const newResult = result.filter(item=> item.free !== "0")
             for (const asset of result) {
               if (asset.coin === "USDT") {
                 asset["usdtBal"] = +asset.free;
                 asset["asset"] = asset.coin;
               } else {
-                // const symbol = asset.coin;
                 try {
                   const symbol = `${asset.coin}/USDT`;
 
@@ -290,12 +267,6 @@ const Wallet = () => {
                 } catch (err) {
                   console.log(err);
                 }
-                // const symbol = `${asset.coin}/USDT`;
-
-                // const ticker = await binance.fetchTicker(symbol);
-                // const usdtPrice = ticker.last;
-                // const usdtBalance = parseFloat(asset.free) * usdtPrice;
-                // asset["usdtBal"] = usdtBalance;
               }
             }
           } else {
@@ -344,19 +315,8 @@ const Wallet = () => {
 
     console.log(dataObject);
 
-    // const singleExchangesAssets = await getExchangesAssets([dataObject]);
-    // console.log(singleExchangesAssets);
-
-    // let oldExchangesAssets = [...allExchangesAssetsData];
-
-    // oldExchangesAssets.push(...singleExchangesAssets);
-
-    // setAllExchangesAssetsData(oldExchangesAssets);
-
     setConnected(true);
     setShowDrawer(false);
-
-    let url;
 
     if (event.currentTarget?.exchangeName === "Binance Futures Testnet") {
       url = "https://www.google.com/";
@@ -401,7 +361,6 @@ const Wallet = () => {
     setSelectedExchange(data.get("name"));
 
     if (response.ok) {
-      // setConnectionData(resp.body);
       setConnected(true);
       setShowDrawer(false);
     }
@@ -630,20 +589,22 @@ const Wallet = () => {
                   }}
                 >
                   <CardContent>
-                    <Typography
-                      fontFamily={"Barlow,san-serif"}
-                      fontWeight={600}
-                      fontSize={20}
-                    >
-                      {`${data.exchange.exchange_name} : ${data.exchange.exchange_type}`}
-                    </Typography>
-                    <Typography
-                      color={"#ACB2B7"}
-                      fontSize={"0.9rem"}
-                      fontFamily={"Barlow,san-serif"}
-                    >
-                      Assets
-                    </Typography>
+                    <Box sx={{ height: 80 }}>
+                      <Typography
+                        fontFamily={"Barlow,san-serif"}
+                        fontWeight={600}
+                        fontSize={20}
+                      >
+                        {`${data.exchange.exchange_name} : ${data.exchange.exchange_type}`}
+                      </Typography>
+                      <Typography
+                        color={"#ACB2B7"}
+                        fontSize={"0.9rem"}
+                        fontFamily={"Barlow,san-serif"}
+                      >
+                        Assets
+                      </Typography>
+                    </Box>
                     <Box sx={{ display: "flex", flexDirection: "column" }}>
                       <Box
                         sx={{
@@ -738,18 +699,41 @@ const Wallet = () => {
                         gap: 1,
                       }}
                     >
-                      <Button
+                      <Box
                         sx={{
-                          background:
-                            "linear-gradient(90deg, #790D83 0%, #7A5CFF 100%)",
-                          textTransform: "none",
-                          color: "white",
-                          px: 1.5,
-                          fontFamily: "Barlow,san-serif",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
                         }}
                       >
-                        Add to Portfolio
-                      </Button>
+                        <Typography
+                          color={"#FFFFFF"}
+                          fontWeight={600}
+                          fontFamily={"Barlow,san-serif"}
+                        >
+                          Add to Portfolio
+                        </Typography>
+                        <Switch
+                          checked={switchStates[index]}
+                          onChange={() => handleChange(index)}
+                          name={`switch-${index}`}
+                          inputProps={{
+                            "aria-label": `controlled switch ${index}`,
+                          }}
+                          sx={{
+                            "& .MuiSwitch-track": {
+                              background: switchStates[index]
+                                ? "#7A5CFF"
+                                : "#FFFFFF",
+                            },
+                            "& .MuiSwitch-thumb": {
+                              background: switchStates[index]
+                                ? "#FFFFFF"
+                                : "#ACB2B7",
+                            },
+                          }}
+                        />
+                      </Box>
                       <Button
                         sx={{
                           background: "#C8181A",
@@ -790,33 +774,3 @@ const Wallet = () => {
 };
 
 export default Wallet;
-
-{
-  /* <Box
-sx={{
-display: "flex",
-justifyContent: "space-between",
-alignItems: "center",
-}}
->
-<Typography color={"#9F90A2"}>Locked Balances</Typography>
-<Box
-sx={{
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  gap: 1,
-}}
->
-<Typography color={"#9F90A2"} fontWeight={500}>
-  {selectedAssets[data.exchangeName]
-    ? selectedAssets[data.exchangeName].value
-        .crossWalletBalance
-    : "0.00"}
-</Typography>
-<Typography color={"#5D3FA6"} fontWeight={500}>
-  USDT
-</Typography>
-</Box>
-</Box> */
-}
