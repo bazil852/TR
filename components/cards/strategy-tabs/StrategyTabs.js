@@ -139,12 +139,18 @@ const StrategyTabsComponent = (props) => {
       "Parameters Data": [],
     },
   ]);
+<<<<<<< HEAD
   const [ParametersData, setParametersData] = useState([
     [{ 1: "", Operator: "", 2: "" }],
   ]);
   useEffect(() => {
     fetchStrategiesByUserId();
   }, []);
+=======
+  // useEffect(() => {
+  //   fetchStrategiesByUserId();
+  // }, []);
+>>>>>>> bc895b28b5f7df9bb6e176b675b77adaafd6e914
   useEffect(() => console.log("Updated State:", AllStrategyData), [
     AllStrategyData,
   ]);
