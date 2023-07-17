@@ -625,7 +625,7 @@ const Wallet = () => {
                               : "",
                         }}
                       >
-                        <GraphOfConsolidatedPOrtfolio data={totalAssets} />
+                        <GraphOfConsolidatedPOrtfolio data={data.assets} />
                       </Box>
                       <Box my={2}>
                         <Select

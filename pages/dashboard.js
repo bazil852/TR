@@ -134,58 +134,57 @@ const DashboardComponent = () => {
 
     if (response.ok) {
       setAllExchangesWithAssets(data);
-    }
+      let totalBalance = 0;
 
-    let totalBalance = 0;
-
-    data.forEach((obj) => {
-      const { portfolios } = obj;
-      portfolios.forEach((portfolio) => {
-        totalBalance += portfolio.balance;
-      });
-    });
-
-    console.log("total PortFolio", totalBalance);
-    setTotalPortfolioValue(totalBalance);
-
-    const newExchanges = data.map((item) => {
-      return { exchange_type: item.exchange.exchange_type, profitOrLoss: 0 };
-    });
-    console.log("exchange", newExchanges);
-    setExchangeList(newExchanges);
-    console.log("data", data);
-    const newArray = data.map((item) => {
-      return [...item.assets];
-    });
-    console.log(newArray);
-
-    // Combine the assets
-    const combinedAssets = {};
-
-    newArray.forEach((array) => {
-      array.forEach((obj) => {
-        const { asset, availableBalance, usdt_price } = obj;
-        if (combinedAssets.hasOwnProperty(asset)) {
-          combinedAssets[asset].availableBalance += parseFloat(
-            availableBalance
-          );
-          combinedAssets[asset].usdt_price += parseFloat(usdt_price);
-        } else {
-          combinedAssets[asset] = {
-            asset,
-            availableBalance: parseFloat(availableBalance),
-            usdt_price: parseFloat(usdt_price),
-          };
+      data.forEach((obj) => {
+        const { portfolios } = obj;
+        console.log(portfolios);
+        if (portfolios) {
+          totalBalance += portfolios.balance;
         }
       });
-    });
 
-    // Convert the combined assets object to an array
-    const combinedArray = Object.values(combinedAssets);
+      console.log("total PortFolio", totalBalance);
+      setTotalPortfolioValue(totalBalance);
+      const newExchanges = data.map((item) => {
+        return { exchange_type: item.exchange.exchange_type, profitOrLoss: 0 };
+      });
+      console.log("exchange", newExchanges);
+      setExchangeList(newExchanges);
+      console.log("data", data);
+      const newArray = data.map((item) => {
+        return [...item.assets];
+      });
+      console.log(newArray);
 
-    console.log(combinedArray);
-    setTotalAssets(combinedArray);
-    setLoading(false);
+      // Combine the assets
+      const combinedAssets = {};
+
+      newArray.forEach((array) => {
+        array.forEach((obj) => {
+          const { asset, availableBalance, usdt_price } = obj;
+          if (combinedAssets.hasOwnProperty(asset)) {
+            combinedAssets[asset].availableBalance += parseFloat(
+              availableBalance
+            );
+            combinedAssets[asset].usdt_price += parseFloat(usdt_price);
+          } else {
+            combinedAssets[asset] = {
+              asset,
+              availableBalance: parseFloat(availableBalance),
+              usdt_price: parseFloat(usdt_price),
+            };
+          }
+        });
+      });
+
+      // Convert the combined assets object to an array
+      const combinedArray = Object.values(combinedAssets);
+
+      console.log(combinedArray);
+      setTotalAssets(combinedArray);
+      setLoading(false);
+    }
   };
 
   const fetchAssetsFromUserInfo = async (save) => {
