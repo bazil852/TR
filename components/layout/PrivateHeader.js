@@ -33,6 +33,7 @@ import {
   TradingBotsIcon,
 } from "../../utils/icons";
 import NavBar from "../navbar/NavBar";
+import { signOut } from "next-auth/react";
 
 const drawerWidth = 240;
 const openedMixin = (theme) => ({
@@ -481,7 +482,7 @@ export default function PrivateHeader({ title, current, Component }) {
               </Typography>
             </Button>
           </Box>
-          <Box mt={5}>
+          <Box mt={5} onClick={() => signOut({ callbackUrl: "/login" })}>
             <ListItem sx={getListItemStyle(6)}>
               <ListItemIcon
                 sx={{
