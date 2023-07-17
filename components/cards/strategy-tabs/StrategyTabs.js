@@ -139,18 +139,18 @@ const StrategyTabsComponent = (props) => {
       "Parameters Data": [],
     },
   ]);
-<<<<<<< HEAD
+  // <<<<<<< HEAD
   const [ParametersData, setParametersData] = useState([
     [{ 1: "", Operator: "", 2: "" }],
   ]);
   useEffect(() => {
     fetchStrategiesByUserId();
   }, []);
-=======
-  // useEffect(() => {
-  //   fetchStrategiesByUserId();
-  // }, []);
->>>>>>> bc895b28b5f7df9bb6e176b675b77adaafd6e914
+  // =======
+  //   // useEffect(() => {
+  //   //   fetchStrategiesByUserId();
+  //   // }, []);
+  // >>>>>>> bc895b28b5f7df9bb6e176b675b77adaafd6e914
   useEffect(() => console.log("Updated State:", AllStrategyData), [
     AllStrategyData,
   ]);
@@ -171,7 +171,7 @@ const StrategyTabsComponent = (props) => {
   };
 
   const handleAdd = () => {
-    const temp = [...value, "general"];
+    const temp = [...value, "orders"];
     setvalue(temp);
     setGeneralSettingsData([
       ...GeneralSettingsData,
@@ -382,10 +382,12 @@ const StrategyTabsComponent = (props) => {
                       height: width < 601 ? 30 : 38,
                       pt: 0.35,
                       px: 2.5,
+                      pointerEvents: index !== 0 ? "none" : "all",
                       background:
                         item === "general"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
                           : "#363636",
+                      opacity: index !== 0 ? 0.4 : 1,
                     }}
                     onClick={() => handleTabClick("general", index)}
                   >
