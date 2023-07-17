@@ -329,12 +329,11 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                   console.log(row, selectedExchange);
                   let allocation;
                   if (
-                    selectedExchange?.portfolios[0]?.balance &&
-                    selectedExchange?.portfolios[0]?.balance !== 0
+                    selectedExchange?.portfolios?.balance &&
+                    selectedExchange?.portfolios?.balance !== 0
                   ) {
                     allocation =
-                      (row.usdt_price /
-                        selectedExchange.portfolios[0].balance) *
+                      (row.usdt_price / selectedExchange.portfolios.balance) *
                       100;
                   } else {
                     allocation = 0; // or whatever default value you want
