@@ -144,12 +144,13 @@ const StrategyTabsComponent = (props) => {
     [{ 1: "", operation: "", 2: "", relation: "" }],
   ]);
   useEffect(() => {
-    fetchStrategiesByUserId();
+    // fetchStrategiesByUserId();
   }, []);
 
   useEffect(() => console.log("Updated State:", AllStrategyData), [
     AllStrategyData,
   ]);
+
   const fetchStrategiesByUserId = async () => {
     let session = await getSession();
     const response = await fetch(
@@ -220,7 +221,7 @@ const StrategyTabsComponent = (props) => {
     ]);
     setANDToggle([...ANDToggle, [true]]);
   };
-  console.log(ANDToggle);
+
   const ParametersOptions = [
     { value: "Dummy1", label: "Dummy1" },
     { value: "Dummy2", label: "Dummy2" },
@@ -320,13 +321,28 @@ const StrategyTabsComponent = (props) => {
     });
     temp2[index] = [
       ...temp2[index],
-      { [parseInt(len) + 1]: "", Operator: "", [parseInt(len) + 2]: "" },
+      {
+        [parseInt(len) + 1]: "",
+        operation: "",
+        [parseInt(len) + 2]: "",
+        relation: "AND",
+      },
     ];
 
     setParametersData(temp2);
     const temp3 = [...ANDToggle];
     temp3[index] = [...temp3[index], true];
     setANDToggle(temp3);
+  };
+
+  const handleANDToggle = (index, ParametersIndex) => {
+    console.log(index, ParametersIndex);
+    let temp2 = [...ParametersData];
+    temp2[0][ParametersIndex].relation = ANDToggle[index][ParametersIndex]
+      ? "AND"
+      : "OR";
+
+    setParametersData(temp2);
   };
 
   const [width, setWidth] = useState(globalThis?.innerWidth);
@@ -362,18 +378,18 @@ const StrategyTabsComponent = (props) => {
     console.log(temp);
     setAllStartegyData([...temp]);
     console.log("all the data", AllStrategyData);
-    // const response = await fetch(`/api/strategy/create-strategy`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify([...temp]),
-    // });
-    // if (response.ok) {
-    //   alert("Strategy Saved");
-    // } else {
-    //   alert("Strategy Not Saved");
-    // }
+    const response = await fetch(`/api/strategy/create-strategy`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([...temp]),
+    });
+    if (response.ok) {
+      alert("Strategy Saved");
+    } else {
+      alert("Strategy Not Saved");
+    }
   };
 
   const handleRemove = (i) => {
@@ -1002,6 +1018,7 @@ const StrategyTabsComponent = (props) => {
                                 ][ParametersIndex];
 
                                 setANDToggle(temp);
+                                handleANDToggle(index, ParametersIndex);
                               }}
                             >
                               {ANDToggle[index][ParametersIndex] ? "AND" : "OR"}
