@@ -9,6 +9,9 @@ import {
   Grid,
   Typography,
   Divider,
+  Autocomplete,
+  TextField,
+  Paper,
 } from "@mui/material";
 import GeneralSettings from "../../../components/cards/general-settings/GeneralSettings";
 import { getSession } from "next-auth/react";
@@ -21,7 +24,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
   },
   "& .MuiInputBase-input": {
     position: "relative",
-    height: 15,
+    height: 11,
     backgroundColor: "#2A2A2A",
     borderRadius: "6px",
     fontSize: 15,
@@ -91,6 +94,7 @@ export default StrategyTabs;
 const StrategyTabsComponent = (props) => {
   const [value, setvalue] = useState(["general"]);
   const [ANDToggle, setANDToggle] = useState([[true]]);
+  const [inputValue, setInputValue] = useState("");
   const [GeneralSettingsData, setGeneralSettingsData] = useState([
     {
       strategyName: "",
@@ -139,6 +143,35 @@ const StrategyTabsComponent = (props) => {
       parameters: [],
     },
   ]);
+
+  const myData = [
+    "Apple",
+    "Banana",
+    "Cherry",
+    "Date",
+    "Elderberry",
+    "Fig",
+    "Grape",
+    "Honeydew",
+    "Iced Tea",
+    "Jackfruit",
+    "Kiwi",
+    "Lime",
+    "Mango",
+    "Nectarine",
+    "Orange",
+    "Pineapple",
+    "Quince",
+    "Raspberry",
+    "Strawberry",
+    "Tangerine",
+    "Ugli Fruit",
+    "Vanilla",
+    "Watermelon",
+    "Xigua",
+    "Yam",
+    "Zucchini",
+  ];
 
   const [ParametersData, setParametersData] = useState([
     [{ 1: "", operation: "", 2: "", relation: "" }],
@@ -961,7 +994,7 @@ const StrategyTabsComponent = (props) => {
                         >
                           Pairs
                         </Typography>
-                        <SelectInputParameters
+                        {/* <SelectInputParameters
                           placeHolder="BTC/USDT"
                           value={OrdersData[index].pairs}
                           Width={width < 600 ? "100%" : "10rem"}
@@ -971,6 +1004,94 @@ const StrategyTabsComponent = (props) => {
                             setOrdersData(temp);
                           }}
                           options={ParametersOptions}
+                        /> */}
+                        <Autocomplete
+                          id="free-solo-demo"
+                          freeSolo
+                          inputValue={OrdersData[index].pairs}
+                          onInputChange={(event, newInputValue) => {
+                            const temp = [...OrdersData];
+                            temp[index].pairs = newInputValue;
+                            setOrdersData(temp);
+                          }}
+                          options={myData}
+                          PaperComponent={({ children }) => (
+                            <Paper
+                              sx={{
+                                width: width < 600 ? "100%" : "10rem",
+                                maxHeight: "300px",
+                                overflow: "auto",
+                                background: "#2B2B2B",
+                                mt: 0.5,
+                              }}
+                            >
+                              {children}
+                            </Paper>
+                          )}
+                          renderOption={(props, option, { selected }) => (
+                            <li
+                              {...props}
+                              style={{
+                                backgroundColor: selected
+                                  ? "#000000"
+                                  : "#2B2B2B",
+                                color: "#FFFFFF",
+                                fontFamily: "Barlow, sans-serif",
+                                fontSize: "15px",
+                              }}
+                            >
+                              {option}
+                            </li>
+                          )}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label={""}
+                              sx={{
+                                width: width < 600 ? "100%" : "10rem",
+                                fontFamily: "Barlow, sans-serif",
+                                ".MuiOutlinedInput-root": {
+                                  borderRadius: "7px",
+                                  backgroundColor: "#2B2B2B",
+                                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                                    border: "none",
+                                  },
+                                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    border: "none",
+                                  },
+                                  ".MuiOutlinedInput-notchedOutline": {
+                                    border: "none",
+                                  },
+                                },
+                                ".MuiOutlinedInput-input": {
+                                  height: "0px",
+                                  lineHeight: "0px",
+                                  padding: "0px",
+                                  fontFamily: "Barlow, sans-serif",
+                                },
+                                ".MuiFormLabel-root": {
+                                  fontFamily: "Barlow, sans-serif",
+                                },
+                              }}
+                            />
+                          )}
+                          filterOptions={(options, { inputValue }) => {
+                            if (inputValue === "") {
+                              return options;
+                            }
+
+                            let results = options.filter((option) =>
+                              option
+                                .toUpperCase()
+                                .startsWith(inputValue.toUpperCase())
+                            );
+
+                            if (results.length === 0) {
+                              results = ["No results found"];
+                            }
+
+                            return results;
+                          }}
                         />
                       </Box>
                     </Grid>
