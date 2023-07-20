@@ -93,55 +93,55 @@ const StrategyTabsComponent = (props) => {
   const [ANDToggle, setANDToggle] = useState([[true]]);
   const [GeneralSettingsData, setGeneralSettingsData] = useState([
     {
-      "Strategy Name": "",
-      "Strategy Folder": "",
-      "Strategy Description": "",
-      BotLink: "",
-      Notes: "",
+      strategyName: "",
+      strategyFolder: "",
+      strategyDescription: "",
+      botLink: "",
+      notes: "",
     },
   ]);
   const [OrdersData, setOrdersData] = useState([
     {
-      "First Order Size": "",
-      "Extra Order Size": "",
-      "Order Type": "",
-      Pairs: "",
+      firstOrderSize: "",
+      extraOrderSize: "",
+      orderType: "",
+      pairs: "",
     },
   ]);
   const [DCAData, setDCAData] = useState([
     {
-      "DCA Type": "",
-      "Volume Multiplier": "",
-      "Max Extra Orders": "",
-      "Min Dist Between Orders": "",
-      "Start Extra Order": "",
-      "Step Multiplier": "",
+      dcaType: "",
+      volumeMultiplier: "",
+      maxExtraOrders: "",
+      minDistBetweenOrders: "",
+      startExtraOrder: "",
+      stepMultiplier: "",
     },
   ]);
   const [TakeProfitData, setTakeProfitData] = useState([
     {
-      "Take Profit": "",
-      "Min Take Profit": "",
+      takeProfit: "",
+      minTakeProfit: "",
     },
   ]);
   const [StopLossData, setStopLossData] = useState([
     {
-      "Stop Loss": "",
+      stopLoss: "",
     },
   ]);
   const [AllStrategyData, setAllStartegyData] = useState([
     {
-      "General Settings Data": {},
-      "Orders Data": {},
-      "DCA Data": {},
-      "Take Profit Data": {},
-      "Stop Loss Data": {},
-      "Parameters Data": [],
+      generalSettings: {},
+      orders: {},
+      dca: {},
+      takeProfit: {},
+      stopLoss: {},
+      parameters: [],
     },
   ]);
 
   const [ParametersData, setParametersData] = useState([
-    [{ 1: "", Operator: "", 2: "" }],
+    [{ 1: "", operation: "", 2: "", relation: "" }],
   ]);
   useEffect(() => {
     fetchStrategiesByUserId();
@@ -172,55 +172,141 @@ const StrategyTabsComponent = (props) => {
     setGeneralSettingsData([
       ...GeneralSettingsData,
       {
-        "Strategy Name": "",
-        "Strategy Folder": "",
-        "Strategy Description": "",
-        BotLink: "",
-        Notes: "",
+        strategyName: "",
+        strategyFolder: "",
+        strategyDescription: "",
+        botLink: "",
+        notes: "",
       },
     ]);
     setOrdersData([
       ...OrdersData,
       {
-        "First Order Size": "",
-        "Extra Order Size": "",
-        "Order Type": "",
-        Pairs: "",
+        firstOrderSize: "",
+        extraOrderSize: "",
+        orderType: "",
+        pairs: "",
       },
     ]);
     setDCAData([
       ...DCAData,
       {
-        "DCA Type": "",
-        "Volume Multiplier": "",
-        "Max Extra Orders": "",
-        "Min Dist Between Orders": "",
-        "Start Extra Order": "",
-        "Step Multiplier": "",
+        dcaType: "",
+        volumeMultiplier: "",
+        maxExtraOrders: "",
+        minDistBetweenOrders: "",
+        startExtraOrder: "",
+        stepMultiplier: "",
       },
     ]);
     setTakeProfitData([
       ...TakeProfitData,
-      { "Take Profit": "", "Min Take Profit": "" },
+      { takeProfit: "", minTakeProfit: "" },
     ]);
-    setStopLossData([...StopLossData, { "Stop Loss": "" }]);
+    setStopLossData([...StopLossData, { stopLoss: "" }]);
     setAllStartegyData([
       ...AllStrategyData,
       {
-        "General Settings Data": {},
-        "Orders Data": {},
-        "DCA Data": {},
-        "Take Profit Data": {},
-        "Stop Loss Data": {},
+        generalSettings: {},
+        orders: {},
+        dca: {},
+        takeProfit: {},
+        stopLoss: {},
       },
     ]);
-    setParametersData([...ParametersData, [{ 1: "", Operator: "", 2: "" }]]);
+    setParametersData([
+      ...ParametersData,
+      [{ 1: "", operation: "", 2: "", relation: "" }],
+    ]);
     setANDToggle([...ANDToggle, [true]]);
   };
+  console.log(ANDToggle);
   const ParametersOptions = [
     { value: "Dummy1", label: "Dummy1" },
     { value: "Dummy2", label: "Dummy2" },
     { value: "Dummy3", label: "Dummy3" },
+  ];
+  const parametersOneOptions = [
+    {
+      value: "BullishGreenVol200Open",
+      label: "Bullish Green (Vol > 200%) Open",
+    },
+    { value: "BullishBlueVol150Open", label: "Bullish Blue (Vol > 150%) Open" },
+    { value: "BearishRedVol200Open", label: "Bearish Red (Vol > 200%) Open" },
+    {
+      value: "BearishPurpleVol150Open",
+      label: "Bearish Purple (Vol > 150%) Open",
+    },
+    {
+      value: "BullishGreenVol200Close",
+      label: "Bullish Green (Vol > 200%) Close",
+    },
+    {
+      value: "BullishBlueVol150Close",
+      label: "Bullish Blue (Vol > 150%) Close",
+    },
+    { value: "BearishRedVol200Close", label: "Bearish Red (Vol > 200%) Close" },
+    {
+      value: "BearishPurpleVol150Close",
+      label: "Bearish Purple (Vol > 150%) Close",
+    },
+    {
+      value: "BullishGreenVol200High",
+      label: "Bullish Green (Vol > 200%) High",
+    },
+    { value: "BullishBlueVol150High", label: "Bullish Blue (Vol > 150%) High" },
+    { value: "BearishRedVol200High", label: "Bearish Red (Vol > 200%) High" },
+    {
+      value: "BearishPurpleVol150High",
+      label: "Bearish Purple (Vol > 150%) High",
+    },
+    { value: "BullishGreenVol200Low", label: "Bullish Green (Vol > 200%) Low" },
+    { value: "BullishBlueVol150Low", label: "Bullish Blue (Vol > 150%) Low" },
+    { value: "BearishRedVol200Low", label: "Bearish Red (Vol > 200%) Low" },
+    {
+      value: "BearishPurpleVol150Low",
+      label: "Bearish Purple (Vol > 150%) Low",
+    },
+  ];
+  const parametersOperationsOptions = [
+    { value: "Ignore", label: "Ignore" },
+    { value: "GreaterThan", label: "Greater than" },
+    { value: "GreaterOrEqual", label: "Greater or equal" },
+    { value: "LessThan", label: "Less than" },
+    { value: "LessOrEqual", label: "Less or equal" },
+    { value: "CrossesUp", label: "Crosses up" },
+    { value: "CrossesDown", label: "Crosses down" },
+  ];
+
+  const parametersTwoOptions = [
+    { value: "Simple Moving Average 20", label: "Simple Moving Average 20" },
+    { value: "Simple Moving Average 50", label: "Simple Moving Average 50" },
+    {
+      value: "Exponential Moving Average 20",
+      label: "Exponential Moving Average 20",
+    },
+    {
+      value: "Exponential Moving Average 50",
+      label: "Exponential Moving Average 50",
+    },
+    {
+      value: "Keltner Channel Upper Band 50",
+      label: "Keltner Channel Upper Band 50",
+    },
+    {
+      value: "Keltner Channel Middle Band 50",
+      label: "Keltner Channel Middle Band 50",
+    },
+    {
+      value: "Keltner Channel Lower Band 50",
+      label: "Keltner Channel Lower Band 50",
+    },
+    { value: "Tom Demark Buy 9", label: "Tom Demark Buy 9" },
+    { value: "Tom Demark Sell 9", label: "Tom Demark Sell 9" },
+    { value: "Tom Demark Buy 13", label: "Tom Demark Buy 13" },
+    { value: "Tom Demark Sell 13", label: "Tom Demark Sell 13" },
+    { value: "Bollinger Band Lower", label: "Bollinger Band Lower" },
+    { value: "Bollinger Band Higher", label: "Bollinger Band Higher" },
   ];
   const OrderTypeOptions = [
     { value: "Market", label: "Market" },
@@ -264,29 +350,30 @@ const StrategyTabsComponent = (props) => {
     const temp = AllStrategyData.map((item, index) => {
       return {
         ...item,
-        "General Settings Data": GeneralSettingsData[index],
-        "DCA Data": DCAData[index],
-        "Orders Data": OrdersData[index],
-        "Stop Loss Data": StopLossData[index],
-        "Take Profit Data": TakeProfitData[index],
-        "Parameters Data": ParametersData[index],
+        generalSettings: GeneralSettingsData[index],
+        dca: DCAData[index],
+        orders: OrdersData[index],
+        stopLoss: StopLossData[index],
+        takeProfit: TakeProfitData[index],
+        parameters: ParametersData[index],
         user,
       };
     });
+    console.log(temp);
     setAllStartegyData([...temp]);
     console.log("all the data", AllStrategyData);
-    const response = await fetch(`/api/strategy/create-strategy`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify([...temp]),
-    });
-    if (response.ok) {
-      alert("Strategy Saved");
-    } else {
-      alert("Strategy Not Saved");
-    }
+    // const response = await fetch(`/api/strategy/create-strategy`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify([...temp]),
+    // });
+    // if (response.ok) {
+    //   alert("Strategy Saved");
+    // } else {
+    //   alert("Strategy Not Saved");
+    // }
   };
 
   const handleRemove = (i) => {
@@ -710,8 +797,8 @@ const StrategyTabsComponent = (props) => {
                           required
                           id="firstorderSize"
                           name="firstOrderSize"
-                          placeholder="100"
-                          value={OrdersData[index]["First Order Size"]}
+                          // placeholder="100"
+                          value={OrdersData[index]["firstOrderSize"]}
                           sx={{
                             width:
                               width < 769 && width > 600
@@ -723,8 +810,7 @@ const StrategyTabsComponent = (props) => {
                           }}
                           onChange={async (event) => {
                             const temp = [...OrdersData];
-                            temp[index]["First Order Size"] =
-                              event.target.value;
+                            temp[index]["firstOrderSize"] = event.target.value;
                             setOrdersData(temp);
                           }}
                         />
@@ -760,10 +846,10 @@ const StrategyTabsComponent = (props) => {
                           type="number"
                           margin="normal"
                           required
-                          placeholder="150"
+                          // placeholder="150"
                           id="extraordersize"
                           name="extraOrderSize"
-                          value={OrdersData[index]["Extra Order Size"]}
+                          value={OrdersData[index]["extraOrderSize"]}
                           sx={{
                             width:
                               width < 769 && width > 600
@@ -775,8 +861,7 @@ const StrategyTabsComponent = (props) => {
                           }}
                           onChange={async (event) => {
                             const temp = [...OrdersData];
-                            temp[index]["Extra Order Size"] =
-                              event.target.value;
+                            temp[index]["extraOrderSize"] = event.target.value;
                             setOrdersData(temp);
                           }}
                         />
@@ -814,11 +899,11 @@ const StrategyTabsComponent = (props) => {
                           Order type
                         </Typography>
                         <SelectInputParameters
-                          placeHolder="Market"
-                          value={OrdersData[index]["Order Type"]}
+                          placeHolder="Select"
+                          value={OrdersData[index]["orderType"]}
                           onChange={async (event) => {
                             const temp = [...OrdersData];
-                            temp[index]["Order Type"] = event.value;
+                            temp[index]["orderType"] = event.value;
                             setOrdersData(temp);
                           }}
                           Width={
@@ -862,11 +947,11 @@ const StrategyTabsComponent = (props) => {
                         </Typography>
                         <SelectInputParameters
                           placeHolder="BTC/USDT"
-                          value={OrdersData[index].Pairs}
+                          value={OrdersData[index].pairs}
                           Width={width < 600 ? "100%" : "10rem"}
                           onChange={async (event) => {
                             const temp = [...OrdersData];
-                            temp[index].Pairs = event.value;
+                            temp[index].pairs = event.value;
                             setOrdersData(temp);
                           }}
                           options={ParametersOptions}
@@ -946,7 +1031,7 @@ const StrategyTabsComponent = (props) => {
                                 Parameters {Object.keys(ParameterItem)[0]}
                               </Typography>
                               <SelectInputParameters
-                                placeHolder="Bullish Green Vector (Vol.>200%)"
+                                // placeHolder="Bullish Green Vector (Vol.>200%)"
                                 value={
                                   ParametersData[index][ParametersIndex][
                                     Object.keys(ParameterItem)[0]
@@ -959,24 +1044,24 @@ const StrategyTabsComponent = (props) => {
                                   ] = selectedOption.value;
                                   setParametersData(temp);
                                 }}
-                                options={ParametersOptions}
+                                options={parametersOneOptions}
                                 keyName={"Parameter"}
                               />
                             </Box>
 
                             <SelectInputParameters
                               value={
-                                ParametersData[index][ParametersIndex].Operator
+                                ParametersData[index][ParametersIndex].operation
                               }
                               onChange={(selectedOption) => {
                                 const temp = [...ParametersData];
-                                temp[index][ParametersIndex].Operator =
+                                temp[index][ParametersIndex].operation =
                                   selectedOption.value;
                                 setParametersData(temp);
                               }}
-                              options={ParametersOptions}
-                              keyName={"Operator"}
-                              placeHolder={"Greater than"}
+                              options={parametersOperationsOptions}
+                              keyName={"operation"}
+                              placeHolder={"Operations"}
                               Width={"50%"}
                               margin={
                                 width < 900 && width > 600
@@ -1009,7 +1094,7 @@ const StrategyTabsComponent = (props) => {
                                 Parameters {Object.keys(ParameterItem)[1]}
                               </Typography>
                               <SelectInputParameters
-                                placeHolder="Bullish Green Vector (Vol.>200%)"
+                                // placeHolder="Bullish Green Vector (Vol.>200%)"
                                 value={
                                   ParametersData[index][ParametersIndex][
                                     Object.keys(ParameterItem)[1]
@@ -1022,7 +1107,7 @@ const StrategyTabsComponent = (props) => {
                                   ] = selectedOption.value;
                                   setParametersData(temp);
                                 }}
-                                options={ParametersOptions}
+                                options={parametersTwoOptions}
                                 keyName={"Parameter"}
                               />
                             </Box>
@@ -1138,10 +1223,10 @@ const StrategyTabsComponent = (props) => {
                             ? "100%"
                             : "5rem"
                         }
-                        value={DCAData[index]["DCA Type"]}
+                        value={DCAData[index]["dcaType"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["DCA Type"] = event.value;
+                          temp[index]["dcaType"] = event.value;
                           setDCAData(temp);
                         }}
                         options={ParametersOptions}
@@ -1172,7 +1257,8 @@ const StrategyTabsComponent = (props) => {
                       <ValidationTextField
                         margin="normal"
                         id="volmult"
-                        placeholder="1.05"
+                        type="number"
+                        // placeholder="1.05"
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1183,10 +1269,10 @@ const StrategyTabsComponent = (props) => {
                           fontFamily: "Barlow, san-serif",
                         }}
                         name="volMultiplier"
-                        value={DCAData[index]["Volume Multiplier"]}
+                        value={DCAData[index]["volumeMultiplier"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["Volume Multiplier"] = event.target.value;
+                          temp[index]["volumeMultiplier"] = event.target.value;
                           setDCAData(temp);
                         }}
                       />
@@ -1222,7 +1308,8 @@ const StrategyTabsComponent = (props) => {
                         margin="normal"
                         id="maxextraorders"
                         name="maxExtraOrders"
-                        placeholder="10"
+                        type="number"
+                        // placeholder="10"
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1232,10 +1319,10 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={DCAData[index]["Max Extra Orders"]}
+                        value={DCAData[index]["maxExtraOrders"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["Max Extra Orders"] = event.target.value;
+                          temp[index]["maxExtraOrders"] = event.target.value;
                           setDCAData(temp);
                         }}
                       />
@@ -1268,7 +1355,8 @@ const StrategyTabsComponent = (props) => {
                         margin="normal"
                         id="mindist"
                         name="mintDist"
-                        placeholder="1.5%"
+                        type="number"
+                        // placeholder="1.5%"
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1278,10 +1366,10 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={DCAData[index]["Min Dist Between Orders"]}
+                        value={DCAData[index]["minDistBetweenOrders"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["Min Dist Between Orders"] =
+                          temp[index]["minDistBetweenOrders"] =
                             event.target.value;
                           setDCAData(temp);
                         }}
@@ -1313,7 +1401,8 @@ const StrategyTabsComponent = (props) => {
                         margin="normal"
                         id="extraorder"
                         name="extraOrder"
-                        placeholder="1.05%"
+                        type="number"
+                        // placeholder="1.05%"
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1323,10 +1412,10 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={DCAData[index]["Start Extra Order"]}
+                        value={DCAData[index]["startExtraOrder"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["Start Extra Order"] = event.target.value;
+                          temp[index]["startExtraOrder"] = event.target.value;
                           setDCAData(temp);
                         }}
                       />
@@ -1357,7 +1446,8 @@ const StrategyTabsComponent = (props) => {
                         margin="normal"
                         id="stepmultiplier"
                         name="stepMultiplier"
-                        placeholder="1.05"
+                        type="number"
+                        // placeholder="1.05"
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1367,10 +1457,10 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={DCAData[index]["Step Multiplier"]}
+                        value={DCAData[index]["stepMultiplier"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["Step Multiplier"] = event.target.value;
+                          temp[index]["stepMultiplier"] = event.target.value;
                           setDCAData(temp);
                         }}
                       />
@@ -1437,7 +1527,7 @@ const StrategyTabsComponent = (props) => {
                       </Typography>
                       <SelectInputParameters
                         placeHolder="Signal"
-                        value={TakeProfitData[index]["Take Profit"]}
+                        value={TakeProfitData[index]["takeProfit"]}
                         Width={
                           width < 900 && width > 600
                             ? "7rem"
@@ -1447,7 +1537,7 @@ const StrategyTabsComponent = (props) => {
                         }
                         onChange={async (event) => {
                           const temp = [...TakeProfitData];
-                          temp[index]["Take Profit"] = event.value;
+                          temp[index]["takeProfit"] = event.value;
                           setTakeProfitData(temp);
                         }}
                         options={ParametersOptions}
@@ -1479,8 +1569,9 @@ const StrategyTabsComponent = (props) => {
                         margin="normal"
                         id="mintakeprofit"
                         name="minTakeProfit"
-                        placeholder="1.5%"
-                        value={TakeProfitData[index]["Min Take Profit"]}
+                        type="number"
+                        // placeholder="1.5%"
+                        value={TakeProfitData[index]["minTakeProfit"]}
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1492,7 +1583,7 @@ const StrategyTabsComponent = (props) => {
                         }}
                         onChange={async (event) => {
                           const temp = [...TakeProfitData];
-                          temp[index]["Min Take Profit"] = event.target.value;
+                          temp[index]["minTakeProfit"] = event.target.value;
                           setTakeProfitData(temp);
                         }}
                       />
@@ -1561,8 +1652,9 @@ const StrategyTabsComponent = (props) => {
                         margin="normal"
                         id="stoploss"
                         name="stopLoss"
-                        placeholder="1.5%"
-                        value={StopLossData[index]["Stop Loss"]}
+                        type="number"
+                        // placeholder="1.5%"
+                        value={StopLossData[index]["stopLoss"]}
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1574,7 +1666,7 @@ const StrategyTabsComponent = (props) => {
                         }}
                         onChange={async (event) => {
                           const temp = [...StopLossData];
-                          temp[index]["Stop Loss"] = event.target.value;
+                          temp[index]["stopLoss"] = event.target.value;
                           setStopLossData(temp);
                         }}
                       />

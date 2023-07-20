@@ -15,7 +15,7 @@ const strategySchema = new Schema({
     orderType: String,
     pairs: String,
   },
-  parameters: Object,
+  parameters: [Object],
   dca: {
     dcaType: String,
     volumeMultiplier: String,
