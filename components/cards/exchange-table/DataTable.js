@@ -472,91 +472,93 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
             <tfoot></tfoot>
           </table>
         </Box>
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: width < 600 ? 50 : 10,
-            left: 22,
-          }}
-        >
-          <Typography
-            sx={{
-              marginBottom: "1rem",
-              color: "white",
-              fontFamily: "Barlow, san-serif",
-            }}
-          >
-            Showing {page * rowsPerPage + 1} to{" "}
-            {Math.min(
-              (page + 1) * rowsPerPage,
-              sortedData?.length ? sortedData?.length : 0
-            )}{" "}
-            of {sortedData?.length ? sortedData?.length : 0}
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: 20,
-            right: width > 600 ? 23.5 : "",
-            left: width < 600 ? 20 : "",
-          }}
-        >
+        <Box pt={width < 600 ? 18 : ""}>
           <Box
             sx={{
-              marginTop: "2rem",
-              borderRadius: "3px",
+              position: "absolute",
+              bottom: width < 600 ? 50 : 10,
+              left: 22,
             }}
           >
-            <button
-              onClick={() => handleChangePage(null, page - 1)}
-              disabled={page === 0}
-              style={{
-                background: "#191A1A",
-                cursor: "pointer",
-                border: "0.7px solid #27292A",
-                padding: "8px 10px",
-                color: "#5C636A",
-                borderTopLeftRadius: "4px",
-                borderBottomLeftRadius: "4px",
+            <Typography
+              sx={{
+                marginBottom: "1rem",
+                color: "white",
                 fontFamily: "Barlow, san-serif",
               }}
             >
-              Previous
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => i).map((p) => (
+              Showing {page * rowsPerPage + 1} to{" "}
+              {Math.min(
+                (page + 1) * rowsPerPage,
+                sortedData?.length ? sortedData?.length : 0
+              )}{" "}
+              of {sortedData?.length ? sortedData?.length : 0}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 20,
+              right: width > 600 ? 23.5 : "",
+              left: width < 600 ? 20 : "",
+            }}
+          >
+            <Box
+              sx={{
+                marginTop: "2rem",
+                borderRadius: "3px",
+              }}
+            >
               <button
-                key={p}
-                onClick={() => handleChangePage(null, p)}
+                onClick={() => handleChangePage(null, page - 1)}
+                disabled={page === 0}
                 style={{
-                  fontWeight: "normal",
-                  backgroundColor: page === p ? "#999999" : "#191A1A",
-                  border: page === p ? "none" : "0.7px solid #27292A",
-                  padding: "8px 10px",
+                  background: "#191A1A",
                   cursor: "pointer",
-                  color: "white",
+                  border: "0.7px solid #27292A",
+                  padding: "8px 10px",
+                  color: page !== 0 ? "white" : "#5C636A",
+                  borderTopLeftRadius: "4px",
+                  borderBottomLeftRadius: "4px",
                   fontFamily: "Barlow, san-serif",
                 }}
               >
-                {p + 1}
+                Previous
               </button>
-            ))}
-            <button
-              onClick={() => handleChangePage(null, page + 1)}
-              disabled={page === totalPages - 1}
-              style={{
-                background: "#191A1A",
-                border: "0.7px solid #27292A",
-                cursor: "pointer",
-                padding: "8px 10px",
-                color: "#5C636A",
-                borderTopRightRadius: "4px",
-                borderBottomRightRadius: "4px",
-                fontFamily: "Barlow, san-serif",
-              }}
-            >
-              Next
-            </button>
+              {Array.from({ length: totalPages }, (_, i) => i).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => handleChangePage(null, p)}
+                  style={{
+                    fontWeight: "normal",
+                    backgroundColor: page === p ? "#999999" : "#191A1A",
+                    border: page === p ? "none" : "0.7px solid #27292A",
+                    padding: "8px 10px",
+                    cursor: "pointer",
+                    color: "white",
+                    fontFamily: "Barlow, san-serif",
+                  }}
+                >
+                  {p + 1}
+                </button>
+              ))}
+              <button
+                onClick={() => handleChangePage(null, page + 1)}
+                disabled={page === totalPages - 1}
+                style={{
+                  background: "#191A1A",
+                  border: "0.7px solid #27292A",
+                  cursor: "pointer",
+                  padding: "8px 10px",
+                  color: page < totalPages - 1 ? "white" : "#5C636A",
+                  borderTopRightRadius: "4px",
+                  borderBottomRightRadius: "4px",
+                  fontFamily: "Barlow, san-serif",
+                }}
+              >
+                Next
+              </button>
+            </Box>
           </Box>
         </Box>
       </Box>

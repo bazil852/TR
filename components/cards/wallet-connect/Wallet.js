@@ -622,7 +622,7 @@ const Wallet = () => {
                               ? 8
                               : width < 400
                               ? 5
-                              : "",
+                              : 3,
                         }}
                       >
                         <GraphOfConsolidatedPOrtfolio data={data.assets} />

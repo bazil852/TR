@@ -150,7 +150,7 @@ export default function PrivateHeader({ title, current, Component }) {
       index: 2,
       title: "VDCA",
       icon: selectedItem === 2 ? VdcaBot : VdcaBot,
-      path: "/bot-config",
+      path: "/BotsLibrary",
     },
     {
       index: 3,
