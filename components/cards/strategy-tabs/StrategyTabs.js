@@ -181,10 +181,12 @@ const StrategyTabsComponent = (props) => {
   const [ParametersData, setParametersData] = useState([
     [{ 1: "", operation: "", 2: "", relation: "" }],
   ]);
+  const [pairsOptions, setPairsOptions] = useState([]);
   useEffect(() => {
     if (props.strategyId) {
       fetchStrategyByStrategyId();
     }
+    fetchPairsSymbolsByUserId();
     // fetchStrategiesByUserId();
   }, [props.strategyId]);
 
@@ -213,6 +215,27 @@ const StrategyTabsComponent = (props) => {
     setDCAData([newData.body.dca]);
     setTakeProfitData([newData.body.takeProfit]);
     setStopLossData([newData.body.stopLoss]);
+  };
+
+  const fetchPairsSymbolsByUserId = async () => {
+    const { user } = await getSession();
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}portfolios/assets/symbols/user/${user.id}`,
+      {
+        method: "GET",
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    let combinedAssetsSymbols = data.reduce((accumulator, currentObject) => {
+      return accumulator.concat(currentObject.assetsSymbols);
+    }, []);
+
+    console.log(combinedAssetsSymbols);
+    let uniqueDataArray = [...new Set(combinedAssetsSymbols)];
+
+    console.log(uniqueDataArray);
+    setPairsOptions(uniqueDataArray);
   };
 
   const fetchStrategiesByUserId = async () => {
@@ -1048,7 +1071,7 @@ const StrategyTabsComponent = (props) => {
                             temp[index].pairs = newInputValue;
                             setOrdersData(temp);
                           }}
-                          options={myData}
+                          options={pairsOptions}
                           PaperComponent={({ children }) => (
                             <Paper
                               sx={{
