@@ -11,7 +11,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-const CommunityStrategies = () => {
+const CommunityStrategies = (props) => {
   const [Active, setActive] = useState("all");
   const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
   const [width, setWidth] = useState(globalThis?.innerWidth);
@@ -94,7 +94,7 @@ const CommunityStrategies = () => {
           >
             All
           </Button>
-          <Button
+          {/* <Button
             sx={{
               fontFamily: "Barlow, san-serif",
               fontSize: "20px",
@@ -111,7 +111,7 @@ const CommunityStrategies = () => {
             onClick={() => setActive("linked")}
           >
             Linked
-          </Button>
+          </Button> */}
           <Button
             sx={{
               fontFamily: "Barlow, san-serif",
@@ -148,7 +148,7 @@ const CommunityStrategies = () => {
           >
             Short
           </Button>
-          <Button
+          {/* <Button
             sx={{
               fontFamily: "Barlow, san-serif",
               fontSize: "20px",
@@ -201,7 +201,7 @@ const CommunityStrategies = () => {
             onClick={() => setActive("binanceFutures")}
           >
             Binance Futures USDT-M
-          </Button>
+          </Button> */}
         </Box>
         <Box mt={width < 600 ? 5 : 2}>
           <Button
@@ -278,7 +278,7 @@ const CommunityStrategies = () => {
         </Grid>
       </Grid>
       <Grid container spacing={1} mt={1}>
-        {Strategies.map((item, index) => (
+        {props.data.map((item, index) => (
           <Grid
             key={index}
             item
@@ -314,7 +314,7 @@ const CommunityStrategies = () => {
                     color: "#ACB2B7",
                   }}
                 >
-                  {item.Title}
+                  {item.generalSettings.strategyName}
                 </Typography>
                 <Typography
                   sx={{
@@ -324,7 +324,7 @@ const CommunityStrategies = () => {
                     color: "#ACB2B7",
                   }}
                 >
-                  By {item.By}
+                  By {item.user.firstName}
                 </Typography>
               </Box>
               <Box
@@ -368,7 +368,7 @@ const CommunityStrategies = () => {
                       color: "#FFFFFF",
                     }}
                   >
-                    {item.Winrate}
+                    {item.winRate ? item.winRate : "NA"} %
                   </Typography>
                 </Box>
                 <Box
@@ -398,7 +398,7 @@ const CommunityStrategies = () => {
                       color: "#22A25B",
                     }}
                   >
-                    {item.Pnl}
+                    {item.profitAndLoss ? item.profitAndLoss : "NA"} %
                   </Typography>
                 </Box>
                 <Box
@@ -430,7 +430,7 @@ const CommunityStrategies = () => {
                       color: "#FFFFFF",
                     }}
                   >
-                    {item.TotalTrades}
+                    {item.totalTrade ? item.totalTrade : 0}
                   </Typography>
                 </Box>
                 <Box
@@ -460,7 +460,8 @@ const CommunityStrategies = () => {
                       color: "#FFFFFF",
                     }}
                   >
-                    {item["Win/Losses"]}
+                    {item.wins ? item.wins : 0}W /{" "}
+                    {item.losses ? item.losses : 0}L
                   </Typography>
                 </Box>
               </Box>

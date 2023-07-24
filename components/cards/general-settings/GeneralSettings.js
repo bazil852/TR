@@ -32,6 +32,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
 }));
 
 const GeneralSettings = (props) => {
+  console.log(props);
   const [width, setWidth] = useState(globalThis?.innerWidth);
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
@@ -81,7 +82,25 @@ const GeneralSettings = (props) => {
             >
               Strategy Name
             </Typography>
-            <SelectInputParameters
+            <ValidationTextField
+              margin="normal"
+              required
+              id="strategyName"
+              placeholder="Strategy Name"
+              sx={{
+                width: "100%",
+                fontFamily: "Barlow, san-serif",
+              }}
+              name="strategyName"
+              value={props.GeneralSettingsData[props.index]["strategyName"]}
+              onChange={(e) => {
+                const temp = [...props.GeneralSettingsData];
+                temp[props.index]["strategyName"] = e.target.value;
+                props.setGeneralSettingsData(temp);
+              }}
+              disabled={props.editSettings}
+            />
+            {/* <SelectInputParameters
               placeHolder={"Strategy Name"}
               value={props.GeneralSettingsData[props.index]["Strategy Name"]}
               onChange={(e) => {
@@ -90,7 +109,7 @@ const GeneralSettings = (props) => {
                 props.setGeneralSettingsData(temp);
               }}
               options={ParametersOptions}
-            />
+            /> */}
           </Box>
           <Box
             sx={{
@@ -115,13 +134,14 @@ const GeneralSettings = (props) => {
             </Typography>
             <SelectInputParameters
               placeHolder="Strategy Folder"
-              value={props.GeneralSettingsData[props.index]["Strategy Folder"]}
+              value={props.GeneralSettingsData[props.index]["strategyFolder"]}
               onChange={(e) => {
                 const temp = [...props.GeneralSettingsData];
-                temp[props.index]["Strategy Folder"] = e.value;
+                temp[props.index]["strategyFolder"] = e.value;
                 props.setGeneralSettingsData(temp);
               }}
-              options={ParametersOptions}
+              // options={ParametersOptions}
+              options={[]}
               Width={"100%"}
             />
           </Box>
@@ -148,13 +168,14 @@ const GeneralSettings = (props) => {
             </Typography>
             <SelectInputParameters
               placeHolder="Bot Link"
-              value={props.GeneralSettingsData[props.index].BotLink}
+              value={props.GeneralSettingsData[props.index].botLink}
               onChange={(e) => {
                 const temp = [...props.GeneralSettingsData];
-                temp[props.index].BotLink = e.value;
+                temp[props.index].botLink = e.value;
                 props.setGeneralSettingsData(temp);
               }}
-              options={ParametersOptions}
+              // options={ParametersOptions}
+              options={[]}
               Width={"100%"}
             />
           </Box>
@@ -192,11 +213,11 @@ const GeneralSettings = (props) => {
               }}
               name="strategyDescription"
               value={
-                props.GeneralSettingsData[props.index]["Strategy Description"]
+                props.GeneralSettingsData[props.index]["strategyDescription"]
               }
               onChange={(e) => {
                 const temp = [...props.GeneralSettingsData];
-                temp[props.index]["Strategy Description"] = e.target.value;
+                temp[props.index]["strategyDescription"] = e.target.value;
                 props.setGeneralSettingsData(temp);
               }}
               disabled={props.editSettings}
@@ -233,10 +254,10 @@ const GeneralSettings = (props) => {
                 fontFamily: "Barlow, san-serif",
               }}
               name="notes"
-              value={props.GeneralSettingsData[props.index].Notes}
+              value={props.GeneralSettingsData[props.index].notes}
               onChange={(e) => {
                 const temp = [...props.GeneralSettingsData];
-                temp[props.index].Notes = e.target.value;
+                temp[props.index].notes = e.target.value;
                 props.setGeneralSettingsData(temp);
               }}
               disabled={props.editSettings}

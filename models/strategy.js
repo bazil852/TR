@@ -15,7 +15,7 @@ const strategySchema = new Schema({
     orderType: String,
     pairs: String,
   },
-  parameters: Object,
+  parameters: [Object],
   dca: {
     dcaType: String,
     volumeMultiplier: String,
@@ -31,6 +31,15 @@ const strategySchema = new Schema({
   stopLoss: {
     stopLoss: String,
   },
+  private: {
+    type: Boolean,
+    default: true,
+  },
+  winRate: Number,
+  profitAndLoss: Number,
+  totalTrade: Number,
+  wins: Number,
+  losses: Number,
 
   // botName: String,
   // exchange: mongoose.Schema.Types.ObjectId,
