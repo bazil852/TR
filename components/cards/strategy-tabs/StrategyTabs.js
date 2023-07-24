@@ -309,6 +309,8 @@ const StrategyTabsComponent = (props) => {
     setANDToggle([...ANDToggle, [true]]);
   };
 
+  const dcaTypeOptions = [{ value: "Signal", label: "Signal" }];
+
   const takeProfitOptions = [
     { value: "Fixed", label: "Fixed" },
     { value: "Trailing SL", label: "Trailing SL" },
@@ -1424,7 +1426,7 @@ const StrategyTabsComponent = (props) => {
                           temp[index]["dcaType"] = event.value;
                           setDCAData(temp);
                         }}
-                        options={takeProfitOptions}
+                        options={dcaTypeOptions}
                       />
                     </Box>
                     <Box
