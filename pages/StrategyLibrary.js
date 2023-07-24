@@ -191,6 +191,7 @@ const StrategyLibrary = () => {
       body: JSON.stringify(body),
     });
     if (response.ok) {
+      setStrategyFolder([body]);
       setOpenModal(false);
       alert("Strategy Folder Created");
     } else {
