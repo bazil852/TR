@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import SelectInputParameters from "../../widgets/SelectInputParameters";
+import { getSession } from "next-auth/react";
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -34,11 +35,31 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
 const GeneralSettings = (props) => {
   console.log(props);
   const [width, setWidth] = useState(globalThis?.innerWidth);
+  const [strategyFolderOptions, setStrategyFolderOptions] = useState([]);
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
+  useEffect(() => {
+    fetchStrategyFolderByUserId();
+  }, []);
+  const fetchStrategyFolderByUserId = async () => {
+    let { user } = await getSession();
+    const response = await fetch(
+      `/api/strategyFolder/get-strategy-folders-id?id=${user?.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const newData = await response.json();
+    console.log(newData);
+    setStrategyFolderOptions(newData.body);
+  };
   const ParametersOptions = [
     { value: "Dummy1", label: "Dummy1" },
     { value: "Dummy2", label: "Dummy2" },
@@ -140,8 +161,7 @@ const GeneralSettings = (props) => {
                 temp[props.index]["strategyFolder"] = e.value;
                 props.setGeneralSettingsData(temp);
               }}
-              // options={ParametersOptions}
-              options={[]}
+              options={strategyFolderOptions}
               Width={"100%"}
             />
           </Box>

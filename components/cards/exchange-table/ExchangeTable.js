@@ -28,13 +28,13 @@ const ExchangeTable = ({ data, loading }) => {
 
   const columns = [
     {
-      field: "asset",
+      field: "coin_name",
       title: "TOKEN",
       // sortable: true,
     },
 
     {
-      field: "availableBalance",
+      field: "quantity",
       title: "AMOUNT",
       // sortable: true,
     },

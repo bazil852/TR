@@ -361,7 +361,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                                 : tableCellStyle
                             }
                           >
-                            {column.field === "asset" ? (
+                            {column.field === "coin_name" ? (
                               <Box
                                 sx={{
                                   display: "flex",
@@ -407,7 +407,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                                   {row[column.field]}
                                 </Box>
                               </Box>
-                            ) : column.field === "balance" ? (
+                            ) : column.field === "usdt_price" ? (
                               <Box
                                 sx={{
                                   textAlign: "center",
@@ -459,7 +459,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                                   color: "#D2D2D2",
                                 }}
                               >
-                                {parseFloat(row[column.field]).toFixed(4)}
+                                {parseFloat(row["usdt_price"]).toFixed(4)}
                               </Box>
                             )}
                           </td>
