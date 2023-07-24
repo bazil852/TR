@@ -167,8 +167,8 @@ export default function PrivateHeader({ title, current, Component }) {
     {
       index: 5,
       title: "Account",
-      icon: selectedItem === 5 ? TradingBotsIcon : TradingBotsIcon,
-      path: "/AllDeals",
+      icon: selectedItem === 4 ? TradingBotsIcon : TradingBotsIcon,
+      path: "/TradesLibrary",
     },
   ];
 

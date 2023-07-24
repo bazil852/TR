@@ -8,32 +8,36 @@ import {
 } from "@mui/material";
 import { withStyles } from "@mui/styles";
 
-const progressData = [
-  { title: "Bitcoin Bot 1 hour", value: 2435 },
-  { title: "ATOM Bot", value: 1325 },
-  { title: "TRON Bot", value: 735 },
-  { title: "Solana Bot", value: 580 },
-  { title: "AVAX Bot", value: 428 },
-  { title: "Stellar Bot", value: 208 },
-];
-
-const roundUp = (num, precision) => Math.ceil(num / precision) * precision;
-
-const ColorLinearProgress = withStyles({
-  root: {
-    minWidth: 200,
-    height: 18,
-    backgroundColor: "rgba(255,255,255,0.1)",
-  },
-  bar: {
-    background: "linear-gradient(45deg, #544DFF 30%, #23C9FF 90%)",
-    borderRight: "3px solid white",
-  },
-})(LinearProgress);
-
-const BotsLibraryProgressGraph = () => {
+const BotsLibraryProgressGraph = ({ progressData, valueType }) => {
   const [loading, setLoading] = useState(true);
   const [normalizedData, setNormalizedData] = useState([]);
+
+  let barHeight = 18;
+  if (progressData.length === 1) {
+    barHeight = 55;
+  } else if (progressData.length === 2) {
+    barHeight = 40;
+  } else if (progressData.length === 3) {
+    barHeight = 35;
+  } else if (progressData.length === 4) {
+    barHeight = 25;
+  } else {
+    barHeight = 18;
+  }
+
+  const roundUp = (num, precision) => Math.ceil(num / precision) * precision;
+
+  const ColorLinearProgress = withStyles({
+    root: {
+      minWidth: 200,
+      height: barHeight,
+      backgroundColor: "rgba(255,255,255,0.1)",
+    },
+    bar: {
+      background: "linear-gradient(45deg, #544DFF 30%, #23C9FF 90%)",
+      borderRight: "3px solid white",
+    },
+  })(LinearProgress);
 
   useEffect(() => {
     const maxValue =
@@ -73,7 +77,13 @@ const BotsLibraryProgressGraph = () => {
         </Typography>
       ) : (
         normalizedData.map((data, index) => (
-          <Grid key={index} container my={4} minWidth={"400px"}>
+          <Grid
+            key={index}
+            container
+            my={4}
+            minWidth={"400px"}
+            alignItems={"center"}
+          >
             <Grid item xs={3.5}>
               <Box>
                 <Typography
@@ -105,6 +115,7 @@ const BotsLibraryProgressGraph = () => {
                   }}
                 >
                   {progressData[index].value}
+                  {valueType}
                 </Typography>
               </Box>
             </Grid>

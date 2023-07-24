@@ -186,9 +186,14 @@ function ProfitCalendar() {
             ? 685
             : width > 1176 && width < 1198 && !isDrawerOpen
             ? 755
-            : 400,
+            : isDrawerOpen
+            ? 300
+            : width < 1037
+            ? 300
+            : 755,
         minWidth: "100%",
         borderRadius: 2,
+        overflowX: "auto",
       }}
     >
       <CardContent>
@@ -229,8 +234,8 @@ function ProfitCalendar() {
             display: "flex",
             alignItems: "center",
             flexWrap: "wrap",
-            gap: 1.5,
-            px: 2,
+            gap: width < 500 ? 0.5 : 1.5,
+            px: width < 500 ? 0 : 2,
             mt: 3,
           }}
         >
@@ -242,13 +247,13 @@ function ProfitCalendar() {
                   background: "#2A2C2D",
                   borderRadius: 1,
                   height: 55,
-                  width: 55,
+                  width: width < 500 ? 50 : 55,
                   p: 1,
                 }}
               >
                 <Typography
                   sx={{
-                    fontSize: 16,
+                    fontSize: width < 500 ? 14 : 16,
                     fontWeight: 600,
                     fontFamily: "Barlow, san-serif",
                     color: "white",
@@ -258,7 +263,7 @@ function ProfitCalendar() {
                 </Typography>
                 <Typography
                   sx={{
-                    fontSize: 12,
+                    fontSize: width < 500 ? 10 : 12,
                     fontWeight: 500,
                     fontFamily: "Barlow, san-serif",
                     color: item.value > 0 ? "#4BD469" : "#FF6060",
@@ -276,7 +281,7 @@ function ProfitCalendar() {
             display: "flex",
             flexWrap: "wrap",
             gap: 1.5,
-            px: 2,
+            px: width < 500 ? 0 : 2,
             mt: 3,
             alignItems: "center",
           }}

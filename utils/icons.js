@@ -70,7 +70,11 @@ import Gift from "../assets/icons/gift.svg";
 import Plus from "../assets/icons/plus.svg";
 import Clock from "../assets/icons/clock.svg";
 import SmokeWave from "../assets/icons/smoke.svg";
+import BtcIcon from "../assets/icons/btcIcon.svg";
+import EditIcon from "../assets/icons/editIcon.svg";
 export {
+  EditIcon,
+  BtcIcon,
   SmokeWave,
   Clock,
   Plus,

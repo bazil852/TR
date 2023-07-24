@@ -12,7 +12,7 @@ const BotsLibraryCards = () => {
     <Grid container spacing={1}>
       {boxData.map((item, index) => {
         return (
-          <Grid item key={index} xs={3}>
+          <Grid item key={index} xs={12} sm={6} md={3}>
             <Box
               sx={{
                 background: "#131313",

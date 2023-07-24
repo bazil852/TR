@@ -24,8 +24,7 @@ const months = [
   "Dec",
 ];
 
-const BotsLibraryBarGraph = () => {
-  const dataArray = [12331, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0];
+const BotsLibraryBarGraph = ({ dataArray, valueType }) => {
   const [width, setWidth] = useState(globalThis?.innerWidth);
 
   const maxVal = Math.max(...dataArray);
@@ -43,7 +42,7 @@ const BotsLibraryBarGraph = () => {
       labels: labelsToShow,
       datasets: [
         {
-          label: "$ of Earnings",
+          label: `${valueType} of Earnings`,
           data: dataArray,
           backgroundColor: (context) => {
             const gradient = context.chart.ctx.createLinearGradient(
@@ -79,7 +78,7 @@ const BotsLibraryBarGraph = () => {
           max: adjustedMax,
           min: 0,
           callback: function(value) {
-            return value + "$";
+            return value + `${valueType}`;
           },
           color: "#8C8C8C",
           font: {

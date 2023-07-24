@@ -3,14 +3,18 @@ import { Box, Button, Typography } from "@mui/material";
 import BotsLibraryBarGraph from "./BotsLibraryBarGraph";
 
 const BotsLibraryGraphTwo = () => {
-  const [activeButton, setActiveButton] = useState("All");
+  const [activeButton, setActiveButton] = useState("Months");
   const [activeTypeButton, setTypectiveButton] = useState("$");
   const [width, setWidth] = useState(globalThis?.innerWidth);
+  const [valueType, setValueType] = useState("$");
+
+  const dataArray = [12331, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000];
 
   const handleButtonClick = (button) => {
     setActiveButton(button);
   };
   const handleTypeClick = (button) => {
+    setValueType(button);
     setTypectiveButton(button);
   };
 
@@ -24,7 +28,7 @@ const BotsLibraryGraphTwo = () => {
     <Box
       sx={{
         background: "#131313",
-        height: width > 1197 ? 565 : 635,
+        height: width > 1197 ? 565 : width < 900 ? "100%" : 635,
         minWidth: "100%",
         borderRadius: 2,
       }}
@@ -47,81 +51,7 @@ const BotsLibraryGraphTwo = () => {
         >
           BOTS PERFORMANCE
         </Typography>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: 1,
-              pt: 2,
-            }}
-          >
-            <Button
-              sx={{
-                border: "none",
-                outline: "none",
-                fontSize: 13.1,
-                color: "#B3B4B9",
-                background: activeButton === "All" ? "#444" : "#2A2C2D",
-                borderRadius: 1,
-                cursor: "pointer",
-                p: 0.2,
-                minWidth: 40,
-              }}
-              onClick={() => handleButtonClick("All")}
-            >
-              All
-            </Button>
-            <Button
-              sx={{
-                border: "none",
-                outline: "none",
-                fontSize: 13.1,
-                color: "#B3B4B9",
-                background: activeButton === "1M" ? "#444" : "#2A2C2D",
-                borderRadius: 1,
-                cursor: "pointer",
-                p: 0.2,
-                minWidth: 40,
-              }}
-              onClick={() => handleButtonClick("1M")}
-            >
-              1M
-            </Button>
-            <Button
-              sx={{
-                border: "none",
-                outline: "none",
-                fontSize: 13.1,
-                color: "#B3B4B9",
-                background: activeButton === "6M" ? "#444" : "#2A2C2D",
-                borderRadius: 1,
-                cursor: "pointer",
-                p: 0.2,
-                minWidth: 40,
-              }}
-              onClick={() => handleButtonClick("6M")}
-            >
-              6M
-            </Button>
-            <Button
-              sx={{
-                border: "none",
-                outline: "none",
-                fontSize: 13.1,
-                color: "#B3B4B9",
-                background: activeButton === "1Y" ? "#444" : "#2A2C2D",
-                borderRadius: 1,
-                cursor: "pointer",
-                p: 0.2,
-                minWidth: 40,
-              }}
-              onClick={() => handleButtonClick("1Y")}
-            >
-              1Y
-            </Button>
-          </Box>
+        <Box sx={{ display: "flex", flexDirection: "column", ml: "auto" }}>
           <Box
             sx={{
               display: "flex",
@@ -165,12 +95,56 @@ const BotsLibraryGraphTwo = () => {
               %
             </Button>
           </Box>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 1,
+              pt: 1,
+            }}
+          >
+            <Button
+              sx={{
+                border: "none",
+                outline: "none",
+                fontSize: 13.1,
+                color: "#B3B4B9",
+                background: activeButton === "Months" ? "#444" : "#2A2C2D",
+                borderRadius: 1,
+                cursor: "pointer",
+                textTransform: "none",
+                p: 0.2,
+                minWidth: 65,
+              }}
+              onClick={() => handleButtonClick("Months")}
+            >
+              Months
+            </Button>
+            <Button
+              sx={{
+                border: "none",
+                outline: "none",
+                fontSize: 13.1,
+                color: "#B3B4B9",
+                background: activeButton === "Days" ? "#444" : "#2A2C2D",
+                borderRadius: 1,
+                cursor: "pointer",
+                textTransform: "none",
+                p: 0.2,
+                minWidth: 55,
+              }}
+              onClick={() => handleButtonClick("Days")}
+            >
+              Days
+            </Button>
+          </Box>
         </Box>
       </Box>
       <Box
         sx={{
           px: 3,
-          mt: width > 1197 ? 5 : 9,
+          mt: width > 1197 ? 5 : width < 900 ? 2 : 5,
           mx: 1,
           overflowX: "auto",
           " ::-webkit-scrollbar": {
@@ -185,7 +159,7 @@ const BotsLibraryGraphTwo = () => {
           },
         }}
       >
-        <BotsLibraryBarGraph />
+        <BotsLibraryBarGraph dataArray={dataArray} valueType={valueType} />
       </Box>
     </Box>
   );

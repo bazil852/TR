@@ -586,6 +586,7 @@ const Wallet = () => {
                     p: "1vw",
                     minWidth: "100%",
                     minHeight: 550,
+                    overflow: "visible",
                   }}
                 >
                   <CardContent>
@@ -611,6 +612,8 @@ const Wallet = () => {
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
+                          overflow: "visible",
+                          minWidth: "100%",
                           pr:
                             width < 900 && width > 700
                               ? 13

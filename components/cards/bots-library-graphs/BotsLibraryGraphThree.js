@@ -100,6 +100,38 @@ const BotsLibraryGraphThree = () => {
               outline: "none",
               fontSize: 13.1,
               color: "#B3B4B9",
+              background: activeButton === "1M" ? "#444" : "#2A2A2C",
+              borderRadius: 1,
+              cursor: "pointer",
+              p: 0.2,
+              minWidth: 40,
+            }}
+            onClick={() => handleButtonClick("1M")}
+          >
+            1M
+          </Button>
+          <Button
+            sx={{
+              border: "none",
+              outline: "none",
+              fontSize: 13.1,
+              color: "#B3B4B9",
+              background: activeButton === "6M" ? "#444" : "#2A2A2C",
+              borderRadius: 1,
+              cursor: "pointer",
+              p: 0.2,
+              minWidth: 40,
+            }}
+            onClick={() => handleButtonClick("6M")}
+          >
+            6M
+          </Button>
+          <Button
+            sx={{
+              border: "none",
+              outline: "none",
+              fontSize: 13.1,
+              color: "#B3B4B9",
               background: activeButton === "1Y" ? "#444" : "#2A2A2C",
               borderRadius: 1,
               cursor: "pointer",
@@ -109,38 +141,6 @@ const BotsLibraryGraphThree = () => {
             onClick={() => handleButtonClick("1Y")}
           >
             1Y
-          </Button>
-          <Button
-            sx={{
-              border: "none",
-              outline: "none",
-              fontSize: 13.1,
-              color: "#B3B4B9",
-              background: activeButton === "2Y" ? "#444" : "#2A2A2C",
-              borderRadius: 1,
-              cursor: "pointer",
-              p: 0.2,
-              minWidth: 40,
-            }}
-            onClick={() => handleButtonClick("2Y")}
-          >
-            2Y
-          </Button>
-          <Button
-            sx={{
-              border: "none",
-              outline: "none",
-              fontSize: 13.1,
-              color: "#B3B4B9",
-              background: activeButton === "3Y" ? "#444" : "#2A2A2C",
-              borderRadius: 1,
-              cursor: "pointer",
-              p: 0.2,
-              minWidth: 40,
-            }}
-            onClick={() => handleButtonClick("3Y")}
-          >
-            3Y
           </Button>
         </Box>
       </Box>
