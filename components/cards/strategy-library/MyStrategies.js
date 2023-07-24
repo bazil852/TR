@@ -1,8 +1,10 @@
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 
-const MyStrategies = () => {
+const MyStrategies = (props) => {
+  const router = useRouter();
   const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
   const [width, setWidth] = useState(globalThis?.innerWidth);
 
@@ -55,7 +57,7 @@ const MyStrategies = () => {
         My Strategies
       </Typography>
       <Grid container spacing={1}>
-        {Strategies.map((item, index) => (
+        {props.data.map((item, index) => (
           <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 4} lg={4} xl={3}>
             <Paper
               sx={{
@@ -68,16 +70,35 @@ const MyStrategies = () => {
                 gap: "1rem",
               }}
             >
-              <Typography
+              <Box
                 sx={{
-                  fontFamily: "Barlow, san-serif",
-                  fontSize: "20px",
-                  fontWeight: 600,
-                  color: "#ACB2B7",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center", // if you want to align items vertically as well
                 }}
               >
-                {item.Title}
-              </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Barlow, san-serif",
+                    fontSize: "20px",
+                    fontWeight: 600,
+                    color: "#ACB2B7",
+                  }}
+                >
+                  {item.generalSettings.strategyName}
+                </Typography>
+                <Button
+                  sx={{ marginLeft: 20 }}
+                  onClick={() => {
+                    router.push({
+                      pathname: "/Startegy",
+                      query: { id: item._id },
+                    });
+                  }}
+                >
+                  Edit
+                </Button>
+              </Box>
               <Box
                 key={index}
                 sx={{
@@ -119,7 +140,7 @@ const MyStrategies = () => {
                       color: "#FFFFFF",
                     }}
                   >
-                    {item.Winrate}
+                    {item.winRate ? item.winRate : "NA"} %
                   </Typography>
                 </Box>
                 <Box
@@ -149,7 +170,7 @@ const MyStrategies = () => {
                       color: "#22A25B",
                     }}
                   >
-                    {item.Pnl}
+                    {item.profitAndLoss ? item.profitAndLoss : "NA"} %
                   </Typography>
                 </Box>
                 <Box
@@ -181,7 +202,7 @@ const MyStrategies = () => {
                       color: "#FFFFFF",
                     }}
                   >
-                    {item.TotalTrades}
+                    {item.totalTrade ? item.totalTrade : 0}
                   </Typography>
                 </Box>
                 <Box
@@ -211,7 +232,8 @@ const MyStrategies = () => {
                       color: "#FFFFFF",
                     }}
                   >
-                    {item["Win/Losses"]}
+                    {item.wins ? item.wins : 0}W /{" "}
+                    {item.losses ? item.losses : 0}L
                   </Typography>
                 </Box>
               </Box>

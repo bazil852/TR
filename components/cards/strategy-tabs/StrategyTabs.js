@@ -47,7 +47,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const StrategyTabs = () => {
+const StrategyTabs = (props) => {
   const [botName, setBotName] = useState("");
   const [exchange, setExchange] = useState("");
   const [botType, setBotType] = useState("");
@@ -84,7 +84,10 @@ const StrategyTabs = () => {
       }}
       component="main"
     >
-      <StrategyTabsComponent setBotSettings={setBotSetting} />
+      <StrategyTabsComponent
+        setBotSettings={setBotSetting}
+        strategyId={props.strategyId}
+      />
     </Box>
   );
 };
@@ -92,6 +95,7 @@ const StrategyTabs = () => {
 export default StrategyTabs;
 
 const StrategyTabsComponent = (props) => {
+  console.log(props.strategyId);
   const [value, setvalue] = useState(["general"]);
   const [ANDToggle, setANDToggle] = useState([[true]]);
   const [inputValue, setInputValue] = useState("");
@@ -104,6 +108,7 @@ const StrategyTabsComponent = (props) => {
       notes: "",
     },
   ]);
+  console.log("general settings", GeneralSettingsData);
   const [OrdersData, setOrdersData] = useState([
     {
       firstOrderSize: "",
@@ -177,12 +182,38 @@ const StrategyTabsComponent = (props) => {
     [{ 1: "", operation: "", 2: "", relation: "" }],
   ]);
   useEffect(() => {
+    if (props.strategyId) {
+      fetchStrategyByStrategyId();
+    }
     // fetchStrategiesByUserId();
-  }, []);
+  }, [props.strategyId]);
 
   useEffect(() => console.log("Updated State:", AllStrategyData), [
     AllStrategyData,
   ]);
+
+  const fetchStrategyByStrategyId = async () => {
+    // let session = await getSession();
+    const response = await fetch(
+      `/api/strategy/get-strategy-by-id?id=${props.strategyId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const newData = await response.json();
+    console.log(newData);
+    setAllStartegyData([newData.body]);
+    setGeneralSettingsData([newData.body.generalSettings]);
+    setOrdersData([newData.body.orders]);
+    setParametersData([newData.body.parameters]);
+    setDCAData([newData.body.dca]);
+    setTakeProfitData([newData.body.takeProfit]);
+    setStopLossData([newData.body.stopLoss]);
+  };
 
   const fetchStrategiesByUserId = async () => {
     let session = await getSession();
@@ -255,10 +286,13 @@ const StrategyTabsComponent = (props) => {
     setANDToggle([...ANDToggle, [true]]);
   };
 
-  const ParametersOptions = [
-    { value: "Dummy1", label: "Dummy1" },
-    { value: "Dummy2", label: "Dummy2" },
-    { value: "Dummy3", label: "Dummy3" },
+  const takeProfitOptions = [
+    { value: "Fixed", label: "Fixed" },
+    { value: "Trailing SL", label: "Trailing SL" },
+    {
+      value: "All candle body w % up or down",
+      label: "All candle body w % up or down",
+    },
   ];
   const parametersOneOptions = [
     {
@@ -1367,7 +1401,7 @@ const StrategyTabsComponent = (props) => {
                           temp[index]["dcaType"] = event.value;
                           setDCAData(temp);
                         }}
-                        options={ParametersOptions}
+                        options={takeProfitOptions}
                       />
                     </Box>
                     <Box
@@ -1664,7 +1698,7 @@ const StrategyTabsComponent = (props) => {
                         Take profit
                       </Typography>
                       <SelectInputParameters
-                        placeHolder="Signal"
+                        placeHolder="Select"
                         value={TakeProfitData[index]["takeProfit"]}
                         Width={
                           width < 900 && width > 600
@@ -1678,7 +1712,7 @@ const StrategyTabsComponent = (props) => {
                           temp[index]["takeProfit"] = event.value;
                           setTakeProfitData(temp);
                         }}
-                        options={ParametersOptions}
+                        options={takeProfitOptions}
                       />
                     </Box>
                     <Box

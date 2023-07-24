@@ -32,6 +32,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
 }));
 
 const GeneralSettings = (props) => {
+  console.log(props);
   const [width, setWidth] = useState(globalThis?.innerWidth);
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
