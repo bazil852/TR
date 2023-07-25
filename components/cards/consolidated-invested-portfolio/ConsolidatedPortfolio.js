@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
 import GraphOfConsolidatedPOrtfolio from "./GraphOfConsolidatedPOrtfolio";
+import { useSelector } from "react-redux";
 
 const ConsolidatedPortfolio = ({ totalAssets }) => {
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
   const [width, setWidth] = useState(globalThis?.innerWidth);
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
@@ -85,15 +87,41 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
           </Box>
         ) : (
           <Grid container alignItems={"center"}>
-            <Grid item xs={12} sm={7} md={7} lg={6}>
+            <Grid
+              item
+              xs={12}
+              sm={7}
+              md={isDrawerOpen && width > 999 ? 12 : 7}
+              lg={6}
+            >
               <GraphOfConsolidatedPOrtfolio data={totalAssets} />
             </Grid>
-            <Grid item xs={12} sm={5} md={5} lg={6}>
+            <Grid
+              item
+              xs={12}
+              sm={5}
+              md={isDrawerOpen && width > 999 ? 12 : 5}
+              lg={6}
+            >
               <Box
                 sx={{
                   display: "flex",
-                  flexDirection: width < 961 ? "row" : "column",
-                  flexWrap: width < 961 ? "wrap" : "nowrap",
+                  justifyContent:
+                    isDrawerOpen && width > 1000 && width < 1200
+                      ? "center"
+                      : "",
+                  flexDirection:
+                    width < 961
+                      ? "row"
+                      : isDrawerOpen && width > 999 && width < 1200
+                      ? "row"
+                      : "column",
+                  flexWrap:
+                    width < 961
+                      ? "wrap"
+                      : isDrawerOpen && width > 999 && width < 1200
+                      ? "wrap"
+                      : "nowrap",
                   float: width < 961 ? "left" : "right",
                   gap: 1.5,
                   mt: width < 961 ? 2 : "",
@@ -110,7 +138,7 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
                         pl: 1,
                       }}
                     >
-                      {coin.asset}
+                      {coin.coin_name}
                     </Typography>
                     <Box
                       sx={{
@@ -128,7 +156,7 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
                           whiteSpace: "nowrap",
                         }}
                       >
-                        {decimalFormatter(coin.availableBalance)} {coin.asset} =
+                        {decimalFormatter(coin.quantity)} {coin.coin_name} =
                       </Typography>
                       <Typography
                         sx={{

@@ -56,15 +56,12 @@ const DashboardComponent = () => {
     "DASH",
     "ZEC",
   ];
-
-  //New useStates
   const [totalPortfolioValue, setTotalPortfolioValue] = useState(0);
   const [totalAssets, setTotalAssets] = useState([]);
   const [allExchangesWithAssets, setAllExchangesWithAssets] = useState([]);
   const [exchangeList, setExchangeList] = useState([]);
   const [balanceHistoryList, setBalanceHistoryList] = useState([]);
 
-  //Old ones
   const [loading, setLoading] = useState(true);
   const [refreshLoading, setRefreshLoading] = useState(false);
 
@@ -101,7 +98,7 @@ const DashboardComponent = () => {
       }
     );
     const data = await response.json();
-    console.log(data);
+    console.log("idr", data);
 
     if (response.ok) {
       const currentMonth = moment().format("MM");
@@ -207,7 +204,7 @@ const DashboardComponent = () => {
       }
     );
     const data = await response.json();
-    console.log(data);
+    console.log("data of the polar area maybe", data);
 
     if (response.ok) {
       setAllExchangesWithAssets(data);
@@ -232,30 +229,28 @@ const DashboardComponent = () => {
       const newArray = data.map((item) => {
         return [...item.assets];
       });
-      console.log(newArray);
+      console.log("new array", newArray);
 
-      // Combine the assets
       const combinedAssets = {};
 
       newArray.forEach((array) => {
         array.forEach((obj) => {
-          const { asset, availableBalance, usdt_price } = obj;
-          if (combinedAssets.hasOwnProperty(asset)) {
-            combinedAssets[asset].availableBalance += parseFloat(
-              availableBalance
-            );
-            combinedAssets[asset].usdt_price += parseFloat(usdt_price);
+          const { coin_name, quantity, usdt_price } = obj;
+          console.log("checking object here", obj);
+          if (combinedAssets.hasOwnProperty(coin_name)) {
+            combinedAssets[coin_name].quantity += parseFloat(quantity);
+            combinedAssets[coin_name].usdt_price += parseFloat(usdt_price);
           } else {
-            combinedAssets[asset] = {
-              asset,
-              availableBalance: parseFloat(availableBalance),
+            combinedAssets[coin_name] = {
+              coin_name,
+              quantity: parseFloat(quantity),
               usdt_price: parseFloat(usdt_price),
             };
           }
         });
       });
 
-      // Convert the combined assets object to an array
+      console.log("combined assets here!!", combinedAssets);
       const combinedArray = Object.values(combinedAssets);
 
       console.log(combinedArray);
@@ -624,21 +619,16 @@ const DashboardComponent = () => {
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Box sx={{ display: "flex", flexDirection: "row" }}>
-            <Typography
-              sx={{
-                fontSize: "2.2rem",
-                fontWeight: 600,
-                ml: 1,
-                fontFamily: "Barlow, san-serif",
-              }}
-            >
-              Dashboard
-            </Typography>
-
-            <Button onClick={handleAssetsRefresh}>Refresh</Button>
-            {refreshLoading && <CircularProgress />}
-          </Box>
+          <Typography
+            sx={{
+              fontSize: "2.2rem",
+              fontWeight: 600,
+              ml: 1,
+              fontFamily: "Barlow, san-serif",
+            }}
+          >
+            Dashboard
+          </Typography>
           <Typography
             sx={{
               fontSize: "0.9rem",

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import GuageMeter from "./MeterGuage";
+import { useSelector } from "react-redux";
 
 const formatNumber = (num) => {
   if (Math.abs(num) >= 1000000) {
@@ -13,6 +14,7 @@ const formatNumber = (num) => {
 };
 
 const InvestedPortfolio = ({ totalBalance }) => {
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
   const [width, setWidth] = useState(globalThis?.innerWidth);
 
   useEffect(() => {
@@ -59,7 +61,13 @@ const InvestedPortfolio = ({ totalBalance }) => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  flexDirection: width < 600 && "column",
+                  gap: width > 1330 ? 6 : "",
+                  flexDirection:
+                    width < 600
+                      ? "column"
+                      : isDrawerOpen && width > 999 && width < 1200
+                      ? "column"
+                      : "row",
                 }}
                 key={index}
               >

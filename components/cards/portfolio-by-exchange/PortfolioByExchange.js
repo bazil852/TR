@@ -13,6 +13,11 @@ import { useState } from "react";
 
 const PortfolioByExchange = ({ coins, balanceHistory }) => {
   const [width, setWidth] = useState(globalThis?.innerWidth);
+  const [activeButton, setActiveButton] = useState("ALL");
+
+  const handleButtonClick = (button) => {
+    setActiveButton(button);
+  };
 
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
@@ -60,73 +65,73 @@ const PortfolioByExchange = ({ coins, balanceHistory }) => {
               gap: 1,
               mt: -2.5,
               float: "right",
-              mr: width < 600 ? 0 : 15,
+              mr: width < 600 ? 0 : 14,
             }}
           >
-            <Box
+            <Button
               sx={{
                 border: "none",
                 outline: "none",
-                textTransform: "uppercase",
                 fontSize: 13.1,
                 color: "#B3B4B9",
-                background: "#2A2A2C",
+                background: activeButton === "ALL" ? "#444" : "#2A2A2C",
                 borderRadius: 1,
                 cursor: "pointer",
-                px: 1,
-                py: 0.3,
+                p: 0.2,
+                minWidth: 40,
               }}
+              onClick={() => handleButtonClick("ALL")}
             >
-              All
-            </Box>
-            <Box
+              ALL
+            </Button>
+            <Button
               sx={{
                 border: "none",
                 outline: "none",
-                textTransform: "uppercase",
                 fontSize: 13.1,
                 color: "#B3B4B9",
-                background: "#2A2A2C",
+                background: activeButton === "1Y" ? "#444" : "#2A2A2C",
                 borderRadius: 1,
                 cursor: "pointer",
-                px: 1,
-                py: 0.3,
+                p: 0.2,
+                minWidth: 40,
               }}
+              onClick={() => handleButtonClick("1Y")}
             >
-              1y
-            </Box>
-            <Box
+              1Y
+            </Button>
+            <Button
               sx={{
                 border: "none",
                 outline: "none",
-                textTransform: "uppercase",
                 fontSize: 13.1,
                 color: "#B3B4B9",
-                background: "#2A2A2C",
+                background: activeButton === "2Y" ? "#444" : "#2A2A2C",
                 borderRadius: 1,
                 cursor: "pointer",
-                px: 1,
-                py: 0.3,
+                p: 0.2,
+                minWidth: 40,
               }}
+              onClick={() => handleButtonClick("2Y")}
             >
-              2y
-            </Box>
-            <Box
+              2Y
+            </Button>
+            <Button
               sx={{
                 border: "none",
                 outline: "none",
-                textTransform: "uppercase",
-                fontSize: 13,
+                fontSize: 13.1,
                 color: "#B3B4B9",
-                background: "#2A2A2C",
+                background: activeButton === "3Y" ? "#444" : "#2A2A2C",
                 borderRadius: 1,
                 cursor: "pointer",
-                px: 1,
-                py: 0.3,
+                p: 0.2,
+                minWidth: 40,
               }}
+              onClick={() => handleButtonClick("3Y")}
             >
-              3y
-            </Box>
+              3Y
+            </Button>
           </Box>
         </Box>
         <CardContent>
@@ -137,6 +142,7 @@ const PortfolioByExchange = ({ coins, balanceHistory }) => {
                 width: width < 960 ? "100%" : "65%",
                 display: width < 960 ? "block" : "flex",
                 overflowX: "auto",
+                pr: 1,
               }}
             >
               <BarGraph balanceHistory={balanceHistory} />
@@ -234,6 +240,7 @@ const PortfolioByExchange = ({ coins, balanceHistory }) => {
                                   coin.profitOrLoss < 0 ? "#D05451" : "#27966A",
                                 textAlign: "center",
                                 fontSize: 12,
+                                whiteSpace: "nowrap",
                               }}
                             >
                               {coin.profitOrLoss < 0 ? "" : "+"}{" "}

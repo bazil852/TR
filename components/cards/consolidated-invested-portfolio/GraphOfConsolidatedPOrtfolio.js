@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import * as d3 from "d3";
+import { useSelector } from "react-redux";
 
-const GraphOfConsolidatedPOrtfolio = ({ data }) => {
+const GraphOfConsolidatedPortfolio = ({ data }) => {
   const [dataWithWorth, setDataWithWorth] = useState([0]);
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
   const [width, setWidth] = useState(globalThis?.innerWidth);
   const colors = ["#36F097", "#3DFFDC", "#1ED6FF", "#2688FC", "#5A3FFE"];
-  const totalRadius = width < 960 && width > 900 ? 16 : 18;
-  const minRadius = 8;
+  const totalRadius = width < 960 && width > 899 ? 16 : 20;
+  const minRadius = 10;
   const MINIMUM_WORTH = 100;
   const minimumValueRadius = 12;
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   useEffect(() => {
     const hasAllElementsZeroOrUndefined = data?.every(
@@ -36,7 +39,7 @@ const GraphOfConsolidatedPOrtfolio = ({ data }) => {
       if (remainingData.length > 0) {
         setDataWithWorth([
           ...topFour,
-          { asset: "Others", worth: remainingWorth },
+          { coin_name: "Others", worth: remainingWorth },
         ]);
       } else {
         setDataWithWorth([...topFour]);
@@ -90,7 +93,9 @@ const GraphOfConsolidatedPOrtfolio = ({ data }) => {
             overflow: "visible",
             float: "left",
             marginLeft:
-              width < 900 && width > 700
+              width < 960 && width > 899
+                ? "5px"
+                : width < 900 && width > 700
                 ? "100px"
                 : width < 700 && width > 600
                 ? "50px"
@@ -102,17 +107,23 @@ const GraphOfConsolidatedPOrtfolio = ({ data }) => {
                 ? "15%"
                 : width < 350
                 ? "10%"
-                : width > 1099 && width < 1500
+                : width > 1099 && width < 1200 && !isDrawerOpen
+                ? "30px"
+                : width > 1199 && width < 1330 && !isDrawerOpen
                 ? "50px"
-                : width > 1500
-                ? "50px"
-                : "",
+                : width > 999 && width < 1100 && isDrawerOpen
+                ? "18%"
+                : width > 1099 && width < 1200 && isDrawerOpen
+                ? "20%"
+                : width > 1330
+                ? "80px"
+                : "30px",
           }}
         >
           {dataWithWorth.map((item, index) => {
             const percentage = item.worth / totalWorth;
             let radius = radiusScale(item.worth);
-            if (item.asset === "Others" && radius < minimumValueRadius) {
+            if (item.coin_name === "Others" && radius < minimumValueRadius) {
               radius = minimumValueRadius;
             }
             const start = accumulatedPercentage * 360;
@@ -158,47 +169,57 @@ const GraphOfConsolidatedPOrtfolio = ({ data }) => {
 
             accumulatedPercentage += percentage;
 
+            const isHovered = index === hoveredIndex;
+
             return (
-              <g key={index}>
+              <g
+                key={index}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+              >
                 <path
                   d={`
-                  M 18 18 
-                  L ${startX} ${startY} 
-                  A ${radius} ${radius} 0 ${largeArcFlag} 1 ${endX} ${endY} 
-                  z
-                `}
+                    M 18 18 
+                    L ${startX} ${startY} 
+                    A ${radius} ${radius} 0 ${largeArcFlag} 1 ${endX} ${endY} 
+                    z
+                  `}
                   fill={colors[index % colors.length]}
                   style={{
                     stroke: "none",
                     filter: "drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.2))",
                   }}
                 />
-                <line
-                  x1={centerX}
-                  y1={centerY}
-                  x2={midX}
-                  y2={midY}
-                  stroke="#A8A8A8"
-                  strokeWidth="0.2"
-                />
-                <path
-                  d={`
-                  M ${midX} ${midY}
-                  H ${labelX}
-                `}
-                  stroke="#A8A8A8"
-                  strokeWidth="0.2"
-                />
-                <text
-                  x={labelX}
-                  y={labelY}
-                  fill="#A8A8A8"
-                  style={{ fontSize: "2.6px" }}
-                  textAnchor={labelX > 18 ? "start" : "end"}
-                  alignmentBaseline={alignmentBaseline}
-                >
-                  {item.asset}
-                </text>
+                {isHovered && (
+                  <>
+                    <line
+                      x1={centerX}
+                      y1={centerY}
+                      x2={midX}
+                      y2={midY}
+                      stroke="#A8A8A8"
+                      strokeWidth="0.2"
+                    />
+                    <path
+                      d={`
+                        M ${midX} ${midY}
+                        H ${labelX}
+                      `}
+                      stroke="#A8A8A8"
+                      strokeWidth="0.2"
+                    />
+                    <text
+                      x={labelX}
+                      y={labelY}
+                      fill="#A8A8A8"
+                      style={{ fontSize: "2.6px" }}
+                      textAnchor={labelX > 18 ? "start" : "end"}
+                      alignmentBaseline={alignmentBaseline}
+                    >
+                      {item.coin_name}
+                    </text>
+                  </>
+                )}
               </g>
             );
           })}
@@ -208,4 +229,4 @@ const GraphOfConsolidatedPOrtfolio = ({ data }) => {
   );
 };
 
-export default GraphOfConsolidatedPOrtfolio;
+export default GraphOfConsolidatedPortfolio;

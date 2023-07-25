@@ -1,15 +1,13 @@
 import { Bar } from "react-chartjs-2";
 import { Chart } from "chart.js";
 import * as Chartjs from "chart.js";
+import { useMemo, useState, useEffect } from "react";
 
 const controllers = Object.values(Chartjs).filter(
   (chart) => chart.id !== undefined
 );
 
 Chart.register(...controllers);
-import { useMemo } from "react";
-import { useState } from "react";
-import { useEffect } from "react";
 
 const months = [
   "Jan",
@@ -27,18 +25,57 @@ const months = [
 ];
 
 const BarGraph = ({ balanceHistory }) => {
-  console.log(balanceHistory);
-  const maxVal = Math.max(...balanceHistory) + 2500;
-  const [width, setWidth] = useState(globalThis?.innerWidth);
+  const maxVal = Math.max(...balanceHistory);
+  const adjustedMax = Math.ceil((maxVal + 1) / 500) * 600;
+  const stepSize = adjustedMax / 10 < 250 ? 50 : adjustedMax / 5;
 
+  const [width, setWidth] = useState(globalThis?.innerWidth);
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
+
+  const lastNonZeroIndex = balanceHistory
+    .map((value, index) => (value !== 0 ? index : -1))
+    .reduce((maxIndex, curr, index) => (curr > -1 ? index : maxIndex), -1);
+
+  const labelsToShow = months.slice(0, lastNonZeroIndex + 1);
+
+  const countNonZeroElements = (array) => {
+    return array.filter((value) => value !== 0).length;
+  };
+
+  const nonZeroCount = countNonZeroElements(balanceHistory);
+
+  let barThickness;
+  if (nonZeroCount === 1) {
+    barThickness = 95;
+  } else if (nonZeroCount === 2) {
+    barThickness = 95;
+  } else if (nonZeroCount === 3) {
+    barThickness = 80;
+  } else if (nonZeroCount === 4) {
+    barThickness = 70;
+  } else if (nonZeroCount === 5) {
+    barThickness = 60;
+  } else if (nonZeroCount === 6) {
+    barThickness = 50;
+  } else if (nonZeroCount === 9) {
+    barThickness = 40;
+  } else if (nonZeroCount === 10) {
+    barThickness = 35;
+  } else if (nonZeroCount === 11) {
+    barThickness = 35;
+  } else if (nonZeroCount === 12) {
+    barThickness = 30;
+  } else {
+    barThickness = 40;
+  }
+
   const data = useMemo(
     () => ({
-      labels: months,
+      labels: labelsToShow,
       datasets: [
         {
           label: "$ of Earnings",
@@ -58,15 +95,8 @@ const BarGraph = ({ balanceHistory }) => {
             return gradient;
           },
           categoryPercentage: 0.9,
-          barPercentage: 0.45,
+          barThickness: barThickness,
           borderWidth: 0,
-        },
-        {
-          label: "Transparent Bars",
-          data: balanceHistory.map((val) => maxVal - val),
-          backgroundColor: "rgba(255,255,255,0.1)",
-          categoryPercentage: 0.9,
-          barPercentage: 0.45,
         },
       ],
     }),
@@ -80,11 +110,10 @@ const BarGraph = ({ balanceHistory }) => {
         beginAtZero: true,
         stacked: true,
         ticks: {
-          stepSize: 2500,
-          max: maxVal,
+          stepSize: stepSize,
+          max: adjustedMax,
           min: 0,
           callback: function(value) {
-            if (value === maxVal) return value + "$";
             return value + "$";
           },
           color: "#8C8C8C",
@@ -113,6 +142,7 @@ const BarGraph = ({ balanceHistory }) => {
         },
         border: {
           color: "#6A6A6A",
+          z: 1000,
         },
       },
     },
