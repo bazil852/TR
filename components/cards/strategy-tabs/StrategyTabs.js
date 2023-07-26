@@ -179,7 +179,7 @@ const StrategyTabsComponent = (props) => {
   ];
 
   const [ParametersData, setParametersData] = useState([
-    [{ 1: "", operation: "", 2: "", relation: "" }],
+    [{ 1: "", operation: "", 2: "", relation: "", middle: "" }],
   ]);
   const [pairsOptions, setPairsOptions] = useState([]);
   useEffect(() => {
@@ -304,7 +304,7 @@ const StrategyTabsComponent = (props) => {
     ]);
     setParametersData([
       ...ParametersData,
-      [{ 1: "", operation: "", 2: "", relation: "" }],
+      [{ 1: "", operation: "", 2: "", relation: "", middle: "" }],
     ]);
     setANDToggle([...ANDToggle, [true]]);
   };
@@ -320,6 +320,83 @@ const StrategyTabsComponent = (props) => {
     },
   ];
   const parametersOneOptions = [
+    {
+      value: "Price",
+      label: "Price",
+    },
+    {
+      value: "Indicator",
+      label: "Indicator",
+    },
+    {
+      value: "Oscillator",
+      label: "Oscillator",
+    },
+    {
+      value: "High Volume Candlestick",
+      label: "High Volume Candlestick",
+    },
+  ];
+
+  const parametersOneIndicatorOptions = [
+    {
+      value: "Simple Moving Average 20",
+      label: "Simple Moving Average 20",
+    },
+    {
+      value: "Simple Moving Average 50",
+      label: "Simple Moving Average 50",
+    },
+    {
+      value: "Exponential Moving Average 20",
+      label: "Exponential Moving Average 20",
+    },
+    {
+      value: "Exponential Moving Average 50",
+      label: "Exponential Moving Average 50",
+    },
+    {
+      value: "Keltner Channel Upper Band 50",
+      label: "Keltner Channel Upper Band 50",
+    },
+    {
+      value: "Keltner Channel Middle Band 50",
+      label: "Keltner Channel Middle Band 50",
+    },
+    {
+      value: "Keltner Channel Lower Band 50",
+      label: "Keltner Channel Lower Band 50",
+    },
+    {
+      value: "Tom Demark Buy 9",
+      label: "Tom Demark Buy 9",
+    },
+    {
+      value: "Tom Demark Sell 9",
+      label: "Tom Demark Sell 9",
+    },
+    {
+      value: "Tom Demark Buy 13",
+      label: "Tom Demark Buy 13",
+    },
+    {
+      value: "Tom Demark Sell 13",
+      label: "Tom Demark Sell 13",
+    },
+    {
+      value: "Bollinger Bands",
+      label: "Bollinger Bands",
+    },
+  ];
+
+  const parametersOneOscillatorOptions = [
+    {
+      value: "Relative Strength Index",
+      label: "Relative Strength Index",
+    },
+  ];
+
+  const parametersOneHighVolumeCandlestickOptions = [
     {
       value: "BullishGreenVol200Open",
       label: "Bullish Green (Vol > 200%) Open",
@@ -1245,6 +1322,104 @@ const StrategyTabsComponent = (props) => {
                                 keyName={"Parameter"}
                               />
                             </Box>
+
+                            {ParametersData[index][ParametersIndex][
+                              Object.keys(ParameterItem)[0]
+                            ] === "Indicator" && (
+                              <Box sx={{ marginBottom: 2 }}>
+                                <SelectInputParameters
+                                  value={
+                                    ParametersData[index][ParametersIndex]
+                                      .middle
+                                  }
+                                  onChange={(selectedOption) => {
+                                    const temp = [...ParametersData];
+                                    temp[index][ParametersIndex].middle =
+                                      selectedOption.value;
+                                    setParametersData(temp);
+                                  }}
+                                  options={parametersOneIndicatorOptions}
+                                  keyName={"middle"}
+                                  placeHolder={"Select"}
+                                  Width={"80%"}
+                                  margin={
+                                    width < 900 && width > 600
+                                      ? "35vw"
+                                      : width < 600 && width > 500
+                                      ? "33vw"
+                                      : width < 500
+                                      ? "28vw"
+                                      : 13.5
+                                  }
+                                />
+                              </Box>
+                            )}
+
+                            {ParametersData[index][ParametersIndex][
+                              Object.keys(ParameterItem)[0]
+                            ] === "Oscillator" && (
+                              <Box sx={{ marginBottom: 2 }}>
+                                <SelectInputParameters
+                                  value={
+                                    ParametersData[index][ParametersIndex]
+                                      .middle
+                                  }
+                                  onChange={(selectedOption) => {
+                                    const temp = [...ParametersData];
+                                    temp[index][ParametersIndex].middle =
+                                      selectedOption.value;
+                                    setParametersData(temp);
+                                  }}
+                                  options={parametersOneOscillatorOptions}
+                                  keyName={"middle"}
+                                  placeHolder={"Select"}
+                                  Width={"80%"}
+                                  margin={
+                                    width < 900 && width > 600
+                                      ? "35vw"
+                                      : width < 600 && width > 500
+                                      ? "33vw"
+                                      : width < 500
+                                      ? "28vw"
+                                      : 13.5
+                                  }
+                                />
+                              </Box>
+                            )}
+
+                            {ParametersData[index][ParametersIndex][
+                              Object.keys(ParameterItem)[0]
+                            ] === "High Volume Candlestick" && (
+                              <Box sx={{ marginBottom: 2 }}>
+                                <SelectInputParameters
+                                  value={
+                                    ParametersData[index][ParametersIndex]
+                                      .middle
+                                  }
+                                  onChange={(selectedOption) => {
+                                    const temp = [...ParametersData];
+                                    temp[index][ParametersIndex].middle =
+                                      selectedOption.value;
+                                    setParametersData(temp);
+                                  }}
+                                  options={
+                                    parametersOneHighVolumeCandlestickOptions
+                                  }
+                                  keyName={"middle"}
+                                  placeHolder={"Select"}
+                                  Width={"80%"}
+                                  margin={
+                                    width < 900 && width > 600
+                                      ? "35vw"
+                                      : width < 600 && width > 500
+                                      ? "33vw"
+                                      : width < 500
+                                      ? "28vw"
+                                      : 13.5
+                                  }
+                                />
+                              </Box>
+                            )}
 
                             <SelectInputParameters
                               value={
