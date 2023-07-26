@@ -72,10 +72,7 @@ const HorizontalStackedBarGraph = ({ chartData }) => {
   }, []);
 
   return (
-    <div
-      ref={chartRef}
-      style={{ marginBottom: "1rem", minWidth: "100%", minHeight:"220px" }}
-    ></div>
+    <div ref={chartRef} style={{ minWidth: "100%", minHeight: "220px" }}></div>
   );
 };
 

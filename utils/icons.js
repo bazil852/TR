@@ -21,10 +21,10 @@ import Lock from "../assets/icons/lock.svg";
 import Dash from "../assets/icons/dash.svg";
 
 import BlueDash from "../assets/icons/bluedash.svg";
-import BlueLock from "../assets/icons/bluelock.svg";
-import BlueHandShake from "../assets/icons/handhsakeblue.svg";
+import BlueLock from "../assets/icons/BlueLock.svg";
+import BlueHandShake from "../assets/icons/BlueHandShake.svg";
 import BlueHistory from "../assets/icons/historyblue.svg";
-import BlueTradingBotsIcon from "../assets/icons/tradingBotBlue.svg";
+import BlueTradingBotsIcon from "../assets/icons/BlueTradingBotsIcon.svg";
 
 import Sort from "../assets/icons/sortingArrow.svg";
 import YellowHandShake from "../assets/icons/yellowhandshake.svg";
@@ -72,7 +72,9 @@ import Clock from "../assets/icons/clock.svg";
 import SmokeWave from "../assets/icons/smoke.svg";
 import BtcIcon from "../assets/icons/btcIcon.svg";
 import EditIcon from "../assets/icons/editIcon.svg";
+import BlueVdcaBot from "../assets/icons/BlueVdcaBot.svg";
 export {
+  BlueVdcaBot,
   EditIcon,
   BtcIcon,
   SmokeWave,

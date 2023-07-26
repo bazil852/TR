@@ -28,7 +28,7 @@ const MainContainer = () => {
       Orders: 1,
       TotalValue: 1000,
       Value: 250,
-      Percentage: 18,
+      Percentage: 0,
       Dollars: 235,
     },
     {
@@ -41,7 +41,7 @@ const MainContainer = () => {
       Orders: 3,
       TotalValue: 1000,
       Value: 300,
-      Percentage: 18,
+      Percentage: 0,
       Dollars: 235,
     },
     {
@@ -54,7 +54,7 @@ const MainContainer = () => {
       Orders: 3,
       TotalValue: 1000,
       Value: 300,
-      Percentage: 18,
+      Percentage: 0,
       Dollars: 235,
     },
   ];
@@ -163,16 +163,20 @@ const MainContainer = () => {
                 alignItems:
                   width < 430
                     ? "center"
-                    : width < 880 && width > 600
+                    : width < 880 && width > 599
+                    ? "center"
+                    : width > 1199 && width < 1440 && isDrawerOpen
                     ? "center"
                     : "",
                 flexDirection:
                   width < 430
                     ? "column"
-                    : width < 880 && width > 600
+                    : width < 880 && width > 599
+                    ? "column"
+                    : width > 1199 && width < 1440 && isDrawerOpen
                     ? "column"
                     : "",
-                mt: 1,
+                mt: 2,
               }}
             >
               <Box
@@ -184,12 +188,14 @@ const MainContainer = () => {
                       ? ""
                       : width > 999 && width < 1051 && isDrawerOpen
                       ? 0
-                      : width < 880 && width > 600
+                      : width < 880 && width > 599
                       ? 0
                       : width < 600 && width > 500
                       ? 10
                       : width > 1080 && width < 1200 && !isDrawerOpen
                       ? 10
+                      : width > 1199 && width < 1440 && isDrawerOpen
+                      ? 0
                       : 5,
                 }}
               >
@@ -204,15 +210,30 @@ const MainContainer = () => {
                   flexDirection:
                     width < 430
                       ? ""
-                      : width < 880 && width > 600
+                      : width < 880 && width > 599
+                      ? ""
+                      : width > 1199 && width < 1440 && isDrawerOpen
                       ? ""
                       : "column",
                   alignItems: "center",
                   gap: 2,
                   mt: 1,
                   ml:
-                    width < 430 ? "" : width < 880 && width > 600 ? "" : "auto",
-                  pl: width < 430 ? 2 : width < 880 && width > 600 ? 2 : "",
+                    width < 430
+                      ? ""
+                      : width < 880 && width > 599
+                      ? ""
+                      : width > 1199 && width < 1440 && isDrawerOpen
+                      ? ""
+                      : "auto",
+                  pl:
+                    width < 430
+                      ? 2
+                      : width < 880 && width > 599
+                      ? 2
+                      : width > 1199 && width < 1440 && isDrawerOpen
+                      ? 2
+                      : "",
                 }}
               >
                 <Box
@@ -247,7 +268,6 @@ const MainContainer = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                flexWrap: "wrap",
                 mt: 2,
                 flexDirection:
                   width < 475
@@ -267,7 +287,18 @@ const MainContainer = () => {
                   color: "#FFFFFF",
                   fontSize: 14,
                   border: "1.5px solid #343131",
-                  height: 30,
+                  height:
+                    isDrawerOpen && width > 999 && width < 1200
+                      ? 36
+                      : width > 1199 && !isDrawerOpen && width < 1500
+                      ? 40
+                      : width > 1199 && isDrawerOpen && width < 1500
+                      ? 60
+                      : width > 1499
+                      ? 40
+                      : width > 754 && width < 943
+                      ? 38
+                      : 30,
                   minWidth:
                     width < 475 ? 200 : width > 599 && width < 755 ? 200 : 75,
                   borderBottomLeftRadius:
@@ -276,9 +307,20 @@ const MainContainer = () => {
                     width < 475 ? 0 : width > 599 && width < 755 ? 0 : 8,
                   borderTopRightRadius: 0,
                   borderBottomRightRadius: 0,
+                  lineHeight: 1.2,
                 }}
               >
-                <RefreshIcon sx={{ fontSize: 18, mr: 0.5 }} />
+                <RefreshIcon
+                  sx={{
+                    fontSize: 18,
+                    mr:
+                      isDrawerOpen && width > 999 && width < 1200
+                        ? 0
+                        : width > 754 && width < 943
+                        ? 0.1
+                        : 0.5,
+                  }}
+                />
                 Cancel Deal
               </Button>
               <Button
@@ -290,13 +332,41 @@ const MainContainer = () => {
                   color: "#FFFFFF",
                   fontSize: 14,
                   border: "1.5px solid #343131",
-                  height: 30,
+                  height:
+                    isDrawerOpen && width > 999 && width < 1200
+                      ? 36
+                      : width > 1199 && !isDrawerOpen && width < 1500
+                      ? 40
+                      : width > 1199 && isDrawerOpen && width < 1500
+                      ? 60
+                      : width > 1499
+                      ? 40
+                      : width > 754 && width < 943
+                      ? 38
+                      : 30,
                   minWidth:
-                    width < 475 ? 200 : width > 599 && width < 755 ? 200 : 75,
+                    width < 475
+                      ? 200
+                      : width > 599 && width < 755
+                      ? 200
+                      : width > 1199
+                      ? 80
+                      : 75,
                   borderRadius: 0,
                 }}
               >
-                <RefreshIcon sx={{ fontSize: 18, mr: 0.5 }} /> Refresh
+                <RefreshIcon
+                  sx={{
+                    fontSize: 18,
+                    mr:
+                      isDrawerOpen && width > 999 && width < 1200
+                        ? 0
+                        : width > 754 && width < 943
+                        ? 0.1
+                        : 0.5,
+                  }}
+                />{" "}
+                Refresh
               </Button>
               <Button
                 sx={{
@@ -307,13 +377,35 @@ const MainContainer = () => {
                   color: "#FFFFFF",
                   fontSize: 14,
                   border: "1.5px solid #343131",
-                  height: 30,
+                  height:
+                    isDrawerOpen && width > 999 && width < 1200
+                      ? 36
+                      : width > 1199 && !isDrawerOpen && width < 1500
+                      ? 40
+                      : width > 1199 && isDrawerOpen && width < 1500
+                      ? 60
+                      : width > 1499
+                      ? 40
+                      : width > 754 && width < 943
+                      ? 38
+                      : 30,
                   minWidth:
-                    width < 475 ? 200 : width > 599 && width < 755 ? 200 : 75,
+                    width < 475
+                      ? 200
+                      : width > 599 && width < 755
+                      ? 200
+                      : width > 1199 && isDrawerOpen && width < 1500
+                      ? 60
+                      : 75,
                   borderRadius: 0,
                 }}
               >
-                <Box sx={{ pr: 0.5, pt: 1 }}>
+                <Box
+                  sx={{
+                    pr: 0.5,
+                    pt: 1,
+                  }}
+                >
                   <EditIcon />
                 </Box>
                 Edit
@@ -327,7 +419,18 @@ const MainContainer = () => {
                   color: "#FFFFFF",
                   fontSize: 14,
                   border: "1.5px solid #343131",
-                  height: 30,
+                  height:
+                    isDrawerOpen && width > 999 && width < 1200
+                      ? 36
+                      : width > 1199 && !isDrawerOpen && width < 1500
+                      ? 40
+                      : width > 1199 && isDrawerOpen && width < 1500
+                      ? 60
+                      : width > 1499
+                      ? 40
+                      : width > 754 && width < 943
+                      ? 38
+                      : 30,
                   minWidth:
                     width < 475 ? 200 : width > 599 && width < 755 ? 200 : 75,
                   borderBottomLeftRadius: 0,
@@ -336,9 +439,23 @@ const MainContainer = () => {
                     width < 475 ? 0 : width > 599 && width < 755 ? 0 : 8,
                   borderBottomRightRadius:
                     width < 475 ? 0 : width > 599 && width < 755 ? 0 : 8,
+                  lineHeight: 1.2,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                <RefreshIcon sx={{ fontSize: 18, mr: 0.5 }} />
+                <RefreshIcon
+                  sx={{
+                    fontSize: 18,
+                    mr:
+                      isDrawerOpen && width > 999 && width < 1200
+                        ? 0
+                        : width > 754 && width < 943
+                        ? 0.1
+                        : 0.5,
+                  }}
+                />
                 Close at Market
               </Button>
             </Box>

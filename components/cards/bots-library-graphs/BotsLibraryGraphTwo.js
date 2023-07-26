@@ -8,7 +8,7 @@ const BotsLibraryGraphTwo = () => {
   const [width, setWidth] = useState(globalThis?.innerWidth);
   const [valueType, setValueType] = useState("$");
 
-  const dataArray = [12331, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000];
+  const dataArray = [12331, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   const handleButtonClick = (button) => {
     setActiveButton(button);

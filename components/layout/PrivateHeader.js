@@ -30,7 +30,12 @@ import {
   VgridBot,
   VdcaBot,
   Lock,
+  BlueLock,
+  BlueVdcaBot,
   TradingBotsIcon,
+  BlueVgridBot,
+  BlueHandShake,
+  BlueTradingBotsIcon,
 } from "../../utils/icons";
 import NavBar from "../navbar/NavBar";
 import { signOut } from "next-auth/react";
@@ -85,8 +90,8 @@ export default function PrivateHeader({ title, current, Component }) {
   const [open, setOpen] = React.useState(false);
   const [toggle, setToggle] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState();
-  const [realAccountBalance, setRealAccountBalance] = React.useState(1250);
-  const [paperTradingBalance, setPaperTradingBalance] = React.useState(1250);
+  const [realAccountBalance, setRealAccountBalance] = React.useState(0);
+  const [paperTradingBalance, setPaperTradingBalance] = React.useState(0);
   const router = useRouter();
   const [windowWidth, setWindowWidth] = React.useState(globalThis?.innerWidth);
   React.useEffect(() => {
@@ -105,8 +110,8 @@ export default function PrivateHeader({ title, current, Component }) {
 
   const getListItemStyle = (index) => {
     return {
-      color: selectedItem === index ? "#9079F6" : "white",
-      width: index === 1 ? "80%" : "100%",
+      color: selectedItem === index ? "#5156BE" : "white",
+      width: index === 1 ? "82%" : index === 2 ? "82%" : "100%",
       pl: 1,
       minHeight: 45,
       cursor: "pointer",
@@ -126,8 +131,9 @@ export default function PrivateHeader({ title, current, Component }) {
       "&:hover": {
         backgroundColor: !open ? "none" : "rgba(255,255,255,0.1)",
         borderRadius: "0px",
-        borderTopRightRadius: index === 1 ? "10px" : "",
-        borderBottomRightRadius: index === 1 ? "10px" : "",
+        borderTopRightRadius: index === 1 ? "10px" : index === 2 ? "10px" : "",
+        borderBottomRightRadius:
+          index === 1 ? "10px" : index === 2 ? "10px" : "",
       },
     };
   };
@@ -141,33 +147,33 @@ export default function PrivateHeader({ title, current, Component }) {
     },
     {
       index: 1,
-      title: "Strategy Library",
-      icon: selectedItem === 1 ? Lock : Lock,
+      title: "Strategies Library",
+      icon: selectedItem === 1 ? BlueLock : Lock,
       path: "/StrategyLibrary",
     },
 
     {
       index: 2,
-      title: "VDCA",
-      icon: selectedItem === 2 ? VdcaBot : VdcaBot,
+      title: "Bots Library",
+      icon: selectedItem === 2 ? BlueVdcaBot : VdcaBot,
       path: "/BotsLibrary",
     },
     {
       index: 3,
-      title: "Deals",
-      icon: selectedItem === 3 ? VgridBot : VgridBot,
+      title: "Deals Library",
+      icon: selectedItem === 3 ? BlueVgridBot : VgridBot,
       path: "/bot-config",
     },
     {
       index: 4,
       title: "Exchanges API",
-      icon: selectedItem === 5 ? HandShake : HandShake,
+      icon: selectedItem === 4 ? BlueHandShake : HandShake,
       path: "/my-exchanges",
     },
     {
       index: 5,
       title: "Account",
-      icon: selectedItem === 4 ? TradingBotsIcon : TradingBotsIcon,
+      icon: selectedItem === 5 ? BlueTradingBotsIcon : TradingBotsIcon,
       path: "/TradesLibrary",
     },
   ];
@@ -304,7 +310,7 @@ export default function PrivateHeader({ title, current, Component }) {
         >
           {items.map((item) => (
             <div key={item.index}>
-              {item.title === "Strategy Library" ? (
+              {item.title === "Strategies Library" ? (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <ListItem
                     sx={getListItemStyle(item.index)}
@@ -348,7 +354,62 @@ export default function PrivateHeader({ title, current, Component }) {
                     <Typography
                       sx={{
                         fontFamily: "Barlow, san-serif",
-                        fontSize: 20,
+                        fontSize: 22,
+                        fontWeight: 600,
+                        mt: -0.5,
+                        color: "#FFFFFF",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      +
+                    </Typography>
+                  </Box>
+                </Box>
+              ) : item.title === "Bots Library" ? (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <ListItem
+                    sx={getListItemStyle(item.index)}
+                    onClick={() => handleClick(item)}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        display: "flex",
+                        justifyContent: open ? "center" : "center",
+                        alignItems: "center",
+                        pr: !open ? 3 : "",
+                      }}
+                    >
+                      <item.icon />
+                    </ListItemIcon>
+                    <Typography
+                      sx={{
+                        display: open ? "flex" : "none",
+                        fontFamily: "Barlow, san-serif",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {item.title}
+                    </Typography>
+                  </ListItem>
+                  <Box
+                    sx={{
+                      background: "linear-gradient(to right,#790D83,#7A5CFF)",
+                      display: open ? "flex" : "none",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: 1,
+                      cursor: "pointer",
+                      height: 20,
+                      width: 20,
+                    }}
+                    onClick={() => {
+                      router.push("Startegy");
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontFamily: "Barlow, san-serif",
+                        fontSize: 22,
                         fontWeight: 600,
                         mt: -0.5,
                         color: "#FFFFFF",
@@ -460,14 +521,8 @@ export default function PrivateHeader({ title, current, Component }) {
                 background: "linear-gradient(to right,#790D83,#7A5CFF)",
                 textTransform: "none",
                 border: "none",
-                transition: "transform 0.2s",
                 borderRadius: "5px",
                 padding: "8px 15px",
-                "&:hover": {
-                  transform: "scale(0.95)",
-                  backgroundColor: "linear-gradient(to right,#790D83,#7A5CFF)",
-                  cursor: "pointer",
-                },
               }}
             >
               <Typography

@@ -1,15 +1,25 @@
 import { Grid, Box, Typography, Button } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MeterChart from "./MeterChart";
 import BarGraph from "./BarGraph";
+import { useSelector } from "react-redux";
 
 const Header = () => {
   const [totalProfit, setTotalProfit] = useState(1530);
   const [todayProfit, setTodayProfit] = useState(35);
   const [totalTrades, setTotalTrades] = useState(350);
   const [activeTrades, setActiveTrades] = useState(5);
-  const [meterValue, setMeterValue] = useState(25);
+  const [meterValue, setMeterValue] = useState(0);
   const [meterAmount, setMeterAmount] = useState(235);
+  const [width, setWidth] = useState(globalThis?.innerWidth);
+
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
 
   const chartData = {
     series: [
@@ -32,7 +42,7 @@ const Header = () => {
 
   return (
     <Grid container sx={{ mt: 1 }} spacing={1}>
-      <Grid item xs={2}>
+      <Grid item xs={12} sm={6} md={isDrawerOpen ? 5 : 2} lg={2}>
         <Box
           sx={{
             display: "flex",
@@ -47,6 +57,7 @@ const Header = () => {
               borderRadius: 2,
               p: 1,
               minWidth: "100%",
+              minHeight: 132,
             }}
           >
             <Typography
@@ -96,6 +107,7 @@ const Header = () => {
               borderRadius: 2,
               p: 1,
               minWidth: "100%",
+              minHeight: 132,
             }}
           >
             <Typography
@@ -142,7 +154,7 @@ const Header = () => {
         </Box>
       </Grid>
 
-      <Grid item xs={3}>
+      <Grid item xs={12} sm={6} md={isDrawerOpen ? 7 : 3} lg={3}>
         <Box
           sx={{
             background: "#131313",
@@ -150,8 +162,12 @@ const Header = () => {
             p: 1,
             display: "flex",
             flexDirection: "column",
+            height: 273,
             minWidth: "100%",
-            height: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 1,
+            position: "relative",
           }}
         >
           <Box
@@ -160,6 +176,9 @@ const Header = () => {
               justifyContent: "flex-start",
               alignItems: "center",
               gap: 1,
+              position: "absolute",
+              left: 6,
+              top: 8,
             }}
           >
             <Typography
@@ -189,10 +208,9 @@ const Header = () => {
           </Box>
           <Box
             sx={{
-              display: "grid",
-              alignSelf: "center",
-              mt: 2,
-              ml: 2.8,
+              width: 200,
+              height: 250,
+              mt: 7,
             }}
           >
             <MeterChart Percentage={meterValue} Dollars={meterAmount} />
@@ -200,13 +218,13 @@ const Header = () => {
         </Box>
       </Grid>
 
-      <Grid item xs={7}>
+      <Grid item xs={12} sm={12} md={isDrawerOpen ? 12 : 7} lg={7}>
         <Box
           sx={{
             background: "#131313",
             borderRadius: 2,
             display: "flex",
-            height: "100%",
+            height: width < 900 ? 415 : 273,
             minWidth: "100%",
             pb: 2,
           }}
@@ -256,14 +274,21 @@ const Header = () => {
             </Box>
 
             <Grid container>
-              <Grid item md={8}>
+              <Grid item xs={12} sm={12} md={8}>
                 <BarGraph chartData={chartData} />
               </Grid>
-              <Grid item md={4}>
-                <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Grid item xs={12} sm={12} md={4}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: width < 900 ? "center" : "",
+                    alignItems: width < 900 ? "center" : "",
+                  }}
+                >
                   <Box sx={{ display: "flex" }}>
-                    <Box sx={{ width: 50 }}></Box>
-                    <Box sx={{ width: 120 }}>
+                    <Box sx={{ width: width < 400 ? 30 : 50 }}></Box>
+                    <Box sx={{ width: width < 400 ? 90 : 120 }}>
                       <Typography
                         sx={{
                           fontFamily: "Barlow, san-serif",
@@ -276,7 +301,7 @@ const Header = () => {
                         Reserved
                       </Typography>
                     </Box>
-                    <Box sx={{ width: 120 }}>
+                    <Box sx={{ width: width < 400 ? 90 : 120 }}>
                       <Typography
                         sx={{
                           fontFamily: "Barlow, san-serif",
@@ -293,7 +318,7 @@ const Header = () => {
                   {dataArray.map((item, index) => {
                     return (
                       <Box sx={{ display: "flex", mt: 3 }} key={index}>
-                        <Box sx={{ width: 50 }}>
+                        <Box sx={{ width: width < 400 ? 30 : 50 }}>
                           <Typography
                             sx={{
                               fontFamily: "Barlow, san-serif",
@@ -306,7 +331,7 @@ const Header = () => {
                             {item.coin}
                           </Typography>
                         </Box>
-                        <Box sx={{ width: 120 }}>
+                        <Box sx={{ width: width < 400 ? 90 : 120 }}>
                           <Typography
                             sx={{
                               fontFamily: "Barlow, san-serif",
@@ -319,7 +344,7 @@ const Header = () => {
                             {item.reserved}
                           </Typography>
                         </Box>
-                        <Box sx={{ width: 120 }}>
+                        <Box sx={{ width: width < 400 ? 90 : 120 }}>
                           <Typography
                             sx={{
                               fontFamily: "Barlow, san-serif",

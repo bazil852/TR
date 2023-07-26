@@ -9,11 +9,11 @@ const BotsLibraryGraphOne = () => {
 
   const progressData = [
     { title: "Bitcoin Bot 1 hour", value: 2435 },
-    { title: "ATOM Bot", value: 1325 },
-    { title: "TRON Bot", value: 735 },
-    { title: "Solana Bot", value: 580 },
-    { title: "AVAX Bot", value: 428 },
-    { title: "Stellar Bot", value: 208 },
+    // { title: "ATOM Bot", value: 1325 },
+    // { title: "TRON Bot", value: 735 },
+    // { title: "Solana Bot", value: 580 },
+    // { title: "AVAX Bot", value: 428 },
+    // { title: "Stellar Bot", value: 208 },
   ];
 
   const handleTypeClick = (button) => {
