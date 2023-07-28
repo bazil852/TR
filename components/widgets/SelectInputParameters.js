@@ -10,7 +10,7 @@ const SelectInputParameters = (props) => {
       width: props.Width,
       marginLeft: props.keyName === "Operator" && "auto",
       minHeight: "30px",
-      height: "30px",
+      // height: "30px",
       borderRadius: "6px",
     }),
     container: (provided) => ({
@@ -45,7 +45,7 @@ const SelectInputParameters = (props) => {
     }),
     valueContainer: (provided, state) => ({
       ...provided,
-      height: "30px",
+      minHeight: "30px",
       padding: "2px 4px",
     }),
     singleValue: (provided) => ({
@@ -54,15 +54,13 @@ const SelectInputParameters = (props) => {
       fontFamily: "Barlow, san-serif",
       fontWeight: 500,
       color: "#FFFFFF",
-      overflow: "hidden",
-      textWrap: "nowrap",
+      whiteSpace: "normal",
     }),
     placeholder: (provided) => ({
       ...provided,
       fontSize: "15px",
       fontFamily: "Barlow, san-serif",
       color: "#ACB2B7",
-      whiteSpace: "nowrap",
       overflow: "hidden",
       textWrap: "nowrap",
       textOverflow: "ellipsis",
