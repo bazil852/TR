@@ -7,9 +7,9 @@ export default async function handler(req, res) {
   const { method } = req;
 
   const options = {
-    accessKeyId: "AKIA3S7AXVMSOWNWWKHM",
-    secretAccessKey: "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",
-    region: "us-east-1",
+    accessKeyId: "AKIA6Q4YWN4JX6XKJE4T",
+    secretAccessKey: "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",
+    region: "eu-north-1",
   };
 
   const SES = new AWS.SES(options);
@@ -37,9 +37,7 @@ export default async function handler(req, res) {
             .json({ status: 404, message: "Invalid Code! Try Again." });
         }
       } catch (error) {
-        res
-            .status(500)
-            .json({ status: 500, message: error });
+        res.status(500).json({ status: 500, message: error });
       }
       break;
     default:

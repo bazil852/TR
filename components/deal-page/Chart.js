@@ -1,82 +1,122 @@
-import React from "react";
-import dynamic from "next/dynamic";
-import { Box, Typography } from "@mui/material";
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
-class CandlestickChart extends React.Component {
-  constructor(props) {
-    super(props);
+import React, { useEffect, useState, useRef } from 'react';
+import { createChart, CrosshairMode } from 'lightweight-charts';
+import { Box } from '@mui/material';
 
-    this.state = {
-      options: {
-        chart: {
-          type: "candlestick",
-          height: 350,
-          toolbar: {
-            show: false,
-          },
-        },
-        xaxis: {
-          type: "datetime",
-          show: false,
-        },
-        yaxis: {
-          show: false,
-        },
-        grid: {
-          show: false,
-        },
-        tooltip: {
-          enabled: false,
-        },
-        plotOptions: {
-          candlestick: {
-            wick: {
-              useFillColor: true,
+
+function CandlestickChart({ data }) {
+  const chartContainerRef = useRef();
+  const [chart, setChart] = useState(null);
+  const [candleSeries, setCandleSeries] = useState(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  
+
+  const formatCandles = (candles) => {
+      if (!candles) {
+          return [];
+      }
+      return candles?.map((item) => ({
+          time: item[0] / 1000,
+          open: item[1],
+          high: item[2],
+          low: item[3],
+          close: item[4]
+      }));
+  }
+
+  const formatOrders = (orders, color, shape, text) => {
+    return orders?.map((order) => ({
+      time: order.timestamp / 1000,
+      position: 'aboveBar',
+      color,
+      shape,
+      text,
+    }));
+  };
+
+  useEffect(() => {
+    console.log("Trying to Render new chart ")
+      const newChart = createChart(chartContainerRef.current, { 
+        width: isFullScreen ? window.innerWidth : 700, 
+        height: isFullScreen ? window.innerHeight : 500,
+          layout: {
+              background: {
+                type: 'solid',
+                color: 'transparent',
             },
+              textColor: 'rgba(255, 255, 255, 0.9)',
           },
-        },
-      },
-      series: [
-        {
-          data: [
-            { x: new Date("2022-01-01"), y: [10.0, 12.0, 9.5, 11.5] },
-            { x: new Date("2022-01-02"), y: [11.5, 13.0, 11.0, 12.0] },
-            { x: new Date("2022-01-03"), y: [12.0, 12.5, 10.5, 11.0] },
-            { x: new Date("2022-01-04"), y: [11.0, 11.5, 9.5, 10.5] },
-            { x: new Date("2022-01-05"), y: [10.5, 11.5, 10.0, 11.0] },
-            { x: new Date("2022-01-06"), y: [11.0, 12.0, 10.5, 11.5] },
-            { x: new Date("2022-01-07"), y: [11.5, 13.0, 10.5, 12.5] },
-            { x: new Date("2022-01-08"), y: [12.5, 14.0, 12.0, 13.5] },
-            { x: new Date("2022-01-09"), y: [13.5, 15.0, 12.5, 14.5] },
-            { x: new Date("2022-01-10"), y: [14.5, 16.0, 13.5, 15.5] },
-            { x: new Date("2022-01-11"), y: [15.5, 17.0, 14.5, 16.5] },
-            { x: new Date("2022-01-12"), y: [16.5, 18.0, 15.5, 17.5] },
-            { x: new Date("2022-01-13"), y: [17.5, 19.0, 16.5, 18.5] },
-            { x: new Date("2022-01-14"), y: [18.5, 20.0, 17.5, 19.5] },
-            { x: new Date("2022-01-15"), y: [19.5, 21.0, 18.5, 20.5] },
-            { x: new Date("2022-01-16"), y: [20.5, 22.0, 19.5, 21.5] },
-            { x: new Date("2022-01-17"), y: [21.5, 23.0, 20.5, 22.5] },
-            { x: new Date("2022-01-18"), y: [22.5, 24.0, 21.5, 23.5] },
-            { x: new Date("2022-01-19"), y: [23.5, 25.0, 22.5, 24.5] },
-            { x: new Date("2022-01-20"), y: [24.5, 26.0, 23.5, 25.5] },
-          ],
-        },
-      ],
-    };
-  }
+          grid: {
+              vertLines: {
+                  color: 'rgba(197, 203, 206, 0.5)',
+              },
+              horzLines: {
+                  color: 'rgba(197, 203, 206, 0.5)',
+              },
+          },
+          crosshair: {
+              mode: CrosshairMode.Normal,
+          },
+          priceScale: {
+              borderColor: 'rgba(197, 203, 206, 0.8)',
+          },
+          timeScale: {
+              borderColor: 'rgba(197, 203, 206, 0.8)',
+          },
+      });
+      const newCandleSeries = newChart.addCandlestickSeries();
+      setChart(newChart);
+      setCandleSeries(newCandleSeries);
+      return () => {
+        // When 'isFullScreen' changes, this cleanup function will run
+        // We check if we are exiting fullscreen mode, and if so, resize the chart
+        if (!isFullScreen && chart) {
+          chart.resize(700, 500);
+        }
+      };
+  },[isFullScreen]);
 
-  render() {
-    return (
-      <Box>
-        <Chart
-          options={this.state.options}
-          series={this.state.series}
-          type="candlestick"
-          height={350}
-        />
+  useEffect(() => {
+      if (chart && candleSeries) {
+          const candleData = formatCandles(data?.candles);
+          const buyOrders = formatOrders(
+            data?.buy_orders,
+            '#00E396',
+            'arrowDown',
+            'Buy'
+          );
+          const sellOrders = formatOrders(
+            data?.sell_orders,
+            '#FF0000',
+            'arrowUp',
+            'Sell'
+          );
+
+          if (candleData && candleData.length > 0) {
+              candleSeries.setData(candleData);
+              candleSeries.setMarkers([...buyOrders, ...sellOrders].sort((a, b) => a.time - b.time));
+          }
+      }
+  }, [data, chart, candleSeries]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (isFullScreen && chart) {
+        chart.resize(window.innerWidth, window.innerHeight);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isFullScreen, chart]);
+
+  return (
+      <Box >
+        <button onClick={() => setIsFullScreen(!isFullScreen)}>{isFullScreen ? "Exit Fullscreen" : "Go Fullscreen"}</button>
+          <div ref={chartContainerRef} style={{ backgroundColor: 'transparent' }}/>
       </Box>
-    );
-  }
+  );
 }
 
+
 export default CandlestickChart;
+
+

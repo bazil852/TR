@@ -11,8 +11,9 @@ const DealsProfit = () => {
         pt: 3,
         minHeight: "300px",
         boxShadow: "none",
-        background:
-          "linear-gradient(180deg, rgba(121, 13, 131, 0.125) 0%, rgba(41, 8, 77, 0.5) 100%)",
+        // background:
+        //   "linear-gradient(180deg, rgba(121, 13, 131, 0.125) 0%, rgba(41, 8, 77, 0.5) 100%)",
+        background: "#790d832d",
       }}
     >
       <Box sx={{ pl: 2 }}>
@@ -20,7 +21,7 @@ const DealsProfit = () => {
           sx={{
             display: "flex",
             justifyContent: "flex-start",
-            fontWeight: "600",
+            fontWeight: "500",
             fontSize: "18px",
             py: 0.5,
           }}

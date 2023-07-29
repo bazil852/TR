@@ -7,9 +7,9 @@ import * as AWS from "aws-sdk";
 import * as bcrypt from "bcrypt";
 
 const options = {
-  accessKeyId: "AKIA3S7AXVMSOWNWWKHM",
-  secretAccessKey: "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",
-  region: "us-east-1",
+  accessKeyId: "AKIA6Q4YWN4JX6XKJE4T",
+  secretAccessKey: "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",
+  region: "eu-north-1",
 };
 
 const SES = new AWS.SES(options);
@@ -19,46 +19,30 @@ export default NextAuth({
     CredentialsProvider({
       name: "Credentials",
       async authorize(credentials, req) {
-        // Add logic here to look up the user from the credentials supplied
-
-        await connectMongo();
-        const findUserByEmail = await Users.findOne({ email: req.body.email });
-
-        if (findUserByEmail) {
-          const match = await bcrypt.compare(
-            req.body.password,
-            findUserByEmail.password
-          );
-          if (match) {
-            // const params = {
-            //   Source: "bazilsb7@gmail.com",
-            //   Destination: {
-            //     ToAddresses: [`${req.body.email}`],
-            //   },
-            //   ReplyToAddresses: [],
-            //   Message: {
-            //     Body: {
-            //       Html: {
-            //         Charset: "UTF-8",
-            //         Data: `Hello Sir, this is your Two Factor Verification code: 1234`,
-            //       },
-            //     },
-            //     Subject: {
-            //       Charset: "UTF-8",
-            //       Data: `Two Factor Auth`,
-            //     },
-            //   },
-            // };
-            // await SES.sendEmail(params).promise();
-
-            return findUserByEmail;
-            // res.status(200).json({status: 200, body: findUserByEmail});
-          } else {
-            throw new Error("Invaild Credentials");
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}users/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: req.body.email,
+              password: req.body.password,
+            }),
           }
+        );
+
+        console.log("nextauth", response);
+        if (response.ok) {
+          const responseData = await response.json();
+          console.log("nextauth", responseData);
+
+          return responseData;
         } else {
           throw new Error("Invaild Credentials");
         }
+        // Add logic here to look up the user from the credentials supplied
       },
     }),
   ],

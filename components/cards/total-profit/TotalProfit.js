@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -7,18 +7,22 @@ import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import { TotalProfitYellow } from "../../../utils/icons";
-import { useSelector } from "react-redux";
 
-const TotalProfit = () => {
-  const widthAbove1600 = useSelector((state) => state.dashboardWidth.value);
+const TotalProfit = (props) => {
+  const [width, setWidth] = useState(globalThis?.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
   return (
     <Card
       sx={{
         minWidth: 400,
         background: "#2D1537",
         borderRadius: "8px",
-        minHeight: widthAbove1600<1600? 340 : 357,
-        maxHeight: widthAbove1600 < 1600 ? "auto" : 357,
+        minHeight: 165,
+        maxHeight: width < 1600 ? "auto" : 357,
       }}
     >
       <CardContent>
@@ -33,13 +37,13 @@ const TotalProfit = () => {
             <TotalProfitYellow />
           </div>
           <Stack spacing={1}>
-            <Typography>Total Profit</Typography>
-            <Typography fontSize="24px" color="#4BD569">
-              +22 263.08 $
+            <Typography fontWeight={500}>Total Profit</Typography>
+            <Typography fontSize="24px" color="#4BD569" fontWeight={600}>
+              {props.profit} $
             </Typography>
           </Stack>
         </Stack>
-        <Grid
+        {/* <Grid
           mt={2}
           container
           rowSpacing={1}
@@ -87,7 +91,7 @@ const TotalProfit = () => {
               <Typography color="#4BD569">00.27 $</Typography>
             </Stack>
           </Grid>
-        </Grid>
+        </Grid> */}
       </CardContent>
     </Card>
   );

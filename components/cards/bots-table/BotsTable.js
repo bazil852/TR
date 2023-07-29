@@ -5,7 +5,7 @@ import Switch, { SwitchProps } from "@mui/material/Switch";
 import Card from "@mui/material/Card";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import { Box } from "@mui/material";
+import { Box, CardContent, Checkbox } from "@mui/material";
 import SearchBar from "../../widgets/SearchBar";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
@@ -22,7 +22,22 @@ import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { Edit, Sort } from "../../../utils/icons";
+import {
+  Edit,
+  Sort,
+  DCAProfit,
+  DCABitcoin,
+  DCAEthereum,
+  DCALtc,
+  DCAStar,
+  DCADeal,
+} from "../../../utils/icons";
+import Modal from "@mui/material/Modal";
+import { getSession } from "next-auth/react";
+import { CircularProgress } from "@mui/material";
+import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+
 const useStyles = makeStyles(() => ({
   input: {
     // width: "685px",
@@ -297,50 +312,7 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 //   },
 // ];
 
-const rows = [
-  // {
-  //   id: 1,
-  //   botName: "BTC Short bot Green Vector 15 Min",
-  //   exchange: "Binance",
-  //   strategyPair: "BTC/BUSD",
-  //   activeDeal: "Yes",
-  //   status: true,
-  //   strategyType: "short",
-  //   // description: "TP: 3.0% BO: 1.%, So: 0.25 %, OS: 1, 02, SOS: 0.25, MSTC: 1,",
-  //   botType: "Trading View Custom Signal",
-  // },
-  {
-    id: "640181ea8d59365339492f1b",
-    botName: "bot 2.0",
-    exchange: "OKX",
-    botType: "Multiple Pair",
-    strategyType: "Short",
-    strategyPair: "BTC",
-    orderSize: "100",
-    availablePercentage: "89",
-    safetyOrderSize: 12,
-    candleSizeAndVol: "88",
-    orderType: "Limit",
-    profitCurrency: "ETH",
-    indicator: "Vector Candle",
-    indicatorValues: {
-      redAction: "buy",
-      purpleAction: "buy",
-      blueAction: "sell",
-      greenAction: "none",
-      minimumTp: "22",
-    },
-    buyOnCondition: "12",
-    avgPrice: "Below",
-    avgPricePercent: 66,
-    ignoreCondition: "22",
-    maxOrders: "12",
-    maxVol: "200",
-    stopLoss: "Fixed",
-    takeProfit: "Trailing TP",
-    takeProfitPercent: 66,
-  },
-];
+const rows = [];
 
 function a11yProps(index) {
   return {
@@ -350,11 +322,37 @@ function a11yProps(index) {
 }
 
 const BotsTable = () => {
+  const router = useRouter();
+
   const [value, setValue] = React.useState(0);
   const [tableRow, setTableRow] = React.useState([]);
   const [searchByBotsName, setSearchByBotsName] = React.useState("");
   const [width, setWidth] = React.useState(globalThis?.innerWidth);
+  const [coinProfitValue, setCoinProfitValue] = React.useState(0);
+  const [numberOfDeals, setNumberOfDeals] = React.useState(9);
 
+  const [selectedRow, setSelectedRow] = React.useState([]);
+  const [showModal, setShowModal] = React.useState(false);
+  const [logs, setLogs] = React.useState("");
+
+  const [loading, setLoading] = React.useState(true);
+
+  const [exchangeArr, setExchangeArr] = React.useState([]);
+  const [btcchecked, setBtcChecked] = React.useState(false);
+  const [ethchecked, setEthChecked] = React.useState(false);
+  const [ltcchecked, setLtcChecked] = React.useState(false);
+  console.log(tableRow);
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
+
+  const handleSwitchChange = (event) => {
+    setBtcChecked(event.target.checked);
+  };
+  const handleLtcSwitchChange = (event) => {
+    setLtcChecked(event.target.checked);
+  };
+  const handleEthSwitchChange = (event) => {
+    setEthChecked(event.target.checked);
+  };
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
@@ -363,10 +361,19 @@ const BotsTable = () => {
   const handleSearch = (event) => {
     setSearchByBotsName(event.target.value);
   };
-  useEffect(async () => {
-    const response = await fetch("/api/user/create-strategy", {
-      method: "GET",
-    });
+  useEffect(() => {
+    fetchStrategy();
+  }, []);
+
+  const fetchStrategy = async () => {
+    const session = await getSession();
+    setExchangeArr(session.user.exchanges);
+    const response = await fetch(
+      `/api/strategy/get-strategy?id=${session?.user?.id}`,
+      {
+        method: "GET",
+      }
+    );
 
     const data = await response.json();
     let body = data.body.map((item) => {
@@ -376,7 +383,98 @@ const BotsTable = () => {
       };
     });
     setTableRow(body);
-  }, []);
+    setLoading(false);
+  };
+
+  const handleStatus = async (event, item) => {
+    let tableRowIndex = tableRow.findIndex(
+      (element) => element._id === item._id
+    );
+    let newData = [...tableRow];
+    let strat = item._id;
+    let url = "";
+    if (event.target.checked) {
+      newData[tableRowIndex].state = "on";
+      url = "start";
+      newData[tableRowIndex].dealTime.push({
+        startTime: new Date(),
+        endTime: "",
+      });
+    } else {
+      newData[tableRowIndex].state = "off";
+      let index =
+        newData[tableRowIndex]?.dealTime?.length > 0
+          ? newData[tableRowIndex]?.dealTime?.length - 1
+          : -1; // Set initial index as -1
+
+      if (
+        index === -1 ||
+        typeof newData[tableRowIndex]?.dealTime?.[index] === "undefined"
+      ) {
+        index = 0; // Assign 0 if index is -1 or undefined
+        newData[tableRowIndex].dealTime[index] = {};
+      }
+
+      newData[tableRowIndex].dealTime[index] = {
+        ...newData[tableRowIndex].dealTime[index],
+        endTime: new Date(),
+      };
+
+      // newData[tableRowIndex].dealTime[index] = {
+      //   ...dealTime[index],
+      //   endTime: "20",
+      // };
+      url = "stop";
+    }
+
+    console.log(newData[tableRowIndex]);
+
+    // const response = await fetch(`http://localhost:8000/${url}`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ strategyID: item._id }),
+    // });
+    // const responseData = await response.json();
+    // console.log(responseData);
+    let reqBody = {
+      strategyId: item._id,
+      state: newData[tableRowIndex].state,
+    };
+
+    const updatedStrategy = await fetch(
+      `/api/strategy/put-strategy?id=${item._id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(newData[tableRowIndex]),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    setTableRow(newData);
+
+    try {
+      const response = await fetch("https://dcabot1.herokuapp.com/" + url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // If you need to send a JSON body, uncomment the following line and replace '{}' with the appropriate JSON object
+        body: JSON.stringify({ strategyId: strat }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Success:", data);
+      } else {
+        console.error("Error:", response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const columns = [
     {
@@ -412,6 +510,10 @@ const BotsTable = () => {
               style={{
                 display: "flex",
                 flexDirection: "row",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                router.push(`/DealPage?id=${cellValues.row._id}`);
               }}
             >
               <div
@@ -452,7 +554,7 @@ const BotsTable = () => {
                 {cellValues.row.botName}
               </div>
             </div>
-            <div>{`TP: ${cellValues?.row?.indicatorValues?.minimumTp}%, BO: ${cellValues?.row?.buyOnCondition}%, SO: ${cellValues?.row?.safetyOrderSize}%, OS: ${cellValues?.row?.orderSize}, `}</div>
+            <div>{`TP: ${cellValues?.row?.takeProfitPercent}%, BO: ${cellValues?.row?.orderSize}, SO: ${cellValues?.row?.safetyOrderSize}, OS: ${cellValues?.row?.maxOrders}, `}</div>
             <div
               style={{
                 padding: 2,
@@ -501,6 +603,9 @@ const BotsTable = () => {
         );
       },
       renderCell: (cellValues) => {
+        const exchange = exchangeArr.find(
+          (item) => item._id === cellValues.row.exchange
+        );
         return (
           <div
           // style={{
@@ -522,9 +627,9 @@ const BotsTable = () => {
                 color: "#795BFF",
               }}
             >
-              {cellValues.row.exchange}
+              {exchange?.exchangeName}
             </div>
-            <div>{cellValues.row.exchange}</div>
+            <div>{exchange?.exchangeName}</div>
           </div>
         );
       },
@@ -582,7 +687,8 @@ const BotsTable = () => {
             //     ? "linear-gradient(to right,#790D83,#7A5CFF)"
             //     : "#5A2B6A"
             // }
-            checked={cellValues.row.status}
+            checked={cellValues?.row?.state === "on" ? true : false}
+            onChange={() => handleStatus(event, cellValues.row)}
           />
         );
       },
@@ -615,6 +721,9 @@ const BotsTable = () => {
                 backgroundColor: "#5B2A6D",
                 cursor: "pointer",
               }}
+              onClick={() => {
+                handleViewModal(cellValues?.row);
+              }}
             >
               <VisibilityIcon />
             </div>
@@ -628,6 +737,9 @@ const BotsTable = () => {
                 borderRadius: "5px",
                 backgroundColor: "#5B2A6D",
                 cursor: "pointer",
+              }}
+              onClick={() => {
+                router.push(`/bot-edit?id=${cellValues.row._id}`);
               }}
             >
               <Edit
@@ -696,13 +808,69 @@ const BotsTable = () => {
     console.log(newValue);
     setValue(newValue);
   };
-  const handleDelete = (newValue, event) => {
-    console.log(newValue, event);
+  const handleDelete = async (newValue, event) => {
     setTableRow(tableRow.filter((item) => item.id !== newValue.id));
+
+    await fetch("/api/strategy/delete-strategy", {
+      method: "DELETE",
+      body: JSON.stringify({ strategyId: newValue._id }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   };
   const handleClearFilter = () => {
     setTableRow(rows);
   };
+  const handleViewModal = async (row) => {
+    const session = await getSession();
+    setLogs(row.logs);
+    setSelectedRow(row);
+    setShowModal(true);
+
+    const response = await fetch(
+      `/api/strategy/get-strategy?id=${session?.user?.id}`,
+      {
+        method: "GET",
+      }
+    );
+
+    const data = await response.json();
+    let filteredBot = data.body.filter((item) => item?._id === row._id);
+    setLogs(filteredBot[0].logs);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleRefresh = async () => {
+    const session = await getSession();
+    const response = await fetch(
+      `/api/strategy/get-strategy?id=${session?.user?.id}`,
+      {
+        method: "GET",
+      }
+    );
+
+    const data = await response.json();
+
+    let filteredBot = data.body.filter((item) => item?._id === selectedRow._id);
+    setLogs(filteredBot[0].logs);
+  };
+
+  function mapIndicatorValue(value) {
+    switch(value) {
+      case "Vector Candle":
+        return "VC";
+      case "Tom Demark":
+        return "TD";
+      case "Moving Averages":
+        return "MA";
+      default:
+        return value;
+    }
+  }
 
   const classes = useStyles();
   return (
@@ -780,7 +948,7 @@ const BotsTable = () => {
       </Container>
       <Container
         sx={{
-          background: "#2C162F",
+          // background: "#2C162F",
           borderRadius: 2,
           p: 3,
           marginTop: 5,
@@ -790,6 +958,56 @@ const BotsTable = () => {
         component="main"
         maxWidth="100%"
       >
+        <Modal open={showModal} onClose={handleModalClose}>
+          <Box>
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                // overflowY: "scroll",
+                width: 700,
+                maxHeight: 600,
+                bgcolor: "background.paper",
+                border: "2px solid #000",
+                boxShadow: 24,
+                p: 4,
+              }}
+            >
+              <Grid container justifyContent="space-between">
+                <Grid>
+                  <Typography sx={{ fontWeight: 650, fontSize: "2rem" }}>
+                    Logs
+                  </Typography>
+                </Grid>
+                <Grid>
+                  <Button onClick={handleRefresh}>Refresh</Button>
+                </Grid>
+              </Grid>
+              <Box
+                sx={{
+                  overflowY: "scroll",
+                  width: 650,
+                  maxHeight: 450,
+                  "&::-webkit-scrollbar": {
+                    width: "0.4em",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                    webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: "rgba(0,0,0,.1)",
+                    outline: "1px solid slategrey",
+                  },
+                }}
+              >
+                <p dangerouslySetInnerHTML={{ __html: logs }}></p>
+              </Box>
+            </Box>
+          </Box>
+        </Modal>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -944,8 +1162,10 @@ const BotsTable = () => {
           </Grid>
         </Grid>
         {/* <Box sx={{ height: 709, disableGutters: true, width: "100%"}}> */}
-        <Box
+        {/* table starts*/}
+        {/* <Box
           sx={{
+     
             width: "100%",
             ...(width >= 1600 && {
               width: "100%",
@@ -968,44 +1188,1196 @@ const BotsTable = () => {
               px: 0,
             }}
           >
-            <DataGrid
-              sx={{
-                ".MuiDataGrid-columnSeparator": {
-                  display: "none",
-                },
-                "&.MuiDataGrid-root": {
-                  border: "none",
-                },
-                " & .MuiDataGrid-cell": {
-                  borderBottom: "none",
-                },
-                ".MuiDataGrid-cell:focus-within": {
-                  outline: "none !important",
-                },
-                ".MuiDataGrid-row.Mui-even": {
-                  backgroundColor: "#2D1537",
-                  backgroundBlendMode: "overlay",
-                },
-                height: 710,
-                // minWidth: "100%",
-                padding: 0,
-                marginTop: 5,
-              }}
-              getRowClassName={(params) =>
-                params.indexRelativeToCurrentPage % 2 === 0
-                  ? "Mui-even"
-                  : "Mui-odd"
-              }
-              rowHeight={"110px"}
-              rows={tableRow}
-              columns={columns}
-              pageSize={5}
-              checkboxSelection
-              disableSelectionOnClick
-            />
+            {loading ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: 40,
+                  marginBottom: 20,
+                }}
+              >
+                <CircularProgress />
+              </div>
+            ) : (
+              <DataGrid
+                sx={{
+                  ".MuiDataGrid-columnSeparator": {
+                    display: "none",
+                  },
+                  "&.MuiDataGrid-root": {
+                    border: "none",
+                  },
+                  " & .MuiDataGrid-cell": {
+                    borderBottom: "none",
+                  },
+                  ".MuiDataGrid-cell:focus-within": {
+                    outline: "none !important",
+                  },
+                  ".MuiDataGrid-row.Mui-even": {
+                    backgroundColor: "#2D1537",
+                    backgroundBlendMode: "overlay",
+                  },
+                  height: 710,
+                  // minWidth: "100%",
+                  padding: 0,
+                  marginTop: 5,
+                }}
+                getRowClassName={(params) =>
+                  params.indexRelativeToCurrentPage % 2 === 0
+                    ? "Mui-even"
+                    : "Mui-odd"
+                }
+                rowHeight={"110px"}
+                rows={tableRow}
+                columns={columns}
+                pageSize={5}
+                checkboxSelection
+                disableSelectionOnClick
+              />
+            )}
           </Box>
-        </Box>
+        </Box> */}
+        {/* table end */}
         {/* </Box> */}
+        {/* <Box
+          sx={{
+            display: "flex",
+            // justifyContent:"space-evenly",
+            flexWrap: "wrap",
+            gap: "0.4rem",
+          }}
+        > */}
+        <Grid container spacing={1} mt={2}>
+          {/* <Box sx={{  mt: 3 }}> */}
+          {tableRow?.map((item) => {
+            return (
+              <>
+                <Grid item xs={isDrawerOpen && width < 1600 ? 6 : 4}>
+                  <Card
+                    sx={{
+                      minWidth: 250,
+                      // background: "linear-gradient(#3D273F,#2C252C)",
+                      background: "#412645",
+                      borderRadius: "8px",
+                      minHeight: 500,
+                      // marginBottom: 5,
+                      position: "relative",
+                    }}
+                  >
+                    <CardContent
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Box
+                            sx={{
+                              background: "#463746",
+                              borderRadius: "50%",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              mx: 1,
+                              px: 1.7,
+                              py: 1,
+                            }}
+                          >
+                            <DCABitcoin />
+                          </Box>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "flex-start",
+                              flexDirection: "column",
+                            }}
+                          >
+                            <Typography fontWeight={600}>
+                              {item?.botName}
+                            </Typography>
+                            <Typography fontSize={"0.9rem"}>Binance</Typography>
+                          </Box>
+                        </Box>
+
+                        <Box
+                            style={{
+                              padding: 2,
+                              height: "30px",
+                              paddingLeft: 5,
+                              paddingRight: 5,
+                              marginRight: 4,
+                              borderRadius: "5px",
+                              backgroundColor: "#5B2A6D",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              handleViewModal(item);
+                            }}
+                          >
+                            <VisibilityIcon />
+                          </Box>
+                        <Box>
+
+                          <Checkbox
+                            style={{
+                              color: "white",
+                              "&$checked": {
+                                color: "white",
+                              },
+                            }}
+                          />
+                         
+                        </Box>
+                      </Box>
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          mt: 1,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 2,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              background: "#631525",
+                              px: 1.5,
+                              borderRadius: 1,
+                            }}
+                          >
+                            <Typography fontSize={"0.8rem"}>
+                              {item?.strategyType}
+                            </Typography>
+                          </Box>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 0.5,
+                            }}
+                          >
+                            <DCAProfit />
+                            <Typography
+                              sx={{
+                                color: coinProfitValue > 0 ? "#5EFF12" : "red",
+                                fontWeight: 600,
+                              }}
+                            >
+                              {coinProfitValue > 0 ? "+" : "-"}
+                            </Typography>
+                            <Typography
+                              sx={{
+                                color: coinProfitValue > 0 ? "#5EFF12" : "red",
+                                fontWeight: 600,
+                              }}
+                            >
+                              {coinProfitValue}
+                            </Typography>
+                            <Typography
+                              sx={{
+                                color: coinProfitValue > 0 ? "#5EFF12" : "red",
+                                fontWeight: 600,
+                              }}
+                            >
+                              {"$"}
+                            </Typography>
+                          </Box>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 0.5,
+                            }}
+                          >
+                            <DCADeal />
+                            <Typography fontWeight={600} color={"#FFA412"}>
+                              {numberOfDeals}
+                            </Typography>
+                          </Box>
+                        </Box>
+                        <Box mr={1}>
+                          <DCAStar />
+                        </Box>
+                      </Box>
+
+                      <Grid container mt={3} spacing={1}>
+                        <Grid item xs={6}>
+                          <Box
+                            sx={{
+                              background: "#482950",
+                              borderRadius: 3,
+                              boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
+                              minWidth: 125,
+                              height: width > 1600 ? "8rem" : "8rem",
+                              p: 1,
+                            }}
+                          >
+                            <Typography
+                              fontWeight={700}
+                              color={"#ffffffbd"}
+                              mb={1}
+                              fontSize={"1.2rem"}
+                              sx={{
+                                textShadow: "1px 5px 5px rgba(0, 0, 0, 0.5)",
+                              }}
+                            >
+                              Cycle 1
+                            </Typography>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: 2 ,
+                                justifyContent: "space-between" ,
+                              }}
+                            >
+                              <Box>
+                                <Typography
+                                  color={"#ffffffbd"}
+                                  // borderBottom={"1px solid #ffffffbd "}
+                                  fontSize={"0.6rem"}
+                                  my={0.5}
+                                >
+                                  Max Order : {item?.maxOrders}
+                                </Typography>
+                                <Typography
+                                  color={"#ffffffbd"}
+                                  // borderBottom={"1px solid #ffffffbd "}
+                                  fontSize={"0.6rem"}
+                                  my={0.5}
+                                >
+                                  Max Volume : {item?.maxVol}
+                                </Typography>
+                                <Typography
+                                  color={"#ffffffbd"}
+                                  // borderBottom={"1px solid #ffffffbd "}
+                                  fontSize={"0.6rem"}
+                                  my={0.5}
+                                >
+                                  Lead Indicator :{" "}
+                                  {mapIndicatorValue(item?.indicators[0]?.chooseIndicatorValue)}
+                                </Typography>
+                              </Box>
+
+                              <Box>
+                              <Typography
+                                color={"#ffffffbd"}
+                                fontSize={"0.6rem"}
+                                my={0.5}
+                              >
+                                Filter Indicator :{" "}
+                                {item?.indicators
+                                  .map((element) => mapIndicatorValue(element.chooseIndicatorValue))
+                                  .join(",")}
+                              </Typography>
+                              <Typography
+                                color={"#ffffffbd"}
+                                // borderBottom={"1px solid #ffffffbd "}
+                                fontSize={"0.6rem"}
+                                my={0.5}
+                              >
+                                TP: {item?.takeProfit?.length > 6 ? item?.takeProfit.substring(0, 6) + "..." : item?.takeProfit}
+                              </Typography>
+                                <Typography
+                                  color={"#ffffffbd"}
+                                  // borderBottom={"1px solid #ffffffbd "}
+                                  fontSize={"0.6rem"}
+                                  my={0.5}
+                                >
+                                  SL : {item?.stopLoss}
+                                </Typography>
+                              </Box>
+                            </Box>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Box
+                            sx={{
+                              background: "#482950",
+                              borderRadius: 3,
+                              boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
+                              minWidth: 125,
+                              height: width > 1600 ? "8rem" : "8rem",
+                              p: 1,
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: width > 1600 ? "flex" : "",
+                                gap: width > 1600 ? 2 : "",
+                              }}
+                            ></Box>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Box
+                            sx={{
+                              background: "#482950",
+                              borderRadius: 3,
+                              boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
+                              minWidth: 125,
+                              height: width > 1600 ? "8rem" : "8rem",
+                              p: 1,
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: width > 1600 ? "flex" : "",
+                                gap: width > 1600 ? 2 : "",
+                              }}
+                            ></Box>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Box
+                            sx={{
+                              background: "#482950",
+                              borderRadius: 3,
+                              boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
+                              minWidth: 125,
+                              height: width > 1600 ? "8rem" : "8rem",
+                              p: 1,
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: width > 1600 ? "flex" : "",
+                                gap: width > 1600 ? 2 : "",
+                              }}
+                            ></Box>
+                          </Box>
+                        </Grid>
+                      </Grid>
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          bottom: 20,
+                          left: 0,
+                          right: 0,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            position: "relative",
+                          }}
+                        >
+                          <Button
+                            sx={{
+                              border: "1px solid #4E343F",
+                              background:
+                                "linear-gradient(to left,#422240,#47294B)",
+                              borderTopRightRadius: 0,
+                              borderBottomRightRadius: 0,
+                              borderTopLeftRadius: 10,
+                              borderBottomLeftRadius: 10,
+                              textTransform: "none",
+                              color: "white",
+                              py: 0.3,
+                            }}
+                          >
+                            Copy
+                          </Button>
+                          <Button
+                            sx={{
+                              border: "1px solid #4E343F",
+                              background:
+                                "linear-gradient(to left,#422240,#47294B)",
+                              borderTopRightRadius: 0,
+                              borderBottomRightRadius: 0,
+                              borderTopLeftRadius: 0,
+                              borderBottomLeftRadius: 0,
+                              textTransform: "none",
+                              color: "white",
+                              py: 0.3,
+                            }}
+                          >
+                            Share
+                          </Button>
+                          <Button
+                            sx={{
+                              border: "1px solid #4E343F",
+                              background:
+                                "linear-gradient(to left,#422240,#47294B)",
+                              borderTopRightRadius: 10,
+                              borderBottomRightRadius: 10,
+                              borderTopLeftRadius: 0,
+                              borderBottomLeftRadius: 0,
+                              textTransform: "none",
+                              color: "white",
+                              py: 0.3,
+                            }}
+                            onClick={() => {
+                              router.push(`/bot-edit?id=${item._id}`);
+                            }}
+                          >
+                            Edit
+                          </Button>
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              right: width < 1050 ? -7 : 0,
+                            }}
+                          >
+                            <Switch
+                              // checked={btcchecked}
+                              // onChange={handleSwitchChange}
+                              name="customSwitch"
+                              sx={{
+                                "& .MuiSwitch-thumb": {
+                                  bgcolor: "#FFFFFF",
+                                },
+                                "& .MuiSwitch-track": {
+                                  background: btcchecked
+                                    ? "linear-gradient(to right,#790D83,#7A5CFF)"
+                                    : "#9E9E9E",
+                                },
+                              }}
+                              checked={item?.state === "on" ? true : false}
+                              onChange={() => handleStatus(event, item)}
+                            />
+                          </Box>
+                        </Box>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </>
+            );
+          })}
+          {/* <Grid item xs={isDrawerOpen && width < 1600 ? 6 : 4}>
+            <Card
+              sx={{
+                minWidth: 250,
+                // background: "linear-gradient(#3D273F,#2C252C)",
+                background: "#412645",
+                borderRadius: "8px",
+                minHeight: 360,
+              }}
+            >
+              <CardContent
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box
+                      sx={{
+                        background: "#463746",
+                        borderRadius: "50%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        mx: 1,
+                        px: 2,
+                        py: 1,
+                      }}
+                    >
+                      <DCAEthereum />
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Typography fontWeight={600}>
+                        ETH Short Bot Vector Candles
+                      </Typography>
+                      <Typography fontSize={"0.9rem"}>Binance</Typography>
+                    </Box>
+                  </Box>
+                  <Box>
+                    <Checkbox
+                      style={{
+                        color: "white",
+                        "&$checked": {
+                          color: "white",
+                        },
+                      }}
+                    />
+                  </Box>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    mt: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "#631525",
+                        px: 1.5,
+                        borderRadius: 1,
+                      }}
+                    >
+                      <Typography fontSize={"0.8rem"}>Short</Typography>
+                    </Box>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                    >
+                      <DCAProfit />
+                      <Typography
+                        sx={{
+                          color: coinProfitValue > 0 ? "#5EFF12" : "red",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {coinProfitValue > 0 ? "+" : "-"}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: coinProfitValue > 0 ? "#5EFF12" : "red",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {coinProfitValue}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: coinProfitValue > 0 ? "#5EFF12" : "red",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {"$"}
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                    >
+                      <DCADeal />
+                      <Typography fontWeight={600} color={"#FFA412"}>
+                        {numberOfDeals}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box mr={1}>
+                    <DCAStar />
+                  </Box>
+                </Box>
+
+                <Grid container mt={3} spacing={1}>
+                  <Grid item xs={6}>
+                    <Box
+                      sx={{
+                        background: "#482950",
+                        borderRadius: 3,
+                        boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
+                        minWidth: 125,
+                        height: width > 1600 ? "12rem" : "15rem",
+
+                        p: 1,
+                      }}
+                    >
+                      <Typography
+                        fontWeight={700}
+                        color={"#ffffffbd"}
+                        mb={1}
+                        fontSize={"1.2rem"}
+                        sx={{ textShadow: "1px 5px 5px rgba(0, 0, 0, 0.5)" }}
+                      >
+                        Cycle 1
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: width > 1600 ? "flex" : "",
+                          gap: width > 1600 ? 2 : "",
+                        }}
+                      >
+                        <Box>
+                          <Typography
+                            color={"#ffffffbd"}
+                            borderBottom={"1px solid #ffffffbd "}
+                            fontSize={"0.7rem"}
+                            my={0.5}
+                          >
+                            Max Order : 10
+                          </Typography>
+                          <Typography
+                            color={"#ffffffbd"}
+                            borderBottom={"1px solid #ffffffbd "}
+                            fontSize={"0.7rem"}
+                            my={0.5}
+                          >
+                            Max Volume : 200 USDT
+                          </Typography>
+                          <Typography
+                            color={"#ffffffbd"}
+                            borderBottom={"1px solid #ffffffbd "}
+                            fontSize={"0.7rem"}
+                            my={0.5}
+                          >
+                            Lead Indicator : VC
+                          </Typography>
+                        </Box>
+
+                        <Box>
+                          <Typography
+                            color={"#ffffffbd"}
+                            borderBottom={"1px solid #ffffffbd "}
+                            fontSize={"0.7rem"}
+                            my={0.5}
+                          >
+                            Filter Indicator : EMA
+                          </Typography>
+                          <Typography
+                            color={"#ffffffbd"}
+                            borderBottom={"1px solid #ffffffbd "}
+                            fontSize={"0.7rem"}
+                            my={0.5}
+                          >
+                            TP: Dynamic
+                          </Typography>
+                          <Typography
+                            color={"#ffffffbd"}
+                            borderBottom={"1px solid #ffffffbd "}
+                            fontSize={"0.7rem"}
+                            my={0.5}
+                          >
+                            SL :
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box
+                      sx={{
+                        background: "#482950",
+                        borderRadius: 3,
+                        boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
+                        minWidth: 125,
+                        height: width > 1600 ? "12rem" : "15rem",
+                        p: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: width > 1600 ? "flex" : "",
+                          gap: width > 1600 ? 2 : "",
+                        }}
+                      ></Box>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box
+                      sx={{
+                        background: "#482950",
+                        borderRadius: 3,
+                        boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
+                        minWidth: 125,
+                        height: width > 1600 ? "12rem" : "15rem",
+                        p: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: width > 1600 ? "flex" : "",
+                          gap: width > 1600 ? 2 : "",
+                        }}
+                      ></Box>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box
+                      sx={{
+                        background: "#482950",
+                        borderRadius: 3,
+                        boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
+                        minWidth: 125,
+                        height: width > 1600 ? "12rem" : "15rem",
+                        p: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: width > 1600 ? "flex" : "",
+                          gap: width > 1600 ? 2 : "",
+                        }}
+                      ></Box>
+                    </Box>
+                  </Grid>
+                </Grid>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: "relative",
+                    mt: 3,
+                  }}
+                >
+                  <Button
+                    sx={{
+                      border: "1px solid #4E343F",
+                      background: "linear-gradient(to left,#422240,#47294B)",
+                      borderTopRightRadius: 0,
+                      borderBottomRightRadius: 0,
+                      borderTopLeftRadius: 10,
+                      borderBottomLeftRadius: 10,
+                      textTransform: "none",
+                      color: "white",
+                      py: 0.3,
+                    }}
+                  >
+                    Copy
+                  </Button>
+                  <Button
+                    sx={{
+                      border: "1px solid #4E343F",
+                      background: "linear-gradient(to left,#422240,#47294B)",
+                      borderTopRightRadius: 0,
+                      borderBottomRightRadius: 0,
+                      borderTopLeftRadius: 0,
+                      borderBottomLeftRadius: 0,
+                      textTransform: "none",
+                      color: "white",
+                      py: 0.3,
+                    }}
+                  >
+                    Share
+                  </Button>
+                  <Button
+                    sx={{
+                      border: "1px solid #4E343F",
+                      background: "linear-gradient(to left,#422240,#47294B)",
+                      borderTopRightRadius: 10,
+                      borderBottomRightRadius: 10,
+                      borderTopLeftRadius: 0,
+                      borderBottomLeftRadius: 0,
+                      textTransform: "none",
+                      color: "white",
+                      py: 0.3,
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      right: width < 1050 ? -25 : -10,
+                    }}
+                  >
+                    <Switch
+                      checked={ethchecked}
+                      onChange={handleEthSwitchChange}
+                      name="customSwitch"
+                      sx={{
+                        "& .MuiSwitch-thumb": {
+                          bgcolor: "#FFFFFF",
+                        },
+                        "& .MuiSwitch-track": {
+                          background: ethchecked
+                            ? "linear-gradient(to right,#790D83,#7A5CFF)"
+                            : "#9E9E9E",
+                        },
+                      }}
+                    />
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={isDrawerOpen && width < 1600 ? 6 : 4}>
+            <Card
+              sx={{
+                minWidth: 250,
+                // background: "linear-gradient(#3D273F,#2C252C)",
+                background: "#412645",
+                borderRadius: "8px",
+                minHeight: 360,
+              }}
+            >
+              <CardContent
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box
+                      sx={{
+                        background: "#463746",
+                        borderRadius: "50%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        mx: 1,
+                        px: 1,
+                        pt: 1.5,
+                        pb: 1,
+                      }}
+                    >
+                      <DCALtc />
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Typography fontWeight={600}>
+                        LTC Short Bot Vector Candles
+                      </Typography>
+                      <Typography fontSize={"0.9rem"}>Binance</Typography>
+                    </Box>
+                  </Box>
+                  <Box>
+                    <Checkbox
+                      style={{
+                        color: "white",
+                        "&$checked": {
+                          color: "white",
+                        },
+                      }}
+                    />
+                  </Box>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    mt: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "#631525",
+                        px: 1.5,
+                        borderRadius: 1,
+                      }}
+                    >
+                      <Typography fontSize={"0.8rem"}>Short</Typography>
+                    </Box>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                    >
+                      <DCAProfit />
+                      <Typography
+                        sx={{
+                          color: coinProfitValue > 0 ? "#5EFF12" : "red",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {coinProfitValue > 0 ? "+" : "-"}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: coinProfitValue > 0 ? "#5EFF12" : "red",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {coinProfitValue}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: coinProfitValue > 0 ? "#5EFF12" : "red",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {"$"}
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                    >
+                      <DCADeal />
+                      <Typography fontWeight={600} color={"#FFA412"}>
+                        {numberOfDeals}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box mr={1}>
+                    <DCAStar />
+                  </Box>
+                </Box>
+
+                <Grid container mt={3} spacing={1}>
+                  <Grid item xs={6}>
+                    <Box
+                      sx={{
+                        background: "#482950",
+                        borderRadius: 3,
+                        boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
+                        minWidth: 125,
+                        height: width > 1600 ? "12rem" : "15rem",
+
+                        p: 1,
+                      }}
+                    >
+                      <Typography
+                        fontWeight={700}
+                        color={"#ffffffbd"}
+                        mb={1}
+                        fontSize={"1.2rem"}
+                        sx={{ textShadow: "1px 5px 5px rgba(0, 0, 0, 0.5)" }}
+                      >
+                        Cycle 1
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: width > 1600 ? "flex" : "",
+                          gap: width > 1600 ? 2 : "",
+                        }}
+                      >
+                        <Box>
+                          <Typography
+                            color={"#ffffffbd"}
+                            borderBottom={"1px solid #ffffffbd "}
+                            fontSize={"0.7rem"}
+                            my={0.5}
+                          >
+                            Max Order : 10
+                          </Typography>
+                          <Typography
+                            color={"#ffffffbd"}
+                            borderBottom={"1px solid #ffffffbd "}
+                            fontSize={"0.7rem"}
+                            my={0.5}
+                          >
+                            Max Volume : 200 USDT
+                          </Typography>
+                          <Typography
+                            color={"#ffffffbd"}
+                            borderBottom={"1px solid #ffffffbd "}
+                            fontSize={"0.7rem"}
+                            my={0.5}
+                          >
+                            Lead Indicator : VC
+                          </Typography>
+                        </Box>
+
+                        <Box>
+                          <Typography
+                            color={"#ffffffbd"}
+                            borderBottom={"1px solid #ffffffbd "}
+                            fontSize={"0.7rem"}
+                            my={0.5}
+                          >
+                            Filter Indicator : EMA
+                          </Typography>
+                          <Typography
+                            color={"#ffffffbd"}
+                            borderBottom={"1px solid #ffffffbd "}
+                            fontSize={"0.7rem"}
+                            my={0.5}
+                          >
+                            TP: Dynamic
+                          </Typography>
+                          <Typography
+                            color={"#ffffffbd"}
+                            borderBottom={"1px solid #ffffffbd "}
+                            fontSize={"0.7rem"}
+                            my={0.5}
+                          >
+                            SL :
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box
+                      sx={{
+                        background: "#482950",
+                        borderRadius: 3,
+                        boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
+                        minWidth: 125,
+                        height: width > 1600 ? "12rem" : "15rem",
+                        p: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: width > 1600 ? "flex" : "",
+                          gap: width > 1600 ? 2 : "",
+                        }}
+                      ></Box>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box
+                      sx={{
+                        background: "#482950",
+                        borderRadius: 3,
+                        boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
+                        minWidth: 125,
+                        height: width > 1600 ? "12rem" : "15rem",
+                        p: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: width > 1600 ? "flex" : "",
+                          gap: width > 1600 ? 2 : "",
+                        }}
+                      ></Box>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box
+                      sx={{
+                        background: "#482950",
+                        borderRadius: 3,
+                        boxShadow: "1px 2px 1px 1px rgba(0, 0, 0, 0.268)",
+                        minWidth: 125,
+                        height: width > 1600 ? "12rem" : "15rem",
+                        p: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: width > 1600 ? "flex" : "",
+                          gap: width > 1600 ? 2 : "",
+                        }}
+                      ></Box>
+                    </Box>
+                  </Grid>
+                </Grid>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: "relative",
+                    mt: 3,
+                  }}
+                >
+                  <Button
+                    sx={{
+                      border: "1px solid #4E343F",
+                      background: "linear-gradient(to left,#422240,#47294B)",
+                      borderTopRightRadius: 0,
+                      borderBottomRightRadius: 0,
+                      borderTopLeftRadius: 10,
+                      borderBottomLeftRadius: 10,
+                      textTransform: "none",
+                      color: "white",
+                      py: 0.3,
+                    }}
+                  >
+                    Copy
+                  </Button>
+                  <Button
+                    sx={{
+                      border: "1px solid #4E343F",
+                      background: "linear-gradient(to left,#422240,#47294B)",
+                      borderTopRightRadius: 0,
+                      borderBottomRightRadius: 0,
+                      borderTopLeftRadius: 0,
+                      borderBottomLeftRadius: 0,
+                      textTransform: "none",
+                      color: "white",
+                      py: 0.3,
+                    }}
+                  >
+                    Share
+                  </Button>
+                  <Button
+                    sx={{
+                      border: "1px solid #4E343F",
+                      background: "linear-gradient(to left,#422240,#47294B)",
+                      borderTopRightRadius: 10,
+                      borderBottomRightRadius: 10,
+                      borderTopLeftRadius: 0,
+                      borderBottomLeftRadius: 0,
+                      textTransform: "none",
+                      color: "white",
+                      py: 0.3,
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      right: width < 1050 ? -25 : -10,
+                    }}
+                  >
+                    <Switch
+                      checked={ltcchecked}
+                      onChange={handleLtcSwitchChange}
+                      name="customSwitch"
+                      sx={{
+                        "& .MuiSwitch-thumb": {
+                          bgcolor: "#FFFFFF",
+                        },
+                        "& .MuiSwitch-track": {
+                          background: ltcchecked
+                            ? "linear-gradient(to right,#790D83,#7A5CFF)"
+                            : "#9E9E9E",
+                        },
+                      }}
+                    />
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid> */}
+        </Grid>
       </Container>
     </>
   );

@@ -12,15 +12,16 @@ import React from "react";
 import { Refresh } from "../../utils/icons";
 import Card from "@mui/material/Card";
 
-const Balances = () => {
+const Balances = (props) => {
   return (
     <Card
       sx={{
         mt: 2,
         boxShadow: "none",
         minHeight: "300px",
-        background:
-          "linear-gradient(180deg, rgba(121, 13, 131, 0.125) 0%, rgba(41, 8, 77, 0.5) 100%)",
+        // background:
+        //   "linear-gradient(180deg, rgba(121, 13, 131, 0.125) 0%, rgba(41, 8, 77, 0.5) 100%)",
+        background: "#790d832d",
       }}
     >
       <Table>
@@ -28,7 +29,7 @@ const Balances = () => {
           <TableRow>
             <TableCell
               sx={{
-                fontWeight: "600",
+                fontWeight: "500",
                 borderRight: "1px solid rgba(255, 255, 255, 0.3)",
               }}
             >
@@ -74,7 +75,7 @@ const Balances = () => {
                     color: "white",
                   }}
                 >
-                  History
+                  Refresh
                 </Typography>
               </Box>
             </TableCell>
@@ -87,7 +88,7 @@ const Balances = () => {
             ></TableCell>
             <TableCell
               sx={{
-                fontWeight: "600",
+                fontWeight: "500",
                 borderRight: "1px solid rgba(255, 255, 255, 0.3)",
               }}
             >
@@ -95,13 +96,64 @@ const Balances = () => {
             </TableCell>
             <TableCell
               sx={{
-                fontWeight: "600",
+                fontWeight: "500",
               }}
             >
               Available
             </TableCell>
           </TableRow>
+          {props.assets?.map((item) => {
+            return (
+              <TableRow>
+                <TableCell
+                  sx={{
+                    borderRight: "1px solid rgba(255, 255, 255, 0.3)",
+                    justifyContent: "flex-end",
+                    display: "flex",
+                  }}
+                >
+                  {item?.asset}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    borderRight: "1px solid rgba(255, 255, 255, 0.3)",
+                  }}
+                >
+                  {item?.usdtBal?.toFixed(2)}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "white",
+                  }}
+                >
+                  {item?.usdtBal?.toFixed(2)}
+                </TableCell>
+              </TableRow>
+            );
+          })}
           <TableRow>
+            <TableCell
+              sx={{
+                borderRight: "1px solid rgba(255, 255, 255, 0.3)",
+                justifyContent: "flex-end",
+                display: "flex",
+                borderBottom: "none",
+              }}
+            ></TableCell>
+            <TableCell
+              sx={{
+                borderRight: "1px solid rgba(255, 255, 255, 0.3)",
+                borderBottom: "none",
+              }}
+            ></TableCell>
+            <TableCell
+              sx={{
+                color: "white",
+                borderBottom: "none",
+              }}
+            ></TableCell>
+          </TableRow>
+          {/* <TableRow>
             <TableCell
               sx={{
                 borderRight: "1px solid rgba(255, 255, 255, 0.3)",
@@ -180,7 +232,7 @@ const Balances = () => {
               }}
             ></TableCell>
             <TableCell sx={{ borderBottom: "none" }}></TableCell>
-          </TableRow>
+          </TableRow> */}
         </TableBody>
       </Table>
     </Card>

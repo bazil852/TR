@@ -4,7 +4,8 @@ import * as bcrypt from "bcrypt";
 import { Spot } from "@binance/connector";
 
 export default async function handler(req, res) {
-  const { method } = req;
+  const { method, query } = req;
+  const { id } = query;
 
   switch (method) {
     case "GET":
@@ -13,16 +14,10 @@ export default async function handler(req, res) {
     case "POST":
       try {
         await connectMongo();
-        let exchanges = [
-          {
-            name: req.body.name,
-            apiKey: req.body.apiKey,
-            apiSecret: req.body.apiSecret,
-          },
-        ];
         let newResp = await Users.findOneAndUpdate(
-          { _id: req.body.userId },
-          { exchanges: exchanges }
+          { _id: id },
+          { exchanges: req.body },
+          { new: true }
         );
 
         res.status(200).json({ status: 200, body: newResp });

@@ -19,6 +19,7 @@ const userSchema = new Schema({
   exchanges: {
     type: [
       {
+        exchangeName: String,
         name: String,
         apiKey: String,
         apiSecret: String,

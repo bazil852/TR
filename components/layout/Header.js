@@ -23,6 +23,7 @@ import {
   DCABotsIcon,
   MyExchangesIcon,
   TradingBotsIcon,
+  NavBarLogo,
 } from "../../utils/icons";
 
 // import { signOut } from "next-auth/client";
@@ -122,11 +123,20 @@ export default function Header() {
         open={open}
         sx={{
           color: "#795BFF",
-          background: "#1E1E1E",
+          // background: "rgb(0,0,0,0)",
+          backgroundImage: "url(https://i.ibb.co/p3vmvzc/authBg.png)",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
         }}
       >
-        <Toolbar>
-          <Typography
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          {/* <Typography
             onClick={() => {
               router.push("/");
             }}
@@ -134,27 +144,36 @@ export default function Header() {
             noWrap
             color="#FFFFFF"
             component="div"
-            sx={{ flexGrow: 1, cursor: "pointer" }}
+            
           >
             Trading Bot
-          </Typography>
-          <Button
-            onClick={() => {
-              router.push("login");
-            }}
-            sx={{ color: "#FFFFFF" }}
-          >
-            Login
-          </Button>
-          <Button
-            sx={{ color: "#FFFFFF" }}
-            onClick={() => {
-              router.push("register");
-            }}
-            color="inherit"
-          >
-            Sign up
-          </Button>
+          </Typography> */}
+          {/* <img style={{
+            cursor: "pointer",
+            flexWrap:'nowrap',
+            
+          }} 
+          src="https://i.postimg.cc/Fz5zMjxY/logove.png" width={40}></img> */}
+          <NavBarLogo />
+          <Box>
+            <Button
+              onClick={() => {
+                router.push("login");
+              }}
+              sx={{ color: "#FFFFFF", fontWeight: 600 }}
+            >
+              Login
+            </Button>
+            <Button
+              sx={{ color: "#FFFFFF", fontWeight: 600 }}
+              onClick={() => {
+                router.push("register");
+              }}
+              color="inherit"
+            >
+              Sign up
+            </Button>
+          </Box>
         </Toolbar>
       </AppBar>
     </Box>

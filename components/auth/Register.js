@@ -7,7 +7,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
-import Checkbox from "@material-ui/core/Checkbox";
+import Checkbox from "@mui/material/Checkbox";
 import InputBase from "@mui/material/InputBase";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -32,7 +32,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
     backgroundColor: "transparent",
     border: "none",
     borderBottom: "1px solid #fff",
-    fontSize: 16,
+    fontSize: 18,
     color: "#fff",
     transition: theme.transitions.create([
       "border-color",
@@ -58,40 +58,45 @@ const Register = () => {
     setLoading(true);
     const data = new FormData(event.currentTarget);
     const payload = {
-      // firstName: data.get("firstName"),
-      // lastName: data.get("lastName"),
-      name: data.get("name"),
-      companyName: data.get("companyName"),
+      firstName: data.get("firstName"),
+      lastName: data.get("lastName"),
+      // name: data.get("name"),
+      // companyName: data.get("companyName"),
       email: data.get("email"),
-      mobile: data.get("mobile"),
+      // mobile: data.get("mobile"),
       password: data.get("password"),
     };
+    console.log(payload);
 
-    const response = await fetch("/api/user/signup", {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}users/register`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     const newData = await response.json();
 
-    if (newData.status == 409) {
+    if (!response.ok) {
       setLoading(false);
 
       setError("Email already exists");
     } else {
-      const res = await signIn("credentials", {
-        email: payload.email,
-        password: payload.password,
-        redirect: false,
-      });
-
-      const session = await getSession();
+      // const res = await signIn("credentials", {
+      //   email: payload.email,
+      //   password: payload.password,
+      //   redirect: false,
+      // });
       setLoading(false);
       setError("");
       // router.push({pathname: '/verify-token', query: {email: session.user.email}});
-      router.push("/verify-token");
+      router.push({
+        pathname: "/verify-token",
+        query: { email: payload.email, password: payload.password },
+      });
     }
   };
 
@@ -100,7 +105,7 @@ const Register = () => {
       <Container
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "center",
           minHeight: "90vh",
         }}
@@ -110,34 +115,74 @@ const Register = () => {
         <CssBaseline />
         <Box
           sx={{
-            // marginTop: 8,
             display: "flex",
             flexDirection: "column",
-            width: "45%",
-            // alignItems: "center",
+            width: "65vw",
+            alignItems: "center",
+            marginTop: "-5%",
+            borderRadius: 10,
+            px: 10,
+            py: 5,
+            backgroundImage: "url(https://i.ibb.co/p3vmvzc/authBg.png)",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+            border: "0px solid #666666",
+            backdropFilter: "blur(5px)",
+            WebkitBackdropFilter: "blur(10px)",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
           }}
         >
           {/* <Avatar>
             <LockOutlinedIcon color="primary" />
           </Avatar>     */}
-          <Typography
-            sx={{ mt: 1, fontSize: "50px", color: "white", fontWeight: "800" }}
-            color="primary"
-            component="h1"
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
           >
-            Start Signup for free
-          </Typography>
-          <Typography
-            sx={{ fontSize: "20px", color: "white", fontWeight: "400" }}
-          >
-            Create your free account
-          </Typography>
+            <Typography
+              sx={{
+                mt: 1,
+                fontSize: "50px",
+                color: "white",
+                fontWeight: "800",
+                lineHeight: 1,
+              }}
+              color="primary"
+              component="h1"
+            >
+              Start Signup
+            </Typography>
+            <Typography
+              sx={{
+                mt: 1,
+                fontSize: "50px",
+                color: "white",
+                fontWeight: "800",
+                lineHeight: 1,
+              }}
+              color="primary"
+              component="h1"
+            >
+              for free
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "20px",
+                color: "#CCC2CF",
+                fontWeight: "400",
+                lineHeight: 4,
+              }}
+            >
+              Create your free account
+            </Typography>
+          </Box>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={12}>
-                {/* <Typography color="#FFFFFF" variant="h6">
-                  Name
-                </Typography> */}
+              {/* <Grid item xs={12} sm={12}>
                 <ValidationTextField
                   focused
                   required
@@ -151,7 +196,7 @@ const Register = () => {
                   placeholder="Name"
                   variant="outlined"
                 />
-              </Grid>
+              </Grid> */}
               <Grid item xs={12} sm={6}>
                 {/* <Typography
                   sx={{ marginBottom: 1, mt: 2 }}
@@ -164,12 +209,11 @@ const Register = () => {
                   focused
                   required
                   fullWidth
-                  // id="lastName"
-                  // label="Last Name"
-                  // name="lastName"
-                  id="companyName"
-                  placeholder="Company Name"
-                  pla="companyName"
+                  name="firstName"
+                  id="firstName"
+                  placeholder="First Name"
+                  // id="companyName"
+                  // placeholder="Company Name"
                   // autoComplete="family-name"
                 />
               </Grid>
@@ -185,12 +229,12 @@ const Register = () => {
                   focused
                   required
                   fullWidth
-                  // id="lastName"
-                  // label="Last Name"
-                  // name="lastName"
-                  id="mobile"
-                  placeholder="Mobile Number"
-                  name="mobile"
+                  id="lastName"
+                  placeholder="Last Name"
+                  name="lastName"
+                  // id="mobile"
+                  // placeholder="Mobile Number"
+                  // name="mobile"
                   // autoComplete="family-name"
                 />
               </Grid>
@@ -259,26 +303,30 @@ const Register = () => {
             </Grid>
             <Box
               sx={{
-                mb: 5,
-                height: "40px",
-                width: "180px",
-                background: "linear-gradient(#790D83,#7A5CFF)",
-                borderRadius: "5px",
-                cursor: "pointer",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                transition: "transform 0.3s ease-in-out",
-                "&:hover": {
-                  transform: "scale(0.95)",
-                },
               }}
             >
               <LoadingButton
                 type="submit"
+                variant="contained"
                 loading={loading}
-                // fullWidth
-                // variant="contained"
+                sx={{
+                  mb: 5,
+                  height: "40px",
+                  width: "180px",
+                  textTransform: "none",
+                  background:
+                    "linear-gradient(90deg, #790D83 0%, #7A5CFF 100%)",
+                  color: "white",
+                  fontWeight: "600",
+                  "&:hover": {
+                    background:
+                      "linear-gradient(90deg, #790D83 0%, #7A5CFF 100%)",
+                    opacity: 0.9,
+                  },
+                }}
               >
                 Sign Up
               </LoadingButton>
@@ -290,14 +338,24 @@ const Register = () => {
             )}
             <Grid container justifyContent="center">
               <Grid item>
-                <Link color="#795BFF" href="login" variant="body2">
-                  Already have an account? Sign in
+                <Link
+                  href="login"
+                  color="#FFFFFF"
+                  variant="body2"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginTop: "1rem",
+                  }}
+                >
+                  Already have an account?{" "}
+                  <Typography sx={{ fontWeight: 800 }}> Sign in</Typography>
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Box
+        {/* <Box
           style={{
             position: "absolute",
             top: "0",
@@ -319,7 +377,7 @@ const Register = () => {
             width={500}
             height={800}
           />
-        </Box>
+        </Box> */}
       </Container>
 
       <Copyright sx={{ mt: 8, pb: 3 }} />

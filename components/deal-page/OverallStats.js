@@ -3,11 +3,11 @@ import React from "react";
 import { Refresh } from "../../utils/icons";
 import Card from "@mui/material/Card";
 
-const OverallStats = () => {
+const OverallStats = (props) => {
   const data = [
     { text: "Today Profit", value: "***" },
-    { text: "Total", value: "***" },
-    { text: " Active Deals", value: "6" },
+    { text: "Total", value: `$${props.totalProfit}` },
+    { text: " Active Deals", value: `${props.activeDeals}` },
     { text: " Funds Locked in DVA Bot Deals", value: " " },
     { text: " UPNL of Active Bot Deals", value: " " },
   ];
@@ -20,8 +20,9 @@ const OverallStats = () => {
         borderRadius: "5px",
         boxShadow: "none",
         minHeight: "300px",
-        background:
-          "linear-gradient(180deg, rgba(121, 13, 131, 0.125) 0%, rgba(41, 8, 77, 0.5) 100%)",
+        // background:
+        //   "linear-gradient(180deg, rgba(121, 13, 131, 0.125) 0%, rgba(41, 8, 77, 0.5) 100%)",
+        background: "#790d832d",
       }}
     >
       <Box
@@ -35,7 +36,7 @@ const OverallStats = () => {
       >
         <Typography
           sx={{
-            fontWeight: "600",
+            fontWeight: "500",
             fontSize: "18px",
             color: "white",
           }}

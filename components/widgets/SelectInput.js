@@ -5,7 +5,6 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-// import Select from "react-select";
 import OutlinedInput from "@mui/material/OutlinedInput";
 
 const SelectInput = (props) => {
@@ -15,15 +14,17 @@ const SelectInput = (props) => {
       name={props.keyName}
       onChange={props.onChange}
       input={<OutlinedInput />}
+      value={props.value}
+      disabled={props.disabled}
       MenuProps={{
         PaperProps: {
           sx: {
-            backgroundColor: "#452951",
+            backgroundColor: "#000000",
             mt: 0.5,
             "& .MuiMenuItem-root": {
               color: "white",
               "&:hover": {
-                backgroundColor: "#4E2C60",
+                backgroundColor: "#000000",
               },
             },
             "& .Mui-selected": {
@@ -56,18 +57,16 @@ const SelectInput = (props) => {
           : {},
         minWidth: "100%",
         height: 37,
-        borderRadius: "8px",
         color: "white",
-        backgroundColor: "#452951",
+        backgroundColor: "#292929",
+        fontFamily: "Barlow,san-serif",
+        border: "1px solid #B3B4B9",
         boxShadow: "none",
         ".MuiOutlinedInput-notchedOutline": {
           border: 0,
         },
       }}
     >
-      {/* <MenuItem disabled value="">
-        <em>{props.placeHolder}</em>
-      </MenuItem> */}
       {props.options.map((item) => (
         <MenuItem key={item} value={item}>
           {item}
