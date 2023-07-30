@@ -21,7 +21,7 @@ import Lock from "../assets/icons/lock.svg";
 import Dash from "../assets/icons/dash.svg";
 
 import BlueDash from "../assets/icons/bluedash.svg";
-import BlueLock from "../assets/icons/BlueLock.svg";
+import BlueLock from "../assets/icons/bluelock.svg";
 import BlueHandShake from "../assets/icons/BlueHandShake.svg";
 import BlueHistory from "../assets/icons/historyblue.svg";
 import BlueTradingBotsIcon from "../assets/icons/BlueTradingBotsIcon.svg";
