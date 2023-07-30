@@ -19,6 +19,8 @@ import { getSession } from "next-auth/react";
 import CandleStickGraph from "../../../components/cards/candleStick-strategy/CandleStickGraph";
 import SelectInputParameters from "../../widgets/SelectInputParameters";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
+import { useStrategy } from '../../../context/StrategyContext';
+import Chart from '../../charts/Chart'
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -55,6 +57,7 @@ const StrategyTabs = (props) => {
   const [botType, setBotType] = useState("");
   const [strategyType, setStrategyType] = useState("");
   const [strategyPair, setStrategyPair] = useState("");
+  const [chartData, setChartData] = useState("");
 
   const setBotSetting = async (values) => {
     let reqBody = {
@@ -100,45 +103,12 @@ const StrategyTabsComponent = (props) => {
   console.log(props.strategyId);
   const [value, setvalue] = useState(["general"]);
   const [ANDToggle, setANDToggle] = useState([[true]]);
-  const [GeneralSettingsData, setGeneralSettingsData] = useState([
-    {
-      strategyName: "",
-      strategyFolder: "",
-      strategyDescription: "",
-      botLink: "",
-      notes: "",
-    },
-  ]);
-  console.log("general settings", GeneralSettingsData);
-  const [OrdersData, setOrdersData] = useState([
-    {
-      firstOrderSize: "",
-      extraOrderSize: "",
-      orderType: "",
-      pairs: "",
-    },
-  ]);
-  const [DCAData, setDCAData] = useState([
-    {
-      dcaType: "",
-      volumeMultiplier: "",
-      maxExtraOrders: "",
-      minDistBetweenOrders: "",
-      startExtraOrder: "",
-      stepMultiplier: "",
-    },
-  ]);
-  const [TakeProfitData, setTakeProfitData] = useState([
-    {
-      takeProfit: "",
-      minTakeProfit: "",
-    },
-  ]);
-  const [StopLossData, setStopLossData] = useState([
-    {
-      stopLoss: "",
-    },
-  ]);
+  const { GeneralSettingsData, setGeneralSettingsData } = useStrategy();
+  // console.log("general settings", GeneralSettingsData);
+  const {OrdersData, setOrdersData} = useStrategy();
+  const {DCAData, setDCAData} = useStrategy();
+  const {TakeProfitData, setTakeProfitData} = useStrategy();
+  const {StopLossData, setStopLossData} = useStrategy();
   const [AllStrategyData, setAllStartegyData] = useState([
     {
       generalSettings: {},
@@ -150,18 +120,8 @@ const StrategyTabsComponent = (props) => {
     },
   ]);
 
-  const [ParametersData, setParametersData] = useState([
-    [
-      {
-        1: "",
-        operation: "",
-        2: "",
-        relation: "",
-        middleOne: "",
-        middleTwo: "",
-      },
-    ],
-  ]);
+
+  const {ParametersData, setParametersData} = useStrategy();
   const [pairsOptions, setPairsOptions] = useState([]);
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -857,6 +817,9 @@ const StrategyTabsComponent = (props) => {
 
   const handleSave = async () => {
     const { user } = await getSession();
+
+    
+    console.log("ALL STRAT DATA: ", AllStrategyData)
     const temp = AllStrategyData.map((item, index) => {
       return {
         ...item,
@@ -884,6 +847,51 @@ const StrategyTabsComponent = (props) => {
     } else {
       alert("Strategy Not Saved");
     }
+  };
+
+  const handleBacktest = async () => {
+    const { user } = await getSession();
+
+    
+    console.log("ALL STRAT DATA: ", AllStrategyData)
+    const temp = AllStrategyData.map((item, index) => {
+      return {
+        ...item,
+        generalSettings: GeneralSettingsData[index],
+        dca: DCAData[index],
+        orders: OrdersData[index],
+        stopLoss: StopLossData[index],
+        takeProfit: TakeProfitData[index],
+        parameters: ParametersData[index],
+        user,
+      };
+    });
+    console.log(temp);
+    setAllStartegyData([...temp]);
+    console.log("all the data", AllStrategyData);
+
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/backtest", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // If you need to send a JSON body, uncomment the following line and replace '{}' with the appropriate JSON object
+        body: JSON.stringify(AllStrategyData[0]),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Success:", data);
+        setChartData(data);
+      } else {
+        console.error("Error:", response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+    
   };
 
   const handleRemove = (i) => {
@@ -4189,7 +4197,8 @@ const StrategyTabsComponent = (props) => {
         ))}
       </Box>
 
-      <CandleStickGraph />
+      <Chart data={AllStrategyData} func={handleBacktest}/>
+      {/* <CandleStickGraph /> */}
     </>
   );
 };

@@ -52,6 +52,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
 const Login = () => {
   const [error, setError] = useState("");
   const [width, setWidth] = useState(globalThis?.innerWidth);
+  console.log("Backend: ",process.env.NEXT_PUBLIC_BACKEND_URL)
 
   const router = useRouter();
   const exchanges = useSelector((state) => state.exchanges.value);
