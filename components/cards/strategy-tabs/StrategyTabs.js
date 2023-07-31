@@ -9,11 +9,18 @@ import {
   Grid,
   Typography,
   Divider,
+  Autocomplete,
+  TextField,
+  Paper,
+  Popover,
 } from "@mui/material";
 import GeneralSettings from "../../../components/cards/general-settings/GeneralSettings";
 import { getSession } from "next-auth/react";
 import CandleStickGraph from "../../../components/cards/candleStick-strategy/CandleStickGraph";
 import SelectInputParameters from "../../widgets/SelectInputParameters";
+import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
+import { useStrategy } from '../../../context/StrategyContext';
+import Chart from '../../charts/Chart'
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -21,7 +28,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
   },
   "& .MuiInputBase-input": {
     position: "relative",
-    height: 15,
+    height: 11,
     backgroundColor: "#2A2A2A",
     borderRadius: "6px",
     fontSize: 15,
@@ -44,12 +51,13 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const StrategyTabs = () => {
+const StrategyTabs = (props) => {
   const [botName, setBotName] = useState("");
   const [exchange, setExchange] = useState("");
   const [botType, setBotType] = useState("");
   const [strategyType, setStrategyType] = useState("");
   const [strategyPair, setStrategyPair] = useState("");
+  const [chartData, setChartData] = useState("");
 
   const setBotSetting = async (values) => {
     let reqBody = {
@@ -81,7 +89,10 @@ const StrategyTabs = () => {
       }}
       component="main"
     >
-      <StrategyTabsComponent setBotSettings={setBotSetting} />
+      <StrategyTabsComponent
+        setBotSettings={setBotSetting}
+        strategyId={props.strategyId}
+      />
     </Box>
   );
 };
@@ -89,67 +100,343 @@ const StrategyTabs = () => {
 export default StrategyTabs;
 
 const StrategyTabsComponent = (props) => {
+  console.log(props.strategyId);
   const [value, setvalue] = useState(["general"]);
   const [ANDToggle, setANDToggle] = useState([[true]]);
-  const [GeneralSettingsData, setGeneralSettingsData] = useState([
-    {
-      "Strategy Name": "",
-      "Strategy Folder": "",
-      "Strategy Description": "",
-      BotLink: "",
-      Notes: "",
-    },
-  ]);
-  const [OrdersData, setOrdersData] = useState([
-    {
-      "First Order Size": "",
-      "Extra Order Size": "",
-      "Order Type": "",
-      Pairs: "",
-    },
-  ]);
-  const [DCAData, setDCAData] = useState([
-    {
-      "DCA Type": "",
-      "Volume Multiplier": "",
-      "Max Extra Orders": "",
-      "Min Dist Between Orders": "",
-      "Start Extra Order": "",
-      "Step Multiplier": "",
-    },
-  ]);
-  const [TakeProfitData, setTakeProfitData] = useState([
-    {
-      "Take Profit": "",
-      "Min Take Profit": "",
-    },
-  ]);
-  const [StopLossData, setStopLossData] = useState([
-    {
-      "Stop Loss": "",
-    },
-  ]);
+  const { GeneralSettingsData, setGeneralSettingsData } = useStrategy();
+  // console.log("general settings", GeneralSettingsData);
+  const {OrdersData, setOrdersData} = useStrategy();
+  const {DCAData, setDCAData} = useStrategy();
+  const {TakeProfitData, setTakeProfitData} = useStrategy();
+  const {StopLossData, setStopLossData} = useStrategy();
   const [AllStrategyData, setAllStartegyData] = useState([
     {
-      "General Settings Data": {},
-      "Orders Data": {},
-      "DCA Data": {},
-      "Take Profit Data": {},
-      "Stop Loss Data": {},
-      "Parameters Data": [],
+      generalSettings: {},
+      orders: {},
+      dca: {},
+      takeProfit: {},
+      stopLoss: {},
+      parameters: [],
     },
   ]);
 
-  const [ParametersData, setParametersData] = useState([
-    [{ 1: "", Operator: "", 2: "" }],
-  ]);
+
+  const {ParametersData, setParametersData} = useStrategy();
+  const [pairsOptions, setPairsOptions] = useState([]);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOptionTwo, setSelectedOptionTwo] = useState(null);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleOptionChange = (index, ParametersIndex, selectedOption) => {
+    setSelectedOption(selectedOption);
+    const temp = [...ParametersData];
+    temp[index][ParametersIndex].middleOne = selectedOption.value;
+    setParametersData(temp);
+  };
+
+  const handleOptionTwoChange = (index, ParametersIndex, selectedOptionTwo) => {
+    setSelectedOptionTwo(selectedOptionTwo);
+    const temp = [...ParametersData];
+    temp[index][ParametersIndex].middleTwo = selectedOptionTwo.value;
+    setParametersData(temp);
+  };
+
+  const [inputValuesHighCandle, setInputValuesHighCandle] = useState({
+    input1: "",
+    input2: "",
+    input3: "",
+  });
+
+  const [inputValuesSimple, setInputValuesSimple] = useState({
+    input1: "",
+    input2: "",
+    input3: "",
+  });
+
+  const [inputValuesTwoSimple, setInputValuesTwoSimple] = useState({
+    input1: "",
+    input2: "",
+    input3: "",
+  });
+
+  const [inputValuesTwoValue, setInputValuesTwoValue] = useState({
+    input1: "",
+  });
+
+  const [inputValuesTwoPrice, setInputValuesTwoPrice] = useState({
+    input1: "",
+  });
+
+  const [inputValuesExponential, setInputValuesExponential] = useState({
+    input1: "",
+    input2: "",
+    input3: "",
+  });
+
+  const [inputValuesTwoExponential, setInputValuesTwoExponential] = useState({
+    input1: "",
+    input2: "",
+    input3: "",
+  });
+
+  const [inputValuesKeltner, setInputValuesKeltner] = useState({
+    input1: "",
+    input2: "",
+    input3: "",
+    input4: "",
+    input5: "",
+  });
+
+  const [inputValuesTwoKeltner, setInputValuesTwoKeltner] = useState({
+    input1: "",
+    input2: "",
+    input3: "",
+    input4: "",
+    input5: "",
+  });
+
+  const [inputValuesTom, setInputValuesTom] = useState({
+    tomDemarkValue: "",
+  });
+
+  const [inputValuesTwoTom, setInputValuesTwoTom] = useState({
+    tomDemarkValue: "",
+  });
+
+  const handleInputChangeSimple = (event) => {
+    const { name, value } = event.target;
+    console.log(name, value, inputValuesSimple);
+    setInputValuesSimple((prevInputValues) => ({
+      ...prevInputValues,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChangeTwoSimple = (event) => {
+    const { name, value } = event.target;
+    console.log(name, value, inputValuesSimple);
+    setInputValuesTwoSimple((prevInputValues) => ({
+      ...prevInputValues,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChangeHighCandle = (event) => {
+    const { name, value } = event.target;
+    console.log(name, value, inputValuesHighCandle);
+    setInputValuesHighCandle((prevInputValues) => ({
+      ...prevInputValues,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChangeExponential = (event) => {
+    const { name, value } = event.target;
+    setInputValuesExponential((prevInputValues) => ({
+      ...prevInputValues,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChangeTwoExponential = (event) => {
+    const { name, value } = event.target;
+    setInputValuesTwoExponential((prevInputValues) => ({
+      ...prevInputValues,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChangeKeltner = (event) => {
+    const { name, value } = event.target;
+    setInputValuesKeltner((prevInputValues) => ({
+      ...prevInputValues,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChangeTwoKeltner = (event) => {
+    const { name, value } = event.target;
+    setInputValuesTwoKeltner((prevInputValues) => ({
+      ...prevInputValues,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChangeTom = (event) => {
+    const { name, value } = event.target;
+    setInputValuesTom((prevInputValues) => ({
+      ...prevInputValues,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChangeTwoTom = (event) => {
+    const { name, value } = event.target;
+    setInputValuesTwoTom((prevInputValues) => ({
+      ...prevInputValues,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChangeTwoValue = (event) => {
+    const { name, value } = event.target;
+    setInputValuesTwoValue((prevInputValues) => ({
+      ...prevInputValues,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChangeTwoPrice = (event) => {
+    const { name, value } = event.target;
+    setInputValuesTwoPrice((prevInputValues) => ({
+      ...prevInputValues,
+      [name]: value,
+    }));
+  };
+
+  const getConcatenatedValue = () => {
+    if (selectedOption?.value.startsWith("Simple Moving Average")) {
+      const { input1, input2, input3 } = inputValuesSimple;
+      const inputs = ["Simple Moving Average", input1, input2, input3]
+        .filter(Boolean)
+        .join(" ");
+      console.log("concatenate", inputs);
+      return inputs ? `${inputs}` : selectedOption?.label || "Select an option";
+    } else if (selectedOption?.value.startsWith("Exponential Moving Average")) {
+      const { input1, input2, input3 } = inputValuesExponential;
+      const inputs = ["Exponential Moving Average", input1, input2, input3]
+        .filter(Boolean)
+        .join(" ");
+      return inputs ? `${inputs}` : selectedOption?.label || "Select an option";
+    } else if (selectedOption?.value.startsWith("Keltner Channel")) {
+      const { input1, input2, input3, input4, input5 } = inputValuesKeltner;
+      const inputs = ["Keltner Channel", input1, input2, input3, input4, input5]
+        .filter(Boolean)
+        .join(" ");
+      return inputs ? `${inputs}` : selectedOption?.label || "Select an option";
+    } else if (selectedOption?.value.startsWith("Tom Demark")) {
+      const { tomDemarkValue } = inputValuesTom;
+      return tomDemarkValue
+        ? `Tom Demark ${tomDemarkValue}`
+        : selectedOption?.label || "Select an option";
+    }
+    return selectedOption?.label || "Select an option";
+  };
+
+  const getConcatenatedValueTwo = () => {
+    if (selectedOptionTwo?.value.startsWith("Simple Moving Average")) {
+      const { input1, input2, input3 } = inputValuesTwoSimple;
+      const inputs = ["Simple Moving Average", input1, input2, input3]
+        .filter(Boolean)
+        .join(" ");
+      console.log("concatenate", inputs);
+      return inputs
+        ? `${inputs}`
+        : selectedOptionTwo?.label || "Select an option";
+    } else if (
+      selectedOptionTwo?.value.startsWith("Exponential Moving Average")
+    ) {
+      const { input1, input2, input3 } = inputValuesTwoExponential;
+      const inputs = ["Exponential Moving Average", input1, input2, input3]
+        .filter(Boolean)
+        .join(" ");
+      return inputs
+        ? `${inputs}`
+        : selectedOptionTwo?.label || "Select an option";
+    } else if (selectedOptionTwo?.value.startsWith("Keltner Channel")) {
+      const { input1, input2, input3, input4, input5 } = inputValuesTwoKeltner;
+      const inputs = ["Keltner Channel", input1, input2, input3, input4, input5]
+        .filter(Boolean)
+        .join(" ");
+      return inputs
+        ? `${inputs}`
+        : selectedOptionTwo?.label || "Select an option";
+    } else if (selectedOptionTwo?.value.startsWith("Tom Demark")) {
+      const { tomDemarkValue } = inputValuesTwoTom;
+      return tomDemarkValue
+        ? `Tom Demark ${tomDemarkValue}`
+        : selectedOptionTwo?.label || "Select an option";
+    } else if (selectedOptionTwo?.value.startsWith("Value")) {
+      const { input1 } = inputValuesTwoValue;
+      return input1
+        ? `Value ${input1}`
+        : selectedOptionTwo?.label || "Select an option";
+    } else if (selectedOptionTwo?.value.startsWith("Price")) {
+      const { input1 } = inputValuesTwoPrice;
+      return input1
+        ? `Price ${input1}`
+        : selectedOptionTwo?.label || "Select an option";
+    }
+    return selectedOptionTwo?.label || "Select an option";
+  };
+
+  const open = Boolean(anchorEl);
+
   useEffect(() => {
-    fetchStrategiesByUserId();
-  }, []);
+    if (props.strategyId) {
+      fetchStrategyByStrategyId();
+    }
+    fetchPairsSymbolsByUserId();
+    // fetchStrategiesByUserId();
+  }, [props.strategyId]);
 
   useEffect(() => console.log("Updated State:", AllStrategyData), [
     AllStrategyData,
   ]);
+
+  const fetchStrategyByStrategyId = async () => {
+    // let session = await getSession();
+    const response = await fetch(
+      `/api/strategy/get-strategy-by-id?id=${props.strategyId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const newData = await response.json();
+    console.log(newData);
+    setAllStartegyData([newData.body]);
+    setGeneralSettingsData([newData.body.generalSettings]);
+    setOrdersData([newData.body.orders]);
+    setParametersData([newData.body.parameters]);
+    setDCAData([newData.body.dca]);
+    setTakeProfitData([newData.body.takeProfit]);
+    setStopLossData([newData.body.stopLoss]);
+  };
+
+  const fetchPairsSymbolsByUserId = async () => {
+    const { user } = await getSession();
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}portfolios/assets/symbols/user/${user.id}`,
+      {
+        method: "GET",
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    let combinedAssetsSymbols = data.reduce((accumulator, currentObject) => {
+      return accumulator.concat(currentObject.assetsSymbols);
+    }, []);
+
+    console.log(combinedAssetsSymbols);
+    let uniqueDataArray = [...new Set(combinedAssetsSymbols)];
+
+    console.log(uniqueDataArray);
+    setPairsOptions(uniqueDataArray);
+  };
+
   const fetchStrategiesByUserId = async () => {
     let session = await getSession();
     const response = await fetch(
@@ -172,55 +459,309 @@ const StrategyTabsComponent = (props) => {
     setGeneralSettingsData([
       ...GeneralSettingsData,
       {
-        "Strategy Name": "",
-        "Strategy Folder": "",
-        "Strategy Description": "",
-        BotLink: "",
-        Notes: "",
+        strategyName: "",
+        strategyFolder: "",
+        strategyDescription: "",
+        botLink: "",
+        notes: "",
       },
     ]);
     setOrdersData([
       ...OrdersData,
       {
-        "First Order Size": "",
-        "Extra Order Size": "",
-        "Order Type": "",
-        Pairs: "",
+        firstOrderSize: "",
+        extraOrderSize: "",
+        orderType: "",
+        pairs: "",
       },
     ]);
     setDCAData([
       ...DCAData,
       {
-        "DCA Type": "",
-        "Volume Multiplier": "",
-        "Max Extra Orders": "",
-        "Min Dist Between Orders": "",
-        "Start Extra Order": "",
-        "Step Multiplier": "",
+        dcaType: "",
+        volumeMultiplier: "",
+        maxExtraOrders: "",
+        minDistBetweenOrders: "",
+        startExtraOrder: "",
+        stepMultiplier: "",
       },
     ]);
     setTakeProfitData([
       ...TakeProfitData,
-      { "Take Profit": "", "Min Take Profit": "" },
+      { takeProfit: "", minTakeProfit: "" },
     ]);
-    setStopLossData([...StopLossData, { "Stop Loss": "" }]);
+    setStopLossData([...StopLossData, { stopLoss: "" }]);
     setAllStartegyData([
       ...AllStrategyData,
       {
-        "General Settings Data": {},
-        "Orders Data": {},
-        "DCA Data": {},
-        "Take Profit Data": {},
-        "Stop Loss Data": {},
+        generalSettings: {},
+        orders: {},
+        dca: {},
+        takeProfit: {},
+        stopLoss: {},
       },
     ]);
-    setParametersData([...ParametersData, [{ 1: "", Operator: "", 2: "" }]]);
+    setParametersData([
+      ...ParametersData,
+      [
+        {
+          1: "",
+          operation: "",
+          2: "",
+          relation: "",
+          middleOne: "",
+          middleTwo: "",
+        },
+      ],
+    ]);
     setANDToggle([...ANDToggle, [true]]);
   };
-  const ParametersOptions = [
-    { value: "Dummy1", label: "Dummy1" },
-    { value: "Dummy2", label: "Dummy2" },
-    { value: "Dummy3", label: "Dummy3" },
+
+  const dcaTypeOptions = [{ value: "Signal", label: "Signal" }];
+
+  // const categoryMap = {
+  //   "Simple Moving Average": [
+  //     "Simple Moving Average 20",
+  //     "Simple Moving Average 50",
+  //   ],
+  //   "Exponential Moving Average": [
+  //     "Exponential Moving Average 20",
+  //     "Exponential Moving Average 50",
+  //   ],
+  //   "Keltner Channel ": [
+  //     "Keltner Channel Upper Band 50",
+  //     "Keltner Channel Middle Band 50",
+  //     "Keltner Channel Lower Band 50",
+  //   ],
+  //   "Tom Demark": [
+  //     "Tom Demark Buy 9",
+  //     "Tom Demark Sell 9",
+  //     "Tom Demark Buy 13",
+  //     "Tom Demark Sell 13",
+  //   ],
+  //   "Bollinger Bands": [
+  //     "Tom Demark Buy 9",
+
+  //   ],
+  // };
+
+  const takeProfitOptions = [
+    { value: "Fixed", label: "Fixed" },
+    { value: "Trailing SL", label: "Trailing SL" },
+    {
+      value: "All candle body w % up or down",
+      label: "All candle body w % up or down",
+    },
+  ];
+  const parametersOneOptions = [
+    {
+      value: "Price",
+      label: "Price",
+    },
+    {
+      value: "Indicator",
+      label: "Indicator",
+    },
+    {
+      value: "Oscillator",
+      label: "Oscillator",
+    },
+    {
+      value: "High Volume Candlestick",
+      label: "High Volume Candlestick",
+    },
+  ];
+
+  const parametersOneIndicatorOptions = [
+    {
+      value: "Simple Moving Average 20",
+      label: "Simple Moving Average 20",
+    },
+    {
+      value: "Simple Moving Average 50",
+      label: "Simple Moving Average 50",
+    },
+    {
+      value: "Exponential Moving Average 20",
+      label: "Exponential Moving Average 20",
+    },
+    {
+      value: "Exponential Moving Average 50",
+      label: "Exponential Moving Average 50",
+    },
+    {
+      value: "Keltner Channel Upper Band 50",
+      label: "Keltner Channel Upper Band 50",
+    },
+    {
+      value: "Keltner Channel Middle Band 50",
+      label: "Keltner Channel Middle Band 50",
+    },
+    {
+      value: "Keltner Channel Lower Band 50",
+      label: "Keltner Channel Lower Band 50",
+    },
+    {
+      value: "Tom Demark Buy 9",
+      label: "Tom Demark Buy 9",
+    },
+    {
+      value: "Tom Demark Sell 9",
+      label: "Tom Demark Sell 9",
+    },
+    {
+      value: "Tom Demark Buy 13",
+      label: "Tom Demark Buy 13",
+    },
+    {
+      value: "Tom Demark Sell 13",
+      label: "Tom Demark Sell 13",
+    },
+    {
+      value: "Bollinger Bands",
+      label: "Bollinger Bands",
+    },
+  ];
+
+  const priceAndHighVolumeParametersTwoIndicatorOptions = [
+    { value: "Value", label: "Value" },
+    ...parametersOneIndicatorOptions,
+  ];
+
+  const indicatorParametersTwoIndicatorOptions = [
+    { value: "Price", label: "Price" },
+    ...parametersOneIndicatorOptions,
+  ];
+
+  const parametersOneOscillatorOptions = [
+    {
+      value: "Relative Strength Index",
+      label: "Relative Strength Index",
+    },
+  ];
+
+  const parametersOneHighVolumeCandlestickOptions = [
+    {
+      value: "Bullish Green (Vol > 200%) Open",
+      label: "Bullish Green (Vol > 200%) Open",
+    },
+    {
+      value: "Bullish Blue (Vol > 150%) Open",
+      label: "Bullish Blue (Vol > 150%) Open",
+    },
+    {
+      value: "Bearish Red (Vol > 200%) Open",
+      label: "Bearish Red (Vol > 200%) Open",
+    },
+    {
+      value: "Bearish Purple (Vol > 150%) Open",
+      label: "Bearish Purple (Vol > 150%) Open",
+    },
+    {
+      value: "Bullish Green (Vol > 200%) Close",
+      label: "Bullish Green (Vol > 200%) Close",
+    },
+    {
+      value: "Bullish Blue (Vol > 150%) Close",
+      label: "Bullish Blue (Vol > 150%) Close",
+    },
+    {
+      value: "Bearish Red (Vol > 200%) Close",
+      label: "Bearish Red (Vol > 200%) Close",
+    },
+    {
+      value: "Bearish Purple (Vol > 150%) Close",
+      label: "Bearish Purple (Vol > 150%) Close",
+    },
+    {
+      value: "Bullish Green (Vol > 200%) High",
+      label: "Bullish Green (Vol > 200%) High",
+    },
+    {
+      value: "Bullish Blue (Vol > 150%) High",
+      label: "Bullish Blue (Vol > 150%) High",
+    },
+    {
+      value: "Bearish Red (Vol > 200%) High",
+      label: "Bearish Red (Vol > 200%) High",
+    },
+    {
+      value: "Bearish Purple (Vol > 150%) High",
+      label: "Bearish Purple (Vol > 150%) High",
+    },
+    {
+      value: "Bullish Green (Vol > 200%) Low",
+      label: "Bullish Green (Vol > 200%) Low",
+    },
+    {
+      value: "Bullish Blue (Vol > 150%) Low",
+      label: "Bullish Blue (Vol > 150%) Low",
+    },
+    {
+      value: "Bearish Red (Vol > 200%) Low",
+      label: "Bearish Red (Vol > 200%) Low",
+    },
+    {
+      value: "Bearish Purple (Vol > 150%) Low",
+      label: "Bearish Purple (Vol > 150%) Low",
+    },
+  ];
+  const parametersOperationsOptions = [
+    { value: "Equal", label: "Equal" },
+    { value: "GreaterThan", label: "Greater than" },
+    { value: "GreaterOrEqual", label: "Greater or equal" },
+    { value: "LessThan", label: "Less than" },
+    { value: "LessOrEqual", label: "Less or equal" },
+    { value: "CrossesUp", label: "Crosses up" },
+    { value: "CrossesDown", label: "Crosses down" },
+  ];
+
+  const highVolumeParametersOperationsOptions = [
+    { value: "GreaterThan", label: "Greater than" },
+    { value: "GreaterOrEqual", label: "Greater or equal" },
+    { value: "LessThan", label: "Less than" },
+    { value: "LessOrEqual", label: "Less or equal" },
+    { value: "CrossesUp", label: "Crosses up" },
+    { value: "CrossesDown", label: "Crosses down" },
+  ];
+
+  const priceParametersOperationsOptions = [
+    { value: "Equal", label: "Equal" },
+    { value: "Greater Than", label: "Greater than" },
+    { value: "Greater Or Equal", label: "Greater or equal" },
+    { value: "Less Than", label: "Less than" },
+    { value: "Less Or Equal", label: "Less or equal" },
+  ];
+
+  const parametersTwoOptions = [
+    { value: "Simple Moving Average 20", label: "Simple Moving Average 20" },
+    { value: "Simple Moving Average 50", label: "Simple Moving Average 50" },
+    {
+      value: "Exponential Moving Average 20",
+      label: "Exponential Moving Average 20",
+    },
+    {
+      value: "Exponential Moving Average 50",
+      label: "Exponential Moving Average 50",
+    },
+    {
+      value: "Keltner Channel Upper Band 50",
+      label: "Keltner Channel Upper Band 50",
+    },
+    {
+      value: "Keltner Channel Middle Band 50",
+      label: "Keltner Channel Middle Band 50",
+    },
+    {
+      value: "Keltner Channel Lower Band 50",
+      label: "Keltner Channel Lower Band 50",
+    },
+    { value: "Tom Demark Buy 9", label: "Tom Demark Buy 9" },
+    { value: "Tom Demark Sell 9", label: "Tom Demark Sell 9" },
+    { value: "Tom Demark Buy 13", label: "Tom Demark Buy 13" },
+    { value: "Tom Demark Sell 13", label: "Tom Demark Sell 13" },
+    { value: "Bollinger Band Lower", label: "Bollinger Band Lower" },
+    { value: "Bollinger Band Higher", label: "Bollinger Band Higher" },
   ];
   const OrderTypeOptions = [
     { value: "Market", label: "Market" },
@@ -234,13 +775,28 @@ const StrategyTabsComponent = (props) => {
     });
     temp2[index] = [
       ...temp2[index],
-      { [parseInt(len) + 1]: "", Operator: "", [parseInt(len) + 2]: "" },
+      {
+        [parseInt(len) + 1]: "",
+        operation: "",
+        [parseInt(len) + 2]: "",
+        relation: "AND",
+      },
     ];
 
     setParametersData(temp2);
     const temp3 = [...ANDToggle];
     temp3[index] = [...temp3[index], true];
     setANDToggle(temp3);
+  };
+
+  const handleANDToggle = (index, ParametersIndex) => {
+    console.log(index, ParametersIndex);
+    let temp2 = [...ParametersData];
+    temp2[0][ParametersIndex].relation = ANDToggle[index][ParametersIndex]
+      ? "AND"
+      : "OR";
+
+    setParametersData(temp2);
   };
 
   const [width, setWidth] = useState(globalThis?.innerWidth);
@@ -261,18 +817,22 @@ const StrategyTabsComponent = (props) => {
 
   const handleSave = async () => {
     const { user } = await getSession();
+
+    
+    console.log("ALL STRAT DATA: ", AllStrategyData)
     const temp = AllStrategyData.map((item, index) => {
       return {
         ...item,
-        "General Settings Data": GeneralSettingsData[index],
-        "DCA Data": DCAData[index],
-        "Orders Data": OrdersData[index],
-        "Stop Loss Data": StopLossData[index],
-        "Take Profit Data": TakeProfitData[index],
-        "Parameters Data": ParametersData[index],
+        generalSettings: GeneralSettingsData[index],
+        dca: DCAData[index],
+        orders: OrdersData[index],
+        stopLoss: StopLossData[index],
+        takeProfit: TakeProfitData[index],
+        parameters: ParametersData[index],
         user,
       };
     });
+    console.log(temp);
     setAllStartegyData([...temp]);
     console.log("all the data", AllStrategyData);
     const response = await fetch(`/api/strategy/create-strategy`, {
@@ -287,6 +847,51 @@ const StrategyTabsComponent = (props) => {
     } else {
       alert("Strategy Not Saved");
     }
+  };
+
+  const handleBacktest = async () => {
+    const { user } = await getSession();
+
+    
+    console.log("ALL STRAT DATA: ", AllStrategyData)
+    const temp = AllStrategyData.map((item, index) => {
+      return {
+        ...item,
+        generalSettings: GeneralSettingsData[index],
+        dca: DCAData[index],
+        orders: OrdersData[index],
+        stopLoss: StopLossData[index],
+        takeProfit: TakeProfitData[index],
+        parameters: ParametersData[index],
+        user,
+      };
+    });
+    console.log(temp);
+    setAllStartegyData([...temp]);
+    console.log("all the data", AllStrategyData);
+
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/backtest", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // If you need to send a JSON body, uncomment the following line and replace '{}' with the appropriate JSON object
+        body: JSON.stringify(AllStrategyData[0]),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Success:", data);
+        setChartData(data);
+      } else {
+        console.error("Error:", response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+    
   };
 
   const handleRemove = (i) => {
@@ -309,6 +914,32 @@ const StrategyTabsComponent = (props) => {
     setAllStartegyData(temp);
     temp = ANDToggle.filter((item, index) => index !== i);
     setANDToggle(temp);
+  };
+  const handlePopoverSave = (index, ParameterIndex) => {
+    let newParameterData = [...ParametersData];
+    const middleValue = getConcatenatedValue();
+    console.log(middleValue);
+    newParameterData[index][ParameterIndex].middleOne = middleValue;
+    setParametersData(newParameterData);
+    setAnchorEl(null);
+  };
+  const handlePopoverSaveTwo = (index, ParameterIndex) => {
+    let newParameterData = [...ParametersData];
+    const middleValue = getConcatenatedValueTwo();
+    console.log(middleValue);
+    newParameterData[index][ParameterIndex].middleTwo = middleValue;
+    setParametersData(newParameterData);
+    setAnchorEl(null);
+  };
+  const handleHighCandleStickPopoverSave = (index, ParameterIndex) => {
+    let newParameterData = [...ParametersData];
+    const { input1, input2, input3 } = inputValuesHighCandle;
+    console.log("inputs", input1, input2, input3);
+    const inputs = [input1, input2, input3].filter(Boolean).join(", ");
+    console.log("concatenate", inputs);
+    newParameterData[index][ParameterIndex].middleOne = inputs;
+    setParametersData(newParameterData);
+    setAnchorEl(null);
   };
   return (
     <>
@@ -710,8 +1341,8 @@ const StrategyTabsComponent = (props) => {
                           required
                           id="firstorderSize"
                           name="firstOrderSize"
-                          placeholder="100"
-                          value={OrdersData[index]["First Order Size"]}
+                          // placeholder="100"
+                          value={OrdersData[index]["firstOrderSize"]}
                           sx={{
                             width:
                               width < 769 && width > 600
@@ -723,8 +1354,7 @@ const StrategyTabsComponent = (props) => {
                           }}
                           onChange={async (event) => {
                             const temp = [...OrdersData];
-                            temp[index]["First Order Size"] =
-                              event.target.value;
+                            temp[index]["firstOrderSize"] = event.target.value;
                             setOrdersData(temp);
                           }}
                         />
@@ -760,10 +1390,10 @@ const StrategyTabsComponent = (props) => {
                           type="number"
                           margin="normal"
                           required
-                          placeholder="150"
+                          // placeholder="150"
                           id="extraordersize"
                           name="extraOrderSize"
-                          value={OrdersData[index]["Extra Order Size"]}
+                          value={OrdersData[index]["extraOrderSize"]}
                           sx={{
                             width:
                               width < 769 && width > 600
@@ -775,8 +1405,7 @@ const StrategyTabsComponent = (props) => {
                           }}
                           onChange={async (event) => {
                             const temp = [...OrdersData];
-                            temp[index]["Extra Order Size"] =
-                              event.target.value;
+                            temp[index]["extraOrderSize"] = event.target.value;
                             setOrdersData(temp);
                           }}
                         />
@@ -814,11 +1443,11 @@ const StrategyTabsComponent = (props) => {
                           Order type
                         </Typography>
                         <SelectInputParameters
-                          placeHolder="Market"
-                          value={OrdersData[index]["Order Type"]}
+                          placeHolder="Select"
+                          value={OrdersData[index]["orderType"]}
                           onChange={async (event) => {
                             const temp = [...OrdersData];
-                            temp[index]["Order Type"] = event.value;
+                            temp[index]["orderType"] = event.value;
                             setOrdersData(temp);
                           }}
                           Width={
@@ -860,16 +1489,104 @@ const StrategyTabsComponent = (props) => {
                         >
                           Pairs
                         </Typography>
-                        <SelectInputParameters
+                        {/* <SelectInputParameters
                           placeHolder="BTC/USDT"
-                          value={OrdersData[index].Pairs}
+                          value={OrdersData[index].pairs}
                           Width={width < 600 ? "100%" : "10rem"}
                           onChange={async (event) => {
                             const temp = [...OrdersData];
-                            temp[index].Pairs = event.value;
+                            temp[index].pairs = event.value;
                             setOrdersData(temp);
                           }}
                           options={ParametersOptions}
+                        /> */}
+                        <Autocomplete
+                          id="free-solo-demo"
+                          freeSolo
+                          inputValue={OrdersData[index].pairs}
+                          onInputChange={(event, newInputValue) => {
+                            const temp = [...OrdersData];
+                            temp[index].pairs = newInputValue;
+                            setOrdersData(temp);
+                          }}
+                          options={pairsOptions}
+                          PaperComponent={({ children }) => (
+                            <Paper
+                              sx={{
+                                width: width < 600 ? "100%" : "10rem",
+                                maxHeight: "300px",
+                                overflow: "auto",
+                                background: "#2B2B2B",
+                                mt: 0.5,
+                              }}
+                            >
+                              {children}
+                            </Paper>
+                          )}
+                          renderOption={(props, option, { selected }) => (
+                            <li
+                              {...props}
+                              style={{
+                                backgroundColor: selected
+                                  ? "#000000"
+                                  : "#2B2B2B",
+                                color: "#FFFFFF",
+                                fontFamily: "Barlow, sans-serif",
+                                fontSize: "15px",
+                              }}
+                            >
+                              {option}
+                            </li>
+                          )}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label={""}
+                              sx={{
+                                width: width < 600 ? "100%" : "10rem",
+                                fontFamily: "Barlow, sans-serif",
+                                ".MuiOutlinedInput-root": {
+                                  borderRadius: "7px",
+                                  backgroundColor: "#2B2B2B",
+                                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                                    border: "none",
+                                  },
+                                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    border: "none",
+                                  },
+                                  ".MuiOutlinedInput-notchedOutline": {
+                                    border: "none",
+                                  },
+                                },
+                                ".MuiOutlinedInput-input": {
+                                  height: "0px",
+                                  lineHeight: "0px",
+                                  padding: "0px",
+                                  fontFamily: "Barlow, sans-serif",
+                                },
+                                ".MuiFormLabel-root": {
+                                  fontFamily: "Barlow, sans-serif",
+                                },
+                              }}
+                            />
+                          )}
+                          filterOptions={(options, { inputValue }) => {
+                            if (inputValue === "") {
+                              return options;
+                            }
+
+                            let results = options.filter((option) =>
+                              option
+                                .toUpperCase()
+                                .startsWith(inputValue.toUpperCase())
+                            );
+
+                            if (results.length === 0) {
+                              results = ["No results found"];
+                            }
+
+                            return results;
+                          }}
                         />
                       </Box>
                     </Grid>
@@ -917,6 +1634,7 @@ const StrategyTabsComponent = (props) => {
                                 ][ParametersIndex];
 
                                 setANDToggle(temp);
+                                handleANDToggle(index, ParametersIndex);
                               }}
                             >
                               {ANDToggle[index][ParametersIndex] ? "AND" : "OR"}
@@ -946,7 +1664,7 @@ const StrategyTabsComponent = (props) => {
                                 Parameters {Object.keys(ParameterItem)[0]}
                               </Typography>
                               <SelectInputParameters
-                                placeHolder="Bullish Green Vector (Vol.>200%)"
+                                // placeHolder="Bullish Green Vector (Vol.>200%)"
                                 value={
                                   ParametersData[index][ParametersIndex][
                                     Object.keys(ParameterItem)[0]
@@ -957,26 +1675,1043 @@ const StrategyTabsComponent = (props) => {
                                   temp[index][ParametersIndex][
                                     Object.keys(ParameterItem)[0]
                                   ] = selectedOption.value;
+                                  temp[index][ParametersIndex].middleOne = "";
                                   setParametersData(temp);
                                 }}
-                                options={ParametersOptions}
+                                options={parametersOneOptions}
                                 keyName={"Parameter"}
                               />
                             </Box>
 
+                            {ParametersData[index][ParametersIndex][
+                              Object.keys(ParameterItem)[0]
+                            ] === "Indicator" && (
+                              <>
+                                <Box
+                                  sx={{
+                                    marginBottom: 2,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                  }}
+                                >
+                                  <SelectInputParameters
+                                    value={
+                                      ParametersData[index][ParametersIndex]
+                                        .middleOne
+                                    }
+                                    onChange={(selectedOption) =>
+                                      handleOptionChange(
+                                        index,
+                                        ParametersIndex,
+                                        selectedOption
+                                      )
+                                    }
+                                    options={parametersOneIndicatorOptions}
+                                    keyName={"middleOne"}
+                                    placeHolder={"Select"}
+                                    Width={"100%"}
+                                    margin={
+                                      width < 900 && width > 600
+                                        ? "35vw"
+                                        : width < 600 && width > 500
+                                        ? "33vw"
+                                        : width < 500
+                                        ? "28vw"
+                                        : 13.5
+                                    }
+                                  />
+                                  {ParametersData[index][ParametersIndex]
+                                    .middleOne && (
+                                    <Button
+                                      onClick={handlePopoverOpen}
+                                      sx={{
+                                        color: "white",
+                                        background: "#2D2D2D",
+                                        borderRadius: "6px",
+                                        height: 30,
+                                        minWidth: 20,
+                                      }}
+                                    >
+                                      <ModeEditOutlineIcon />
+                                    </Button>
+                                  )}
+                                </Box>
+                                <Popover
+                                  open={open}
+                                  anchorEl={anchorEl}
+                                  onClose={handlePopoverClose}
+                                  anchorOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "right",
+                                  }}
+                                  transformOrigin={{
+                                    vertical: "top",
+                                    horizontal: "center",
+                                  }}
+                                  sx={{ mt: 0.5 }}
+                                >
+                                  <Box
+                                    sx={{
+                                      background: "#606060",
+                                      minWidth: 250,
+                                      minHeight: 100,
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      gap: 1,
+                                      py: 0.2,
+                                    }}
+                                  >
+                                    {/* <Typography
+                                      sx={{
+                                        fontFamily: "Barlow, san-serif",
+                                        fontWeight: 500,
+                                        fontSize: 16,
+                                        color: "#FFFFFF",
+                                        px: 0.5,
+                                        opacity: 0.7,
+                                      }}
+                                    >
+                                      {selectedOption?.label ||
+                                        "Select an option"}
+                                    </Typography> */}
+                                    {selectedOption?.value.startsWith(
+                                      "Simple Moving Average"
+                                    ) && (
+                                      <>
+                                        <Typography
+                                          sx={{
+                                            fontFamily: "Barlow, san-serif",
+                                            fontWeight: 500,
+                                            fontSize: 16,
+                                            color: "#FFFFFF",
+                                            px: 0.5,
+                                            opacity: 0.7,
+                                          }}
+                                        >
+                                          {`Simple Moving Average ${inputValuesSimple.input1 ||
+                                            ""}` || "Select an option"}
+                                        </Typography>
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            gap: 1,
+                                          }}
+                                        >
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Length
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input1"
+                                              value={
+                                                inputValuesSimple.input1 || ""
+                                              }
+                                              onChange={handleInputChangeSimple}
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Source
+                                            </label>
+                                            <input
+                                              type="text"
+                                              name="input2"
+                                              value={
+                                                inputValuesSimple.input2 || ""
+                                              }
+                                              onChange={handleInputChangeSimple}
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Offset
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input3"
+                                              value={
+                                                inputValuesSimple.input3 || ""
+                                              }
+                                              onChange={handleInputChangeSimple}
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                        </Box>
+                                      </>
+                                    )}
+                                    {selectedOption?.value.startsWith(
+                                      "Exponential Moving Average"
+                                    ) && (
+                                      <>
+                                        <Typography
+                                          sx={{
+                                            fontFamily: "Barlow, san-serif",
+                                            fontWeight: 500,
+                                            fontSize: 16,
+                                            color: "#FFFFFF",
+                                            px: 0.5,
+                                            opacity: 0.7,
+                                          }}
+                                        >
+                                          {`Exponential Moving Average ${inputValuesExponential.input1 ||
+                                            ""}` || "Select an option"}
+                                        </Typography>
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            gap: 1,
+                                          }}
+                                        >
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Length
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input1"
+                                              value={
+                                                inputValuesExponential.input1 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeExponential
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Source
+                                            </label>
+                                            <input
+                                              type="text"
+                                              name="input2"
+                                              value={
+                                                inputValuesExponential.input2 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeExponential
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Offset
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input3"
+                                              value={
+                                                inputValuesExponential.input3 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeExponential
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                        </Box>
+                                      </>
+                                    )}
+                                    {selectedOption?.value.startsWith(
+                                      "Keltner Channel"
+                                    ) && (
+                                      <>
+                                        <Typography
+                                          sx={{
+                                            fontFamily: "Barlow, san-serif",
+                                            fontWeight: 500,
+                                            fontSize: 16,
+                                            color: "#FFFFFF",
+                                            px: 0.5,
+                                            opacity: 0.7,
+                                          }}
+                                        >
+                                          {`Keltner Channel ${inputValuesKeltner.input1 ||
+                                            ""}` || "Select an option"}
+                                        </Typography>
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            gap: 1,
+                                            px: 3,
+                                          }}
+                                        >
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Length
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input1"
+                                              value={
+                                                inputValuesKeltner.input1 || ""
+                                              }
+                                              onChange={
+                                                handleInputChangeKeltner
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Multiplier
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input2"
+                                              value={
+                                                inputValuesKeltner.input2 || ""
+                                              }
+                                              onChange={
+                                                handleInputChangeKeltner
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Ma Type
+                                            </label>
+                                            <input
+                                              type="text"
+                                              name="input3"
+                                              value={
+                                                inputValuesKeltner.input3 || ""
+                                              }
+                                              onChange={
+                                                handleInputChangeKeltner
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              ATR Length
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input4"
+                                              value={
+                                                inputValuesKeltner.input4 || ""
+                                              }
+                                              onChange={
+                                                handleInputChangeKeltner
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Source
+                                            </label>
+                                            <input
+                                              type="text"
+                                              name="input5"
+                                              value={
+                                                inputValuesKeltner.input5 || ""
+                                              }
+                                              onChange={
+                                                handleInputChangeKeltner
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                        </Box>
+                                      </>
+                                    )}
+                                    {selectedOption?.value.startsWith(
+                                      "Tom Demark"
+                                    ) && (
+                                      <>
+                                        <Typography
+                                          sx={{
+                                            fontFamily: "Barlow, san-serif",
+                                            fontWeight: 500,
+                                            fontSize: 16,
+                                            color: "#FFFFFF",
+                                            px: 0.5,
+                                            opacity: 0.7,
+                                          }}
+                                        >
+                                          {`Tom Demark` || "Select an option"}
+                                        </Typography>
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            justifyContent: "flex-start",
+                                            pl: 1,
+                                          }}
+                                        >
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Type
+                                            </label>
+                                            <input
+                                              type="text"
+                                              name="tomDemarkValue"
+                                              value={
+                                                inputValuesTom.tomDemarkValue ||
+                                                ""
+                                              }
+                                              onChange={handleInputChangeTom}
+                                              style={{
+                                                width: "180px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                        </Box>
+                                      </>
+                                    )}
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "flex-end",
+                                        mt: 1,
+                                        gap: 1,
+                                        mr: 1,
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <Button
+                                        sx={{
+                                          background:
+                                            "linear-gradient(to right,#790F87,#794AE3)",
+                                          color: "#FFFFFF",
+                                          borderRadius: 1.5,
+                                          height: 22,
+                                          minWidth: 20,
+                                          fontFamily: "Barlow, san-serif",
+                                          textTransform: "none",
+                                        }}
+                                        onClick={() =>
+                                          handlePopoverSave(
+                                            index,
+                                            ParametersIndex
+                                          )
+                                        }
+                                      >
+                                        Apply
+                                      </Button>
+                                      <Button
+                                        sx={{
+                                          background: "#8F8F8F",
+                                          color: "#FFFFFF",
+                                          borderRadius: 1.5,
+                                          height: 22,
+                                          minWidth: 20,
+                                          fontFamily: "Barlow, san-serif",
+                                          textTransform: "none",
+                                        }}
+                                        onClick={handlePopoverClose}
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </Box>
+                                  </Box>
+                                </Popover>
+                              </>
+                            )}
+
+                            {ParametersData[index][ParametersIndex][
+                              Object.keys(ParameterItem)[0]
+                            ] === "Oscillator" && (
+                              <>
+                                <Box sx={{ marginBottom: 2 }}>
+                                  <SelectInputParameters
+                                    value={
+                                      ParametersData[index][ParametersIndex]
+                                        .middleOne
+                                    }
+                                    onChange={(selectedOption) => {
+                                      const temp = [...ParametersData];
+                                      temp[index][ParametersIndex].middleOne =
+                                        selectedOption.value;
+                                      setParametersData(temp);
+                                    }}
+                                    options={parametersOneOscillatorOptions}
+                                    keyName={"middleOne"}
+                                    placeHolder={"Select"}
+                                    Width={"80%"}
+                                    margin={
+                                      width < 900 && width > 600
+                                        ? "35vw"
+                                        : width < 600 && width > 500
+                                        ? "33vw"
+                                        : width < 500
+                                        ? "28vw"
+                                        : 13.5
+                                    }
+                                  />
+                                </Box>
+                              </>
+                            )}
+
+                            {ParametersData[index][ParametersIndex][
+                              Object.keys(ParameterItem)[0]
+                            ] === "High Volume Candlestick" && (
+                              <>
+                                <Box
+                                  sx={{
+                                    marginBottom: 2,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                  }}
+                                >
+                                  <SelectInputParameters
+                                    value={
+                                      ParametersData[index][ParametersIndex]
+                                        .middleOne
+                                    }
+                                    onChange={(selectedOption) => {
+                                      const temp = [...ParametersData];
+                                      temp[index][ParametersIndex].middleOne =
+                                        selectedOption.value;
+                                      setInputValuesHighCandle(
+                                        (prevInputValues) => ({
+                                          ...prevInputValues,
+                                          ["input1"]: selectedOption.value,
+                                        })
+                                      );
+                                      setParametersData(temp);
+                                    }}
+                                    options={
+                                      parametersOneHighVolumeCandlestickOptions
+                                    }
+                                    keyName={"middleOne"}
+                                    placeHolder={"Select"}
+                                    Width={"80%"}
+                                    margin={
+                                      width < 900 && width > 600
+                                        ? "35vw"
+                                        : width < 600 && width > 500
+                                        ? "33vw"
+                                        : width < 500
+                                        ? "28vw"
+                                        : 13.5
+                                    }
+                                  />
+                                  {ParametersData[index][ParametersIndex]
+                                    .middleOne && (
+                                    <Button
+                                      onClick={handlePopoverOpen}
+                                      sx={{
+                                        color: "white",
+                                        background: "#2D2D2D",
+                                        borderRadius: "6px",
+                                        height: 30,
+                                        minWidth: 20,
+                                      }}
+                                    >
+                                      <ModeEditOutlineIcon />
+                                    </Button>
+                                  )}
+                                </Box>
+                                <Popover
+                                  open={open}
+                                  anchorEl={anchorEl}
+                                  onClose={handlePopoverClose}
+                                  anchorOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "right",
+                                  }}
+                                  transformOrigin={{
+                                    vertical: "top",
+                                    horizontal: "center",
+                                  }}
+                                  sx={{ mt: 0.5 }}
+                                >
+                                  <Box
+                                    sx={{
+                                      background: "#606060",
+                                      minWidth: 250,
+                                      minHeight: 100,
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      gap: 1,
+                                      py: 0.2,
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        fontFamily: "Barlow, san-serif",
+                                        fontWeight: 500,
+                                        fontSize: 16,
+                                        color: "#FFFFFF",
+                                        px: 0.5,
+                                        opacity: 0.7,
+                                      }}
+                                    >
+                                      High Volume Candlestick
+                                    </Typography>
+                                    {ParametersData[index][ParametersIndex][
+                                      Object.keys(ParameterItem)[0]
+                                    ] === "High Volume Candlestick" && (
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "center",
+                                          alignItems: "center",
+                                          gap: 1,
+                                        }}
+                                      >
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                          }}
+                                        >
+                                          <label
+                                            style={{
+                                              fontFamily: "Barlow, san-serif",
+                                              color: "#FFFFFF",
+                                              fontSize: "13px",
+                                            }}
+                                          >
+                                            Type
+                                          </label>
+                                          <input
+                                            type="text"
+                                            name="input1"
+                                            value={
+                                              inputValuesHighCandle.input1 ||
+                                              ParametersData[index][
+                                                ParametersIndex
+                                              ].middleOne
+                                            }
+                                            onChange={
+                                              handleInputChangeHighCandle
+                                            }
+                                            style={{
+                                              width: "210px",
+                                              background: "#8F8F8F",
+                                              border: "none",
+                                              outline: "none",
+                                              borderRadius: "4px",
+                                              fontFamily: "Barlow, san-serif",
+                                              color: "#FFFFFF",
+                                              height: "25px",
+                                              paddingLeft: "5px",
+                                            }}
+                                          />
+                                        </Box>
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                          }}
+                                        >
+                                          <label
+                                            style={{
+                                              fontFamily: "Barlow, san-serif",
+                                              color: "#FFFFFF",
+                                              fontSize: "13px",
+                                            }}
+                                          >
+                                            Price Point
+                                          </label>
+                                          <input
+                                            type="text"
+                                            name="input2"
+                                            value={
+                                              inputValuesHighCandle.input2 || ""
+                                            }
+                                            onChange={
+                                              handleInputChangeHighCandle
+                                            }
+                                            style={{
+                                              width: "70px",
+                                              background: "#8F8F8F",
+                                              border: "none",
+                                              outline: "none",
+                                              borderRadius: "4px",
+                                              fontFamily: "Barlow, san-serif",
+                                              color: "#FFFFFF",
+                                              height: "25px",
+                                              paddingLeft: "5px",
+                                            }}
+                                          />
+                                        </Box>
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                          }}
+                                        >
+                                          <label
+                                            style={{
+                                              fontFamily: "Barlow, san-serif",
+                                              color: "#FFFFFF",
+                                              fontSize: "13px",
+                                            }}
+                                          >
+                                            Min. Candle Size
+                                          </label>
+                                          <input
+                                            type="number"
+                                            name="input3"
+                                            value={
+                                              inputValuesHighCandle.input3 || ""
+                                            }
+                                            onChange={
+                                              handleInputChangeHighCandle
+                                            }
+                                            style={{
+                                              width: "110px",
+                                              background: "#8F8F8F",
+                                              border: "none",
+                                              outline: "none",
+                                              borderRadius: "4px",
+                                              fontFamily: "Barlow, san-serif",
+                                              color: "#FFFFFF",
+                                              height: "25px",
+                                              paddingLeft: "5px",
+                                            }}
+                                          />
+                                        </Box>
+                                      </Box>
+                                    )}
+
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "flex-end",
+                                        mt: 1,
+                                        gap: 1,
+                                        mr: 1,
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <Button
+                                        sx={{
+                                          background:
+                                            "linear-gradient(to right,#790F87,#794AE3)",
+                                          color: "#FFFFFF",
+                                          borderRadius: 1.5,
+                                          height: 22,
+                                          minWidth: 20,
+                                          fontFamily: "Barlow, san-serif",
+                                          textTransform: "none",
+                                        }}
+                                        onClick={() =>
+                                          handleHighCandleStickPopoverSave(
+                                            index,
+                                            ParametersIndex
+                                          )
+                                        }
+                                      >
+                                        Apply
+                                      </Button>
+                                      <Button
+                                        sx={{
+                                          background: "#8F8F8F",
+                                          color: "#FFFFFF",
+                                          borderRadius: 1.5,
+                                          height: 22,
+                                          minWidth: 20,
+                                          fontFamily: "Barlow, san-serif",
+                                          textTransform: "none",
+                                        }}
+                                        onClick={handlePopoverClose}
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </Box>
+                                  </Box>
+                                </Popover>
+                              </>
+                            )}
+
                             <SelectInputParameters
                               value={
-                                ParametersData[index][ParametersIndex].Operator
+                                ParametersData[index][ParametersIndex].operation
                               }
                               onChange={(selectedOption) => {
                                 const temp = [...ParametersData];
-                                temp[index][ParametersIndex].Operator =
+                                temp[index][ParametersIndex].operation =
                                   selectedOption.value;
                                 setParametersData(temp);
                               }}
-                              options={ParametersOptions}
-                              keyName={"Operator"}
-                              placeHolder={"Greater than"}
+                              options={
+                                ParametersData[index][ParametersIndex][
+                                  Object.keys(ParameterItem)[0]
+                                ] === "Price"
+                                  ? priceParametersOperationsOptions
+                                  : ParametersData[index][ParametersIndex][
+                                      Object.keys(ParameterItem)[0]
+                                    ] === "High Volume Candlestick"
+                                  ? highVolumeParametersOperationsOptions
+                                  : parametersOperationsOptions
+                              }
+                              // options={parametersOperationsOptions}
+                              keyName={"operation"}
+                              placeHolder={"Operations"}
                               Width={"50%"}
                               margin={
                                 width < 900 && width > 600
@@ -1009,7 +2744,7 @@ const StrategyTabsComponent = (props) => {
                                 Parameters {Object.keys(ParameterItem)[1]}
                               </Typography>
                               <SelectInputParameters
-                                placeHolder="Bullish Green Vector (Vol.>200%)"
+                                // placeHolder="Bullish Green Vector (Vol.>200%)"
                                 value={
                                   ParametersData[index][ParametersIndex][
                                     Object.keys(ParameterItem)[1]
@@ -1022,10 +2757,855 @@ const StrategyTabsComponent = (props) => {
                                   ] = selectedOption.value;
                                   setParametersData(temp);
                                 }}
-                                options={ParametersOptions}
+                                options={[
+                                  { value: "Indicator", label: "Indicator" },
+                                ]}
                                 keyName={"Parameter"}
                               />
                             </Box>
+                            {ParametersData[index][ParametersIndex][
+                              Object.keys(ParameterItem)[1]
+                            ] === "Indicator" && (
+                              <>
+                                <Box
+                                  sx={{
+                                    marginTop: 2,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                  }}
+                                >
+                                  <SelectInputParameters
+                                    value={
+                                      ParametersData[index][ParametersIndex]
+                                        .middleTwo
+                                    }
+                                    onChange={(selectedOptionTwo) =>
+                                      handleOptionTwoChange(
+                                        index,
+                                        ParametersIndex,
+                                        selectedOptionTwo
+                                      )
+                                    }
+                                    options={
+                                      ParametersData[index][ParametersIndex][
+                                        Object.keys(ParameterItem)[0]
+                                      ] === "Indicator"
+                                        ? indicatorParametersTwoIndicatorOptions
+                                        : priceAndHighVolumeParametersTwoIndicatorOptions
+                                    }
+                                    // options={parametersOneIndicatorOptions}
+                                    keyName={"middleTwo"}
+                                    placeHolder={"Select"}
+                                    Width={"100%"}
+                                    margin={
+                                      width < 900 && width > 600
+                                        ? "35vw"
+                                        : width < 600 && width > 500
+                                        ? "33vw"
+                                        : width < 500
+                                        ? "28vw"
+                                        : 13.5
+                                    }
+                                  />
+                                  {ParametersData[index][ParametersIndex]
+                                    .middleTwo && (
+                                    <Button
+                                      onClick={handlePopoverOpen}
+                                      sx={{
+                                        color: "white",
+                                        background: "#2D2D2D",
+                                        borderRadius: "6px",
+                                        height: 30,
+                                        minWidth: 20,
+                                      }}
+                                    >
+                                      <ModeEditOutlineIcon />
+                                    </Button>
+                                  )}
+                                </Box>
+
+                                <Popover
+                                  open={open}
+                                  anchorEl={anchorEl}
+                                  onClose={handlePopoverClose}
+                                  anchorOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "right",
+                                  }}
+                                  transformOrigin={{
+                                    vertical: "top",
+                                    horizontal: "center",
+                                  }}
+                                  sx={{ mt: 0.5 }}
+                                >
+                                  <Box
+                                    sx={{
+                                      background: "#606060",
+                                      minWidth: 250,
+                                      minHeight: 100,
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      gap: 1,
+                                      py: 0.2,
+                                    }}
+                                  >
+                                    {/* <Typography
+                                      sx={{
+                                        fontFamily: "Barlow, san-serif",
+                                        fontWeight: 500,
+                                        fontSize: 16,
+                                        color: "#FFFFFF",
+                                        px: 0.5,
+                                        opacity: 0.7,
+                                      }}
+                                    >
+                                      {selectedOption?.label ||
+                                        "Select an option"}
+                                    </Typography> */}
+                                    {selectedOptionTwo?.value.startsWith(
+                                      "Simple Moving Average"
+                                    ) && (
+                                      <>
+                                        <Typography
+                                          sx={{
+                                            fontFamily: "Barlow, san-serif",
+                                            fontWeight: 500,
+                                            fontSize: 16,
+                                            color: "#FFFFFF",
+                                            px: 0.5,
+                                            opacity: 0.7,
+                                          }}
+                                        >
+                                          {`Simple Moving Average ${inputValuesTwoSimple.input1 ||
+                                            ""}` || "Select an option"}
+                                        </Typography>
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            gap: 1,
+                                          }}
+                                        >
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Length
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input1"
+                                              value={
+                                                inputValuesTwoSimple.input1 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeTwoSimple
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Source
+                                            </label>
+                                            <input
+                                              type="text"
+                                              name="input2"
+                                              value={
+                                                inputValuesTwoSimple.input2 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeTwoSimple
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Offset
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input3"
+                                              value={
+                                                inputValuesTwoSimple.input3 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeTwoSimple
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                        </Box>
+                                      </>
+                                    )}
+                                    {selectedOptionTwo?.value.startsWith(
+                                      "Exponential Moving Average"
+                                    ) && (
+                                      <>
+                                        <Typography
+                                          sx={{
+                                            fontFamily: "Barlow, san-serif",
+                                            fontWeight: 500,
+                                            fontSize: 16,
+                                            color: "#FFFFFF",
+                                            px: 0.5,
+                                            opacity: 0.7,
+                                          }}
+                                        >
+                                          {`Exponential Moving Average ${inputValuesTwoExponential.input1 ||
+                                            ""}` || "Select an option"}
+                                        </Typography>
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            gap: 1,
+                                          }}
+                                        >
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Length
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input1"
+                                              value={
+                                                inputValuesTwoExponential.input1 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeTwoExponential
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Source
+                                            </label>
+                                            <input
+                                              type="text"
+                                              name="input2"
+                                              value={
+                                                inputValuesTwoExponential.input2 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeTwoExponential
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Offset
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input3"
+                                              value={
+                                                inputValuesTwoExponential.input3 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeTwoExponential
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                        </Box>
+                                      </>
+                                    )}
+                                    {selectedOptionTwo?.value.startsWith(
+                                      "Keltner Channel"
+                                    ) && (
+                                      <>
+                                        <Typography
+                                          sx={{
+                                            fontFamily: "Barlow, san-serif",
+                                            fontWeight: 500,
+                                            fontSize: 16,
+                                            color: "#FFFFFF",
+                                            px: 0.5,
+                                            opacity: 0.7,
+                                          }}
+                                        >
+                                          {`Keltner Channel ${inputValuesTwoKeltner.input1 ||
+                                            ""}` || "Select an option"}
+                                        </Typography>
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            gap: 1,
+                                            px: 3,
+                                          }}
+                                        >
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Length
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input1"
+                                              value={
+                                                inputValuesTwoKeltner.input1 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeTwoKeltner
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Multiplier
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input2"
+                                              value={
+                                                inputValuesTwoKeltner.input2 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeTwoKeltner
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Ma Type
+                                            </label>
+                                            <input
+                                              type="text"
+                                              name="input3"
+                                              value={
+                                                inputValuesTwoKeltner.input3 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeTwoKeltner
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              ATR Length
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input4"
+                                              value={
+                                                inputValuesTwoKeltner.input4 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeTwoKeltner
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Source
+                                            </label>
+                                            <input
+                                              type="text"
+                                              name="input5"
+                                              value={
+                                                inputValuesTwoKeltner.input5 ||
+                                                ""
+                                              }
+                                              onChange={
+                                                handleInputChangeTwoKeltner
+                                              }
+                                              style={{
+                                                width: "65px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                        </Box>
+                                      </>
+                                    )}
+                                    {selectedOptionTwo?.value.startsWith(
+                                      "Tom Demark"
+                                    ) && (
+                                      <>
+                                        <Typography
+                                          sx={{
+                                            fontFamily: "Barlow, san-serif",
+                                            fontWeight: 500,
+                                            fontSize: 16,
+                                            color: "#FFFFFF",
+                                            px: 0.5,
+                                            opacity: 0.7,
+                                          }}
+                                        >
+                                          {`Tom Demark` || "Select an option"}
+                                        </Typography>
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            justifyContent: "flex-start",
+                                            pl: 1,
+                                          }}
+                                        >
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Type
+                                            </label>
+                                            <input
+                                              type="text"
+                                              name="tomDemarkValue"
+                                              value={
+                                                inputValuesTwoTom.tomDemarkValue ||
+                                                ""
+                                              }
+                                              onChange={handleInputChangeTwoTom}
+                                              style={{
+                                                width: "180px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                        </Box>
+                                      </>
+                                    )}
+                                    {selectedOptionTwo?.value.startsWith(
+                                      "Value"
+                                    ) && (
+                                      <>
+                                        <Typography
+                                          sx={{
+                                            fontFamily: "Barlow, san-serif",
+                                            fontWeight: 500,
+                                            fontSize: 16,
+                                            color: "#FFFFFF",
+                                            px: 0.5,
+                                            opacity: 0.7,
+                                          }}
+                                        >
+                                          {`Value` || "Select an option"}
+                                        </Typography>
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            justifyContent: "flex-start",
+                                            pl: 1,
+                                          }}
+                                        >
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Value
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input1"
+                                              value={
+                                                inputValuesTwoValue.input1 || ""
+                                              }
+                                              onChange={
+                                                handleInputChangeTwoValue
+                                              }
+                                              style={{
+                                                width: "180px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                        </Box>
+                                      </>
+                                    )}
+
+                                    {selectedOptionTwo?.value.startsWith(
+                                      "Price"
+                                    ) && (
+                                      <>
+                                        <Typography
+                                          sx={{
+                                            fontFamily: "Barlow, san-serif",
+                                            fontWeight: 500,
+                                            fontSize: 16,
+                                            color: "#FFFFFF",
+                                            px: 0.5,
+                                            opacity: 0.7,
+                                          }}
+                                        >
+                                          {`Price` || "Select an option"}
+                                        </Typography>
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            justifyContent: "flex-start",
+                                            pl: 1,
+                                          }}
+                                        >
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              flexDirection: "column",
+                                            }}
+                                          >
+                                            <label
+                                              style={{
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              Price
+                                            </label>
+                                            <input
+                                              type="number"
+                                              name="input1"
+                                              value={
+                                                inputValuesTwoPrice.input1 || ""
+                                              }
+                                              onChange={
+                                                handleInputChangeTwoPrice
+                                              }
+                                              style={{
+                                                width: "180px",
+                                                background: "#8F8F8F",
+                                                border: "none",
+                                                outline: "none",
+                                                borderRadius: "4px",
+                                                fontFamily: "Barlow, san-serif",
+                                                color: "#FFFFFF",
+                                                height: "25px",
+                                                paddingLeft: "5px",
+                                              }}
+                                            />
+                                          </Box>
+                                        </Box>
+                                      </>
+                                    )}
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "flex-end",
+                                        mt: 1,
+                                        gap: 1,
+                                        mr: 1,
+                                        mb: 1,
+                                      }}
+                                    >
+                                      <Button
+                                        sx={{
+                                          background:
+                                            "linear-gradient(to right,#790F87,#794AE3)",
+                                          color: "#FFFFFF",
+                                          borderRadius: 1.5,
+                                          height: 22,
+                                          minWidth: 20,
+                                          fontFamily: "Barlow, san-serif",
+                                          textTransform: "none",
+                                        }}
+                                        onClick={() =>
+                                          handlePopoverSaveTwo(
+                                            index,
+                                            ParametersIndex
+                                          )
+                                        }
+                                      >
+                                        Apply
+                                      </Button>
+                                      <Button
+                                        sx={{
+                                          background: "#8F8F8F",
+                                          color: "#FFFFFF",
+                                          borderRadius: 1.5,
+                                          height: 22,
+                                          minWidth: 20,
+                                          fontFamily: "Barlow, san-serif",
+                                          textTransform: "none",
+                                        }}
+                                        onClick={handlePopoverClose}
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </Box>
+                                  </Box>
+                                </Popover>
+                              </>
+                            )}
+
                             <Box
                               sx={{
                                 display: "flex",
@@ -1138,13 +3718,13 @@ const StrategyTabsComponent = (props) => {
                             ? "100%"
                             : "5rem"
                         }
-                        value={DCAData[index]["DCA Type"]}
+                        value={DCAData[index]["dcaType"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["DCA Type"] = event.value;
+                          temp[index]["dcaType"] = event.value;
                           setDCAData(temp);
                         }}
-                        options={ParametersOptions}
+                        options={dcaTypeOptions}
                       />
                     </Box>
                     <Box
@@ -1172,7 +3752,8 @@ const StrategyTabsComponent = (props) => {
                       <ValidationTextField
                         margin="normal"
                         id="volmult"
-                        placeholder="1.05"
+                        type="number"
+                        // placeholder="1.05"
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1183,10 +3764,10 @@ const StrategyTabsComponent = (props) => {
                           fontFamily: "Barlow, san-serif",
                         }}
                         name="volMultiplier"
-                        value={DCAData[index]["Volume Multiplier"]}
+                        value={DCAData[index]["volumeMultiplier"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["Volume Multiplier"] = event.target.value;
+                          temp[index]["volumeMultiplier"] = event.target.value;
                           setDCAData(temp);
                         }}
                       />
@@ -1222,7 +3803,8 @@ const StrategyTabsComponent = (props) => {
                         margin="normal"
                         id="maxextraorders"
                         name="maxExtraOrders"
-                        placeholder="10"
+                        type="number"
+                        // placeholder="10"
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1232,10 +3814,10 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={DCAData[index]["Max Extra Orders"]}
+                        value={DCAData[index]["maxExtraOrders"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["Max Extra Orders"] = event.target.value;
+                          temp[index]["maxExtraOrders"] = event.target.value;
                           setDCAData(temp);
                         }}
                       />
@@ -1268,7 +3850,8 @@ const StrategyTabsComponent = (props) => {
                         margin="normal"
                         id="mindist"
                         name="mintDist"
-                        placeholder="1.5%"
+                        type="number"
+                        // placeholder="1.5%"
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1278,10 +3861,10 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={DCAData[index]["Min Dist Between Orders"]}
+                        value={DCAData[index]["minDistBetweenOrders"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["Min Dist Between Orders"] =
+                          temp[index]["minDistBetweenOrders"] =
                             event.target.value;
                           setDCAData(temp);
                         }}
@@ -1313,7 +3896,8 @@ const StrategyTabsComponent = (props) => {
                         margin="normal"
                         id="extraorder"
                         name="extraOrder"
-                        placeholder="1.05%"
+                        type="number"
+                        // placeholder="1.05%"
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1323,10 +3907,10 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={DCAData[index]["Start Extra Order"]}
+                        value={DCAData[index]["startExtraOrder"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["Start Extra Order"] = event.target.value;
+                          temp[index]["startExtraOrder"] = event.target.value;
                           setDCAData(temp);
                         }}
                       />
@@ -1357,7 +3941,8 @@ const StrategyTabsComponent = (props) => {
                         margin="normal"
                         id="stepmultiplier"
                         name="stepMultiplier"
-                        placeholder="1.05"
+                        type="number"
+                        // placeholder="1.05"
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1367,10 +3952,10 @@ const StrategyTabsComponent = (props) => {
                               : "5rem",
                           fontFamily: "Barlow, san-serif",
                         }}
-                        value={DCAData[index]["Step Multiplier"]}
+                        value={DCAData[index]["stepMultiplier"]}
                         onChange={async (event) => {
                           const temp = [...DCAData];
-                          temp[index]["Step Multiplier"] = event.target.value;
+                          temp[index]["stepMultiplier"] = event.target.value;
                           setDCAData(temp);
                         }}
                       />
@@ -1436,8 +4021,8 @@ const StrategyTabsComponent = (props) => {
                         Take profit
                       </Typography>
                       <SelectInputParameters
-                        placeHolder="Signal"
-                        value={TakeProfitData[index]["Take Profit"]}
+                        placeHolder="Select"
+                        value={TakeProfitData[index]["takeProfit"]}
                         Width={
                           width < 900 && width > 600
                             ? "7rem"
@@ -1447,10 +4032,10 @@ const StrategyTabsComponent = (props) => {
                         }
                         onChange={async (event) => {
                           const temp = [...TakeProfitData];
-                          temp[index]["Take Profit"] = event.value;
+                          temp[index]["takeProfit"] = event.value;
                           setTakeProfitData(temp);
                         }}
-                        options={ParametersOptions}
+                        options={takeProfitOptions}
                       />
                     </Box>
                     <Box
@@ -1479,8 +4064,9 @@ const StrategyTabsComponent = (props) => {
                         margin="normal"
                         id="mintakeprofit"
                         name="minTakeProfit"
-                        placeholder="1.5%"
-                        value={TakeProfitData[index]["Min Take Profit"]}
+                        type="number"
+                        // placeholder="1.5%"
+                        value={TakeProfitData[index]["minTakeProfit"]}
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1492,7 +4078,7 @@ const StrategyTabsComponent = (props) => {
                         }}
                         onChange={async (event) => {
                           const temp = [...TakeProfitData];
-                          temp[index]["Min Take Profit"] = event.target.value;
+                          temp[index]["minTakeProfit"] = event.target.value;
                           setTakeProfitData(temp);
                         }}
                       />
@@ -1561,8 +4147,9 @@ const StrategyTabsComponent = (props) => {
                         margin="normal"
                         id="stoploss"
                         name="stopLoss"
-                        placeholder="1.5%"
-                        value={StopLossData[index]["Stop Loss"]}
+                        type="number"
+                        // placeholder="1.5%"
+                        value={StopLossData[index]["stopLoss"]}
                         sx={{
                           width:
                             width < 900 && width > 600
@@ -1574,7 +4161,7 @@ const StrategyTabsComponent = (props) => {
                         }}
                         onChange={async (event) => {
                           const temp = [...StopLossData];
-                          temp[index]["Stop Loss"] = event.target.value;
+                          temp[index]["stopLoss"] = event.target.value;
                           setStopLossData(temp);
                         }}
                       />
@@ -1610,7 +4197,8 @@ const StrategyTabsComponent = (props) => {
         ))}
       </Box>
 
-      <CandleStickGraph />
+      <Chart data={AllStrategyData} func={handleBacktest}/>
+      {/* <CandleStickGraph /> */}
     </>
   );
 };

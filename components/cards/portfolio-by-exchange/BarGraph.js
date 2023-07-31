@@ -50,9 +50,9 @@ const BarGraph = ({ balanceHistory }) => {
 
   let barThickness;
   if (nonZeroCount === 1) {
-    barThickness = 100;
+    barThickness = 95;
   } else if (nonZeroCount === 2) {
-    barThickness = 100;
+    barThickness = 95;
   } else if (nonZeroCount === 3) {
     barThickness = 80;
   } else if (nonZeroCount === 4) {

@@ -1,7 +1,7 @@
 import { Box, Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-const StrategyFolders = () => {
+const StrategyFolders = (props) => {
   const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
   const [width, setWidth] = useState(globalThis?.innerWidth);
 
@@ -57,7 +57,7 @@ const StrategyFolders = () => {
         Strategy Folders
       </Typography>
       <Grid container spacing={2} mt={1}>
-        {Folders.map((item, index) => (
+        {props.data.map((item, index) => (
           <Grid
             key={index}
             item
@@ -99,7 +99,7 @@ const StrategyFolders = () => {
                   left: width < 700 && width > 600 ? 5 : 10,
                 }}
               >
-                {item.StrategyName}
+                {item.folderName}
               </Typography>
               <Typography
                 sx={{
@@ -147,7 +147,7 @@ const StrategyFolders = () => {
                     padding: "0 2rem 0 0.5rem",
                   }}
                 >
-                  {item.StrategyDescription}
+                  {item.folderDescription}
                 </Typography>
                 <Typography
                   sx={{
@@ -159,7 +159,7 @@ const StrategyFolders = () => {
                     textAlign: "center",
                   }}
                 >
-                  {item.NumberOfStrategies} Strategies
+                  {item.strategiesList?.length} Strategies
                 </Typography>
               </Box>
             </Box>

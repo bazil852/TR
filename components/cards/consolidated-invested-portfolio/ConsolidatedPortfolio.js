@@ -106,6 +106,10 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
               <Box
                 sx={{
                   display: "flex",
+                  justifyContent:
+                    isDrawerOpen && width > 1000 && width < 1200
+                      ? "center"
+                      : "",
                   flexDirection:
                     width < 961
                       ? "row"
@@ -134,7 +138,7 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
                         pl: 1,
                       }}
                     >
-                      {coin.asset}
+                      {coin.coin_name}
                     </Typography>
                     <Box
                       sx={{
@@ -152,7 +156,7 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
                           whiteSpace: "nowrap",
                         }}
                       >
-                        {decimalFormatter(coin.availableBalance)} {coin.asset} =
+                        {decimalFormatter(coin.quantity)} {coin.coin_name} =
                       </Typography>
                       <Typography
                         sx={{

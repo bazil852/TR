@@ -5,7 +5,13 @@ import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { Video } from "../utils/icons";
 import StrategyThreeBoxes from "../components/cards/strategy-three-boxes/StrategyThreeBoxes";
+import { useRouter } from "next/router";
+import { StrategyProvider } from '../context/StrategyContext';
 const StartegyComponent = () => {
+  const router = useRouter();
+  const { id } = router.query;
+  console.log(id);
+
   const [width, setWidth] = useState(globalThis?.innerWidth);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -112,22 +118,25 @@ const StartegyComponent = () => {
           </Modal>
         </Box>
       </Box>
-      
+      <StrategyProvider>
       <Box mt={4}>
         <StrategyThreeBoxes />
       </Box>
-      <StrategyTabs />
+      <StrategyTabs strategyId={id} />
+      </StrategyProvider>
     </Box>
   );
 };
 
 function Startegy() {
   return (
+    <StrategyProvider>
     <PrivateHeader
       title="New Strategy / Edit Strategy"
       current="2"
       Component={StartegyComponent}
     />
+    </StrategyProvider>
   );
 }
 

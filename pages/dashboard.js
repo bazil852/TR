@@ -1,7 +1,16 @@
 import PrivateHeader from "../components/layout/PrivateHeader";
 import React, { useEffect, useState } from "react";
 import AggregateAccountBalance from "../components/charts/AggregateAccountBalance";
-import { Box, Modal, Typography, Backdrop, Fade, Grid } from "@mui/material";
+import {
+  Box,
+  Modal,
+  Typography,
+  Backdrop,
+  Fade,
+  Grid,
+  Button,
+} from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import ReactPlayer from "react-player";
 import { Video } from "../utils/icons";
 import ExchangeTable from "../components/cards/exchange-table/ExchangeTable";
@@ -47,16 +56,14 @@ const DashboardComponent = () => {
     "DASH",
     "ZEC",
   ];
-
-  //New useStates
   const [totalPortfolioValue, setTotalPortfolioValue] = useState(0);
   const [totalAssets, setTotalAssets] = useState([]);
   const [allExchangesWithAssets, setAllExchangesWithAssets] = useState([]);
   const [exchangeList, setExchangeList] = useState([]);
   const [balanceHistoryList, setBalanceHistoryList] = useState([]);
 
-  //Old ones
   const [loading, setLoading] = useState(true);
+  const [refreshLoading, setRefreshLoading] = useState(false);
 
   const [assets, setAssets] = useState([]);
   const [allExchangesAssets, setAllExchangesAssets] = useState([]);
@@ -91,7 +98,7 @@ const DashboardComponent = () => {
       }
     );
     const data = await response.json();
-    console.log(data);
+    console.log("idr", data);
 
     if (response.ok) {
       const currentMonth = moment().format("MM");
@@ -121,10 +128,11 @@ const DashboardComponent = () => {
     }
   };
 
-  const fetchPortfoliosFromUserId = async () => {
+  const handleAssetsRefresh = async () => {
+    setRefreshLoading(true);
     const { user } = await getSession();
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}portfolios/user/${user.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}portfolios/refresh/user/${user.id}`,
       {
         method: "GET",
       }
@@ -137,10 +145,10 @@ const DashboardComponent = () => {
       let totalBalance = 0;
 
       data.forEach((obj) => {
-        const { portfolios } = obj;
-        console.log(portfolios);
-        if (portfolios) {
-          totalBalance += portfolios.balance;
+        const { portfolio } = obj;
+        console.log(portfolio);
+        if (portfolio) {
+          totalBalance += portfolio.balance;
         }
       });
 
@@ -179,6 +187,70 @@ const DashboardComponent = () => {
       });
 
       // Convert the combined assets object to an array
+      const combinedArray = Object.values(combinedAssets);
+
+      console.log(combinedArray);
+      setTotalAssets(combinedArray);
+      setRefreshLoading(false);
+    }
+  };
+
+  const fetchPortfoliosFromUserId = async () => {
+    const { user } = await getSession();
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}portfolios/user/${user.id}`,
+      {
+        method: "GET",
+      }
+    );
+    const data = await response.json();
+    console.log("data of the polar area maybe", data);
+
+    if (response.ok) {
+      setAllExchangesWithAssets(data);
+      let totalBalance = 0;
+
+      data.forEach((obj) => {
+        const { portfolio } = obj;
+        console.log(portfolio);
+        if (portfolio) {
+          totalBalance += portfolio.balance;
+        }
+      });
+
+      console.log("total PortFolio", totalBalance);
+      setTotalPortfolioValue(totalBalance);
+      const newExchanges = data.map((item) => {
+        return { exchange_type: item.exchange.exchange_type, profitOrLoss: 0 };
+      });
+      console.log("exchange", newExchanges);
+      setExchangeList(newExchanges);
+      console.log("data", data);
+      const newArray = data.map((item) => {
+        return [...item.assets];
+      });
+      console.log("new array", newArray);
+
+      const combinedAssets = {};
+
+      newArray.forEach((array) => {
+        array.forEach((obj) => {
+          const { coin_name, quantity, usdt_price } = obj;
+          console.log("checking object here", obj);
+          if (combinedAssets.hasOwnProperty(coin_name)) {
+            combinedAssets[coin_name].quantity += parseFloat(quantity);
+            combinedAssets[coin_name].usdt_price += parseFloat(usdt_price);
+          } else {
+            combinedAssets[coin_name] = {
+              coin_name,
+              quantity: parseFloat(quantity),
+              usdt_price: parseFloat(usdt_price),
+            };
+          }
+        });
+      });
+
+      console.log("combined assets here!!", combinedAssets);
       const combinedArray = Object.values(combinedAssets);
 
       console.log(combinedArray);

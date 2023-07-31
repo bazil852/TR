@@ -114,9 +114,8 @@ const MeterGuage = ({ value }) => {
                      rotate(${((pointerAngle - Math.PI / 2) * 180) / Math.PI})`}
     >
       <polygon
-        points={`0,${pointerHeight} ${pointerWidth / 2},0 ${
-          -pointerWidth / 2
-        },0`}
+        points={`0,${pointerHeight} ${pointerWidth / 2},0 ${-pointerWidth /
+          2},0`}
         fill="#36F097"
       />
     </g>
@@ -146,13 +145,11 @@ const MeterGuage = ({ value }) => {
           <>
             {generateTicks()}
             <path
-              d={`M ${svgSize.width / 2 - radiusPercentage * svgSize.width} ${
-                svgSize.height / 2
-              } A ${radiusPercentage * svgSize.width} ${
-                radiusPercentage * svgSize.width
-              } 0 0 1 ${svgSize.width / 2 + radiusPercentage * svgSize.width} ${
-                svgSize.height / 2
-              }`}
+              d={`M ${svgSize.width / 2 -
+                radiusPercentage * svgSize.width} ${svgSize.height /
+                2} A ${radiusPercentage * svgSize.width} ${radiusPercentage *
+                svgSize.width} 0 0 1 ${svgSize.width / 2 +
+                radiusPercentage * svgSize.width} ${svgSize.height / 2}`}
               fill="transparent"
               stroke="url(#gradient)"
               strokeWidth={`${0.03 * svgSize.width}`}

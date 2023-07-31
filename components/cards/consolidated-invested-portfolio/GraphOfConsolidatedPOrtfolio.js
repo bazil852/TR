@@ -39,7 +39,7 @@ const GraphOfConsolidatedPortfolio = ({ data }) => {
       if (remainingData.length > 0) {
         setDataWithWorth([
           ...topFour,
-          { asset: "Others", worth: remainingWorth },
+          { coin_name: "Others", worth: remainingWorth },
         ]);
       } else {
         setDataWithWorth([...topFour]);
@@ -115,13 +115,15 @@ const GraphOfConsolidatedPortfolio = ({ data }) => {
                 ? "18%"
                 : width > 1099 && width < 1200 && isDrawerOpen
                 ? "20%"
-                : "20px",
+                : width > 1330
+                ? "80px"
+                : "30px",
           }}
         >
           {dataWithWorth.map((item, index) => {
             const percentage = item.worth / totalWorth;
             let radius = radiusScale(item.worth);
-            if (item.asset === "Others" && radius < minimumValueRadius) {
+            if (item.coin_name === "Others" && radius < minimumValueRadius) {
               radius = minimumValueRadius;
             }
             const start = accumulatedPercentage * 360;
@@ -214,7 +216,7 @@ const GraphOfConsolidatedPortfolio = ({ data }) => {
                       textAnchor={labelX > 18 ? "start" : "end"}
                       alignmentBaseline={alignmentBaseline}
                     >
-                      {item.asset}
+                      {item.coin_name}
                     </text>
                   </>
                 )}

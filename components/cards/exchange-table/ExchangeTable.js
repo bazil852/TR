@@ -3,24 +3,13 @@ import { useState } from "react";
 import { Box, CircularProgress, Grid } from "@mui/material";
 import { useSelector } from "react-redux";
 import DataTable from "./DataTable";
-import CryptocurrencyData from "../crypto-currencies-data/CryptocurrencyData";
-
-const ccxt = require("ccxt");
 
 const ExchangeTable = ({ data, loading }) => {
-  const exchanges = useSelector((state) => state.exchanges.value);
   const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
-  const [tableData, setTableData] = useState([]);
-
-  const [inputSearch, setInputSearch] = useState("");
-
   const [selectedTab, setSelectedTab] = useState(0);
 
   const [selectedAssets, setSelectedAssets] = useState([]);
 
-  const handleChange = (event, newValue) => {
-    setSelectedTab(newValue);
-  };
   console.log(data);
   React.useEffect(() => {
     setSelectedAssets(data[selectedTab]);
@@ -28,13 +17,13 @@ const ExchangeTable = ({ data, loading }) => {
 
   const columns = [
     {
-      field: "asset",
+      field: "coin_name",
       title: "TOKEN",
       // sortable: true,
     },
 
     {
-      field: "availableBalance",
+      field: "quantity",
       title: "AMOUNT",
       // sortable: true,
     },
@@ -46,7 +35,7 @@ const ExchangeTable = ({ data, loading }) => {
 
     { field: "change", title: "CHANGE" },
     {
-      field: "balance",
+      field: "usdt_price",
       title: "VALUE",
       // sortable: true,
     },

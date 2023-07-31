@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useState, useMemo } from "react";
 import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 import Select from "react-select";
 import dynamic from "next/dynamic";
 const CryptoIcon = dynamic(() => import("crypto-icons-react"), { ssr: false });
@@ -131,14 +133,6 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
     border: "none",
     fontSize: "14px",
   };
-  const firstTableCellStyle = {
-    whiteSpace: "normal",
-    wordWrap: "break-word",
-    maxWidth: "100px",
-    border: "none",
-    borderTopLeftRadius: "15px",
-    fontSize: "15px",
-  };
 
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
@@ -148,6 +142,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
 
   const handleExchangeChange = (value) => {
     console.log(value);
+    setPage(0);
     const newExchange = data.find(
       (item) => item.exchange.exchange_name === value.value
     );
@@ -353,15 +348,8 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                     >
                       {columns.map((column) => {
                         return (
-                          <td
-                            key={column.field}
-                            style={
-                              column.field === "token"
-                                ? firstTableCellStyle
-                                : tableCellStyle
-                            }
-                          >
-                            {column.field === "asset" ? (
+                          <td key={column.field} style={tableCellStyle}>
+                            {column.field === "coin_name" ? (
                               <Box
                                 sx={{
                                   display: "flex",
@@ -376,12 +364,13 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                                       try {
                                         return (
                                           <CryptoIcon
-                                            symbol={
-                                              row[column.field] === "USDC" ||
-                                              row[column.field] === "BUSD"
-                                                ? ""
-                                                : row[column.field]
-                                            }
+                                            // symbol={
+                                            //   row[column.field] === "USDC" ||
+                                            //   row[column.field] === "BUSD"
+                                            //     ? ""
+                                            //     : row[column.field]
+                                            // }
+                                            symbol={row[column.field]}
                                             size={32}
                                             color="auto"
                                           />
@@ -407,7 +396,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                                   {row[column.field]}
                                 </Box>
                               </Box>
-                            ) : column.field === "balance" ? (
+                            ) : column.field === "usdt_price" ? (
                               <Box
                                 sx={{
                                   textAlign: "center",
@@ -459,7 +448,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                                   color: "#D2D2D2",
                                 }}
                               >
-                                {parseFloat(row[column.field]).toFixed(4)}
+                                {row[column.field]}
                               </Box>
                             )}
                           </td>
@@ -472,94 +461,103 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
             <tfoot></tfoot>
           </table>
         </Box>
-        <Box pt={width < 600 ? 18 : ""}>
-          <Box
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: width < 600 ? 50 : 10,
+            left: 22,
+          }}
+        >
+          <Typography
             sx={{
-              position: "absolute",
-              bottom: width < 600 ? 50 : 10,
-              left: 22,
+              marginBottom: "1rem",
+              color: "white",
+              fontFamily: "Barlow, san-serif",
             }}
           >
-            <Typography
+            Showing {page * rowsPerPage + 1} to{" "}
+            {Math.min(
+              (page + 1) * rowsPerPage,
+              sortedData?.length ? sortedData?.length : 0
+            )}{" "}
+            of {sortedData?.length ? sortedData?.length : 0}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: totalPages > 5 ? 60 : 20,
+            right: width > 600 ? 23.5 : "",
+            left: width < 600 ? 20 : "",
+          }}
+        >
+          <Stack spacing={0} direction="row">
+            <Button
+              onClick={() => handleChangePage(null, page - 1)}
+              disabled={page === 0}
               sx={{
-                marginBottom: "1rem",
+                backgroundColor: "#191A1A",
                 color: "white",
+                fontWeight: 500,
                 fontFamily: "Barlow, san-serif",
+                border: "1px solid #2A2C2D",
+                mx: 0,
+                textTransform: "none",
+                minWidth: 20,
+                height: 32,
+                borderTopRightRadius: 0,
+                borderTopLeftRadius: 4,
+                borderBottomRightRadius: 0,
+                borderBottomLeftRadius: 4,
               }}
             >
-              Showing {page * rowsPerPage + 1} to{" "}
-              {Math.min(
-                (page + 1) * rowsPerPage,
-                sortedData?.length ? sortedData?.length : 0
-              )}{" "}
-              of {sortedData?.length ? sortedData?.length : 0}
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              position: "absolute",
-              bottom: 20,
-              right: width > 600 ? 23.5 : "",
-              left: width < 600 ? 20 : "",
-            }}
-          >
-            <Box
+              Previous
+            </Button>
+            <Pagination
+              count={totalPages}
+              page={page + 1}
+              onChange={(event, value) => handleChangePage(event, value - 1)}
+              hidePrevButton
+              hideNextButton
               sx={{
-                marginTop: "2rem",
-                borderRadius: "3px",
+                "& button": {
+                  backgroundColor: "#191A1A",
+                  color: "white",
+                  borderRadius: 0,
+                  textTransform: "none",
+                  fontWeight: 500,
+                  fontFamily: "Barlow, san-serif",
+                  border: "1px solid #2A2C2D",
+                  mx: 0,
+                },
+                "& .Mui-selected": {
+                  backgroundColor: "#999999",
+                  color: "white",
+                },
+              }}
+            />
+            <Button
+              onClick={() => handleChangePage(null, page + 1)}
+              disabled={page === totalPages - 1}
+              sx={{
+                backgroundColor: "#191A1A",
+                color: "white",
+                fontWeight: 500,
+                fontFamily: "Barlow, san-serif",
+                border: "1px solid #2A2C2D",
+                mx: 0,
+                textTransform: "none",
+                minWidth: 20,
+                height: 32,
+                borderTopRightRadius: 4,
+                borderTopLeftRadius: 0,
+                borderBottomRightRadius: 4,
+                borderBottomLeftRadius: 0,
               }}
             >
-              <button
-                onClick={() => handleChangePage(null, page - 1)}
-                disabled={page === 0}
-                style={{
-                  background: "#191A1A",
-                  cursor: "pointer",
-                  border: "0.7px solid #27292A",
-                  padding: "8px 10px",
-                  color: page !== 0 ? "white" : "#5C636A",
-                  borderTopLeftRadius: "4px",
-                  borderBottomLeftRadius: "4px",
-                  fontFamily: "Barlow, san-serif",
-                }}
-              >
-                Previous
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => handleChangePage(null, p)}
-                  style={{
-                    fontWeight: "normal",
-                    backgroundColor: page === p ? "#999999" : "#191A1A",
-                    border: page === p ? "none" : "0.7px solid #27292A",
-                    padding: "8px 10px",
-                    cursor: "pointer",
-                    color: "white",
-                    fontFamily: "Barlow, san-serif",
-                  }}
-                >
-                  {p + 1}
-                </button>
-              ))}
-              <button
-                onClick={() => handleChangePage(null, page + 1)}
-                disabled={page === totalPages - 1}
-                style={{
-                  background: "#191A1A",
-                  border: "0.7px solid #27292A",
-                  cursor: "pointer",
-                  padding: "8px 10px",
-                  color: page < totalPages - 1 ? "white" : "#5C636A",
-                  borderTopRightRadius: "4px",
-                  borderBottomRightRadius: "4px",
-                  fontFamily: "Barlow, san-serif",
-                }}
-              >
-                Next
-              </button>
-            </Box>
-          </Box>
+              Next
+            </Button>
+          </Stack>
         </Box>
       </Box>
     </Box>

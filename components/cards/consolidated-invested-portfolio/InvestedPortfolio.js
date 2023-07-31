@@ -61,6 +61,7 @@ const InvestedPortfolio = ({ totalBalance }) => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  gap: width > 1330 ? 6 : "",
                   flexDirection:
                     width < 600
                       ? "column"

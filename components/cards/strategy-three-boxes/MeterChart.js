@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 
 const MeterChart = () => {
   const [maxRange, setMaxRange] = useState(1500);
-  const [guageValue, setGuageValue] = useState(1000);
+  const [guageValue, setGuageValue] = useState(0);
+  const [coin, setCoin] = useState("USDT");
 
   const radiusPercentage = 0.48;
   const maxValue = maxRange;
@@ -234,7 +235,7 @@ const MeterChart = () => {
                 opacity: 0.1,
               }}
             >
-              USDT
+              {coin}
             </text>
           </>
         )}

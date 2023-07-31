@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 const GraphSpotfuturePieChart = ({ data }) => {
   const [dataWithWorth, setDataWithWorth] = useState([]);
   const colors = ["#36D2B6", "#1EB1D2", "#4E38D2", "#90BAD2", "#2474D2"];
-  const minPercentage = 0.05;
+  const minPercentage = 0.06;
 
   useEffect(() => {
     const hasAllElementsZeroOrUndefined = data?.every(
@@ -30,7 +30,7 @@ const GraphSpotfuturePieChart = ({ data }) => {
 
       setDataWithWorth([
         ...topFour,
-        { asset: "Others", worth: remainingWorth },
+        { coin_name: "Others", worth: remainingWorth },
       ]);
     }
   }, [data]);
@@ -155,7 +155,7 @@ const GraphSpotfuturePieChart = ({ data }) => {
               textAnchor={labelX > 18 ? "start" : "end"}
               alignmentBaseline="middle"
             >
-              {item.asset}
+              {item.coin_name}
             </text>
           </g>
         );

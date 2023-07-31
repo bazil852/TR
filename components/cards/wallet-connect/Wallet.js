@@ -71,6 +71,7 @@ const exchangeTypes = [
   "Binance Spot",
 ];
 import GraphOfConsolidatedPOrtfolio from "../consolidated-invested-portfolio/GraphOfConsolidatedPOrtfolio";
+import { useSelector } from "react-redux";
 
 const Draw = styled(Drawer)({
   "& .MuiDrawer-paper": {
@@ -98,6 +99,7 @@ const Wallet = () => {
   const [switchStates, setSwitchStates] = useState(
     allExchange.map(() => false)
   );
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
 
   const handleChange = (index) => {
     const newSwitchStates = [...switchStates];
@@ -612,8 +614,8 @@ const Wallet = () => {
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          overflow: "visible",
-                          minWidth: "100%",
+                          mt: 1,
+                          pb: 3,
                           pr:
                             width < 900 && width > 700
                               ? 13
@@ -625,7 +627,13 @@ const Wallet = () => {
                               ? 8
                               : width < 400
                               ? 5
-                              : 3,
+                              : width > 1180 && width < 1280
+                              ? 4
+                              : width > 1280 && width < 1330
+                              ? 6
+                              : width < 960 && width > 900
+                              ? 0
+                              : 2,
                         }}
                       >
                         <GraphOfConsolidatedPOrtfolio data={data.assets} />
