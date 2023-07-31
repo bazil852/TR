@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { RateReviewOutlined } from "@mui/icons-material";
 import { getSession } from "next-auth/react";
 
 const CryptoCard = ({ title }) => {
@@ -43,7 +42,6 @@ const CryptoCard = ({ title }) => {
             ?.usdtBal?.toFixed(2)}`}
         </Typography>
         <Typography
-          // color={percentage >= 0 ? "#4BD569" : "#EB5757"}
           color={"#4BD569"}
           fontSize={14}
           pt={0.5}

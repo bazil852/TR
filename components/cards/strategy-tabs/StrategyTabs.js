@@ -981,7 +981,7 @@ const StrategyTabsComponent = (props) => {
                 scrollButtons="auto"
                 sx={{
                   "& .MuiSvgIcon-root": arrowButtonStyle,
-                  width: "80%",
+                  width: "100%",
                   pt: 1,
                   "& .MuiTabs-indicator": {
                     display: "none",
@@ -991,9 +991,9 @@ const StrategyTabsComponent = (props) => {
                 <Box
                   sx={{
                     display: "flex",
-                    gap: "1rem",
+                    gap: 1,
                     alignItems: "center",
-                    width: "200px",
+                    width: 400,
                   }}
                 >
                   <Typography
