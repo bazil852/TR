@@ -157,7 +157,7 @@ function CandlestickChart({ data ,func}) {
             fontFamily: "Barlow, san-serif",
             fontWeight: 500,
             fontSize: 17,
-            display: "flex",
+            // display: "flex",
             alignItems: "center",
             gap: 0.5,
             pl: 0.5,
@@ -187,6 +187,74 @@ function CandlestickChart({ data ,func}) {
           <MenuItem value={30}>1d</MenuItem>
         </Select>
       </FormControl>
+
+      <Typography
+          sx={{
+            fontFamily: "Barlow, san-serif",
+            fontWeight: 500,
+            fontSize: 17,
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+            pl: 0.5,
+          }}
+        >
+          Symbol
+        </Typography>
+        <FormControl >
+        <InputLabel id="demo-simple-select-label">Symbol</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={timeframeVal}
+          label="Age"
+          onChange={handleChange}
+          sx={{
+            width:'35%',
+            marginBottom:'3px'
+          }}
+        >
+          <MenuItem value={10}>BTC/USDT</MenuItem>
+          <MenuItem value={20}>ETH/USDT</MenuItem>
+          <MenuItem value={30}>LTC/USDT</MenuItem>
+          <MenuItem value={30}>XRP/USDT</MenuItem>
+          <MenuItem value={30}>DOGE/USDT</MenuItem>
+
+        </Select>
+      </FormControl>
+
+      <Typography
+          sx={{
+            fontFamily: "Barlow, san-serif",
+            fontWeight: 500,
+            fontSize: 17,
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+            pl: 0.5,
+          }}
+        >
+          Position 
+        </Typography>
+        <FormControl >
+        <InputLabel id="demo-simple-select-label">Position</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={timeframeVal}
+          label="Age"
+          onChange={handleChange}
+          sx={{
+            width:'35%',
+            marginBottom:'3px'
+          }}
+        >
+          <MenuItem value={10}>Long</MenuItem>
+          <MenuItem value={20}>Short</MenuItem>
+
+        </Select>
+      </FormControl>
+          
       </Box>
       <Box mt={3} mb={2} ml={"40%"}>
         <Button
