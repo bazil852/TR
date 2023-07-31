@@ -166,7 +166,7 @@ function CandlestickChart({ data ,func}) {
           Timeframe
         </Typography>
         <FormControl >
-        <InputLabel id="demo-simple-select-label">Age</InputLabel>
+        <InputLabel id="demo-simple-select-label">Timeframe</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
@@ -178,9 +178,13 @@ function CandlestickChart({ data ,func}) {
             marginBottom:'3px'
           }}
         >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
+          <MenuItem value={10}>1m</MenuItem>
+          <MenuItem value={20}>5m</MenuItem>
+          <MenuItem value={30}>1h</MenuItem>
+          <MenuItem value={30}>3h</MenuItem>
+          <MenuItem value={30}>5h</MenuItem>
+          <MenuItem value={30}>12h</MenuItem>
+          <MenuItem value={30}>1d</MenuItem>
         </Select>
       </FormControl>
       </Box>
