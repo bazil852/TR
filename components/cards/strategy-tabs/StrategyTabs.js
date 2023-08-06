@@ -57,7 +57,7 @@ const StrategyTabs = (props) => {
   const [botType, setBotType] = useState("");
   const [strategyType, setStrategyType] = useState("");
   const [strategyPair, setStrategyPair] = useState("");
-  const [chartData, setChartData] = useState("");
+  
 
   const setBotSetting = async (values) => {
     let reqBody = {
@@ -104,6 +104,7 @@ const StrategyTabsComponent = (props) => {
   const [value, setvalue] = useState(["general"]);
   const [ANDToggle, setANDToggle] = useState([[true]]);
   const { GeneralSettingsData, setGeneralSettingsData } = useStrategy();
+  const [chartData, setChartData] = useState("");
   // console.log("general settings", GeneralSettingsData);
   const {OrdersData, setOrdersData} = useStrategy();
   const {DCAData, setDCAData} = useStrategy();
@@ -378,6 +379,12 @@ const StrategyTabsComponent = (props) => {
     }
     return selectedOptionTwo?.label || "Select an option";
   };
+  const [formData, setFormData] = useState({});
+
+  const addToForm = (key, value) => {
+    setFormData(prevState => ({...prevState, [key]: value}));
+  }
+
 
   const open = Boolean(anchorEl);
 
@@ -849,7 +856,7 @@ const StrategyTabsComponent = (props) => {
     }
   };
 
-  const handleBacktest = async () => {
+  const handleBacktest = async (dropdownValues) => {
     const { user } = await getSession();
 
     
@@ -864,6 +871,7 @@ const StrategyTabsComponent = (props) => {
         takeProfit: TakeProfitData[index],
         parameters: ParametersData[index],
         user,
+        dropdownValues,
       };
     });
     console.log(temp);
@@ -872,7 +880,7 @@ const StrategyTabsComponent = (props) => {
 
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/backtest", {
+      const response = await fetch("https://dcabot1.herokuapp.com/backtest", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -4197,7 +4205,7 @@ const StrategyTabsComponent = (props) => {
         ))}
       </Box>
 
-      <Chart data={AllStrategyData} func={handleBacktest}/>
+      <Chart  data={chartData} func={handleBacktest} />
       {/* <CandleStickGraph /> */}
     </>
   );
