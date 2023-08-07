@@ -8,23 +8,82 @@ import MenuItem from '@mui/material/MenuItem'
 
 
 function CandlestickChart({ data ,func}) {
-  const [timeframeVal, setTimeFrame] = React.useState('');
+  const [hoveredCandleData, setHoveredCandleData] = useState(null);
 
-  const handleChange = (event) => {
-    setTimeFrame(event.target.value );
+  const [dropdownValues, setDropdownValues] = useState({
+    timeframe: '',
+    symbol: '',
+    position: '',
+  });
+  
+
+  const handleChangeTimeframe = (event) => {
+    setDropdownValues((prevValues) => ({
+      ...prevValues,
+      timeframe: event.target.value,
+    }));
   };
+  const handleChangeSymbol = (event) => {
+    setDropdownValues((prevValues) => ({
+      ...prevValues,
+      symbol: event.target.value,
+    }));
+  };
+  const handleChangePos= (event) => {
+    setDropdownValues((prevValues) => ({
+      ...prevValues,
+      position: event.target.value,
+    }));
+  };
+  
   const chartContainerRef = useRef();
   const [chart, setChart] = useState(null);
   const [candleSeries, setCandleSeries] = useState(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const chartData = [
+  const [chartData, setChartData] = useState([
     { title: "Total Profit", value: 1200, percent: 20 },
     { title: "Total Trades", value: 34 },
     { title: "Win Rate", value: 100 },
     { title: "Buy & Hold", value: 120 },
     { title: "Totaltime", day: 123, hour: 2 },
     { title: "Profit Factor", value: 95 },
-  ];
+  ]);
+
+  useEffect(() => {
+    // Suppose `props.data` is the data that changes
+    if (!data) {
+      return;
+    }
+    const buyOrders = data.buy_orders; // adjust this to match your actual data structure
+
+    // Calculate total cost in USDT
+    const totalCost = buyOrders.reduce((acc, order) => acc + (order.amount), 0);
+    console.log("Total Profit: ",totalCost)
+  
+    // Assume profit percentage is a property in props.data
+    const profitPercentage = data.profit; // adjust this to match your actual data structure
+  
+    // Calculate total profit
+    const totalProfit = totalCost * profitPercentage;
+    const firstTimestamp = data?.candles[0][0];
+    const lastTimestamp = data?.candles[data?.candles.length - 1][0];
+
+    const totalTime = lastTimestamp - firstTimestamp; // in milliseconds
+
+    const totalDays = Math.floor(totalTime / (24 * 60 * 60 * 1000)); // convert to days
+    const totalHours = Math.floor((totalTime % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)); // convert the remainder to hours
+      
+    const newChartData = [
+      { title: "Total Profit", value: parseFloat(totalProfit.toFixed(0)), percent: parseFloat((data?.profit *100).toFixed(1))  },
+      { title: "Total Trades", value: data?.buy_orders.length + data?.sell_orders.length },
+      { title: "Win Rate", value: 25 },
+      { title: "Buy & Hold", value: data?.buy_orders.length - data?.sell_orders.length },
+      { title: "Totaltime", day: totalDays, hour: totalHours },
+      { title: "Profit Factor", value: 95 },
+    ];
+    setChartData(newChartData);
+  }, [data]); // Re-run the effect when `props.data` changes
+
   
 
   const formatCandles = (candles) => {
@@ -53,7 +112,7 @@ function CandlestickChart({ data ,func}) {
   useEffect(() => {
     console.log("Trying to Render new chart ")
       const newChart = createChart(chartContainerRef.current, { 
-        width: isFullScreen ? window.innerWidth : 700, 
+        width: isFullScreen ? window.innerWidth : window.innerWidth -250, 
         height: isFullScreen ? window.innerHeight : 500,
           layout: {
               background: {
@@ -83,16 +142,40 @@ function CandlestickChart({ data ,func}) {
       const newCandleSeries = newChart.addCandlestickSeries();
       setChart(newChart);
       setCandleSeries(newCandleSeries);
+      setChart(newChart);
+    setCandleSeries(newCandleSeries);
+    newChart.subscribeCrosshairMove(function(param) {
+      if (param.point === undefined) {
+        setHoveredCandleData(null);
+        return;
+      }
+      if (param && param.seriesPrices) {
+      const price = param.seriesPrices.get(newCandleSeries);
+      if (price !== undefined) {
+        setHoveredCandleData({
+          open: price.open.toFixed(2),
+          high: price.high.toFixed(2),
+          low: price.low.toFixed(2),
+          close: price.close.toFixed(2),
+          volume: price.volume.toFixed(2),
+        });
+      }
+    }
+    });
+    
       return () => {
         // When 'isFullScreen' changes, this cleanup function will run
         // We check if we are exiting fullscreen mode, and if so, resize the chart
         if (!isFullScreen && chart) {
-          chart.resize(700, 500);
+          chart.resize(window.innerWidth-250, 500);
         }
       };
+
+      
   },[isFullScreen]);
 
   useEffect(() => {
+      console.log("Candles",data.candles)
       if (chart && candleSeries) {
           const candleData = formatCandles(data?.candles);
           const buyOrders = formatOrders(
@@ -170,21 +253,19 @@ function CandlestickChart({ data ,func}) {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={timeframeVal}
+          value={dropdownValues.timeframe}
           label="Age"
-          onChange={handleChange}
+          onChange={handleChangeTimeframe}
           sx={{
             width:'35%',
             marginBottom:'3px'
           }}
         >
-          <MenuItem value={10}>1m</MenuItem>
-          <MenuItem value={20}>5m</MenuItem>
-          <MenuItem value={30}>1h</MenuItem>
-          <MenuItem value={30}>3h</MenuItem>
-          <MenuItem value={30}>5h</MenuItem>
-          <MenuItem value={30}>12h</MenuItem>
-          <MenuItem value={30}>1d</MenuItem>
+          <MenuItem value={'1h'}>1h</MenuItem>
+          <MenuItem value={'3h'}>3h</MenuItem>
+          <MenuItem value={'5h'}>5h</MenuItem>
+          <MenuItem value={'12h'}>12h</MenuItem>
+          <MenuItem value={'1d'}>1d</MenuItem>
         </Select>
       </FormControl>
 
@@ -206,19 +287,19 @@ function CandlestickChart({ data ,func}) {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={timeframeVal}
+          value={dropdownValues.symbol}
           label="Age"
-          onChange={handleChange}
+          onChange={handleChangeSymbol}
           sx={{
             width:'35%',
             marginBottom:'3px'
           }}
         >
-          <MenuItem value={10}>BTC/USDT</MenuItem>
-          <MenuItem value={20}>ETH/USDT</MenuItem>
-          <MenuItem value={30}>LTC/USDT</MenuItem>
-          <MenuItem value={30}>XRP/USDT</MenuItem>
-          <MenuItem value={30}>DOGE/USDT</MenuItem>
+          <MenuItem value={'BTC/USDT'}>BTC/USDT</MenuItem>
+          <MenuItem value={'ETH/USDT'}>ETH/USDT</MenuItem>
+          <MenuItem value={'LTC/USDT'}>LTC/USDT</MenuItem>
+          <MenuItem value={'XRP/USDT'}>XRP/USDT</MenuItem>
+          <MenuItem value={'DOGE/USDT'}>DOGE/USDT</MenuItem>
 
         </Select>
       </FormControl>
@@ -241,16 +322,16 @@ function CandlestickChart({ data ,func}) {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={timeframeVal}
+          value={dropdownValues.position}
           label="Age"
-          onChange={handleChange}
+          onChange={handleChangePos}
           sx={{
             width:'35%',
             marginBottom:'3px'
           }}
         >
-          <MenuItem value={10}>Long</MenuItem>
-          <MenuItem value={20}>Short</MenuItem>
+          <MenuItem value={'long'}>Long</MenuItem>
+          <MenuItem value={'short'}>Short</MenuItem>
 
         </Select>
       </FormControl>
@@ -268,7 +349,7 @@ function CandlestickChart({ data ,func}) {
             fontWeight: 300,
             fontSize: 17,
           }}
-          onClick={() => func()}
+          onClick={() => func(dropdownValues)}
         >
           Start Backtest
         </Button>
