@@ -11,6 +11,13 @@ import {
 import { useSelector } from "react-redux";
 import { BtcIcon, EditIcon } from "../../../utils/icons";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { styled } from "@mui/material/styles";
+
+const CustomCheckbox = styled(Checkbox)({
+  "&.Mui-checked": {
+    color: "white",
+  },
+});
 
 const Bot = ({
   dataArray,
@@ -32,61 +39,76 @@ const Bot = ({
   };
 
   return (
-    <Card sx={{ borderRadius: 2, background: "#131313" }}>
+    <Card
+      sx={{
+        background: "#262626",
+        border: "1.2px solid #3F4341",
+        borderRadius: "4.8px",
+      }}
+    >
       <CardContent>
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            // justifyContent: "space-between",
+            justifyContent: "space-between",
             gap: 1,
             flexWrap: "wrap",
           }}
         >
-          <Checkbox
-            key={dataArray._id}
-            onChange={(e) => {
-              handleBotsCheckbox(e, dataArray._id);
-            }}
-          />
-          <Typography
+          <Box
             sx={{
-              fontFamily: "Barlow, san-serif",
-              color: "white",
-              fontWeight: 600,
-              fontSize: 18,
-              textTransform: "capitalize",
-            }}
-          >
-            {dataArray?.botName}
-          </Typography>
-        </Box>
-        <Box sx={{ display: "flex", alignItems: "center", marginLeft: 1.4 }}>
-          <Typography
-            sx={{
-              fontFamily: "Barlow, san-serif",
-              color: "white",
-              fontWeight: 500,
-              fontSize: 13,
-              textTransform: "capitalize",
-              pr: 0.2,
               display: "flex",
               alignItems: "center",
+              gap: 0,
+              flexWrap: "wrap",
             }}
           >
-            <BtcIcon /> BTC /
-          </Typography>
-          <Typography
-            sx={{
-              fontFamily: "Barlow, san-serif",
-              color: "white",
-              fontWeight: 400,
-              fontSize: 13,
-              textTransform: "capitalize",
-            }}
-          >
-            USDT
-          </Typography>
+            <CustomCheckbox
+              key={dataArray._id}
+              onChange={(e) => {
+                handleBotsCheckbox(e, dataArray._id);
+              }}
+            />
+            <Typography
+              sx={{
+                fontFamily: "Barlow, san-serif",
+                color: "white",
+                fontWeight: 600,
+                fontSize: 18,
+                textTransform: "capitalize",
+              }}
+            >
+              {dataArray?.botName}
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center", marginLeft: 1.4 }}>
+            <Typography
+              sx={{
+                fontFamily: "Barlow, san-serif",
+                color: "white",
+                fontWeight: 500,
+                fontSize: 13,
+                textTransform: "capitalize",
+                pr: 0.2,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <BtcIcon /> BTC /
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: "Barlow, san-serif",
+                color: "white",
+                fontWeight: 400,
+                fontSize: 13,
+                textTransform: "capitalize",
+              }}
+            >
+              USDT
+            </Typography>
+          </Box>
         </Box>
 
         <Grid container spacing={1} mt={3}>
@@ -94,28 +116,36 @@ const Bot = ({
             item
             xs={12}
             sm={6}
-            md={3}
-            lg={6}
+            md={isDrawerOpen && width > 999 ? 6 : 3}
+            lg={
+              isDrawerOpen && width > 1300 && width < 1350
+                ? 3
+                : width > 1299 && !isDrawerOpen
+                ? 3
+                : 6
+            }
+            xl={3}
             key={dataArray?._id}
             display={"flex"}
             alignContent={"stretch"}
           >
             <Box
               sx={{
-                background: "#2A2C2D",
+                background: "#3E3E3E",
                 borderRadius: 2,
                 minHeight: 60,
                 minWidth: "100%",
-                p: 1,
+                p: 0.5,
               }}
             >
               <Typography
                 sx={{
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: 600,
                   fontFamily: "Barlow, san-serif",
                   color: "white",
                   mb: 1,
+                  whiteSpace: "nowrap",
                 }}
               >
                 Total Profit
@@ -139,28 +169,36 @@ const Bot = ({
             item
             xs={12}
             sm={6}
-            md={3}
-            lg={6}
+            md={isDrawerOpen && width > 999 ? 6 : 3}
+            lg={
+              isDrawerOpen && width > 1300 && width < 1350
+                ? 3
+                : width > 1299 && !isDrawerOpen
+                ? 3
+                : 6
+            }
+            xl={3}
             key={dataArray?._id}
             display={"flex"}
             alignContent={"stretch"}
           >
             <Box
               sx={{
-                background: "#2A2C2D",
+                background: "#3E3E3E",
                 borderRadius: 2,
                 minHeight: 60,
                 minWidth: "100%",
-                p: 1,
+                p: 0.5,
               }}
             >
               <Typography
                 sx={{
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: 600,
                   fontFamily: "Barlow, san-serif",
                   color: "white",
                   mb: 1,
+                  whiteSpace: "nowrap",
                 }}
               >
                 Total Deals
@@ -184,28 +222,36 @@ const Bot = ({
             item
             xs={12}
             sm={6}
-            md={3}
-            lg={6}
+            md={isDrawerOpen && width > 999 ? 6 : 3}
+            lg={
+              isDrawerOpen && width > 1300 && width < 1350
+                ? 3
+                : width > 1299 && !isDrawerOpen
+                ? 3
+                : 6
+            }
+            xl={3}
             key={dataArray?._id}
             display={"flex"}
             alignContent={"stretch"}
           >
             <Box
               sx={{
-                background: "#2A2C2D",
+                background: "#3E3E3E",
                 borderRadius: 2,
                 minHeight: 60,
                 minWidth: "100%",
-                p: 1,
+                p: 0.5,
               }}
             >
               <Typography
                 sx={{
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: 600,
                   fontFamily: "Barlow, san-serif",
                   color: "white",
                   mb: 1,
+                  whiteSpace: "nowrap",
                 }}
               >
                 Status
@@ -225,8 +271,7 @@ const Bot = ({
                       : "#FFFFFF",
                 }}
               >
-                {dataArray?.state === "on" ? "ON-OK" : "OFF-NOT OK"}
-                {/* {item.title === "Total Profit" ? "$" : ""} */}
+                {dataArray?.state === "on" ? "ON" : "OFF"}
               </Typography>
             </Box>
           </Grid>
@@ -235,28 +280,36 @@ const Bot = ({
             item
             xs={12}
             sm={6}
-            md={3}
-            lg={6}
+            md={isDrawerOpen && width > 999 ? 6 : 3}
+            lg={
+              isDrawerOpen && width > 1300 && width < 1350
+                ? 3
+                : width > 1299 && !isDrawerOpen
+                ? 3
+                : 6
+            }
+            xl={3}
             key={dataArray?._id}
             display={"flex"}
             alignContent={"stretch"}
           >
             <Box
               sx={{
-                background: "#2A2C2D",
+                background: "#3E3E3E",
                 borderRadius: 2,
                 minHeight: 60,
                 minWidth: "100%",
-                p: 1,
+                p: 0.5,
               }}
             >
               <Typography
                 sx={{
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: 600,
                   fontFamily: "Barlow, san-serif",
                   color: "white",
                   mb: 1,
+                  whiteSpace: "nowrap",
                 }}
               >
                 Side
@@ -350,7 +403,7 @@ const Bot = ({
         </Grid>
         <Box
           sx={{
-            background: "#2A2C2D",
+            background: "#3E3E3E",
             borderRadius: 2,
             minHeight: 160,
             minWidth: "100%",
@@ -656,7 +709,7 @@ const Bot = ({
             mt: 2,
             alignItems: "center",
             justifyContent: "center",
-            flexWrap: "wrap",
+            flexWrap: width < 1100 ? "wrap" : "",
             flexDirection:
               width < 400
                 ? "column"
@@ -669,7 +722,7 @@ const Bot = ({
           <Button
             sx={{
               textTransform: "none",
-              background: "linear-gradient(#1B1B1B, #191717)",
+              background: "linear-gradient(to right, #292828, #262222)",
               outline: "none",
               fontFamily: "Barlow, san-serif",
               color: "#FFFFFF",
@@ -679,9 +732,9 @@ const Bot = ({
               minWidth:
                 width < 400 ? 200 : width > 599 && width < 755 ? 200 : 75,
               borderBottomLeftRadius:
-                width < 400 ? 0 : width > 599 && width < 755 ? 0 : 8,
+                width < 400 ? 0 : width > 599 && width < 755 ? 0 : 5,
               borderTopLeftRadius:
-                width < 400 ? 0 : width > 599 && width < 755 ? 0 : 8,
+                width < 400 ? 0 : width > 599 && width < 755 ? 0 : 5,
               borderTopRightRadius: 0,
               borderBottomRightRadius: 0,
             }}
@@ -691,7 +744,7 @@ const Bot = ({
           <Button
             sx={{
               textTransform: "none",
-              background: "linear-gradient(#1B1B1B, #191717)",
+              background: "linear-gradient(to right, #292828, #262222)",
               outline: "none",
               fontFamily: "Barlow, san-serif",
               color: "#FFFFFF",
@@ -704,12 +757,12 @@ const Bot = ({
             }}
             onClick={() => handleViewModal(dataArray?._id, dataArray?.logs)}
           >
-            <RefreshIcon sx={{ fontSize: 18, mr: 0.5 }} /> Logs
+            <RefreshIcon sx={{ fontSize: 18, mr: 0.5 }} /> Share
           </Button>
           <Button
             sx={{
               textTransform: "none",
-              background: "linear-gradient(#1B1B1B, #191717)",
+              background: "linear-gradient(to right, #292828, #262222)",
               outline: "none",
               fontFamily: "Barlow, san-serif",
               color: "#FFFFFF",
@@ -729,7 +782,7 @@ const Bot = ({
           <Button
             sx={{
               textTransform: "none",
-              background: "linear-gradient(#1B1B1B, #191717)",
+              background: "linear-gradient(to right, #292828, #262222)",
               outline: "none",
               fontFamily: "Barlow, san-serif",
               color: "#FFFFFF",
@@ -737,13 +790,13 @@ const Bot = ({
               border: "1.5px solid #343131",
               height: 30,
               minWidth:
-                width < 400 ? 200 : width > 599 && width < 755 ? 200 : 75,
+                width < 400 ? 200 : width > 599 && width < 755 ? 200 : 91,
               borderBottomLeftRadius: 0,
               borderTopLeftRadius: 0,
               borderTopRightRadius:
-                width < 400 ? 0 : width > 599 && width < 755 ? 0 : 8,
+                width < 400 ? 0 : width > 599 && width < 755 ? 0 : 5,
               borderBottomRightRadius:
-                width < 400 ? 0 : width > 599 && width < 755 ? 0 : 8,
+                width < 400 ? 0 : width > 599 && width < 755 ? 0 : 5,
             }}
             onClick={() => handleBotStatus(dataArray?._id, dataArray?.state)}
           >

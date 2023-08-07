@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 import GuageMeter from "./MeterGuage";
 import { useSelector } from "react-redux";
 
@@ -38,12 +38,41 @@ const InvestedPortfolio = ({ totalBalance }) => {
   return (
     <Card
       sx={{
-        background: "#242424",
+        background: "#262626",
         minHeight: "100%",
         minWidth: "100%",
+        border: "1.2px solid #3F4341",
+        borderRadius: "4.8px",
       }}
     >
-      <CardContent sx={{ px: width < 960 ? 5 : width > 1200 ? 5 : "" }}>
+      <CardContent
+        sx={{
+          px: width < 960 ? 5 : width > 1200 ? 5 : "",
+          position: "relative",
+        }}
+      >
+        <Button
+          sx={{
+            position: "absolute",
+            right: 10,
+            top: 8,
+            borderRadius: "50%",
+            background: "#3B3B3B",
+            border: "1px solid #5C5A66",
+            height: 17,
+            minWidth: 9,
+            fontFamily: "Barlow, san-serif",
+            fontWeight: 600,
+            color: "#AFAFAF",
+            fontSize: 8,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            textTransform: "none",
+          }}
+        >
+          i
+        </Button>
         <Typography
           sx={{
             fontFamily: "Barlow, san-serif",
@@ -61,7 +90,7 @@ const InvestedPortfolio = ({ totalBalance }) => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  gap: width > 1330 ? 6 : "",
+                  gap: width > 1330 ? 6 : width < 961 && width > 899 ? 4 : "",
                   flexDirection:
                     width < 600
                       ? "column"
@@ -71,7 +100,24 @@ const InvestedPortfolio = ({ totalBalance }) => {
                 }}
                 key={index}
               >
-                <Box>
+                <Box
+                  sx={{
+                    ml:
+                      width < 900 && width > 839
+                        ? "15%"
+                        : width < 840 && width > 799
+                        ? "13%"
+                        : width < 800 && width > 749
+                        ? "12%"
+                        : width < 750 && width > 699
+                        ? "10%"
+                        : width < 700 && width > 649
+                        ? "9%"
+                        : width < 650 && width > 599
+                        ? "7.5%"
+                        : "10%",
+                  }}
+                >
                   <GuageMeter value={item.guageValue} />
                 </Box>
                 <Box
@@ -84,10 +130,11 @@ const InvestedPortfolio = ({ totalBalance }) => {
                     sx={{
                       fontFamily: "Barlow, san-serif",
                       color: "#ACB2B7",
-                      fontSize: 13,
+                      fontSize: 16,
+                      fontWeight: 400,
                     }}
                   >
-                    Invested Amount
+                    Max. Investment Amount
                   </Typography>
                   <Typography
                     sx={{
@@ -99,23 +146,11 @@ const InvestedPortfolio = ({ totalBalance }) => {
                   >
                     ${formatNumber(item.investedAmount)}
                   </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "Barlow, san-serif",
-                      color: "#ACB2B7",
-                      fontSize: 13,
-                      mb: 1.5,
-                    }}
-                  >
-                    {item.pointValue > 0 ? "+" : "-"} {item.pointValue} (
-                    {item.percentageValue}%)
-                  </Typography>
+
                   <Box
                     sx={{
                       display: "flex",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                      flexGrow: 1,
+                      flexDirection: "column",
                       gap: 1.5,
                     }}
                   >
@@ -124,47 +159,30 @@ const InvestedPortfolio = ({ totalBalance }) => {
                         sx={{
                           fontFamily: "Barlow, san-serif",
                           color: "#ACB2B7",
-                          fontSize: 13,
+                          fontSize: 14,
+                          fontWeight: 400,
                         }}
                       >
-                        Total Account
+                        In Trades
                       </Typography>
                       <Typography
                         sx={{
                           fontFamily: "Barlow, san-serif",
                           fontWeight: 500,
-                          fontSize: 17,
+                          fontSize: 18,
                         }}
                       >
                         ${formatNumber(item.total)}
                       </Typography>
                     </Box>
+
                     <Box sx={{ display: "flex", flexDirection: "column" }}>
                       <Typography
                         sx={{
                           fontFamily: "Barlow, san-serif",
                           color: "#ACB2B7",
-                          fontSize: 13,
-                        }}
-                      >
-                        In Deals
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontFamily: "Barlow, san-serif",
-                          fontWeight: 500,
-                          fontSize: 17,
-                        }}
-                      >
-                        ${formatNumber(item.inDeal)}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: "flex", flexDirection: "column" }}>
-                      <Typography
-                        sx={{
-                          fontFamily: "Barlow, san-serif",
-                          color: "#ACB2B7",
-                          fontSize: 13,
+                          fontSize: 14,
+                          fontWeight: 400,
                         }}
                       >
                         In Orders
@@ -173,7 +191,7 @@ const InvestedPortfolio = ({ totalBalance }) => {
                         sx={{
                           fontFamily: "Barlow, san-serif",
                           fontWeight: 500,
-                          fontSize: 17,
+                          fontSize: 18,
                         }}
                       >
                         ${formatNumber(item.inOrder)}

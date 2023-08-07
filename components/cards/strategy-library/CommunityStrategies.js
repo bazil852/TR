@@ -21,40 +21,7 @@ const CommunityStrategies = (props) => {
     globalThis?.addEventListener("resize", handleResize);
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
-  const Strategies = [
-    {
-      Title: "BTC High Volume on 5 Min",
-      By: "Bazil",
-      Winrate: "95%",
-      Pnl: "143%",
-      TotalTrades: "54",
-      "Win/Losses": "50W/4L",
-    },
-    {
-      Title: "BTC TD indicator on 1 hour",
-      By: "Rui",
-      Winrate: "100%",
-      Pnl: "34%",
-      TotalTrades: "23",
-      "Win/Losses": "23W/0L",
-    },
-    {
-      Title: "BTC RSI",
-      By: "Ali",
-      Winrate: "93%",
-      Pnl: "37%",
-      TotalTrades: "72",
-      "Win/Losses": "70W/2L",
-    },
-    {
-      Title: "BTC Jump daily",
-      By: "Abdul",
-      Winrate: "100%",
-      Pnl: "23%",
-      TotalTrades: "7",
-      "Win/Losses": "7W/0L",
-    },
-  ];
+
   return (
     <Box sx={{ mt: 8, mb: 10 }}>
       <Typography
@@ -75,7 +42,7 @@ const CommunityStrategies = (props) => {
           justifyContent: "space-between",
         }}
       >
-        <Box sx={{ display: "flex", gap: "0.5rem", mt: 2, flexWrap: "wrap" }}>
+        <Box sx={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
           <Button
             sx={{
               fontFamily: "Barlow, san-serif",
@@ -85,7 +52,7 @@ const CommunityStrategies = (props) => {
                 Active === "all"
                   ? "linear-gradient(93.46deg, #790D83 -12.4%, #7A5CFF 105.26%)"
                   : "#262626",
-              borderRadius: 1.5,
+              borderRadius: 1,
               color: "#FFFFFF",
               textTransform: "none",
               height: 35,
@@ -103,7 +70,7 @@ const CommunityStrategies = (props) => {
                 Active === "linked"
                   ? "linear-gradient(93.46deg, #790D83 -12.4%, #7A5CFF 105.26%)"
                   : "#262626",
-              borderRadius: 1.5,
+              borderRadius: 1,
               color: "#FFFFFF",
               textTransform: "none",
               height: 35,
@@ -121,7 +88,7 @@ const CommunityStrategies = (props) => {
                 Active === "long"
                   ? "linear-gradient(93.46deg, #790D83 -12.4%, #7A5CFF 105.26%)"
                   : "#262626",
-              borderRadius: 1.5,
+              borderRadius: 1,
               color: "#FFFFFF",
               textTransform: "none",
               height: 35,
@@ -139,7 +106,7 @@ const CommunityStrategies = (props) => {
                 Active === "Short"
                   ? "linear-gradient(93.46deg, #790D83 -12.4%, #7A5CFF 105.26%)"
                   : "#262626",
-              borderRadius: 1.5,
+              borderRadius: 1,
               color: "#FFFFFF",
               textTransform: "none",
               height: 35,
@@ -157,7 +124,7 @@ const CommunityStrategies = (props) => {
                 Active === ">3months"
                   ? "linear-gradient(93.46deg, #790D83 -12.4%, #7A5CFF 105.26%)"
                   : "#262626",
-              borderRadius: 1.5,
+              borderRadius: 1,
               color: "#FFFFFF",
               textTransform: "none",
               height: 35,
@@ -175,7 +142,7 @@ const CommunityStrategies = (props) => {
                 Active === "binance"
                   ? "linear-gradient(93.46deg, #790D83 -12.4%, #7A5CFF 105.26%)"
                   : "#262626",
-              borderRadius: 1.5,
+              borderRadius: 1,
               color: "#FFFFFF",
               textTransform: "none",
               height: 35,
@@ -193,7 +160,7 @@ const CommunityStrategies = (props) => {
                 Active === "binanceFutures"
                   ? "linear-gradient(93.46deg, #790D83 -12.4%, #7A5CFF 105.26%)"
                   : "#262626",
-              borderRadius: 1.5,
+              borderRadius: 1,
               color: "#FFFFFF",
               textTransform: "none",
               height: 35,
@@ -221,7 +188,7 @@ const CommunityStrategies = (props) => {
           </Button>
         </Box>
       </Box>
-      <Grid container spacing={2}>
+      <Grid container spacing={"20px"} mt={-3.5}>
         <Grid item xs={12} sm={6} md={3}>
           <Paper
             sx={{
@@ -230,7 +197,7 @@ const CommunityStrategies = (props) => {
               alignItems: "center",
               height: 35,
               mt: 2,
-              borderRadius: 2,
+              borderRadius: 1,
             }}
           >
             <IconButton type="button" sx={{ p: "5px" }} aria-label="search">
@@ -257,7 +224,7 @@ const CommunityStrategies = (props) => {
               alignItems: "center",
               height: 35,
               mt: width < 600 ? 0 : 2,
-              borderRadius: 2,
+              borderRadius: 1,
             }}
           >
             <IconButton type="button" sx={{ p: "5px" }} aria-label="search">
@@ -277,7 +244,7 @@ const CommunityStrategies = (props) => {
           </Paper>
         </Grid>
       </Grid>
-      <Grid container spacing={1} mt={1}>
+      <Grid container spacing={"20px"} mt={0}>
         {props.data.map((item, index) => (
           <Grid
             key={index}
@@ -291,8 +258,9 @@ const CommunityStrategies = (props) => {
             <Paper
               sx={{
                 background: "#262626",
+                border: "1.2px solid #3F4341",
+                borderRadius: "4.8px",
                 padding: "1rem 0.5rem 1rem 0.5rem",
-                borderRadius: "8px",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -353,7 +321,12 @@ const CommunityStrategies = (props) => {
                   <Typography
                     sx={{
                       fontFamily: "Barlow, san-serif",
-                      fontSize: width < 670 && width > 599 ? 14 : 16,
+                      fontSize:
+                        width < 670 && width > 599
+                          ? 14
+                          : width > 1535
+                          ? 15
+                          : 16,
                       fontWeight: 300,
                       color: "#ACB2B7",
                     }}
@@ -383,7 +356,12 @@ const CommunityStrategies = (props) => {
                   <Typography
                     sx={{
                       fontFamily: "Barlow, san-serif",
-                      fontSize: width < 670 && width > 599 ? 14 : 16,
+                      fontSize:
+                        width < 670 && width > 599
+                          ? 14
+                          : width > 1535
+                          ? 15
+                          : 16,
                       fontWeight: 300,
                       color: "#ACB2B7",
                     }}
@@ -396,6 +374,7 @@ const CommunityStrategies = (props) => {
                       fontSize: width < 670 && width > 599 ? 14 : 16,
                       fontWeight: 600,
                       color: "#22A25B",
+                      whiteSpace: "nowrap",
                     }}
                   >
                     {item.profitAndLoss ? item.profitAndLoss : "NA"} %
@@ -413,7 +392,12 @@ const CommunityStrategies = (props) => {
                   <Typography
                     sx={{
                       fontFamily: "Barlow, san-serif",
-                      fontSize: width < 670 && width > 599 ? 14 : 16,
+                      fontSize:
+                        width < 670 && width > 599
+                          ? 14
+                          : width > 1535
+                          ? 15
+                          : 16,
                       fontWeight: 300,
                       color: "#ACB2B7",
                       minWidth: "fit-content",
@@ -445,7 +429,12 @@ const CommunityStrategies = (props) => {
                   <Typography
                     sx={{
                       fontFamily: "Barlow, san-serif",
-                      fontSize: width < 670 && width > 599 ? 14 : 16,
+                      fontSize:
+                        width < 670 && width > 599
+                          ? 14
+                          : width > 1535
+                          ? 15
+                          : 16,
                       fontWeight: 300,
                       color: "#ACB2B7",
                     }}

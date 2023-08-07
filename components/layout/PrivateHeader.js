@@ -13,11 +13,14 @@ import {
   Button,
 } from "@mui/material";
 
+import Select from "react-select";
+
 import CloseIcon from "@mui/icons-material/Close";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 import { useDispatch } from "react-redux";
 import { setWidth } from "../../slices/dashboardWidthController-slice";
@@ -84,16 +87,91 @@ const Drawer = styled(MuiDrawer, {
     "& .MuiDrawer-paper": closedMixin(theme),
   }),
 }));
-export default function PrivateHeader({ title, current, Component }) {
+
+const customStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    border: "none",
+    backgroundColor: "#363737",
+    width: "130px",
+    minHeight: "30px",
+    borderRadius: "8px",
+    textAlign: "center",
+  }),
+  container: (provided) => ({
+    ...provided,
+    border: "none",
+    width: "100%",
+    minHeight: "20px",
+  }),
+  indicatorSeparator: (provided) => ({
+    ...provided,
+    display: "none",
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    color: "#FFFFFF",
+    fontSize: "15px",
+    fontFamily: "Barlow, san-serif",
+    backgroundColor: state.isSelected ? "#000000" : "#2B2B2B",
+    ":hover": { background: "#131313", color: "#FFFFFF" },
+  }),
+  indicatorsContainer: (provided, state) => ({
+    ...provided,
+    height: "30px",
+    width: state.isFocused ? "20px" : "20px",
+    justifyContent: state.isFocused ? "flex-end" : "flex-end",
+    padding: "0",
+  }),
+  menu: (provided) => ({
+    ...provided,
+    background: "#2B2B2B",
+    color: "#FFFFFF",
+  }),
+  valueContainer: (provided, state) => ({
+    ...provided,
+    minHeight: "30px",
+    padding: "2px 4px",
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    fontSize: "15px",
+    fontFamily: "Barlow, san-serif",
+    fontWeight: 500,
+    color: "#FFFFFF",
+    whiteSpace: "normal",
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    fontSize: "15px",
+    fontFamily: "Barlow, san-serif",
+    overflow: "hidden",
+    textWrap: "nowrap",
+    textOverflow: "ellipsis",
+    fontWeight: 500,
+  }),
+};
+
+export default function PrivateHeader({ Component }) {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
   const [toggle, setToggle] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState();
   const [realAccountBalance, setRealAccountBalance] = React.useState(0);
-  const [paperTradingBalance, setPaperTradingBalance] = React.useState(0);
   const router = useRouter();
   const [windowWidth, setWindowWidth] = React.useState(globalThis?.innerWidth);
+  const [exchangeValue, setExchangeValue] = React.useState("");
+  const exchangeOptions = [
+    { value: "chocolate", label: "Chocolate" },
+    { value: "strawberry", label: "Strawberry" },
+    { value: "vanilla", label: "Vanilla" },
+  ];
+
+  const exchangeOnChange = (option) => {
+    setExchangeValue(option);
+  };
+
   React.useEffect(() => {
     const handleResize = () => setWindowWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
@@ -162,7 +240,7 @@ export default function PrivateHeader({ title, current, Component }) {
       index: 3,
       title: "Deals Library",
       icon: selectedItem === 3 ? BlueVgridBot : VgridBot,
-      path: "/bot-config",
+      path: "/DealsLibrary",
     },
     {
       index: 4,
@@ -209,7 +287,7 @@ export default function PrivateHeader({ title, current, Component }) {
             "&::-webkit-scrollbar": {
               display: "none",
             },
-            background: `${open ? "#131414" : "#0A0A0A)"}`,
+            background: `${open ? "#131414" : "#050606)"}`,
           },
         }}
         variant="permanent"
@@ -252,42 +330,71 @@ export default function PrivateHeader({ title, current, Component }) {
           sx={{
             display: open ? "flex" : "none",
             flexDirection: "column",
-            gap: 1,
-            pl: 3,
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "13px",
             mt: -1,
           }}
         >
-          <Box>
-            <Typography
-              sx={{
-                fontSize: "0.9rem",
-                fontFamily: "Barlow, san-serif",
-                color: "#ffffff",
-              }}
-            >
-              Real Account Balance
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: "0.9rem",
-                fontFamily: "Barlow, san-serif",
-                color: "#ffffff",
-                fontWeight: 600,
-              }}
-            >
-              ${realAccountBalance}
-            </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Select
+              placeholder={
+                <div className="select-placeholder-text">All Exchanges</div>
+              }
+              options={exchangeOptions}
+              styles={customStyles}
+              onChange={exchangeOnChange}
+              isSearchable={false}
+              value={exchangeValue}
+            />
           </Box>
           <Box>
-            <Typography
+            <Button
               sx={{
-                fontSize: "0.9rem",
-                fontFamily: "Barlow, san-serif",
-                color: "#ffffff",
+                width: 130,
+                background: "#363737",
+                borderRadius: "8px",
+                height: 40,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                textTransform: "none",
+                color: "#FFFFFF",
+                position: "relative",
               }}
             >
-              Paper Trading Balance
-            </Typography>
+              <Box mr={2}>
+                <Typography
+                  sx={{
+                    fontSize: "0.9rem",
+                    fontFamily: "Barlow, san-serif",
+                    color: "#ffffff",
+                    mb: -0.5,
+                  }}
+                >
+                  Total Portfolio
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "0.9rem",
+                    fontFamily: "Barlow, san-serif",
+                    color: "#ffffff",
+                    fontWeight: 600,
+                  }}
+                >
+                  {realAccountBalance}$
+                </Typography>
+              </Box>
+              <Box sx={{ position: "absolute", right: 3, top: 10 }}>
+                <RefreshIcon style={{ fontSize: "22px" }} />
+              </Box>
+            </Button>
             <Typography
               sx={{
                 fontSize: "0.9rem",
@@ -295,9 +402,7 @@ export default function PrivateHeader({ title, current, Component }) {
                 color: "#ffffff",
                 fontWeight: 600,
               }}
-            >
-              ${paperTradingBalance}
-            </Typography>
+            ></Typography>
           </Box>
         </Box>
 
@@ -461,7 +566,7 @@ export default function PrivateHeader({ title, current, Component }) {
             <Gift />
             <Typography
               sx={{
-                fontSize: 16,
+                fontSize: 17.3,
                 fontFamily: "Barlow, san-serif",
                 color: "#5156BE",
                 fontWeight: 500,
@@ -523,12 +628,13 @@ export default function PrivateHeader({ title, current, Component }) {
                 border: "none",
                 borderRadius: "5px",
                 padding: "8px 15px",
+                width: 130,
               }}
             >
               <Typography
                 sx={{
                   color: "white",
-                  fontSize: "13px",
+                  fontSize: "15px",
                   fontFamily: "Barlow, san-serif",
                   fontWeight: 500,
                 }}
@@ -566,7 +672,11 @@ export default function PrivateHeader({ title, current, Component }) {
       <Box sx={{ position: "fixed", minWidth: "100%", zIndex: 1000 }}>
         <NavBar />
       </Box>
-      <Container>
+      <Container
+        sx={{
+          "@media (min-width:1200px)": { maxWidth: "1305px !important" },
+        }}
+      >
         {Component && (
           <div>
             <Component />

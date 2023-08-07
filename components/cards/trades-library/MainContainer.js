@@ -59,13 +59,14 @@ const MainContainer = () => {
     },
   ];
   return (
-    <Grid container sx={{ mt: 0, minWidth: "100%" }} spacing={1}>
+    <Grid container sx={{ mt: 0, minWidth: "100%" }} spacing={"20px"}>
       {Data.map((item, index) => (
         <Grid key={index} item xs={12} sm={6} md={6} lg={4}>
           <Box
             sx={{
-              background: "#131313",
-              borderRadius: 2,
+              background: "#262626",
+              border: "1.2px solid #3F4341",
+              borderRadius: "4.8px",
               p: 2,
               minWidth: "100%",
             }}
@@ -281,7 +282,7 @@ const MainContainer = () => {
               <Button
                 sx={{
                   textTransform: "none",
-                  background: "linear-gradient(#1B1B1B, #191717)",
+                  background: "linear-gradient(to right, #292828, #262222)",
                   outline: "none",
                   fontFamily: "Barlow, san-serif",
                   color: "#FFFFFF",
@@ -318,6 +319,8 @@ const MainContainer = () => {
                         ? 0
                         : width > 754 && width < 943
                         ? 0.1
+                        : width > 1300 && !isDrawerOpen
+                        ? -1
                         : 0.5,
                   }}
                 />
@@ -326,7 +329,7 @@ const MainContainer = () => {
               <Button
                 sx={{
                   textTransform: "none",
-                  background: "linear-gradient(#1B1B1B, #191717)",
+                  background: "linear-gradient(to right, #292828, #262222)",
                   outline: "none",
                   fontFamily: "Barlow, san-serif",
                   color: "#FFFFFF",
@@ -350,7 +353,7 @@ const MainContainer = () => {
                       : width > 599 && width < 755
                       ? 200
                       : width > 1199
-                      ? 80
+                      ? 85
                       : 75,
                   borderRadius: 0,
                 }}
@@ -371,7 +374,7 @@ const MainContainer = () => {
               <Button
                 sx={{
                   textTransform: "none",
-                  background: "linear-gradient(#1B1B1B, #191717)",
+                  background: "linear-gradient(to right, #292828, #262222)",
                   outline: "none",
                   fontFamily: "Barlow, san-serif",
                   color: "#FFFFFF",
@@ -413,7 +416,7 @@ const MainContainer = () => {
               <Button
                 sx={{
                   textTransform: "none",
-                  background: "linear-gradient(#1B1B1B, #191717)",
+                  background: "linear-gradient(to right, #292828, #262222)",
                   outline: "none",
                   fontFamily: "Barlow, san-serif",
                   color: "#FFFFFF",
@@ -453,6 +456,8 @@ const MainContainer = () => {
                         ? 0
                         : width > 754 && width < 943
                         ? 0.1
+                        : width > 1300 && !isDrawerOpen
+                        ? -2
                         : 0.5,
                   }}
                 />

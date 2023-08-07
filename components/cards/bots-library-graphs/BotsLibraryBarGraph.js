@@ -1,7 +1,8 @@
 import { Bar } from "react-chartjs-2";
 import { Chart } from "chart.js";
 import * as Chartjs from "chart.js";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const controllers = Object.values(Chartjs).filter(
   (chart) => chart.id !== undefined
@@ -23,19 +24,45 @@ const months = [
   "Nov",
   "Dec",
 ];
-
 const BotsLibraryBarGraph = ({ dataArray, valueType }) => {
-  const [width, setWidth] = useState(globalThis?.innerWidth);
-
-  const maxVal = Math.max(...dataArray);
+  const nonZeroData = dataArray.filter((value) => value !== 0);
+  const labelsToShow = months.filter((_, index) => dataArray[index] !== 0);
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
+  const maxVal = Math.max(...nonZeroData);
   const adjustedMax = Math.ceil((maxVal + 1) / 500) * 600;
   const stepSize = adjustedMax / 10 < 250 ? 50 : adjustedMax / 5;
 
-  const lastNonZeroIndex = dataArray
-    .map((value, index) => (value !== 0 ? index : -1))
-    .reduce((maxIndex, curr, index) => (curr > -1 ? index : maxIndex), -1);
+  const [width, setWidth] = useState(globalThis?.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
 
-  const labelsToShow = months.slice(0, lastNonZeroIndex + 1);
+  let barThickness;
+  if (nonZeroData.length === 1) {
+    barThickness = 70;
+  } else if (nonZeroData.length === 2) {
+    barThickness = 50;
+  } else if (nonZeroData.length === 3) {
+    barThickness = 35;
+  } else if (nonZeroData.length === 4) {
+    barThickness = 30;
+  } else if (nonZeroData.length === 5) {
+    barThickness = 25;
+  } else if (nonZeroData.length === 6) {
+    barThickness = 25;
+  } else if (nonZeroData.length === 9) {
+    barThickness = 25;
+  } else if (nonZeroData.length === 10) {
+    barThickness = 35;
+  } else if (nonZeroData.length === 11) {
+    barThickness = 25;
+  } else if (nonZeroData.length === 12) {
+    barThickness = 25;
+  } else {
+    barThickness = 25;
+  }
 
   const data = useMemo(
     () => ({
@@ -43,7 +70,7 @@ const BotsLibraryBarGraph = ({ dataArray, valueType }) => {
       datasets: [
         {
           label: `${valueType} of Earnings`,
-          data: dataArray,
+          data: nonZeroData,
           backgroundColor: (context) => {
             const gradient = context.chart.ctx.createLinearGradient(
               0,
@@ -59,12 +86,12 @@ const BotsLibraryBarGraph = ({ dataArray, valueType }) => {
             return gradient;
           },
           categoryPercentage: 0.9,
-          barThickness: 22,
+          barThickness: barThickness,
           borderWidth: 0,
         },
       ],
     }),
-    [dataArray]
+    [nonZeroData]
   );
 
   const options = {
@@ -78,7 +105,7 @@ const BotsLibraryBarGraph = ({ dataArray, valueType }) => {
           max: adjustedMax,
           min: 0,
           callback: function(value) {
-            return value + `${valueType}`;
+            return value + valueType;
           },
           color: "#8C8C8C",
           font: {
@@ -120,18 +147,21 @@ const BotsLibraryBarGraph = ({ dataArray, valueType }) => {
     },
   };
 
-  useEffect(() => {
-    const handleResize = () => setWidth(globalThis?.innerWidth);
-    globalThis?.addEventListener("resize", handleResize);
-    return () => globalThis?.removeEventListener("resize", handleResize);
-  }, []);
-
   return (
     <div
       style={{
         position: "relative",
-        minWidth: `${Math.max(100, labelsToShow.length * 15)}%`,
-        height: width > 1197 ? "343px" : "400px",
+        minWidth: `${Math.max(100, labelsToShow.length * 20)}%`,
+        height:
+          width > 1219 && width < 1450 && !isDrawerOpen
+            ? "290px"
+            : width > 1200 && width < 1220 && !isDrawerOpen
+            ? "322px"
+            : width < 1221 && width > 1042 && isDrawerOpen
+            ? "285px"
+            : width < 1043 && width > 1036 && isDrawerOpen
+            ? "270px"
+            : "345px",
         paddingBottom: "1rem",
       }}
     >

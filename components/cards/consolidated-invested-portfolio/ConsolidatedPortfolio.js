@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  Typography,
+} from "@mui/material";
 import GraphOfConsolidatedPOrtfolio from "./GraphOfConsolidatedPOrtfolio";
 import { useSelector } from "react-redux";
 
@@ -40,12 +47,36 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
   return (
     <Card
       sx={{
-        background: "#242424",
         minHeight: "100%",
         minWidth: "100%",
+        background: "#262626",
+        border: "1.2px solid #3F4341",
+        borderRadius: "4.8px",
       }}
     >
       <CardContent sx={{ position: "relative" }}>
+        <Button
+          sx={{
+            position: "absolute",
+            right: width < 360 ? 6 : 10,
+            top: width < 360 ? 4 : 8,
+            borderRadius: "50%",
+            background: "#3B3B3B",
+            border: "1px solid #5C5A66",
+            height: 17,
+            minWidth: 9,
+            fontFamily: "Barlow, san-serif",
+            fontWeight: 600,
+            color: "#AFAFAF",
+            fontSize: 8,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            textTransform: "none",
+          }}
+        >
+          i
+        </Button>
         <Typography
           sx={{
             fontFamily: "Barlow, san-serif",
@@ -92,16 +123,25 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
               xs={12}
               sm={7}
               md={isDrawerOpen && width > 999 ? 12 : 7}
-              lg={6}
+              lg={width > 1300 ? 7 : 6}
             >
-              <GraphOfConsolidatedPOrtfolio data={totalAssets} />
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  minWidth: "100%",
+                }}
+              >
+                <GraphOfConsolidatedPOrtfolio data={totalAssets} />
+              </Box>
             </Grid>
             <Grid
               item
               xs={12}
               sm={5}
               md={isDrawerOpen && width > 999 ? 12 : 5}
-              lg={6}
+              lg={width > 1300 ? 5 : 6}
             >
               <Box
                 sx={{
@@ -125,7 +165,7 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
                   float: width < 961 ? "left" : "right",
                   gap: 1.5,
                   mt: width < 961 ? 2 : "",
-                  px: width > 1200 ? 5 : "",
+                  px: width > 1200 ? 5 : 2,
                 }}
               >
                 {topThree.map((coin) => (
@@ -135,7 +175,6 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
                         fontSize: 14,
                         fontFamily: "Barlow, san-serif",
                         color: "#ACB2B7",
-                        pl: 1,
                       }}
                     >
                       {coin.coin_name}
@@ -154,6 +193,7 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
                           fontWeight: 600,
                           color: "#B3B4B9",
                           whiteSpace: "nowrap",
+                          pl: 1,
                         }}
                       >
                         {decimalFormatter(coin.quantity)} {coin.coin_name} =

@@ -12,7 +12,7 @@ const CryptoIcon = dynamic(() => import("crypto-icons-react"), { ssr: false });
 const customStyles = {
   control: (provided, state) => ({
     ...provided,
-    backgroundColor: "#27292A",
+    backgroundColor: "#2A2C2D",
     borderRadius: "7px",
     border: "none",
     borderTop: "2px solid #333536 ",
@@ -129,7 +129,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
   const tableCellStyle = {
     whiteSpace: "normal",
     wordWrap: "break-word",
-    maxWidth: "100px",
+    maxWidth: "60px",
     border: "none",
     fontSize: "14px",
   };
@@ -152,35 +152,48 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
   console.log(sortedData);
 
   return (
-    <Box mt={-5}>
-      <Typography
-        sx={{
-          fontFamily: "Barlow, san-serif",
-          fontWeight: 600,
-          fontSize: 24,
-          pl: 2,
-          py: 2,
-        }}
-      >
-        Portfolio Summary
-      </Typography>
+    <Box>
       <Box
         sx={{
           width: "100%",
-          minHeight: "700px",
-          background: "#242424",
-          border: "none",
-          borderRadius: "5px",
+          minHeight: width < 500 ? "750px" : "710px",
+          background: "#262626",
+          border: "1.2px solid #3F4341",
+          borderRadius: "4.8px",
           px: 3,
           position: "relative",
         }}
       >
+        <Button
+          sx={{
+            position: "absolute",
+            right: 10,
+            top: 8,
+            borderRadius: "50%",
+            background: "#3B3B3B",
+            border: "1px solid #5C5A66",
+            height: 17,
+            minWidth: 9,
+            fontFamily: "Barlow, san-serif",
+            fontWeight: 600,
+            color: "#AFAFAF",
+            fontSize: 8,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            textTransform: "none",
+          }}
+        >
+          i
+        </Button>
         <Box
           sx={{
             py: 3,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            flexDirection: width < 500 ? "column" : "row",
+            gap: width < 500 ? 3 : "",
           }}
         >
           <Box>
@@ -200,7 +213,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                 color: "#859498",
               }}
             >
-              All your tokens aggregated or by exchange
+              Token details
             </Typography>
           </Box>
           <Select
@@ -243,6 +256,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                             fontSize: "13px",
                             fontFamily: "Barlow, san-serif",
                             color: "#859498",
+                            fontWeight: 500,
                           }}
                         >
                           CHANGE
@@ -252,6 +266,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                             fontSize: "13px",
                             fontFamily: "Barlow, san-serif",
                             color: "#859498",
+                            fontWeight: 500,
                           }}
                         >
                           (DAY)
@@ -270,6 +285,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                             fontSize: "13px",
                             fontFamily: "Barlow, san-serif",
                             color: "#859498",
+                            fontWeight: 500,
                           }}
                         >
                           {column.title}
@@ -342,8 +358,8 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                       key={index}
                       style={{
                         backgroundColor:
-                          index % 2 === 0 ? "#323233" : "#2A2A2B",
-                        height: "45px",
+                          index % 2 === 0 ? "#222223" : "#202021",
+                        height: "35px",
                       }}
                     >
                       {columns.map((column) => {
@@ -355,7 +371,6 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                                   display: "flex",
                                   alignItems: "center",
                                   pl: "15%",
-                                  width: "200px",
                                 }}
                               >
                                 <Box>
@@ -464,7 +479,14 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
         <Box
           sx={{
             position: "absolute",
-            bottom: width < 600 ? 50 : 10,
+            bottom:
+              width < 600 && totalPages < 5
+                ? 50
+                : totalPages > 5 && width < 418
+                ? 70
+                : width < 600 && totalPages > 5
+                ? 50
+                : 10,
             left: 22,
           }}
         >
@@ -486,9 +508,15 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
         <Box
           sx={{
             position: "absolute",
-            bottom: totalPages > 5 ? 60 : 20,
+            bottom:
+              totalPages > 5 && width > 600
+                ? 60
+                : totalPages > 5 && width < 402
+                ? 10
+                : 20,
             right: width > 600 ? 23.5 : "",
             left: width < 600 ? 20 : "",
+            pr: width < 420 && totalPages > 5 ? 3 : "",
           }}
         >
           <Stack spacing={0} direction="row">
@@ -503,7 +531,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                 border: "1px solid #2A2C2D",
                 mx: 0,
                 textTransform: "none",
-                minWidth: 20,
+                minWidth: 65,
                 height: 32,
                 borderTopRightRadius: 0,
                 borderTopLeftRadius: 4,
@@ -547,7 +575,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                 border: "1px solid #2A2C2D",
                 mx: 0,
                 textTransform: "none",
-                minWidth: 20,
+                minWidth: 40,
                 height: 32,
                 borderTopRightRadius: 4,
                 borderTopLeftRadius: 0,

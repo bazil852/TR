@@ -1,16 +1,6 @@
 import PrivateHeader from "../components/layout/PrivateHeader";
 import React, { useEffect, useState } from "react";
-import AggregateAccountBalance from "../components/charts/AggregateAccountBalance";
-import {
-  Box,
-  Modal,
-  Typography,
-  Backdrop,
-  Fade,
-  Grid,
-  Button,
-} from "@mui/material";
-import { CircularProgress } from "@mui/material";
+import { Box, Modal, Typography, Backdrop, Fade, Grid } from "@mui/material";
 import ReactPlayer from "react-player";
 import { Video } from "../utils/icons";
 import ExchangeTable from "../components/cards/exchange-table/ExchangeTable";
@@ -18,12 +8,13 @@ import ExchangeTable from "../components/cards/exchange-table/ExchangeTable";
 import { getSession } from "next-auth/react";
 import TotalPortfolioAndInvestedDeals from "../components/cards/total-portfolio-invested-deals/TotalPortfolioAndInvestedDeals";
 
-import TotalAndInvestedDeals from "../components/cards/total-deals-total-invested-deals/TotalAndInvestedDeals";
+import ActiveTrades from "../components/cards/total-deals-total-invested-deals/ActiveTrades";
 import { useSelector } from "react-redux";
 import ConsolidatedPortfolio from "../components/cards/consolidated-invested-portfolio/ConsolidatedPortfolio";
 import InvestedPortfolio from "../components/cards/consolidated-invested-portfolio/InvestedPortfolio";
 import SpotFuturePieChart from "../components/cards/spot-future-pie-chart/SpotFuturePieChart";
 import PortfolioByExchange from "../components/cards/portfolio-by-exchange/PortfolioByExchange";
+import CloseTrades from "../components/cards/total-deals-total-invested-deals/CloseTrades";
 const moment = require("moment");
 
 const ccxt = require("ccxt");
@@ -580,22 +571,34 @@ const DashboardComponent = () => {
       total: 865200,
       lastWeek: 0,
       lastMonth: 0,
+      days: 6,
       graph: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     },
   ];
   const investedInDeals = [
     {
-      name: "Invested in Deals",
+      name: "Invested in trades",
       total: 0,
       lastWeek: 0,
       lastMonth: 0,
+      days: 7,
       graph: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     },
   ];
   const totalDeals = [
     {
-      name: "Total Deals",
-      total: 0,
+      name: "Active Trades",
+      totalTrades: 0,
+      buy: "BUY",
+      sell: "SELL",
+      sellDetail: "1BTC at 29230 USDT for a total of 29230",
+      buyDetail: "1BTC at 29230 USDT for a total of 29230 ",
+    },
+  ];
+  const closedTrades = [
+    {
+      name: "Closed Trades",
+      totalTrades: 0,
       lastWeek: 0,
       lastMonth: 0,
     },
@@ -608,7 +611,7 @@ const DashboardComponent = () => {
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
   return (
-    <Box mt={8} minHeight={"100%"}>
+    <Box mb={8} mt={"85px"} minHeight={"100%"}>
       <Box
         sx={{
           display: "flex",
@@ -627,18 +630,18 @@ const DashboardComponent = () => {
               fontFamily: "Barlow, san-serif",
             }}
           >
-            Dashboard
+            Portfolio Dashboard
           </Typography>
           <Typography
             sx={{
-              fontSize: "0.9rem",
+              fontSize: "1rem",
               ml: 1,
               mb: 1,
               fontFamily: "Barlow, san-serif",
               color: "#ACB2B7",
             }}
           >
-            All your accounts in the same place
+            Detailed portfolio and trades
           </Typography>
         </Box>
         <Box>
@@ -704,7 +707,13 @@ const DashboardComponent = () => {
         </Box>
       </Box>
 
-      <Grid container spacing={1} mt={3}>
+      <Grid
+        container
+        spacing={"20px"}
+        mt={0}
+        alignContent={"stretch"}
+        minHeight={115}
+      >
         <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 3.5} lg={3.5}>
           <TotalPortfolioAndInvestedDeals
             data={totalPortfolio}
@@ -717,18 +726,18 @@ const DashboardComponent = () => {
             totalBalance={0}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 2.5} lg={2.5}>
-          <TotalAndInvestedDeals data={totalDeals} />
+        <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 3} lg={3}>
+          <ActiveTrades data={totalDeals} />
         </Grid>
-        <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 2.5} lg={2.5}>
-          <TotalAndInvestedDeals data={investedInDeals} />
+        <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 2} lg={2}>
+          <CloseTrades data={closedTrades} />
         </Grid>
       </Grid>
 
       <Grid
         container
-        spacing={1}
-        mt={1}
+        spacing={"20px"}
+        mt={"0px"}
         alignContent={"stretch"}
         minHeight={320}
       >

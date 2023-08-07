@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import * as echarts from "echarts";
 import { Box } from "@mui/material";
 
-const GraphSpotfuturePieChart = ({ data }) => {
+const WalletPieChrat = ({ data }) => {
   const chartRef = useRef(null);
   const [dataWithWorth, setDataWithWorth] = useState([0]);
   const colors = ["#3DFFDC", "#1ED6FF", "#5A3FFF", "#ADE1FF", "#268AFF"];
@@ -75,7 +75,7 @@ const GraphSpotfuturePieChart = ({ data }) => {
         {
           name: "Access From",
           type: "pie",
-          radius: "65%",
+          radius: "75%",
           center: ["50%", "50%"],
           data: adjustedDataWithWorth.map((item, idx) => ({
             value: item.worth,
@@ -96,8 +96,8 @@ const GraphSpotfuturePieChart = ({ data }) => {
               color: "#9A9A9A",
             },
             smooth: 0.1,
-            length: 7,
-            length2: 3,
+            length: 10,
+            length2: 8,
           },
           animationType: "scale",
           animationEasing: "elasticOut",
@@ -121,8 +121,10 @@ const GraphSpotfuturePieChart = ({ data }) => {
       sx={{
         position: "relative",
         height: "230px",
-        mt: -3,
-        width: "100%",
+        width: "290px",
+        margin: 0,
+        padding: 0,
+        pt: 3,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -132,4 +134,4 @@ const GraphSpotfuturePieChart = ({ data }) => {
   );
 };
 
-export default GraphSpotfuturePieChart;
+export default WalletPieChrat;

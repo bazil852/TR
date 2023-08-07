@@ -25,7 +25,10 @@ const months = [
 ];
 
 const BarGraph = ({ balanceHistory }) => {
-  const maxVal = Math.max(...balanceHistory);
+  const nonZeroData = balanceHistory.filter((value) => value !== 0);
+  const labelsToShow = months.filter((_, index) => balanceHistory[index] !== 0);
+
+  const maxVal = Math.max(...nonZeroData);
   const adjustedMax = Math.ceil((maxVal + 1) / 500) * 600;
   const stepSize = adjustedMax / 10 < 250 ? 50 : adjustedMax / 5;
 
@@ -36,38 +39,26 @@ const BarGraph = ({ balanceHistory }) => {
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
 
-  const lastNonZeroIndex = balanceHistory
-    .map((value, index) => (value !== 0 ? index : -1))
-    .reduce((maxIndex, curr, index) => (curr > -1 ? index : maxIndex), -1);
-
-  const labelsToShow = months.slice(0, lastNonZeroIndex + 1);
-
-  const countNonZeroElements = (array) => {
-    return array.filter((value) => value !== 0).length;
-  };
-
-  const nonZeroCount = countNonZeroElements(balanceHistory);
-
   let barThickness;
-  if (nonZeroCount === 1) {
+  if (nonZeroData.length === 1) {
     barThickness = 95;
-  } else if (nonZeroCount === 2) {
+  } else if (nonZeroData.length === 2) {
     barThickness = 95;
-  } else if (nonZeroCount === 3) {
+  } else if (nonZeroData.length === 3) {
     barThickness = 80;
-  } else if (nonZeroCount === 4) {
+  } else if (nonZeroData.length === 4) {
     barThickness = 70;
-  } else if (nonZeroCount === 5) {
+  } else if (nonZeroData.length === 5) {
     barThickness = 60;
-  } else if (nonZeroCount === 6) {
+  } else if (nonZeroData.length === 6) {
     barThickness = 50;
-  } else if (nonZeroCount === 9) {
+  } else if (nonZeroData.length === 9) {
     barThickness = 40;
-  } else if (nonZeroCount === 10) {
+  } else if (nonZeroData.length === 10) {
     barThickness = 35;
-  } else if (nonZeroCount === 11) {
+  } else if (nonZeroData.length === 11) {
     barThickness = 35;
-  } else if (nonZeroCount === 12) {
+  } else if (nonZeroData.length === 12) {
     barThickness = 30;
   } else {
     barThickness = 40;
@@ -79,7 +70,7 @@ const BarGraph = ({ balanceHistory }) => {
       datasets: [
         {
           label: "$ of Earnings",
-          data: balanceHistory,
+          data: nonZeroData,
           backgroundColor: (context) => {
             const gradient = context.chart.ctx.createLinearGradient(
               0,
@@ -100,7 +91,7 @@ const BarGraph = ({ balanceHistory }) => {
         },
       ],
     }),
-    [balanceHistory]
+    [nonZeroData]
   );
 
   const options = {

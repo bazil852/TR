@@ -10,42 +10,9 @@ const StrategyFolders = (props) => {
     globalThis?.addEventListener("resize", handleResize);
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
-  const Folders = [
-    {
-      StrategyName: "Bitcoin",
-      StrategyDescription:
-        "BTC Strategies with vector candles on 5 min timeframe",
-      NumberOfStrategies: 4,
-    },
-    {
-      StrategyName: "Ethereum",
-      StrategyDescription:
-        "Ethereum Strategies with High Volume Candles on 1 hour timeframe",
-      NumberOfStrategies: 5,
-    },
-    {
-      StrategyName: "XRP",
-      StrategyDescription: "Generic XRP strategies",
-      NumberOfStrategies: 2,
-    },
-    {
-      StrategyName: "Solana",
-      StrategyDescription: "Solana Strategies with Bollinger bands and RSI",
-      NumberOfStrategies: 7,
-    },
-    {
-      StrategyName: "Avax",
-      StrategyDescription: "AVAX multiple strategies",
-      NumberOfStrategies: 5,
-    },
-    {
-      StrategyName: "Stellar",
-      StrategyDescription: "Stellar multiple strategies",
-      NumberOfStrategies: 1,
-    },
-  ];
+
   return (
-    <Box sx={{ mt: 5 }}>
+    <Box mt={"19px"}>
       <Typography
         sx={{
           fontFamily: "Barlow, san-serif",
@@ -56,7 +23,7 @@ const StrategyFolders = (props) => {
       >
         Strategy Folders
       </Typography>
-      <Grid container spacing={2} mt={1}>
+      <Grid container spacing={"20px"} mt={"13px"}>
         {props.data.map((item, index) => (
           <Grid
             key={index}
@@ -97,6 +64,10 @@ const StrategyFolders = (props) => {
                   color: "#FFFFFF",
                   top: -15,
                   left: width < 700 && width > 600 ? 5 : 10,
+                  width: 70,
+                  overflow: "hidden",
+                  textWrap: "nowrap",
+                  textOverflow: "ellipsis",
                 }}
               >
                 {item.folderName}
