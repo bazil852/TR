@@ -1,7 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Grid, Typography } from "@mui/material";
 
 const BotsLibraryCards = () => {
+  const [width, setWidth] = useState(globalThis?.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
+
   const boxData = [
     { title: "Total Profit", value: 1350 },
     { title: "Today's Profit", value: 35 },
@@ -9,25 +17,27 @@ const BotsLibraryCards = () => {
     { title: "Totals", yesterday: 35, weekly: 45, monthly: 789 },
   ];
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={"20px"}>
       {boxData.map((item, index) => {
         return (
           <Grid item key={index} xs={12} sm={6} md={3}>
             <Box
               sx={{
-                background: "#131313",
-                borderRadius: 2,
-                minHeight: 110,
+                background: "#262626",
+                border: "1.2px solid #3F4341",
+                borderRadius: "4.8px",
+                minHeight: "100%",
                 minWidth: "100%",
                 p: 1,
               }}
             >
               <Typography
                 sx={{
-                  fontSize: 19,
+                  fontSize: width < 1100 && width > 1036 ? 17 : 19,
                   fontWeight: 600,
                   fontFamily: "Barlow, san-serif",
                   color: "white",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {item.title}

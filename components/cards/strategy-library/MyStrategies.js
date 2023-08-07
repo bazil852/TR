@@ -2,6 +2,7 @@ import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import EditIcon from "@mui/icons-material/Edit";
 
 const MyStrategies = (props) => {
   const router = useRouter();
@@ -13,36 +14,6 @@ const MyStrategies = (props) => {
     globalThis?.addEventListener("resize", handleResize);
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
-  const Strategies = [
-    {
-      Title: "BTC High Volume on 5 Min",
-      Winrate: "95%",
-      Pnl: "143%",
-      TotalTrades: "54",
-      "Win/Losses": "50W/4L",
-    },
-    {
-      Title: "BTC TD indicator on 1 hour",
-      Winrate: "100%",
-      Pnl: "34%",
-      TotalTrades: "23",
-      "Win/Losses": "23W/0L",
-    },
-    {
-      Title: "BTC RSI",
-      Winrate: "93%",
-      Pnl: "37%",
-      TotalTrades: "72",
-      "Win/Losses": "70W/2L",
-    },
-    {
-      Title: "BTC Jump daily",
-      Winrate: "100%",
-      Pnl: "23%",
-      TotalTrades: "7",
-      "Win/Losses": "7W/0L",
-    },
-  ];
   return (
     <Box sx={{ mt: 8 }}>
       <Typography
@@ -56,25 +27,26 @@ const MyStrategies = (props) => {
       >
         My Strategies
       </Typography>
-      <Grid container spacing={1}>
+      <Grid container spacing={"20px"}>
         {props.data.map((item, index) => (
           <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 4} lg={4} xl={3}>
             <Paper
               sx={{
                 background: "#262626",
+                border: "1.2px solid #3F4341",
+                borderRadius: "4.8px",
                 padding: "1rem 0.5rem 1rem 0.5rem",
-                borderRadius: "8px",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 gap: "1rem",
+                position: "relative",
               }}
             >
               <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center", // if you want to align items vertically as well
+                  position: "absolute",
+                  left: 12,
                 }}
               >
                 <Typography
@@ -83,26 +55,40 @@ const MyStrategies = (props) => {
                     fontSize: "20px",
                     fontWeight: 600,
                     color: "#ACB2B7",
+                    whiteSpace: "nowrap",
+                    width: 200,
+                    overflow: "hidden",
+                    textWrap: "nowrap",
+                    textOverflow: "ellipsis",
                   }}
                 >
                   {item.generalSettings.strategyName}
                 </Typography>
-                <Button
-                  sx={{ marginLeft: 20 }}
-                  onClick={() => {
-                    router.push({
-                      pathname: "/Startegy",
-                      query: { id: item._id },
-                    });
-                  }}
-                >
-                  Edit
-                </Button>
               </Box>
+              <Button
+                onClick={() => {
+                  router.push({
+                    pathname: "/Startegy",
+                    query: { id: item._id },
+                  });
+                }}
+                sx={{
+                  background:
+                    "linear-gradient(93.46deg, #790D83 -12.4%, #7A5CFF 105.26%)",
+                  color: "#FFFFFF",
+                  height: 30,
+                  minWidth: 20,
+                  position: "absolute",
+                  right: 11,
+                }}
+              >
+                <EditIcon />
+              </Button>
               <Box
                 key={index}
                 sx={{
                   display: "flex",
+                  pt: 6,
                   gap:
                     width < 600 && width > 400
                       ? "1rem"
@@ -125,7 +111,7 @@ const MyStrategies = (props) => {
                   <Typography
                     sx={{
                       fontFamily: "Barlow, san-serif",
-                      fontSize: width < 670 && width > 599 ? 14 : 16,
+                      fontSize: width < 670 && width > 599 ? 14 : width>1535?15:16,
                       fontWeight: 300,
                       color: "#ACB2B7",
                     }}
@@ -155,7 +141,7 @@ const MyStrategies = (props) => {
                   <Typography
                     sx={{
                       fontFamily: "Barlow, san-serif",
-                      fontSize: width < 670 && width > 599 ? 14 : 16,
+                      fontSize: width < 670 && width > 599 ? 14 : width>1535?15:16,
                       fontWeight: 300,
                       color: "#ACB2B7",
                     }}
@@ -168,6 +154,7 @@ const MyStrategies = (props) => {
                       fontSize: width < 670 && width > 599 ? 14 : 16,
                       fontWeight: 600,
                       color: "#22A25B",
+                      whiteSpace: "nowrap",
                     }}
                   >
                     {item.profitAndLoss ? item.profitAndLoss : "NA"} %
@@ -185,7 +172,7 @@ const MyStrategies = (props) => {
                   <Typography
                     sx={{
                       fontFamily: "Barlow, san-serif",
-                      fontSize: width < 670 && width > 599 ? 14 : 16,
+                      fontSize: width < 670 && width > 599 ? 14 : width>1535?15:16,
                       fontWeight: 300,
                       color: "#ACB2B7",
                       minWidth: "fit-content",
@@ -217,7 +204,7 @@ const MyStrategies = (props) => {
                   <Typography
                     sx={{
                       fontFamily: "Barlow, san-serif",
-                      fontSize: width < 670 && width > 599 ? 14 : 16,
+                      fontSize: width < 670 && width > 599 ? 14 : width>1535?15:16,
                       fontWeight: 300,
                       color: "#ACB2B7",
                     }}

@@ -19,7 +19,7 @@ const TradesLibraryComponent = () => {
   }, []);
 
   return (
-    <Box mt={8} minHeight={"100%"} mb={10}>
+    <Box mb={8} mt={"85px"} minHeight={"100%"}>
       <Box
         sx={{
           display: "flex",
@@ -114,7 +114,7 @@ const TradesLibraryComponent = () => {
           </Modal>
         </Box>
       </Box>
-      <Box mt={3}>
+      <Box mt={0}>
         <Header />
         <MainContainer />
       </Box>

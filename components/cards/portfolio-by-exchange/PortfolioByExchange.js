@@ -13,7 +13,7 @@ import { useState } from "react";
 
 const PortfolioByExchange = ({ coins, balanceHistory }) => {
   const [width, setWidth] = useState(globalThis?.innerWidth);
-  const [activeButton, setActiveButton] = useState("ALL");
+  const [activeButton, setActiveButton] = useState("Day");
 
   const handleButtonClick = (button) => {
     setActiveButton(button);
@@ -25,18 +25,39 @@ const PortfolioByExchange = ({ coins, balanceHistory }) => {
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
   return (
-    <Box>
-      <Typography
+    <Box mt={"20px"}>
+      <Card
         sx={{
-          fontFamily: "Barlow, san-serif",
-          fontWeight: 600,
-          fontSize: 24,
-          py: 2,
+          background: "#262626",
+          minWidth: "100%",
+          minHeight: 400,
+          border: "1.2px solid #3F4341",
+          borderRadius: "4.8px",
+          position: "relative",
         }}
       >
-        Portfolio Summary
-      </Typography>
-      <Card sx={{ background: "#242424", minWidth: "100%", minHeight: 400 }}>
+        <Button
+          sx={{
+            position: "absolute",
+            right: 10,
+            top: 8,
+            borderRadius: "50%",
+            background: "#3B3B3B",
+            border: "1px solid #5C5A66",
+            height: 17,
+            minWidth: 9,
+            fontFamily: "Barlow, san-serif",
+            fontWeight: 600,
+            color: "#AFAFAF",
+            fontSize: 8,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            textTransform: "none",
+          }}
+        >
+          i
+        </Button>
         <Box
           sx={{
             display: width < 600 && "flex",
@@ -49,23 +70,22 @@ const PortfolioByExchange = ({ coins, balanceHistory }) => {
           <Typography
             sx={{
               fontFamily: "Barlow, san-serif",
-              color: "#B3B4B9",
-              fontWeight: 500,
-              fontSize: 15.1,
-              pt: 2,
+              fontWeight: 600,
+              fontSize: 22,
+              pt: 3,
               pl: 2,
             }}
           >
-            Wallet Balance
+            PORTFOLIO HISTORY
           </Typography>
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
               gap: 1,
-              mt: -2.5,
+              mt: -3,
               float: "right",
-              mr: width < 600 ? 0 : 14,
+              mr: width < 600 ? -2 : 4,
             }}
           >
             <Button
@@ -74,15 +94,16 @@ const PortfolioByExchange = ({ coins, balanceHistory }) => {
                 outline: "none",
                 fontSize: 13.1,
                 color: "#B3B4B9",
-                background: activeButton === "ALL" ? "#444" : "#2A2A2C",
+                background: activeButton === "Day" ? "#444" : "#2A2A2C",
                 borderRadius: 1,
                 cursor: "pointer",
                 p: 0.2,
                 minWidth: 40,
+                textTransform: "none",
               }}
-              onClick={() => handleButtonClick("ALL")}
+              onClick={() => handleButtonClick("Day")}
             >
-              ALL
+              Day
             </Button>
             <Button
               sx={{
@@ -90,47 +111,16 @@ const PortfolioByExchange = ({ coins, balanceHistory }) => {
                 outline: "none",
                 fontSize: 13.1,
                 color: "#B3B4B9",
-                background: activeButton === "1Y" ? "#444" : "#2A2A2C",
+                background: activeButton === "Year" ? "#444" : "#2A2A2C",
                 borderRadius: 1,
                 cursor: "pointer",
                 p: 0.2,
                 minWidth: 40,
+                textTransform: "none",
               }}
-              onClick={() => handleButtonClick("1Y")}
+              onClick={() => handleButtonClick("Year")}
             >
-              1Y
-            </Button>
-            <Button
-              sx={{
-                border: "none",
-                outline: "none",
-                fontSize: 13.1,
-                color: "#B3B4B9",
-                background: activeButton === "2Y" ? "#444" : "#2A2A2C",
-                borderRadius: 1,
-                cursor: "pointer",
-                p: 0.2,
-                minWidth: 40,
-              }}
-              onClick={() => handleButtonClick("2Y")}
-            >
-              2Y
-            </Button>
-            <Button
-              sx={{
-                border: "none",
-                outline: "none",
-                fontSize: 13.1,
-                color: "#B3B4B9",
-                background: activeButton === "3Y" ? "#444" : "#2A2A2C",
-                borderRadius: 1,
-                cursor: "pointer",
-                p: 0.2,
-                minWidth: 40,
-              }}
-              onClick={() => handleButtonClick("3Y")}
-            >
-              3Y
+              Year
             </Button>
           </Box>
         </Box>

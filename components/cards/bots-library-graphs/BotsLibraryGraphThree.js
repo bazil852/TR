@@ -42,10 +42,12 @@ const BotsLibraryGraphThree = () => {
   return (
     <Card
       sx={{
-        background: "#131313",
+        background: "#262626",
+        border: "1.2px solid #3F4341",
+        borderRadius: "4.8px",
         minWidth: "100%",
         minHeight: 400,
-        borderRadius: 2,
+        mt: "20px",
       }}
     >
       <Box
@@ -153,6 +155,16 @@ const BotsLibraryGraphThree = () => {
               width: width < 960 ? "100%" : "95%",
               display: width < 960 ? "block" : "flex",
               overflowX: "auto",
+              " ::-webkit-scrollbar": {
+                height: 3,
+              },
+              "::-webkit-scrollbar-track": {
+                background: "none",
+              },
+              "::-webkit-scrollbar-thumb": {
+                background: "#888",
+                borderRadius: "4px",
+              },
             }}
           >
             <BotsLibraryLineGraph balanceHistory={balanceHistory} />

@@ -342,7 +342,7 @@ const DcaBot = () => {
 export default function DcaBots() {
   return (
     <>
-      <PrivateHeader current="3" Component={DcaBot} title="DCA Bots" />
+      <PrivateHeader current="9" Component={DcaBot} title="DCA Bots" />
     </>
   );
 }

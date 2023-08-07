@@ -17,7 +17,7 @@ const GraphOfTotalPortfolioAndInvestedDeals = ({ graph }) => {
               data: graph,
               backgroundColor: "transparent",
               borderColor: "#42458B",
-              borderWidth: 1,
+              borderWidth: 2,
               pointRadius: 0,
             },
           ],
@@ -59,7 +59,7 @@ const GraphOfTotalPortfolioAndInvestedDeals = ({ graph }) => {
   return (
     <div
       style={{
-        height: "90px",
+        height: "50px",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

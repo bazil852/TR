@@ -73,7 +73,11 @@ import SmokeWave from "../assets/icons/smoke.svg";
 import BtcIcon from "../assets/icons/btcIcon.svg";
 import EditIcon from "../assets/icons/editIcon.svg";
 import BlueVdcaBot from "../assets/icons/BlueVdcaBot.svg";
+import BlueVgridBot from "../assets/icons/BlueVgridBot.svg";
+import Binance from "../assets/icons/binance.svg";
 export {
+  Binance,
+  BlueVgridBot,
   BlueVdcaBot,
   EditIcon,
   BtcIcon,

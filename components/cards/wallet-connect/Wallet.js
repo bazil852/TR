@@ -70,8 +70,8 @@ const exchangeTypes = [
   "Binance Futures",
   "Binance Spot",
 ];
-import GraphOfConsolidatedPOrtfolio from "../consolidated-invested-portfolio/GraphOfConsolidatedPOrtfolio";
 import { useSelector } from "react-redux";
+import WalletPieChrat from "./WalletPieChrat";
 
 const Draw = styled(Drawer)({
   "& .MuiDrawer-paper": {
@@ -416,38 +416,6 @@ const Wallet = () => {
 
   console.log("allExchange", selectedAssets);
 
-  const totalAssets = [
-    {
-      asset: "USDT",
-      availableBalance: 26869.36865522,
-      usdt_price: 2682.82340546,
-    },
-    {
-      asset: "BTC",
-      availableBalance: 0.07095732,
-      usdt_price: 247.920650792,
-    },
-    {
-      asset: "BUSD",
-      availableBalance: 2000.80032012,
-      usdt_price: 200.600240087988,
-    },
-    {
-      asset: "ETH",
-      availableBalance: 1.04312268,
-      usdt_price: 1950.4307870639998,
-    },
-    {
-      asset: "BNB",
-      availableBalance: 5.95036998,
-      usdt_price: 1460.81583009,
-    },
-    {
-      asset: "USDC",
-      availableBalance: 0,
-      usdt_price: 0,
-    },
-  ];
   const [width, setWidth] = useState(globalThis?.innerWidth);
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
@@ -456,7 +424,7 @@ const Wallet = () => {
   }, []);
 
   return (
-    <Box>
+    <Box mt={0.8}>
       <Button
         type="submit"
         variant="contained"
@@ -576,14 +544,23 @@ const Wallet = () => {
           <CircularProgress />
         </div>
       ) : connected ? (
-        <Grid container spacing={1} mb={8}>
+        <Grid container spacing={"20px"} mb={8}>
           {allExchange?.map((data, index) => {
             console.log("exchange card", data);
             return (
-              <Grid item xs={12} sm={6} md={4} lg={4} key={index}>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={isDrawerOpen && width > 999 ? 6 : width < 960 ? 6 : 4}
+                lg={4}
+                key={index}
+              >
                 <Card
                   sx={{
                     background: "#262626",
+                    border: "1.2px solid #3F4341",
+                    borderRadius: "4.8px",
                     boxShadow: "none",
                     p: "1vw",
                     minWidth: "100%",
@@ -616,27 +593,9 @@ const Wallet = () => {
                           alignItems: "center",
                           mt: 1,
                           pb: 3,
-                          pr:
-                            width < 900 && width > 700
-                              ? 13
-                              : width < 700 && width > 600
-                              ? 6
-                              : width < 600 && width > 500
-                              ? 13
-                              : width < 500 && width > 400
-                              ? 8
-                              : width < 400
-                              ? 5
-                              : width > 1180 && width < 1280
-                              ? 4
-                              : width > 1280 && width < 1330
-                              ? 6
-                              : width < 960 && width > 900
-                              ? 0
-                              : 2,
                         }}
                       >
-                        <GraphOfConsolidatedPOrtfolio data={data.assets} />
+                        <WalletPieChrat data={data.assets} />
                       </Box>
                       <Box my={2}>
                         <Select

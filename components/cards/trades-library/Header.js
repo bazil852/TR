@@ -41,23 +41,24 @@ const Header = () => {
   ];
 
   return (
-    <Grid container sx={{ mt: 1 }} spacing={1}>
+    <Grid container sx={{ mt: 0.3 }} spacing={"20px"}>
       <Grid item xs={12} sm={6} md={isDrawerOpen ? 5 : 2} lg={2}>
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: 1,
+            gap: "20px",
             minWidth: "100%",
           }}
         >
           <Box
             sx={{
-              background: "#131313",
-              borderRadius: 2,
+              background: "#262626",
+              border: "1.2px solid #3F4341",
+              borderRadius: "4.8px",
               p: 1,
               minWidth: "100%",
-              minHeight: 132,
+              minHeight: 126.8,
             }}
           >
             <Typography
@@ -103,11 +104,12 @@ const Header = () => {
           </Box>
           <Box
             sx={{
-              background: "#131313",
-              borderRadius: 2,
+              background: "#262626",
+              border: "1.2px solid #3F4341",
+              borderRadius: "4.8px",
               p: 1,
               minWidth: "100%",
-              minHeight: 132,
+              minHeight: 126.8,
             }}
           >
             <Typography
@@ -157,8 +159,9 @@ const Header = () => {
       <Grid item xs={12} sm={6} md={isDrawerOpen ? 7 : 3} lg={3}>
         <Box
           sx={{
-            background: "#131313",
-            borderRadius: 2,
+            background: "#262626",
+            border: "1.2px solid #3F4341",
+            borderRadius: "4.8px",
             p: 1,
             display: "flex",
             flexDirection: "column",
@@ -194,13 +197,14 @@ const Header = () => {
             <Button
               sx={{
                 borderRadius: "50%",
-                background: "#292929",
+                background: "#3D3D3D",
                 minWidth: 20,
                 height: 20,
                 p: 0,
                 color: "#FFFFFF",
                 fontFamily: "Barlow, san-serif",
                 textAlign: "center",
+                fontWeight: 600,
               }}
             >
               ?
@@ -221,8 +225,9 @@ const Header = () => {
       <Grid item xs={12} sm={12} md={isDrawerOpen ? 12 : 7} lg={7}>
         <Box
           sx={{
-            background: "#131313",
-            borderRadius: 2,
+            background: "#262626",
+            border: "1.2px solid #3F4341",
+            borderRadius: "4.8px",
             display: "flex",
             height: width < 900 ? 415 : 273,
             minWidth: "100%",
@@ -260,13 +265,14 @@ const Header = () => {
               <Button
                 sx={{
                   borderRadius: "50%",
-                  background: "#292929",
+                  background: "#3D3D3D",
                   minWidth: 20,
                   height: 20,
                   p: 0,
                   color: "#FFFFFF",
                   fontFamily: "Barlow, san-serif",
                   textAlign: "center",
+                  fontWeight: 600,
                 }}
               >
                 ?

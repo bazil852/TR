@@ -21,6 +21,7 @@ import { getSession } from "next-auth/react";
 import { alpha, styled } from "@mui/material/styles";
 import SelectInputParameters from "../../widgets/SelectInputParameters";
 import TimeFrameSelectInput from "../../widgets/TimeFrameSelectInput";
+import { useSelector } from "react-redux";
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -28,11 +29,11 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
   },
   "& .MuiInputBase-input": {
     position: "relative",
-    height: 11,
-    backgroundColor: "#2A2A2A",
-    borderRadius: "6px",
-    fontSize: 15,
-    fontWeight: 400,
+    height: 15,
+    backgroundColor: "#3E3E3E",
+    borderRadius: "4px",
+    fontSize: 16,
+    fontWeight: 500,
     padding: "8px 5px",
     color: "#FFFFFF",
     transition: theme.transitions.create([
@@ -50,6 +51,12 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
+
+const CustomCheckbox = styled(Checkbox)({
+  "&.Mui-checked": {
+    color: "white",
+  },
+});
 
 const BotsLibraryTabs = () => {
   const [value, setValue] = useState(0);
@@ -77,6 +84,16 @@ const BotsLibraryTabs = () => {
 
   const [bot, setBots] = useState([]);
   const [checkedBot, setCheckedBots] = useState([]);
+
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
+
+  const [width, setWidth] = useState(globalThis?.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
 
   function a11yProps(index) {
     return {
@@ -394,30 +411,57 @@ const BotsLibraryTabs = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 700,
-            maxHeight: 1000,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
+            width:
+              width < 600 && width > 400 ? "85%" : width < 400 ? "90%" : "70%",
+            height: "90%",
+            background: "#262626",
+            border: "1.2px solid #3F4341",
+            borderRadius: 2,
             boxShadow: 24,
-            p: 4,
+            px: 4,
+            pt: 1,
+            pb: 2,
+            overflowY: "auto",
+            "&::-webkit-scrollbar": {
+              width: "3px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: "grey",
+              borderRadius: "8px",
+            },
+            "&::-webkit-scrollbar-track": {
+              background: "transparent",
+            },
           }}
         >
-          <h1>Create Bot</h1>
-          <Grid container alignItems="center">
-            <Grid item xs={4}>
+          <Typography
+            sx={{
+              fontSize: width < 500 ? "1.8rem" : "2.2rem",
+              fontWeight: 600,
+              fontFamily: "Barlow, san-serif",
+            }}
+          >
+            Create Bot
+          </Typography>
+          <Grid
+            container
+            alignItems="center"
+            mt={1}
+            spacing={width < 800 ? "" : "20px"}
+          >
+            <Grid item xs={12} sm={width < 800 ? 12 : 4}>
               <Typography
                 sx={{
-                  fontWeight: 500,
-                  fontSize: 16,
+                  fontWeight: 600,
+                  fontSize: 18,
                   fontFamily: "Barlow, san-serif",
-                  color: "#CCCCCC",
                   whiteSpace: "nowrap",
                 }}
               >
                 Bot Name
               </Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={12} sm={width < 800 ? 12 : 8}>
               <ValidationTextField
                 margin="normal"
                 required
@@ -436,21 +480,20 @@ const BotsLibraryTabs = () => {
               />
             </Grid>
           </Grid>
-          <Grid container alignItems="center" sx={{ marginTop: 2 }}>
-            <Grid item xs={4}>
+          <Grid container spacing={width < 800 ? "" : "20px"} mt={1}>
+            <Grid item xs={12} sm={width < 800 ? 12 : 4}>
               <Typography
                 sx={{
-                  fontWeight: 500,
-                  fontSize: 16,
+                  fontWeight: 600,
+                  fontSize: 18,
                   fontFamily: "Barlow, san-serif",
-                  color: "#CCCCCC",
                   whiteSpace: "nowrap",
                 }}
               >
                 Bot Type
               </Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={12} sm={width < 800 ? 12 : 8}>
               <SelectInputParameters
                 placeHolder="Select"
                 value={exchange}
@@ -464,21 +507,20 @@ const BotsLibraryTabs = () => {
               />
             </Grid>
           </Grid>
-          <Grid container alignItems="center" sx={{ marginTop: 2 }}>
-            <Grid item xs={4}>
+          <Grid container spacing={width < 800 ? "" : "20px"} mt={1}>
+            <Grid item xs={12} sm={width < 800 ? 12 : 4}>
               <Typography
                 sx={{
-                  fontWeight: 500,
-                  fontSize: 16,
+                  fontWeight: 600,
+                  fontSize: 18,
                   fontFamily: "Barlow, san-serif",
-                  color: "#CCCCCC",
                   whiteSpace: "nowrap",
                 }}
               >
                 Bot Description
               </Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={12} sm={width < 800 ? 12 : 8}>
               <ValidationTextField
                 multiline
                 rows={3}
@@ -499,21 +541,20 @@ const BotsLibraryTabs = () => {
               />
             </Grid>
           </Grid>
-          <Grid container alignItems="center" sx={{ marginTop: 2 }}>
-            <Grid item xs={4}>
+          <Grid container spacing={width < 800 ? "" : "20px"} mt={1}>
+            <Grid item xs={12} sm={width < 800 ? 12 : 4}>
               <Typography
                 sx={{
-                  fontWeight: 500,
-                  fontSize: 16,
+                  fontWeight: 600,
+                  fontSize: 18,
                   fontFamily: "Barlow, san-serif",
-                  color: "#CCCCCC",
                   whiteSpace: "nowrap",
                 }}
               >
                 Exchange
               </Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={12} sm={width < 800 ? 12 : 8}>
               <SelectInputParameters
                 placeHolder="Select"
                 value={exchange}
@@ -529,21 +570,20 @@ const BotsLibraryTabs = () => {
               />
             </Grid>
           </Grid>
-          <Grid container alignItems="center" sx={{ marginTop: 2 }}>
-            <Grid item xs={4}>
+          <Grid container spacing={width < 800 ? "" : "20px"} mt={1}>
+            <Grid item xs={12} sm={width < 800 ? 12 : 4}>
               <Typography
                 sx={{
-                  fontWeight: 500,
-                  fontSize: 16,
+                  fontWeight: 600,
+                  fontSize: 18,
                   fontFamily: "Barlow, san-serif",
-                  color: "#CCCCCC",
                   whiteSpace: "nowrap",
                 }}
               >
                 TimeFrame
               </Typography>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={12} sm={width < 800 ? 12 : 8}>
               <TimeFrameSelectInput
                 placeHolder={"Select TimeFrame"}
                 fullWidth
@@ -556,33 +596,63 @@ const BotsLibraryTabs = () => {
               />
             </Grid>
           </Grid>
-          <Box sx={{ marginTop: 2 }}>
+          <Box>
             <div className="surface-container">
-              <Typography variant="h5" component="div">
+              <Typography
+                sx={{
+                  fontSize: width < 400 ? 20 : 25,
+                  fontWeight: 600,
+                  fontFamily: "Barlow, san-serif",
+                }}
+              >
                 Select strategies
               </Typography>
               <div>
                 <Grid container alignItems="center" sx={{ marginTop: 1 }}>
                   <Grid item xs={3}>
-                    <Button onClick={handleReset}>Reset</Button>
-                  </Grid>
-                  <Grid item xs={1} sx={{ marginTop: 1 }}>
-                    <SearchIcon />
-                  </Grid>
-                  <Grid item xs={8}>
-                    <ValidationTextField
-                      margin="normal"
-                      required
-                      id="search"
-                      placeholder="Search strategies"
+                    <Button
                       sx={{
-                        width: "100%",
+                        background:
+                          "linear-gradient(93.46deg, #790D83 -12.4%, #7A5CFF 105.26%)",
+                        textTransform: "none",
+                        color: "#FFFFFF",
+                        minWidth: 60,
+                        height: 25,
                         fontFamily: "Barlow, san-serif",
+                        fontSize: 16,
+                        fontWeight: 600,
+                        mb: 2,
                       }}
-                      onChange={(e) => {
-                        setCheckboxSearched(e.target.value);
+                      onClick={handleReset}
+                    >
+                      Reset
+                    </Button>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 1,
                       }}
-                    />
+                    >
+                      <SearchIcon />
+                      <ValidationTextField
+                        margin="normal"
+                        required
+                        id="search"
+                        placeholder="Search strategies..."
+                        sx={{
+                          width: "100%",
+                          fontFamily: "Barlow, san-serif",
+                        }}
+                        onChange={(e) => {
+                          setCheckboxSearched(e.target.value);
+                        }}
+                      />
+                    </Box>
                   </Grid>
                 </Grid>
               </div>
@@ -590,16 +660,29 @@ const BotsLibraryTabs = () => {
               <div>
                 <List
                   sx={{
-                    height: 200,
+                    height: "30vh",
                     marginTop: 2,
                     marginBottom: 2,
                     overflow: "auto",
-                    border: "1px solid #000",
+                    background: "#262626",
+                    border: "2px solid #3F4341",
+                    borderRadius: "4.8px",
+                    boxShadow: "4px 4px 4px #131313",
+                    "&::-webkit-scrollbar": {
+                      width: "3px",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      background: "grey",
+                      borderRadius: "8px",
+                    },
+                    "&::-webkit-scrollbar-track": {
+                      background: "transparent",
+                    },
                   }}
                 >
                   {found?.map((item, index) => (
                     <ListItem key={item._id} dense divider>
-                      <Checkbox
+                      <CustomCheckbox
                         checked={item.checked}
                         onChange={(e) => {
                           handleCheckbox(e, item._id);
@@ -608,7 +691,13 @@ const BotsLibraryTabs = () => {
                       />
                       <ListItemText
                         primary={
-                          <Typography variant="h6" component="div">
+                          <Typography
+                            sx={{
+                              fontFamily: "Barlow, san-serif",
+                              fontWeight: 600,
+                              fontSize: width < 400 ? 17 : 20,
+                            }}
+                          >
                             {item?.generalSettings?.strategyName}
                           </Typography>
                         }
@@ -624,7 +713,14 @@ const BotsLibraryTabs = () => {
                   .map((data) => (
                     <Grid key={data._id} item>
                       <div className="selected-checkbox">
-                        <Typography variant="h6" component="div">
+                        <Typography
+                          sx={{
+                            fontFamily: "Barlow, san-serif",
+                            fontWeight: 600,
+                            fontSize: 22,
+                            pl: 2,
+                          }}
+                        >
                           {data.generalSettings.strategyName}
                         </Typography>
                         {/* <RedCrossIcon
@@ -638,24 +734,41 @@ const BotsLibraryTabs = () => {
                   ))}
                 {!limit && checkedList.length > 5 && (
                   <div onClick={handleSeeMore} className="see-more-container">
-                    <Typography variant="body1" component="div">
+                    <Typography
+                      sx={{
+                        fontFamily: "Barlow, san-serif",
+                        fontWeight: 600,
+                        fontSize: 22,
+                        pl: 2,
+                      }}
+                    >
                       +{checkedList.length - 5} more
                     </Typography>
                   </div>
                 )}
               </Grid>
             </div>
-            <div
-              style={{
+            <Box
+              sx={{
                 display: "flex",
+                gap: width < 460 ? 1 : "20px",
                 justifyContent: "flex-end",
-                marginTop: 20,
+                flexDirection: width < 460 ? "column" : "row",
+                mt: 10,
               }}
             >
               <Button
-                variant="outlined"
-                className="cancel-btn"
-                sx={{ marginRight: 1 }}
+                sx={{
+                  background:
+                    "linear-gradient(93.46deg, #790D83 -12.4%, #7A5CFF 105.26%)",
+                  textTransform: "none",
+                  color: "#FFFFFF",
+                  minWidth: 90,
+                  height: width < 460 ? 30 : 40,
+                  fontFamily: "Barlow, san-serif",
+                  fontSize: 18,
+                  fontWeight: 600,
+                }}
                 onClick={() => {
                   handleReset();
                   setOpenModal(false);
@@ -665,14 +778,22 @@ const BotsLibraryTabs = () => {
               </Button>
 
               <Button
-                variant="contained"
-                color="primary"
-                className="send-btn"
+                sx={{
+                  background:
+                    "linear-gradient(93.46deg, #790D83 -12.4%, #7A5CFF 105.26%)",
+                  textTransform: "none",
+                  color: "#FFFFFF",
+                  minWidth: 90,
+                  height: width < 460 ? 30 : 40,
+                  fontFamily: "Barlow, san-serif",
+                  fontSize: 18,
+                  fontWeight: 600,
+                }}
                 onClick={handleCreateBot}
               >
                 Create Bot
               </Button>
-            </div>
+            </Box>
           </Box>
         </Box>
       </Modal>
@@ -682,7 +803,7 @@ const BotsLibraryTabs = () => {
           alignItems: "center",
           justifyContent: "space-between",
           flexWrap: "wrap",
-          gap: 2,
+          gap: 1,
         }}
       >
         <Tabs
@@ -802,7 +923,6 @@ const BotsLibraryTabs = () => {
               textTransform: "none",
               border: "none",
               borderRadius: 1,
-              my: 1,
             }}
           >
             <Typography
@@ -839,17 +959,16 @@ const BotsLibraryTabs = () => {
         </Box>
       </Box>
 
-      <Grid container my={1} spacing={1}>
-        <Grid item xs={12} sm={6} md={5}>
+      <Grid container my={1} spacing={"20px"}>
+        <Grid item xs={12} sm={8.5} md={9.5}>
           <InputBase
             placeholder="Search by bot's name"
             sx={{
               height: "38px",
               minWidth: "100%",
-              background: "#ffffff1f",
               borderRadius: 1,
               fontFamily: "Barlow, san-serif",
-              fontWeight: 400,
+              fontWeight: 500,
               fontSize: 16,
             }}
             value={searchByBotsName}
@@ -868,25 +987,8 @@ const BotsLibraryTabs = () => {
             }
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={5}>
-          <InputBase
-            placeholder="Pairs"
-            sx={{
-              minWidth: "100%",
-              height: "38px",
-              paddingLeft: "10px",
-              background: "#ffffff1f",
-              borderRadius: 1,
-              fontFamily: "Barlow, san-serif",
-              fontWeight: 400,
-              fontSize: 16,
-            }}
-            value={pairs}
-            onChange={handlePairs}
-          />
-        </Grid>
 
-        <Grid item xs={6} sm={3} md={2}>
+        <Grid item xs={6} sm={3.5} md={2.5}>
           <Button
             sx={{
               background: "linear-gradient(to right,#790D83,#7A5CFF)",
@@ -897,6 +999,7 @@ const BotsLibraryTabs = () => {
               fontFamily: "Barlow, san-serif",
               fontWeight: 500,
               width: "100%",
+              height: 45,
             }}
             onClick={handleClearFilter}
           >
@@ -908,14 +1011,15 @@ const BotsLibraryTabs = () => {
       <Box sx={{ display: "flex", mt: 3, gap: "0.7rem", flexWrap: "wrap" }}>
         <Button
           sx={{
-            height: "40px",
+            height: "49px",
             width: "150px",
             fontSize: 16,
             fontWeight: 500,
             color: "#FFFFFF",
             fontFamily: "Barlow, san-serif",
             textTransform: "none",
-            border: "1px solid #634372",
+            border: "1.5px solid #3A383F",
+            borderRadius: "5px",
             background:
               "linear-gradient(93.46deg, #350B41 -12.4%, #35256A 105.26%)",
           }}
@@ -925,14 +1029,15 @@ const BotsLibraryTabs = () => {
         </Button>
         <Button
           sx={{
-            height: "40px",
+            height: "49px",
             width: "150px",
             fontSize: 16,
             fontWeight: 500,
             color: "#FFFFFF",
             fontFamily: "Barlow, san-serif",
             textTransform: "none",
-            border: "1px solid #634372",
+            border: "1.5px solid #3A383F",
+            borderRadius: "5px",
             background:
               "linear-gradient(93.46deg, #350B41 -12.4%, #35256A 105.26%)",
           }}
@@ -941,10 +1046,18 @@ const BotsLibraryTabs = () => {
           Delete Bot
         </Button>
       </Box>
-      <Grid container spacing={1} mt={3}>
+      <Grid container spacing={"20px"} mt={0.6}>
         {bot.map((item, index) => {
           return (
-            <Grid item key={index} xs={12} sm={6} md={6} lg={4}>
+            <Grid
+              item
+              key={index}
+              xs={12}
+              sm={6}
+              md={6}
+              lg={isDrawerOpen && width < 1350 ? 6 : 4}
+              xl={4}
+            >
               <Bot
                 dataArray={item}
                 handleBotsCheckbox={handleBotsCheckbox}

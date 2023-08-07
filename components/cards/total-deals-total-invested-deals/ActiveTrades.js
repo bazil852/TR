@@ -1,20 +1,17 @@
 import React from "react";
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 
-const formatValue = (number) => {
-  return number >= 10000 ? `${(number / 1000).toFixed(1)}k` : number.toFixed(0);
-};
-
-const TotalAndInvestedDeals = ({ data }) => {
+const ActiveTrades = ({ data }) => {
   return data.map((item) => (
     <Card
       sx={{
-        background: "#242424",
-        minHeight: 125,
+        minHeight: "100%",
         minWidth: "100%",
-        border: "1px solid #3F4341",
-        borderRadius: 1,
+        background: "#262626",
+        border: "1.2px solid #3F4341",
+        borderRadius: "4.8px",
         py: 0.5,
+        position: "relative",
       }}
     >
       <CardContent
@@ -24,12 +21,32 @@ const TotalAndInvestedDeals = ({ data }) => {
           position: "relative",
         }}
       >
+        <Button
+          sx={{
+            position: "absolute",
+            right: 5,
+            top: 3,
+            borderRadius: "50%",
+            background: "#3B3B3B",
+            border: "1px solid #5C5A66",
+            height: 17,
+            minWidth: 9,
+            fontFamily: "Barlow, san-serif",
+            fontWeight: 600,
+            color: "#AFAFAF",
+            fontSize: 8,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            textTransform: "none",
+          }}
+        >
+          i
+        </Button>
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
-            position: "absolute",
-            left: 15,
           }}
         >
           <Typography
@@ -48,10 +65,21 @@ const TotalAndInvestedDeals = ({ data }) => {
               fontSize: 20,
               fontFamily: "Barlow, sans-serif",
               fontWeight: 500,
-              mt: 1,
             }}
           >
-            ${formatValue(item.total)}
+            {item.totalTrades}
+          </Typography>
+
+          <Typography
+            sx={{
+              color: "#ADB5BD",
+              fontSize: 11,
+              fontWeight: 400,
+              fontFamily: "Barlow, san-serif",
+              height: 10,
+            }}
+          >
+            Last Trades
           </Typography>
 
           <Box
@@ -64,36 +92,35 @@ const TotalAndInvestedDeals = ({ data }) => {
           >
             <Box
               sx={{
-                background: item.lastWeek < 0 ? "#7f1010" : "#264639",
+                background: "#264639",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: 1,
-                minWidth: 50,
-                height: 20,
+                width: 35,
+                height: 18,
               }}
             >
               <Typography
                 sx={{
-                  color: item.lastWeek < 0 ? "#ff0000" : "#27966A",
+                  color: "#27966A",
                   fontSize: 12,
                   fontFamily: "Barlow, sans-serif",
                   fontWeight: 500,
                 }}
               >
-                {item.lastWeek < 0 ? "-" : ""}$
-                {formatValue(Math.abs(item.lastWeek))}
+                {item.buy}
               </Typography>
             </Box>
             <Typography
               sx={{
-                color: "#90969D",
-                fontSize: 13.1,
+                color: "#ADB5BD",
+                fontSize: 11,
                 fontFamily: "Barlow, sans-serif",
                 fontWeight: 400,
               }}
             >
-              Since last week
+              {item.buyDetail}
             </Typography>
           </Box>
 
@@ -102,41 +129,40 @@ const TotalAndInvestedDeals = ({ data }) => {
               display: "flex",
               gap: 0.5,
               mt: 1,
-              mb: -2,
+              mb: -3,
             }}
           >
             <Box
               sx={{
-                background: item.lastMonth < 0 ? "#7f1010" : "#264639",
+                background: "#5F3031",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: 1,
-                minWidth: 50,
-                height: 20,
+                minWidth: 35,
+                height: 18,
               }}
             >
               <Typography
                 sx={{
-                  color: item.lastMonth < 0 ? "#ff0000" : "#27966A",
+                  color: "#E24648",
                   fontSize: 12,
                   fontFamily: "Barlow, sans-serif",
                   fontWeight: 500,
                 }}
               >
-                {item.lastMonth < 0 ? "-" : ""}$
-                {formatValue(Math.abs(item.lastMonth))}
+                {item.sell}
               </Typography>
             </Box>
             <Typography
               sx={{
-                color: "#90969D",
-                fontSize: 13.1,
+                color: "#ADB5BD",
+                fontSize: 11,
                 fontFamily: "Barlow, sans-serif",
                 fontWeight: 400,
               }}
             >
-              Since last month
+              {item.sellDetail}
             </Typography>
           </Box>
         </Box>
@@ -145,4 +171,4 @@ const TotalAndInvestedDeals = ({ data }) => {
   ));
 };
 
-export default TotalAndInvestedDeals;
+export default ActiveTrades;

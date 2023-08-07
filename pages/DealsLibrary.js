@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Box, Fade, Modal, Typography, Backdrop, Grid } from "@mui/material";
+import { Box, Fade, Modal, Typography, Backdrop } from "@mui/material";
 import ReactPlayer from "react-player";
 import { Video } from "../utils/icons";
+import TradesDetails from "../components/cards/deals-page-sections/TradesDetails";
+import OrdersDetails from "../components/cards/deals-page-sections/OrdersDetails";
+import BotEventsDetails from "../components/cards/deals-page-sections/BotsEventsDetails";
 import PrivateHeader from "../components/layout/PrivateHeader";
-import ProfitCalendar from "../components/calendar/ProfitCalendar";
-import BotsLibraryCards from "../components/cards/bots-library-cards/BotsLibraryCards";
-import BotsLibraryGraphTwo from "../components/cards/bots-library-graphs/BotsLibraryGraphTwo";
-import BotsLibraryGraphOne from "../components/cards/bots-library-graphs/BotsLibraryGraphOne";
-import BotsLibraryGraphThree from "../components/cards/bots-library-graphs/BotsLibraryGraphThree";
-import { useSelector } from "react-redux";
-import BotsLibraryTabs from "../components/cards/bots-library-tabs/BotsLibraryTabs";
 
-const BotsLibraryComponent = () => {
-  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
+const DealsLibraryComponent = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -44,7 +39,7 @@ const BotsLibraryComponent = () => {
               fontFamily: "Barlow, san-serif",
             }}
           >
-            Bots Library
+            Deal Details
           </Typography>
           <Typography
             sx={{
@@ -55,7 +50,7 @@ const BotsLibraryComponent = () => {
               color: "#ACB2B7",
             }}
           >
-            Create your Bots, check the statistics
+            Create, test and save your strategies
           </Typography>
         </Box>
         <Box>
@@ -120,57 +115,21 @@ const BotsLibraryComponent = () => {
           </Modal>
         </Box>
       </Box>
-      <Grid container mt={0.2} spacing={"20px"}>
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          md={isDrawerOpen ? 12 : width < 1037 ? 12 : 7}
-          lg={isDrawerOpen && width < 1390 ? 12 : width > 1449 ? 8 : 7}
-        >
-          <Grid
-            container
-            spacing={"20px"}
-            minHeight={300}
-            alignContent={"stretch"}
-          >
-            <Grid item xs={12} sm={12} md={12}>
-              <BotsLibraryCards />
-            </Grid>
-            <Grid item xs={12} sm={12} md={6}>
-              <BotsLibraryGraphOne />
-            </Grid>
-            <Grid item xs={12} sm={12} md={6}>
-              <BotsLibraryGraphTwo />
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid
-          item
-          md={isDrawerOpen ? 12 : width < 1037 ? 12 : 5}
-          lg={isDrawerOpen && width < 1390 ? 12 : width > 1449 ? 4 : 5}
-        >
-          <ProfitCalendar />
-        </Grid>
-      </Grid>
-      <Box sx={{ minWidth: "100%", my: 1 }}>
-        <BotsLibraryGraphThree />
-      </Box>
-      <Box mt={4}>
-        <BotsLibraryTabs />
-      </Box>
+      <TradesDetails />
+      <OrdersDetails />
+      <BotEventsDetails />
     </Box>
   );
 };
 
-function BotsLibrary() {
+function DealsLibrary() {
   return (
     <PrivateHeader
-      title="Bots Library"
-      current="2"
-      Component={BotsLibraryComponent}
+      title="Deals Library"
+      current="3"
+      Component={DealsLibraryComponent}
     />
   );
 }
 
-export default BotsLibrary;
+export default DealsLibrary;

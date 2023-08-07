@@ -17,7 +17,7 @@ const MyExchangesComponent = () => {
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
   return (
-    <Box mt={8} minHeight={"100%"}>
+    <Box mb={8} mt={"85px"} minHeight={"100%"}>
       <Box
         sx={{
           display: "flex",
@@ -122,7 +122,7 @@ export default function MyExchanges() {
     <PrivateHeader
       title="My Exchanges"
       Component={MyExchangesComponent}
-      current="1"
+      current="4"
     />
   );
 }
