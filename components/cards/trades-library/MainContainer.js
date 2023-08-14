@@ -6,8 +6,11 @@ import { BtcIcon, EditIcon } from "../../../utils/icons";
 
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 
 const MainContainer = () => {
+  const router = useRouter();
+
   const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
   const [width, setWidth] = useState(globalThis?.innerWidth);
 
@@ -139,6 +142,10 @@ const MainContainer = () => {
                       fontSize: 11,
                       color: "#FFFFFF",
                       fontWeight: 300,
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      router.push("DealsLibrary");
                     }}
                   >
                     ID : {item.ID}

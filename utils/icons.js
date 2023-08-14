@@ -75,7 +75,11 @@ import EditIcon from "../assets/icons/editIcon.svg";
 import BlueVdcaBot from "../assets/icons/BlueVdcaBot.svg";
 import BlueVgridBot from "../assets/icons/BlueVgridBot.svg";
 import Binance from "../assets/icons/binance.svg";
+import Up from "../assets/icons/up.svg";
+import Down from "../assets/icons/down.svg";
 export {
+  Up,
+  Down,
   Binance,
   BlueVgridBot,
   BlueVdcaBot,

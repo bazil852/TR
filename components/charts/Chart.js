@@ -1,133 +1,225 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { createChart, CrosshairMode } from 'lightweight-charts';
+import React, { useEffect, useState, useRef } from "react";
+import { createChart, CrosshairMode } from "lightweight-charts";
 import { Box, Button, Grid, Typography } from "@mui/material";
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem'
+import FormControl from "@mui/material/FormControl";
+import Select from "react-select";
+import StrategyCalender from "../cards/strategy-calender/StrategyCalender";
 
-
-function CandlestickChart({ data ,func}) {
-  const [timeframeVal, setTimeFrame] = React.useState('');
-
-  const handleChange = (event) => {
-    setTimeFrame(event.target.value );
+function CandlestickChart({ data, func }) {
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      border: "2px solid #9D9D9D",
+      backgroundColor: "#191919",
+      width: "100%",
+      minHeight: "35px",
+      borderRadius: "8px",
+    }),
+    container: (provided) => ({
+      ...provided,
+      border: "none",
+      width: "100%",
+      minHeight: "20px",
+    }),
+    indicatorSeparator: (provided) => ({
+      ...provided,
+      display: "none",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      color: "#FFFFFF",
+      fontSize: "15px",
+      fontFamily: "Barlow, san-serif",
+      backgroundColor: state.isSelected ? "#000000" : "#2B2B2B",
+      ":hover": { background: "#131313", color: "#FFFFFF" },
+    }),
+    indicatorsContainer: (provided, state) => ({
+      ...provided,
+      height: "30px",
+      width: state.isFocused ? "20px" : "20px",
+      justifyContent: state.isFocused ? "flex-end" : "flex-end",
+      padding: "0",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      background: "#2B2B2B",
+      color: "#FFFFFF",
+    }),
+    valueContainer: (provided, state) => ({
+      ...provided,
+      minHeight: "30px",
+      padding: "2px 4px",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      fontSize: "15px",
+      fontFamily: "Barlow, san-serif",
+      fontWeight: 500,
+      color: "#FFFFFF",
+      whiteSpace: "normal",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      fontSize: "15px",
+      fontFamily: "Barlow, san-serif",
+      color: "#ACB2B7",
+      overflow: "hidden",
+      textWrap: "nowrap",
+      textOverflow: "ellipsis",
+      opacity: 0.8,
+    }),
+    menuList: (provided) => ({
+      ...provided,
+      "&::-webkit-scrollbar": {
+        width: "3px",
+      },
+      "&::-webkit-scrollbar-track": {
+        background: "transparent",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        background: "#888",
+        borderRadius: "4px",
+      },
+      "&::-webkit-scrollbar-thumb:hover": {
+        background: "#555",
+      },
+    }),
   };
-  const chartContainerRef = useRef();
-  const [chart, setChart] = useState(null);
-  const [candleSeries, setCandleSeries] = useState(null);
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const chartData = [
-    { title: "Total Profit", value: 1200, percent: 20 },
-    { title: "Total Trades", value: 34 },
-    { title: "Win Rate", value: 100 },
-    { title: "Buy & Hold", value: 120 },
-    { title: "Totaltime", day: 123, hour: 2 },
-    { title: "Profit Factor", value: 95 },
-  ];
-  
 
-  const formatCandles = (candles) => {
-      if (!candles) {
-          return [];
-      }
-      return candles?.map((item) => ({
-          time: item[0] / 1000,
-          open: item[1],
-          high: item[2],
-          low: item[3],
-          close: item[4]
-      }));
+  const options = [
+    { value: 10, label: "1 Minute Timeframe" },
+    { value: 20, label: "5 Minute Timeframe" },
+    { value: 30, label: "1 Hour Timeframe" },
+    { value: 30, label: "3 Hour Timeframe" },
+    { value: 30, label: "5 Hour Timeframe" },
+    { value: 30, label: "12 Hour Timeframe" },
+    { value: 30, label: "1 Day Timeframe" },
+  ];
+  const symbolOptions = [
+    { value: 10, label: "BTC/USDT" },
+    { value: 20, label: "ETH/USDT" },
+    { value: 30, label: "LTC/USDT" },
+    { value: 30, label: "XRP/USDT" },
+    { value: 30, label: "DOGE/USDT" },
+  ];
+
+  const sideOption = [
+    { value: 10, label: "Long" },
+    { value: 20, label: "Short" },
+  ];
+
+  const [timeframeVal, setTimeFrame] = React.useState("");
+
+  function handleChange(selectedOption) {
+    setTimeFrame(selectedOption.value);
   }
 
-  const formatOrders = (orders, color, shape, text) => {
-    return orders?.map((order) => ({
-      time: order.timestamp / 1000,
-      position: 'aboveBar',
-      color,
-      shape,
-      text,
-    }));
-  };
+  // const chartContainerRef = useRef();
+  // const [chart, setChart] = useState(null);
+  // const [candleSeries, setCandleSeries] = useState(null);
+  // const [isFullScreen, setIsFullScreen] = useState(false);
 
-  useEffect(() => {
-    console.log("Trying to Render new chart ")
-      const newChart = createChart(chartContainerRef.current, { 
-        width: isFullScreen ? window.innerWidth : 700, 
-        height: isFullScreen ? window.innerHeight : 500,
-          layout: {
-              background: {
-                type: 'solid',
-                color: 'transparent',
-            },
-              textColor: 'rgba(255, 255, 255, 0.9)',
-          },
-          grid: {
-              vertLines: {
-                  color: 'rgba(197, 203, 206, 0.5)',
-              },
-              horzLines: {
-                  color: 'rgba(197, 203, 206, 0.5)',
-              },
-          },
-          crosshair: {
-              mode: CrosshairMode.Normal,
-          },
-          priceScale: {
-              borderColor: 'rgba(197, 203, 206, 0.8)',
-          },
-          timeScale: {
-              borderColor: 'rgba(197, 203, 206, 0.8)',
-          },
-      });
-      const newCandleSeries = newChart.addCandlestickSeries();
-      setChart(newChart);
-      setCandleSeries(newCandleSeries);
-      return () => {
-        // When 'isFullScreen' changes, this cleanup function will run
-        // We check if we are exiting fullscreen mode, and if so, resize the chart
-        if (!isFullScreen && chart) {
-          chart.resize(700, 500);
-        }
-      };
-  },[isFullScreen]);
+  // const formatCandles = (candles) => {
+  //   if (!candles) {
+  //     return [];
+  //   }
+  //   return candles?.map((item) => ({
+  //     time: item[0] / 1000,
+  //     open: item[1],
+  //     high: item[2],
+  //     low: item[3],
+  //     close: item[4],
+  //   }));
+  // };
 
-  useEffect(() => {
-      if (chart && candleSeries) {
-          const candleData = formatCandles(data?.candles);
-          const buyOrders = formatOrders(
-            data?.buy_orders,
-            '#00E396',
-            'arrowDown',
-            'Buy'
-          );
-          const sellOrders = formatOrders(
-            data?.sell_orders,
-            '#FF0000',
-            'arrowUp',
-            'Sell'
-          );
+  // const formatOrders = (orders, color, shape, text) => {
+  //   return orders?.map((order) => ({
+  //     time: order.timestamp / 1000,
+  //     position: "aboveBar",
+  //     color,
+  //     shape,
+  //     text,
+  //   }));
+  // };
 
-          if (candleData && candleData.length > 0) {
-              candleSeries.setData(candleData);
-              candleSeries.setMarkers([...buyOrders, ...sellOrders].sort((a, b) => a.time - b.time));
-          }
-      }
-  }, [data, chart, candleSeries]);
+  // useEffect(() => {
+  //   console.log("Trying to Render new chart ");
+  //   const newChart = createChart(chartContainerRef.current, {
+  //     width: isFullScreen ? window.innerWidth : 700,
+  //     height: isFullScreen ? window.innerHeight : 500,
+  //     layout: {
+  //       background: {
+  //         type: "solid",
+  //         color: "transparent",
+  //       },
+  //       textColor: "rgba(255, 255, 255, 0.9)",
+  //     },
+  //     grid: {
+  //       vertLines: {
+  //         color: "rgba(197, 203, 206, 0.5)",
+  //       },
+  //       horzLines: {
+  //         color: "rgba(197, 203, 206, 0.5)",
+  //       },
+  //     },
+  //     crosshair: {
+  //       mode: CrosshairMode.Normal,
+  //     },
+  //     priceScale: {
+  //       borderColor: "rgba(197, 203, 206, 0.8)",
+  //     },
+  //     timeScale: {
+  //       borderColor: "rgba(197, 203, 206, 0.8)",
+  //     },
+  //   });
+  //   const newCandleSeries = newChart.addCandlestickSeries();
+  //   setChart(newChart);
+  //   setCandleSeries(newCandleSeries);
+  //   return () => {
+  //     if (!isFullScreen && chart) {
+  //       chart.resize(700, 500);
+  //     }
+  //   };
+  // }, [isFullScreen]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (isFullScreen && chart) {
-        chart.resize(window.innerWidth, window.innerHeight);
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isFullScreen, chart]);
+  // useEffect(() => {
+  //   if (chart && candleSeries) {
+  //     const candleData = formatCandles(data?.candles);
+  //     const buyOrders = formatOrders(
+  //       data?.buy_orders,
+  //       "#00E396",
+  //       "arrowDown",
+  //       "Buy"
+  //     );
+  //     const sellOrders = formatOrders(
+  //       data?.sell_orders,
+  //       "#FF0000",
+  //       "arrowUp",
+  //       "Sell"
+  //     );
+
+  //     if (candleData && candleData.length > 0) {
+  //       candleSeries.setData(candleData);
+  //       candleSeries.setMarkers(
+  //         [...buyOrders, ...sellOrders].sort((a, b) => a.time - b.time)
+  //       );
+  //     }
+  //   }
+  // }, [data, chart, candleSeries]);
+
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     if (isFullScreen && chart) {
+  //       chart.resize(window.innerWidth, window.innerHeight);
+  //     }
+  //   };
+  //   window.addEventListener("resize", handleResize);
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, [isFullScreen, chart]);
 
   return (
-      <Box mb={3}>
-        <Box sx={{ display: "flex", flexDirection: "column", mt: -2 }}>
+    <Box mt={"20px"}>
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Typography
           sx={{
             fontSize: "2.2rem",
@@ -151,211 +243,152 @@ function CandlestickChart({ data ,func}) {
           backtester
         </Typography>
       </Box>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 2 }}>
-        <Typography
-          sx={{
-            fontFamily: "Barlow, san-serif",
-            fontWeight: 500,
-            fontSize: 17,
-            // display: "flex",
-            alignItems: "center",
-            gap: 0.5,
-            pl: 0.5,
-          }}
-        >
-          Timeframe
-        </Typography>
-        <FormControl >
-        <InputLabel id="demo-simple-select-label">Timeframe</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={timeframeVal}
-          label="Age"
-          onChange={handleChange}
-          sx={{
-            width:'35%',
-            marginBottom:'3px'
-          }}
-        >
-          <MenuItem value={10}>1m</MenuItem>
-          <MenuItem value={20}>5m</MenuItem>
-          <MenuItem value={30}>1h</MenuItem>
-          <MenuItem value={30}>3h</MenuItem>
-          <MenuItem value={30}>5h</MenuItem>
-          <MenuItem value={30}>12h</MenuItem>
-          <MenuItem value={30}>1d</MenuItem>
-        </Select>
-      </FormControl>
 
-      <Typography
-          sx={{
-            fontFamily: "Barlow, san-serif",
-            fontWeight: 500,
-            fontSize: 17,
-            display: "flex",
-            alignItems: "center",
-            gap: 0.5,
-            pl: 0.5,
-          }}
-        >
-          Symbol
-        </Typography>
-        <FormControl >
-        <InputLabel id="demo-simple-select-label">Symbol</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={timeframeVal}
-          label="Age"
-          onChange={handleChange}
-          sx={{
-            width:'35%',
-            marginBottom:'3px'
-          }}
-        >
-          <MenuItem value={10}>BTC/USDT</MenuItem>
-          <MenuItem value={20}>ETH/USDT</MenuItem>
-          <MenuItem value={30}>LTC/USDT</MenuItem>
-          <MenuItem value={30}>XRP/USDT</MenuItem>
-          <MenuItem value={30}>DOGE/USDT</MenuItem>
-
-        </Select>
-      </FormControl>
-
-      <Typography
-          sx={{
-            fontFamily: "Barlow, san-serif",
-            fontWeight: 500,
-            fontSize: 17,
-            display: "flex",
-            alignItems: "center",
-            gap: 0.5,
-            pl: 0.5,
-          }}
-        >
-          Position 
-        </Typography>
-        <FormControl >
-        <InputLabel id="demo-simple-select-label">Position</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={timeframeVal}
-          label="Age"
-          onChange={handleChange}
-          sx={{
-            width:'35%',
-            marginBottom:'3px'
-          }}
-        >
-          <MenuItem value={10}>Long</MenuItem>
-          <MenuItem value={20}>Short</MenuItem>
-
-        </Select>
-      </FormControl>
-          
-      </Box>
-      <Box mt={3} mb={2} ml={"40%"}>
-        <Button
-          sx={{
-            background: "linear-gradient(to right,#790F87,#794AE3)",
-            textTransform: "none",
-            border: "none",
-            outline: "none",
-            color: "white",
-            fontFamily: "Barlow, san-serif",
-            fontWeight: 300,
-            fontSize: 17,
-          }}
-          onClick={() => func()}
-        >
-          Start Backtest
-        </Button>
-      </Box>
-      <Grid container spacing={1} mt={2}>
-        {chartData.map((item, index) => {
-          return (
-            <Grid item xs={12} sm={6} md={3} lg={3} key={index}>
-              <Box
+      <Grid container spacing={"20px"} mt={1}>
+        <Grid item xs={12} sm={6} md={3.5} lg={3.5}>
+          <Box>
+            <Typography
+              sx={{
+                fontFamily: "Barlow, san-serif",
+                fontWeight: 500,
+                fontSize: 17,
+                pl: 0.5,
+                position: "relative",
+              }}
+            >
+              Timeframe
+              <Typography
                 sx={{
-                  background: "#191919",
-                  borderTop: "2px solid #2D2D30",
-                  borderRadius: 1.5,
-                  height: 100,
-                  minWidth: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  pl: 1,
-                  gap: 0.5,
+                  fontFamily: "Barlow, san-serif",
+                  fontWeight: 400,
+                  fontSize: 20,
+                  color: "#FF5656",
+                  position: "absolute",
+                  left: 90,
+                  top: 0,
                 }}
               >
-                <Typography
-                  sx={{
-                    fontFamily: "Barlow, san-serif",
-                    fontWeight: 500,
-                    fontSize: 20,
-                  }}
-                >
-                  {item.title}
-                </Typography>
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Typography
-                    sx={{
-                      fontFamily: "Barlow, san-serif",
-                      fontWeight: 500,
-                      fontSize: 20,
-                    }}
-                  >
-                    {item.title === "Totaltime" ? (
-                      <Typography
-                        sx={{
-                          fontFamily: "Barlow, san-serif",
-                          fontWeight: 500,
-                          fontSize: 20,
-                        }}
-                      >
-                        {item.day} Days and {item.hour} hours
-                      </Typography>
-                    ) : (
-                      ""
-                    )}
-                    {item.value}
-                    {item.title === "Total Profit"
-                      ? "$"
-                      : item.title === "Win Rate" ||
-                        item.title === "Profit Factor"
-                      ? "%"
-                      : ""}
-                  </Typography>
-                  {item.title === "Total Profit" ? (
-                    <Typography
-                      sx={{
-                        fontFamily: "Barlow, san-serif",
-                        fontWeight: 500,
-                        fontSize: 20,
-                        pr: 2,
-                      }}
-                    >
-                      {" "}
-                      {item.percent}%
-                    </Typography>
-                  ) : (
-                    ""
-                  )}
-                </Box>
-              </Box>
-            </Grid>
-          );
-        })}
+                *
+              </Typography>
+            </Typography>
+
+            <FormControl sx={{ minWidth: "100%" }}>
+              <Select
+                value={options.find((option) => option.value === timeframeVal)}
+                onChange={handleChange}
+                styles={customStyles}
+                options={options}
+                isSearchable={false}
+                placeholder={"Select Timeframe"}
+              />
+            </FormControl>
+          </Box>
+          <Box mt={"12px"}>
+            <Typography
+              sx={{
+                fontFamily: "Barlow, san-serif",
+                fontWeight: 500,
+                fontSize: 17,
+                pl: 0.5,
+                position: "relative",
+              }}
+            >
+              Symbol
+              <Typography
+                sx={{
+                  fontFamily: "Barlow, san-serif",
+                  fontWeight: 400,
+                  fontSize: 20,
+                  color: "#FF5656",
+                  position: "absolute",
+                  left: 63,
+                  top: 0,
+                }}
+              >
+                *
+              </Typography>
+            </Typography>
+            <FormControl sx={{ minWidth: "100%" }}>
+              <Select
+                value={symbolOptions.find(
+                  (option) => option.value === timeframeVal
+                )}
+                onChange={handleChange}
+                styles={customStyles}
+                options={symbolOptions}
+                isSearchable={false}
+                placeholder={"Select Symbol"}
+              />
+            </FormControl>
+          </Box>
+          <Box mt={"12px"}>
+            <Typography
+              sx={{
+                fontFamily: "Barlow, san-serif",
+                fontWeight: 500,
+                fontSize: 17,
+                pl: 0.5,
+                position: "relative",
+              }}
+            >
+              Side
+              <Typography
+                sx={{
+                  fontFamily: "Barlow, san-serif",
+                  fontWeight: 400,
+                  fontSize: 20,
+                  color: "#FF5656",
+                  position: "absolute",
+                  left: 40,
+                  top: 0,
+                }}
+              >
+                *
+              </Typography>
+            </Typography>
+            <FormControl sx={{ minWidth: "100%" }}>
+              <Select
+                value={sideOption.find(
+                  (option) => option.value === timeframeVal
+                )}
+                onChange={handleChange}
+                styles={customStyles}
+                options={sideOption}
+                isSearchable={false}
+                placeholder={"Select Side"}
+              ></Select>
+            </FormControl>
+          </Box>
+          <Button
+            sx={{
+              background: "linear-gradient(to right,#790F87,#794AE3)",
+              textTransform: "none",
+              border: "none",
+              outline: "none",
+              color: "white",
+              fontFamily: "Barlow, san-serif",
+              fontWeight: 400,
+              fontSize: 16,
+              height: 35,
+              mt: 5,
+            }}
+            onClick={() => func()}
+          >
+            Start Backtest
+          </Button>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4.5} lg={4.5}>
+          <StrategyCalender />
+        </Grid>
+        <Grid item xs={12} sm={6} md={4.5} lg={4.5}></Grid>
       </Grid>
-        <button onClick={() => setIsFullScreen(!isFullScreen)}>{isFullScreen ? "Exit Fullscreen" : "Go Fullscreen"}</button>
-          <div ref={chartContainerRef} style={{ backgroundColor: 'transparent' }}/>
-      </Box>
+
+      {/* <button onClick={() => setIsFullScreen(!isFullScreen)}>
+        {isFullScreen ? "Exit Fullscreen" : "Go Fullscreen"}
+      </button>
+      <div ref={chartContainerRef} style={{ backgroundColor: "transparent" }} /> */}
+    </Box>
   );
 }
 
-
 export default CandlestickChart;
-
-

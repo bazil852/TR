@@ -35,12 +35,12 @@ const SelectMulInput = (props) => {
       MenuProps={{
         PaperProps: {
           sx: {
-            backgroundColor: "#452951",
+            backgroundColor: "#2B2B2B",
             mt: 0.5,
             "& .MuiMenuItem-root": {
               color: "white",
               "&:hover": {
-                backgroundColor: "#4E2C60",
+                backgroundColor: "#2B2B2B",
               },
             },
             "& .Mui-selected": {
@@ -75,7 +75,7 @@ const SelectMulInput = (props) => {
         height: 37,
         borderRadius: "8px",
         color: "white",
-        backgroundColor: "#452951",
+        backgroundColor: "#2B2B2B",
         boxShadow: "none",
         ".MuiOutlinedInput-notchedOutline": {
           border: 0,

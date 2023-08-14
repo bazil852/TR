@@ -6,11 +6,10 @@ const SelectInputParameters = (props) => {
     control: (provided, state) => ({
       ...provided,
       border: "none",
-      backgroundColor: "#2B2B2B",
+      backgroundColor: "#3E3E3E",
       width: props.Width,
-      marginLeft: props.keyName === "Operator" && "auto",
+      marginLeft: props.keyName === "operation" && "auto",
       minHeight: "30px",
-      // height: "30px",
       borderRadius: "6px",
     }),
     container: (provided) => ({
@@ -65,6 +64,22 @@ const SelectInputParameters = (props) => {
       textWrap: "nowrap",
       textOverflow: "ellipsis",
       opacity: 0.8,
+    }),
+    menuList: (provided) => ({
+      ...provided,
+      "&::-webkit-scrollbar": {
+        width: "3px",
+      },
+      "&::-webkit-scrollbar-track": {
+        background: "transparent",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        background: "#888",
+        borderRadius: "4px",
+      },
+      "&::-webkit-scrollbar-thumb:hover": {
+        background: "#555",
+      },
     }),
   };
   const selectedValue = { value: props.value, label: props.value };
