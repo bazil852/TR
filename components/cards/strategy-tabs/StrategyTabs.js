@@ -2629,7 +2629,6 @@ const StrategyTabsComponent = (props) => {
                                           ParametersIndex
                                         )
                                       }
-                                      onClick={handlePopoverOpen}
                                       sx={{
                                         color: "white",
                                         background: "#2D2D2D",
