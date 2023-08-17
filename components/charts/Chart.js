@@ -261,6 +261,8 @@ function CandlestickChart({ data ,func}) {
             marginBottom:'3px'
           }}
         >
+          <MenuItem value={'3m'}>3m</MenuItem>
+          <MenuItem value={'5m'}>5m</MenuItem>
           <MenuItem value={'1h'}>1h</MenuItem>
           <MenuItem value={'3h'}>3h</MenuItem>
           <MenuItem value={'5h'}>5h</MenuItem>

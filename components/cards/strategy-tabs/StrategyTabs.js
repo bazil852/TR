@@ -625,8 +625,8 @@ const StrategyTabsComponent = (props) => {
       label: "Tom Demark Sell 13",
     },
     {
-      value: "Bollinger Bands",
-      label: "Bollinger Bands",
+      value: "Bollinger Bands upper",
+      label: "Bollinger Bands upper",
     },
   ];
 
@@ -880,7 +880,7 @@ const StrategyTabsComponent = (props) => {
 
 
     try {
-      const response = await fetch("https://dcabot1.herokuapp.com/backtest", {
+      const response = await fetch("http://127.0.0.1:8000/backtest", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
