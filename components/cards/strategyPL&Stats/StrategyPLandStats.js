@@ -57,7 +57,7 @@ const StrategyPLandStats = () => {
               key={index}
               xs={12}
               sm={6}
-              md={isDrawerOpen ? 4 : 3}
+              md={isDrawerOpen && width > 999 ? 4 : 3}
               lg={
                 width < 1500 && width > 1299 && isDrawerOpen
                   ? 3
@@ -125,10 +125,10 @@ const StrategyPLandStats = () => {
         })}
       </Grid>
       <Grid container spacing={"20px"} mt={"0px"}>
-        <Grid item xs={12} sm={12} md={isDrawerOpen ? 12 : 6} lg={6} xl={6}>
+        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
           <StrategyPLBarGraph />
         </Grid>
-        <Grid item xs={12} sm={12} md={isDrawerOpen ? 12 : 6} lg={6} xl={6}>
+        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
           <StrategyPLLineGraph />
         </Grid>
       </Grid>

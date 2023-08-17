@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
-import { useSelector } from "react-redux";
 import Graph1 from "./Graph1";
 
 const StrategyPLBarGraph = () => {
   const [activeTypeButton, setTypectiveButton] = useState("$");
   const [width, setWidth] = useState(globalThis?.innerWidth);
   const [valueType, setValueType] = useState("$");
-  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
 
   const dataArray = [
     11,
@@ -23,19 +21,19 @@ const StrategyPLBarGraph = () => {
     20,
     10,
     20,
-    40,
-    60,
-    78,
-    90,
-    80,
-    70,
+    220,
     20,
-    50,
-    40,
-    40,
-    60,
-    70,
-    50,
+    20,
+    20,
+    20,
+    20,
+    20,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
     0,
     0,
     0,
@@ -60,7 +58,7 @@ const StrategyPLBarGraph = () => {
         background: "#262626",
         border: "1.2px solid #3F4341",
         borderRadius: "4.8px",
-        height: 400,
+        height: width < 355 ? 440 : width > 1399 ? 370 : 385,
         minWidth: "100%",
       }}
     >
@@ -70,6 +68,7 @@ const StrategyPLBarGraph = () => {
           display: "flex",
           justifyContent: "space-between",
           flexWrap: "wrap",
+          gap: 1,
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -140,23 +139,12 @@ const StrategyPLBarGraph = () => {
           </Box>
         </Box>
       </Box>
+
       <Box
         sx={{
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          overflowX: "auto",
-          width: "100%",
-          " ::-webkit-scrollbar": {
-            height: 3,
-          },
-          "::-webkit-scrollbar-track": {
-            background: "none",
-          },
-          "::-webkit-scrollbar-thumb": {
-            background: "#888",
-            borderRadius: "4px",
-          },
         }}
       >
         <Graph1 dataArray={dataArray} valueType={valueType} />
@@ -166,7 +154,7 @@ const StrategyPLBarGraph = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          mt: -1.5,
+          mt: width > 1399 ? -1.5 : "",
         }}
       >
         <Typography

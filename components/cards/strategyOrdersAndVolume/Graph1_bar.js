@@ -6,64 +6,64 @@ function Graph1_bar({ data }) {
 
   const colors = ["#5A3FFF", "#268AFF", "#1ED6FF", "#3DFFDC", "#ADE1FF"];
 
+  const seriesData = Object.entries(data).map(([key, value], index) => ({
+    maintainAspectRatio: false,
+    name: key,
+    type: "bar",
+    stack: "total",
+    label: { show: false },
+    emphasis: { focus: "series" },
+    data: value,
+    itemStyle: {
+      color: colors[index % colors.length],
+    },
+  }));
+
+  const maxLength = Math.max(...Object.values(data).map((arr) => arr.length));
+
+  let barThickness;
+  if (maxLength === 1) {
+    barThickness = 90;
+  } else if (maxLength === 2) {
+    barThickness = 75;
+  } else if (maxLength === 3) {
+    barThickness = 65;
+  } else if (maxLength === 4) {
+    barThickness = 55;
+  } else if (maxLength === 5) {
+    barThickness = 45;
+  } else if (maxLength === 6) {
+    barThickness = 35;
+  } else if (maxLength === 7) {
+    barThickness = 35;
+  } else if (maxLength === 9) {
+    barThickness = 30;
+  } else if (maxLength === 10) {
+    barThickness = 30;
+  } else if (maxLength === 11) {
+    barThickness = 30;
+  } else if (maxLength === 12) {
+    barThickness = 25;
+  } else if (maxLength >= 13 && maxLength <= 17) {
+    barThickness = 20;
+  } else {
+    barThickness = 20;
+  }
+  console.log(barThickness);
+  const categories =
+    seriesData[0]?.data?.map((_, index) => (index + 1).toString()) || [];
+  const widthPerBar = barThickness;
+  const gap = maxLength > 20 ? 10 : 0;
+  const containerWidth = `${maxLength * (widthPerBar + gap)}px`;
+
   useEffect(() => {
     if (chartRef.current) {
       const myChart = echarts.init(chartRef.current);
 
-      const seriesData = Object.entries(data).map(([key, value], index) => {
-        return {
-          name: key,
-          type: "bar",
-          stack: "total",
-          label: { show: false },
-          emphasis: { focus: "series" },
-          data: value,
-          itemStyle: {
-            color: colors[index % colors.length],
-          },
-        };
-      });
-
-      const maxLength = Math.max(
-        ...Object.values(data).map((arr) => arr.length)
-      );
-
-      let barThickness;
-      if (maxLength === 1) {
-        barThickness = 100;
-      } else if (maxLength === 2) {
-        barThickness = 90;
-      } else if (maxLength === 3) {
-        barThickness = 85;
-      } else if (maxLength === 4) {
-        barThickness = 80;
-      } else if (maxLength === 5) {
-        barThickness = 70;
-      } else if (maxLength === 6) {
-        barThickness = 60;
-      } else if (maxLength === 9) {
-        barThickness = 40;
-      } else if (maxLength === 10) {
-        barThickness = 30;
-      } else if (maxLength === 11) {
-        barThickness = 25;
-      } else if (maxLength === 12) {
-        barThickness = 20;
-      } else if (maxLength > 12) {
-        barThickness = 20;
-      } else {
-        barThickness = 50;
-      }
-      const categories =
-        seriesData[0]?.data?.map((value, index) => (index + 1).toString()) ||
-        [];
-
       const option = {
         tooltip: {
           trigger: "axis",
-          axisPointer: {
-            type: "shadow",
-          },
+          axisPointer: { type: "shadow" },
           backgroundColor: "rgba(0, 0, 0, 0.8)",
           borderWidth: 0,
           textStyle: {
@@ -112,9 +112,7 @@ function Graph1_bar({ data }) {
             color: "#8C8C8C",
             fontFamily: "Barlow, san-serif",
           },
-          axisPointer: {
-            type: "none",
-          },
+          axisPointer: { type: "none" },
         },
         series: seriesData.map((series) => ({
           ...series,
@@ -128,15 +126,30 @@ function Graph1_bar({ data }) {
 
   return (
     <div
-      ref={chartRef}
       style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
         width: "100%",
-        height: "370px",
+        height: "380px",
+        overflowX: "auto",
+        " ::-webkit-scrollbar": {
+          height: 3,
+        },
+        "::-webkit-scrollbar-track": {
+          background: "none",
+        },
+        "::-webkit-scrollbar-thumb": {
+          background: "#888",
+          borderRadius: "4px",
+        },
       }}
-    />
+    >
+      <div
+        ref={chartRef}
+        style={{
+          width: maxLength > 17 ? containerWidth : "100%",
+          height: "100%",
+        }}
+      />
+    </div>
   );
 }
 

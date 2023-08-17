@@ -19,20 +19,20 @@ const StrategyPLLineGraph = () => {
     161,
     12,
     20,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    10,
+    20,
+    220,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
     0,
     0,
     0,
@@ -40,7 +40,6 @@ const StrategyPLLineGraph = () => {
     0,
     0,
   ];
-
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
@@ -53,29 +52,31 @@ const StrategyPLLineGraph = () => {
         background: "#262626",
         border: "1.2px solid #3F4341",
         borderRadius: "4.8px",
-        height: 400,
+        height: width < 355 ? 440 : width > 1399 ? 370 : 385,
         minWidth: "100%",
       }}
     >
-      <Typography
-        sx={{
-          fontFamily: "Barlow, san-serif",
-          fontSize: 22,
-          fontWeight: 600,
-          pt: 2,
-          pl: 1,
-          mb: 4,
-        }}
-      >
-        PROFIT BY TRADE CUMULATIVE $
-      </Typography>
+      <Box px={width < 1042 && width > 999 && isDrawerOpen ? 1 : 2}>
+        <Typography
+          sx={{
+            fontFamily: "Barlow, san-serif",
+            fontSize: 22,
+            fontWeight: 600,
+            pt: 2,
+            mb: 4,
+            // whiteSpace: "nowrap",
+          }}
+        >
+          PROFIT BY TRADE CUMULATIVE $
+        </Typography>
+      </Box>
+
       <Box
         sx={{
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          overflowX: "auto",
-          width: "100%",
+          // pr: 2,
           " ::-webkit-scrollbar": {
             height: 3,
           },
@@ -90,12 +91,13 @@ const StrategyPLLineGraph = () => {
       >
         <Graph2 dataArray={dataArray} />
       </Box>
+
       <Box
         sx={{
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          mt: -1.5,
+          mt: width > 1399 ? -1.5 : 0.4,
         }}
       >
         <Typography

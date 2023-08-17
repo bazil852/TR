@@ -103,6 +103,64 @@ const customStyles = {
 function StrategyCalender() {
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
+  const [selectedDates, setSelectedDates] = useState([]);
+
+  const selectDate = (day) => {
+    const selectedDayDate = new Date(year, day.month, day.date);
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    if (selectedDayDate > currentDate) {
+      return;
+    }
+    const index = selectedDates.findIndex(
+      (selectedDate) =>
+        selectedDate.date === day.date &&
+        selectedDate.month === day.month &&
+        selectedDate.currentMonth === day.currentMonth
+    );
+
+    if (index !== -1) {
+      setSelectedDates(selectedDates.filter((_, i) => i !== index));
+    } else {
+      if (selectedDates.length === 0) {
+        setSelectedDates([day]);
+      } else if (selectedDates.length === 1) {
+        setSelectedDates(
+          [...selectedDates, day].sort((a, b) => {
+            const dateA = new Date(year, a.month, a.date);
+            const dateB = new Date(year, b.month, b.date);
+            return dateA - dateB;
+          })
+        );
+      } else if (selectedDates.length === 2) {
+        setSelectedDates(
+          [selectedDates[0], day].sort((a, b) => {
+            const dateA = new Date(year, a.month, a.date);
+            const dateB = new Date(year, b.month, b.date);
+            return dateA - dateB;
+          })
+        );
+      }
+    }
+  };
+
+  const isBetweenSelectedDates = (day) => {
+    if (selectedDates.length !== 2) return false;
+    const dateA = new Date(year, selectedDates[0].month, selectedDates[0].date);
+    const dateB = new Date(year, selectedDates[1].month, selectedDates[1].date);
+    const currentDate = new Date(year, day.month, day.date);
+    return currentDate > dateA && currentDate < dateB;
+  };
+
+  const isSelectedDate = (day) => {
+    return selectedDates.some(
+      (selectedDate) =>
+        selectedDate.date === day.date &&
+        selectedDate.month === day.month &&
+        selectedDate.currentMonth === day.currentMonth
+    );
+  };
 
   const getCalendarDays = (month, year) => {
     const firstDayOfMonth = new Date(year, month, 1).getDay();
@@ -155,25 +213,6 @@ function StrategyCalender() {
     value: year + i - 15,
     label: year + i - 15,
   }));
-
-  const currentDate = new Date();
-  const isToday = (day) => {
-    return (
-      day.date === currentDate.getDate() &&
-      day.month === currentDate.getMonth() &&
-      year === currentDate.getFullYear()
-    );
-  };
-
-  const isPastDay = (day) => {
-    const todayDate = new Date().getDate();
-    return day.date <= todayDate && day.month === new Date().getMonth();
-  };
-
-  const startOfMonthIndex = calendarDays.findIndex(
-    (day) => day.date === 1 && day.month === month
-  );
-  const todaysDateIndex = calendarDays.findIndex(isToday);
 
   return (
     <Box
@@ -315,6 +354,7 @@ function StrategyCalender() {
                   <TableCell
                     key={colIndex}
                     align="center"
+                    onClick={() => selectDate(day)}
                     sx={{
                       color: day.month === day.currentMonth ? "white" : "grey",
                       fontFamily: "Barlow, san-serif",
@@ -331,18 +371,32 @@ function StrategyCalender() {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        width: isToday(day) ? "50%" : "100%",
-                        background: isPastDay(day)
-                          ? "rgba(255,255,255,0.1)"
-                          : "transparent",
-                        borderRadius:
-                          colIndex === 0
-                            ? "4px 0 0 4px"
-                            : colIndex === 6
-                            ? "0 4px 4px 0"
-                            : index === startOfMonthIndex
-                            ? "3px 0 0 3px"
-                            : "0",
+                        ...(isBetweenSelectedDates(day) && {
+                          background: "rgba(255, 255, 255, 0.1)",
+                          borderRadius:
+                            colIndex === 0
+                              ? "3px 0 0 3px"
+                              : colIndex === 6
+                              ? "0 3px 3px 0"
+                              : "0",
+                        }),
+                        ...(isSelectedDate(day) &&
+                          selectedDates.length === 2 && {
+                            background: "rgba(255, 255, 255, 0.1)",
+                            borderRadius: "0",
+                            left:
+                              day.date === selectedDates[0].date &&
+                              day.month === selectedDates[0].month &&
+                              day.currentMonth === selectedDates[0].currentMonth
+                                ? "50%"
+                                : "0",
+                            right:
+                              day.date === selectedDates[1].date &&
+                              day.month === selectedDates[1].month &&
+                              day.currentMonth === selectedDates[1].currentMonth
+                                ? "50%"
+                                : "0",
+                          }),
                       },
                     }}
                   >
@@ -354,7 +408,7 @@ function StrategyCalender() {
                         width: 28,
                         height: 28,
                         borderRadius: "50%",
-                        ...(isToday(day) && {
+                        ...(isSelectedDate(day) && {
                           background:
                             "linear-gradient(to right,#383446,#6F1B86)",
                           border: "2px solid white",

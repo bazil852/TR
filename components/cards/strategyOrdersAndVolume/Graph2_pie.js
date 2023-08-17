@@ -89,7 +89,7 @@ function Graph2_pie({ dataArray }) {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        width: "100%",
+        overflow: "auto",
         height: "400px",
       }}
     ></div>

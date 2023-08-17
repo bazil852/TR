@@ -51,10 +51,6 @@ const StrategyORdersAndVolumePieGraph = () => {
       </Box>
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          overflowX: "auto",
           mt: -8.7,
           " ::-webkit-scrollbar": {
             height: 3,

@@ -2,6 +2,8 @@ import { Line } from "react-chartjs-2";
 import { Chart } from "chart.js";
 import * as Chartjs from "chart.js";
 import { useMemo, useState, useEffect } from "react";
+import { Box } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 
 const controllers = Object.values(Chartjs).filter(
   (chart) => chart.id !== undefined
@@ -44,6 +46,26 @@ const months = [
 ];
 
 const Graph2 = ({ dataArray }) => {
+  const useStyles = makeStyles({
+    scrollContainer: {
+      position: "relative",
+      width: "100%",
+      paddingBottom: "1rem",
+      paddingTop: "1rem",
+      paddingRight: "1rem",
+      overflowX: "auto",
+      "&::-webkit-scrollbar": {
+        height: "3px",
+      },
+      "&::-webkit-scrollbar-track": {
+        background: "none",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        background: "#888",
+        borderRadius: "4px",
+      },
+    },
+  });
   const maxVal = Math.max(...dataArray);
   const adjustedMax = Math.ceil((maxVal + 1) / 500) * 600;
   const stepSize = adjustedMax / 10 < 250 ? 50 : adjustedMax / 5;
@@ -135,20 +157,29 @@ const Graph2 = ({ dataArray }) => {
       },
     },
   };
-
+  const graphWidth = labelsToShow.length * 23;
+  const classes = useStyles();
   return (
-    <div
+    <Box
+      className={classes.scrollContainer}
       style={{
         position: "relative",
-        width: `95%`,
-        height: "300px",
-        paddingBottom: "1rem",
+        width: `100%`,
+        height: "274.643px",
         paddingTop: "1rem",
-        paddingRight: "1rem",
+        marginLeft: "1rem",
+        overflowX: "auto",
       }}
     >
-      <Line data={data} options={options} />
-    </div>
+      <div
+        style={{
+          width: labelsToShow.length > 11 ? `${graphWidth}px` : "100%",
+          height: "100%",
+        }}
+      >
+        <Line data={data} options={options} />
+      </div>
+    </Box>
   );
 };
 

@@ -1,9 +1,14 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import * as echarts from "echarts";
 
 function Graph1_Bar({ data }) {
   const chartRef = useRef(null);
+  const drawdownData = data.find((item) => item.drawdown)?.drawdown || [];
+  const deviationData = data.find((item) => item.deviation)?.deviation || [];
+  const totalBars = drawdownData.length || deviationData.length;
 
+  const computedWidth = totalBars * (50 + 10);
+  const containerWidth = `${computedWidth}px`;
   useEffect(() => {
     if (chartRef.current) {
       const myChart = echarts.init(chartRef.current);
@@ -104,16 +109,18 @@ function Graph1_Bar({ data }) {
   }, [data]);
 
   return (
-    <div
-      ref={chartRef}
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "370px",
-      }}
-    ></div>
+    <div style={{ width: "100%", height: "370px", overflowX: "auto" }}>
+      <div
+        ref={chartRef}
+        style={{
+          width: containerWidth,
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      />
+    </div>
   );
 }
 

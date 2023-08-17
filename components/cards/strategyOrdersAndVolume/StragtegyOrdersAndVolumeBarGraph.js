@@ -8,11 +8,45 @@ const StragtegyOrdersAndVolumeBarGraph = () => {
   const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
 
   const dummyData = {
-    "Base Order": [50, 162, 78, 89, 45, 65, 32],
+    "Base Order": [
+      50,
+      162,
+      80,
+      20,
+      30,
+      10,
+      35,
+      162,
+      80,
+      20,
+      30,
+      10,
+      35,
+      162,
+      80,
+      20,
+      30,
+      10,
+      35,
+
+      162,
+      80,
+      20,
+      30,
+      10,
+      35,
+
+      162,
+      80,
+      20,
+      30,
+      10,
+      35,
+    ],
     "Extra Order 1": [30, 192, 88, 98, 54, 56, 78],
     "Extra Order 2": [70, 232, 72, 90, 60, 70, 35],
   };
-
+ 
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
@@ -48,6 +82,7 @@ const StragtegyOrdersAndVolumeBarGraph = () => {
           VOLUME AND ORDERS BY TRADE
         </Typography>
       </Box>
+
       <Box
         sx={{
           display: "flex",
