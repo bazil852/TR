@@ -262,13 +262,16 @@ const BotsLibraryTabs = () => {
     console.log(botName, description, checkedList, exchange);
 
     let selectedExchangeIndex = exchanges.findIndex(
-      (item) => item.exchange_name === exchange
+      (item) => item.exchange_name === exchange?.value
     );
+    console.log(exchanges, selectedExchangeIndex);
+
+    let temp = botType;
 
     let body = {
       botName,
       description,
-      botType,
+      botType: temp?.value,
       timeFrame: botTimeFrame,
       strategyId: checkedList.map((item) => item._id),
       user,
@@ -411,6 +414,7 @@ const BotsLibraryTabs = () => {
   // };
 
   const onChangeBotType = (option) => {
+    console.log(option);
     setBotType(option);
   };
   const onChangeExchange = (option) => {
