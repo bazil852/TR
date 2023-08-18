@@ -238,9 +238,9 @@ export default function PrivateHeader({ Component }) {
     },
     {
       index: 3,
-      title: "Deals Library",
+      title: "Trades Library",
       icon: selectedItem === 3 ? BlueVgridBot : VgridBot,
-      path: "/DealsLibrary",
+      path: "/TradesLibrary",
     },
     {
       index: 4,
@@ -424,7 +424,7 @@ export default function PrivateHeader({ Component }) {
                     <ListItemIcon
                       sx={{
                         display: "flex",
-                        justifyContent: open ? "center" : "center",
+                        justifyContent: "center",
                         alignItems: "center",
                         pr: !open ? 3 : "",
                       }}
@@ -479,7 +479,7 @@ export default function PrivateHeader({ Component }) {
                     <ListItemIcon
                       sx={{
                         display: "flex",
-                        justifyContent: open ? "center" : "center",
+                        justifyContent: "center",
                         alignItems: "center",
                         pr: !open ? 3 : "",
                       }}

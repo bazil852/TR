@@ -22,6 +22,7 @@ import { alpha, styled } from "@mui/material/styles";
 import SelectInputParameters from "../../widgets/SelectInputParameters";
 import TimeFrameSelectInput from "../../widgets/TimeFrameSelectInput";
 import { useSelector } from "react-redux";
+import Select from "react-select";
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -57,6 +58,69 @@ const CustomCheckbox = styled(Checkbox)({
     color: "white",
   },
 });
+
+const customStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    border: "none",
+    backgroundColor: "#3E3E3E",
+    minHeight: "30px",
+    borderRadius: "4px",
+  }),
+  container: (provided) => ({
+    ...provided,
+    border: "none",
+    width: "100%",
+    minHeight: "20px",
+  }),
+  indicatorSeparator: (provided) => ({
+    ...provided,
+    display: "none",
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    color: "#FFFFFF",
+    fontSize: "15px",
+    fontFamily: "Barlow, san-serif",
+    backgroundColor: state.isSelected ? "#000000" : "none",
+    ":hover": { background: "#131313", color: "#FFFFFF" },
+  }),
+  indicatorsContainer: (provided, state) => ({
+    ...provided,
+    height: "30px",
+    width: state.isFocused ? "20px" : "20px",
+    justifyContent: state.isFocused ? "flex-end" : "flex-end",
+    padding: "0",
+  }),
+  menu: (provided) => ({
+    ...provided,
+    background: "#3E3E3E",
+    color: "#FFFFFF",
+  }),
+  valueContainer: (provided, state) => ({
+    ...provided,
+    minHeight: "30px",
+    padding: "2px 4px",
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    fontSize: "15px",
+    fontFamily: "Barlow, san-serif",
+    fontWeight: 500,
+    color: "#FFFFFF",
+    whiteSpace: "normal",
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    fontSize: "15px",
+    fontFamily: "Barlow, san-serif",
+    color: "#ACB2B7",
+    overflow: "hidden",
+    textWrap: "nowrap",
+    textOverflow: "ellipsis",
+    opacity: 0.8,
+  }),
+};
 
 const BotsLibraryTabs = () => {
   const [value, setValue] = useState(0);
@@ -198,13 +262,16 @@ const BotsLibraryTabs = () => {
     console.log(botName, description, checkedList, exchange);
 
     let selectedExchangeIndex = exchanges.findIndex(
-      (item) => item.exchange_name === exchange
+      (item) => item.exchange_name === exchange?.value
     );
+    console.log(exchanges, selectedExchangeIndex);
+
+    let temp = botType;
 
     let body = {
       botName,
       description,
-      botType,
+      botType: temp?.value,
       timeFrame: botTimeFrame,
       strategyId: checkedList.map((item) => item._id),
       user,
@@ -345,6 +412,14 @@ const BotsLibraryTabs = () => {
   //   let filteredBot = data.body.filter((item) => item?._id === selectedRow._id);
   //   setLogs(filteredBot[0].logs);
   // };
+
+  const onChangeBotType = (option) => {
+    console.log(option);
+    setBotType(option);
+  };
+  const onChangeExchange = (option) => {
+    setExchange(option);
+  };
 
   return (
     <Box>
@@ -494,16 +569,16 @@ const BotsLibraryTabs = () => {
               </Typography>
             </Grid>
             <Grid item xs={12} sm={width < 800 ? 12 : 8}>
-              <SelectInputParameters
+              <Select
                 placeHolder="Select"
-                value={exchange}
-                onChange={async (event) => {
-                  setBotType(event.value);
-                }}
                 options={[
                   { value: "Short", label: "Short" },
                   { value: "Long", label: "Long" },
                 ]}
+                styles={customStyles}
+                onChange={onChangeBotType}
+                isSearchable={false}
+                value={botType}
               />
             </Grid>
           </Grid>
@@ -555,18 +630,18 @@ const BotsLibraryTabs = () => {
               </Typography>
             </Grid>
             <Grid item xs={12} sm={width < 800 ? 12 : 8}>
-              <SelectInputParameters
+              <Select
                 placeHolder="Select"
-                value={exchange}
-                onChange={async (event) => {
-                  setExchange(event.value);
-                }}
                 options={exchanges.map((item) => {
                   return {
                     value: item.exchange_name,
                     label: item.exchange_name,
                   };
                 })}
+                styles={customStyles}
+                onChange={onChangeExchange}
+                isSearchable={false}
+                value={exchange}
               />
             </Grid>
           </Grid>

@@ -1,12 +1,15 @@
 import StrategyTabs from "../components/cards/strategy-tabs/StrategyTabs";
-import { Box, Modal, Typography, Backdrop, Fade, Grid } from "@mui/material";
+import { Box, Modal, Typography, Backdrop, Fade } from "@mui/material";
 import PrivateHeader from "../components/layout/PrivateHeader";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { Video } from "../utils/icons";
-import StrategyThreeBoxes from "../components/cards/strategy-three-boxes/StrategyThreeBoxes";
 import { useRouter } from "next/router";
-import { StrategyProvider } from '../context/StrategyContext';
+import { StrategyProvider } from "../context/StrategyContext";
+import StrategyPLandStats from "../components/cards/strategyPL&Stats/StrategyPLandStats";
+import StrategyOrdersAndVolume from "../components/cards/strategyOrdersAndVolume/StrategyOrdersAndVolume";
+import StrategyDrawDownAndDeviation from "../components/cards/strategyDrawDownAndDeviation/StrategyDrawDownAndDeviation";
+
 const StartegyComponent = () => {
   const router = useRouter();
   const { id } = router.query;
@@ -23,7 +26,7 @@ const StartegyComponent = () => {
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
   return (
-    <Box mt={8} minHeight={"100%"}>
+    <Box mb={8} mt={"85px"} minHeight={"100%"}>
       <Box
         sx={{
           display: "flex",
@@ -119,10 +122,19 @@ const StartegyComponent = () => {
         </Box>
       </Box>
       <StrategyProvider>
-      <Box mt={4}>
-        <StrategyThreeBoxes />
-      </Box>
-      <StrategyTabs strategyId={id} />
+        <Box mt={2.8}>
+          <StrategyTabs strategyId={id} />
+        </Box>
+
+        <Box mt={"0px"}>
+          <StrategyPLandStats />
+        </Box>
+        <Box mt={"20px"}>
+          <StrategyOrdersAndVolume />
+        </Box>
+        <Box mt={"20px"}>
+          <StrategyDrawDownAndDeviation />
+        </Box>
       </StrategyProvider>
     </Box>
   );
@@ -131,11 +143,11 @@ const StartegyComponent = () => {
 function Startegy() {
   return (
     <StrategyProvider>
-    <PrivateHeader
-      title="New Strategy / Edit Strategy"
-      current="2"
-      Component={StartegyComponent}
-    />
+      <PrivateHeader
+        title="New Strategy / Edit Strategy"
+        current="2"
+        Component={StartegyComponent}
+      />
     </StrategyProvider>
   );
 }

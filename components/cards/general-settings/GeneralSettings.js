@@ -14,7 +14,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "& .MuiInputBase-input": {
     position: "relative",
     height: 15,
-    backgroundColor: "#2A2A2A",
+    backgroundColor: "#3E3E3E",
     borderRadius: "6px",
     fontSize: 15,
     fontWeight: 400,
@@ -60,15 +60,11 @@ const GeneralSettings = (props) => {
     console.log(newData);
     setStrategyFolderOptions(newData.body);
   };
-  const ParametersOptions = [
-    { value: "Dummy1", label: "Dummy1" },
-    { value: "Dummy2", label: "Dummy2" },
-    { value: "Dummy3", label: "Dummy3" },
-  ];
+
   return (
     <Box
       sx={{
-        mt: 3,
+        mt: "23px",
         borderRadius: "5px",
         px:
           width > 1200 && width < 1300
