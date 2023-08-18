@@ -22,7 +22,7 @@ const strategySchema = new Schema({
     maxExtraOrders: String,
     minDistBetweenOrders: String,
     startExtraOrder: String,
-    stopMultiplier: String,
+    stepMultiplier: String,
   },
   takeProfit: {
     takeProfit: String,
