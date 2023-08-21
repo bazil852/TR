@@ -365,9 +365,9 @@ const BotsLibraryTabs = () => {
       },
       body: JSON.stringify(tempStateText[botState]),
     });
-
+    
     const data = await response.json();
-    console.log(data);
+    console.log("Data to be sent to heroku : ",data['body']);
     if (response.ok) {
       let newBots = bot.map((item) =>
         item._id === botId
@@ -376,6 +376,27 @@ const BotsLibraryTabs = () => {
       );
 
       setBots(newBots);
+    }
+    if (tempStateText[botState] === 'on'){
+      try { 
+        const response = await fetch("https://dcabot1.herokuapp.com/start", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // If you need to send a JSON body, uncomment the following line and replace '{}' with the appropriate JSON object
+          body: JSON.stringify(data['body']),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Success:", data);
+        } else {
+          console.error("Error:", response.status, response.statusText);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
   };
 
