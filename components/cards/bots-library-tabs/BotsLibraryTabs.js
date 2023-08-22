@@ -423,7 +423,7 @@ const BotsLibraryTabs = () => {
 
   return (
     <Box>
-      <Modal open={showModal} onClose={handleModalClose}>
+      {/* <Modal open={showModal} onClose={handleModalClose}>
         <Box>
           <Box
             sx={{
@@ -446,9 +446,6 @@ const BotsLibraryTabs = () => {
                   Logs
                 </Typography>
               </Grid>
-              {/* <Grid>
-                  <Button onClick={handleRefreshLogs}>Refresh</Button>
-                </Grid> */}
             </Grid>
             <Box
               sx={{
@@ -472,7 +469,7 @@ const BotsLibraryTabs = () => {
             </Box>
           </Box>
         </Box>
-      </Modal>
+      </Modal> */}
       <Modal
         open={openModal}
         onClose={() => {
@@ -1138,6 +1135,8 @@ const BotsLibraryTabs = () => {
                 handleBotsCheckbox={handleBotsCheckbox}
                 handleBotStatus={handleBotStatus}
                 handleViewModal={handleViewModal}
+                allBots={bot}
+                updateBots={setBots}
               />
             </Grid>
           );
