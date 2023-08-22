@@ -899,7 +899,7 @@ const StrategyTabsComponent = (props) => {
     console.log("all the data", AllStrategyData);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/backtest", {
+      const response = await fetch("https://dcabot1.herokuapp.com/backtest", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
