@@ -61,7 +61,6 @@ const StrategyTabs = (props) => {
   const [botType, setBotType] = useState("");
   const [strategyType, setStrategyType] = useState("");
   const [strategyPair, setStrategyPair] = useState("");
-  
 
   const setBotSetting = async (values) => {
     let reqBody = {
@@ -396,9 +395,8 @@ const StrategyTabsComponent = (props) => {
   const [formData, setFormData] = useState({});
 
   const addToForm = (key, value) => {
-    setFormData(prevState => ({...prevState, [key]: value}));
-  }
-
+    setFormData((prevState) => ({ ...prevState, [key]: value }));
+  };
 
   const open = Boolean(anchorEl);
 
@@ -568,10 +566,10 @@ const StrategyTabsComponent = (props) => {
 
   const takeProfitOptions = [
     { value: "Fixed", label: "Fixed" },
-    { value: "Trailing SL", label: "Trailing SL" },
+    { value: "At Candle Body", label: "At Candle Body" },
     {
-      value: "All candle body w % up or down",
-      label: "All candle body w % up or down",
+      value: "At Candle Wick",
+      label: "At Candle Wick",
     },
   ];
   const parametersOneOptions = [
@@ -966,6 +964,18 @@ const StrategyTabsComponent = (props) => {
     newParameterData[index][ParameterIndex].middleOne = inputs;
     setParametersData(newParameterData);
     setAnchorEl(null);
+  };
+  console.log(ParametersData);
+
+  const containsHighVolumeCandlestick = (arr) => {
+    for (let obj of arr) {
+      for (let key in obj) {
+        if (parseInt(key) % 2 !== 0 && obj[key] === "High Volume Candlestick") {
+          return true;
+        }
+      }
+    }
+    return false;
   };
 
   return (
@@ -4363,7 +4373,14 @@ const StrategyTabsComponent = (props) => {
                           temp[index]["takeProfit"] = event.value;
                           setTakeProfitData(temp);
                         }}
-                        options={takeProfitOptions}
+                        options={
+                          containsHighVolumeCandlestick(ParametersData[index])
+                            ? // ParametersData[index].some(
+                              //   (item) => item["1"] === "High Volume Candlestick"
+                              // )
+                              takeProfitOptions
+                            : [{ value: "Fixed", label: "Fixed" }]
+                        }
                       />
                     </Box>
                     <Box
@@ -4540,7 +4557,7 @@ const StrategyTabsComponent = (props) => {
         ))}
       </Box>
 
-      <Chart  data={chartData} func={handleBacktest} />
+      <Chart data={chartData} func={handleBacktest} />
       {/* <CandleStickGraph /> */}
     </>
   );
