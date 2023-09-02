@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
 import { Chart } from "chart.js";
+import React, { useEffect, useRef } from "react";
 
 const GraphOfTotalPortfolioAndInvestedDeals = ({ graph }) => {
   const chartContainer = useRef(null);

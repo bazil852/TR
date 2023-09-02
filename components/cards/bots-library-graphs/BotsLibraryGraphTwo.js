@@ -19,7 +19,6 @@ const BotsLibraryGraphTwo = () => {
     setValueType(button);
     setTypectiveButton(button);
   };
-
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);

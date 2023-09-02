@@ -41,7 +41,20 @@ a {
 .select-placeholder-text {
   color: whitesmoke;
 }
+#leverageInput::-webkit-inner-spin-button,
+#leverageInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
+#leverageInput {
+  -moz-appearance: textfield;
+  outline: none;
+}
+
+#leverageInput:focus {
+  border: none;
+}
 .folder2 {
   background: url("../assets/icons/folderIcon.svg") #6b569c !important ;
   background-position: bottom right !important;
@@ -50,6 +63,7 @@ a {
 li:hover {
   background-color: #131313 !important;
   color: #ffffff !important;
+  /* color: #262626c4; */
 }
 
 @media (prefers-color-scheme: dark) {

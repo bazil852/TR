@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Checkbox,
@@ -9,18 +9,18 @@ import {
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import MeterChart from "./MeterChart";
-import { useStrategy } from '../../../context/StrategyContext';
+import { useStrategy } from "../../../context/StrategyContext";
 
 const StrategyThreeBoxes = () => {
   const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
   const { GeneralSettingsData, setGeneralSettingsData } = useStrategy();
-  const {OrdersData, setOrdersData} = useStrategy();
-  const {ParametersData, setParametersData} = useStrategy();
-  const {DCAData, setDCAData} = useStrategy();
-  const {TakeProfitData, setTakeProfitData} = useStrategy();
-  const {StopLossData, setStopLossData} = useStrategy();
+  const { OrdersData, setOrdersData } = useStrategy();
+  const { ParametersData, setParametersData } = useStrategy();
+  const { DCAData, setDCAData } = useStrategy();
+  const { TakeProfitData, setTakeProfitData } = useStrategy();
+  const { StopLossData, setStopLossData } = useStrategy();
 
-  console.log("FORM GENERAL:     ",DCAData[0]['dcaType'])
+  console.log("FORM GENERAL:     ", DCAData[0]["dcaType"]);
   const StrategySettings = [
     {
       Cycles: 1,
@@ -87,27 +87,29 @@ const StrategyThreeBoxes = () => {
       />
     );
   }
-  const [AllToggles, setAllToggles] = useState({
-    "Strategy Name": false,
-    Pairs: false,
-    "First Order Size": false,
-    "Order Type": false,
-    Parameters: false,
-    "DCA Type": false,
-    "Volume Multiplier": false,
-    "Max. Extra Orders": false,
-    "Take Profit": false,
-  });
+  const [width, setWidth] = useState(globalThis?.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <Grid container spacing={1}>
-      <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 3.5} lg={3.5}>
+    <Grid container spacing={"20px"} mt={"0px"}>
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={isDrawerOpen && width > 999 ? 6 : width < 1150 ? 4 : 3}
+        lg={isDrawerOpen && width < 1351 ? 6 : 3}
+      >
         <Box
           sx={{
-            background: "#191919",
+            background: "#262626",
+            border: "1.2px solid #3F4341",
+            borderRadius: "4.8px",
             pt: 2,
-            borderRadius: 1,
-            minHeight: 350,
+            minHeight: 325,
           }}
         >
           <Typography
@@ -117,6 +119,7 @@ const StrategyThreeBoxes = () => {
               fontFamily: "Barlow, san-serif",
               pb: 2,
               pl: 2,
+              height: 50,
             }}
           >
             VOLUME REQUIRED VS VOLUME AVAILABLE
@@ -132,14 +135,60 @@ const StrategyThreeBoxes = () => {
           </Box>
         </Box>
       </Grid>
-      <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 3.5} lg={3.5}>
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={isDrawerOpen && width > 999 ? 6 : width < 1150 ? 4 : 3}
+        lg={isDrawerOpen && width < 1351 ? 6 : 3}
+      >
         <Box
           sx={{
-            background: "#191919",
+            background: "#262626",
+            border: "1.2px solid #3F4341",
+            borderRadius: "4.8px",
+            pt: 2,
+            minHeight: 325,
+          }}
+        >
+          <Typography
+            sx={{
+              fontWeight: 600,
+              fontSize: 14,
+              fontFamily: "Barlow, san-serif",
+              pb: 2,
+              pl: 2,
+              height: 50,
+            }}
+          >
+            % OF AVAILABLE USDT
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <MeterChart />
+          </Box>
+        </Box>
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={isDrawerOpen && width > 999 ? 6 : width < 1150 ? 4 : 3}
+        lg={isDrawerOpen && width < 1351 ? 6 : 3}
+      >
+        <Box
+          sx={{
+            background: "#262626",
+            border: "1.2px solid #3F4341",
+            borderRadius: "4.8px",
             pt: 2,
             pl: 2,
-            borderRadius: 1,
-            minHeight: 350,
+            minHeight: 325,
           }}
         >
           <Typography
@@ -161,7 +210,10 @@ const StrategyThreeBoxes = () => {
           >
             <FormControlLabel
               control={
-                <BpCheckbox checked={GeneralSettingsData[0]['strategyName']!== ''} disabled />
+                <BpCheckbox
+                  checked={GeneralSettingsData[0]["strategyName"] !== ""}
+                  disabled
+                />
               }
               label="Strategy Name"
               sx={{
@@ -176,10 +228,13 @@ const StrategyThreeBoxes = () => {
                 },
               }}
             />
-            
+
             <FormControlLabel
               control={
-                <BpCheckbox checked={OrdersData[0]['firstOrderSize'] !== ''} disabled />
+                <BpCheckbox
+                  checked={OrdersData[0]["firstOrderSize"] !== ""}
+                  disabled
+                />
               }
               label="First order size"
               sx={{
@@ -196,7 +251,10 @@ const StrategyThreeBoxes = () => {
             />
             <FormControlLabel
               control={
-                <BpCheckbox checked={OrdersData[0]['orderType']!==''} disabled />
+                <BpCheckbox
+                  checked={OrdersData[0]["orderType"] !== ""}
+                  disabled
+                />
               }
               label="Order type"
               sx={{
@@ -212,7 +270,12 @@ const StrategyThreeBoxes = () => {
               }}
             />
             <FormControlLabel
-              control={<BpCheckbox checked={ParametersData[0][0]['1']!==''} disabled />}
+              control={
+                <BpCheckbox
+                  checked={ParametersData[0][0]["1"] !== ""}
+                  disabled
+                />
+              }
               label="Parameters"
               sx={{
                 "& .Mui-disabled": {
@@ -227,7 +290,9 @@ const StrategyThreeBoxes = () => {
               }}
             />
             <FormControlLabel
-              control={<BpCheckbox checked={DCAData[0]['dcaType']!==''} disabled />}
+              control={
+                <BpCheckbox checked={DCAData[0]["dcaType"] !== ""} disabled />
+              }
               label="DCA Type"
               sx={{
                 "& .Mui-disabled": {
@@ -244,7 +309,7 @@ const StrategyThreeBoxes = () => {
             <FormControlLabel
               control={
                 <BpCheckbox
-                  checked={DCAData[0]['volumeMultiplier'] !== ''}
+                  checked={DCAData[0]["volumeMultiplier"] !== ""}
                   disabled
                 />
               }
@@ -264,7 +329,7 @@ const StrategyThreeBoxes = () => {
             <FormControlLabel
               control={
                 <BpCheckbox
-                  checked={DCAData[0]['maxExtraOrders'] !== ''}
+                  checked={DCAData[0]["maxExtraOrders"] !== ""}
                   disabled
                 />
               }
@@ -283,7 +348,10 @@ const StrategyThreeBoxes = () => {
             />
             <FormControlLabel
               control={
-                <BpCheckbox checked={TakeProfitData[0]['takeProfit'] !== ''} disabled />
+                <BpCheckbox
+                  checked={TakeProfitData[0]["takeProfit"] !== ""}
+                  disabled
+                />
               }
               label="Take Profit"
               sx={{
@@ -306,17 +374,18 @@ const StrategyThreeBoxes = () => {
           item
           key={index}
           xs={12}
-          sm={12}
-          md={isDrawerOpen ? 12 : 5}
-          lg={5}
+          sm={6}
+          md={isDrawerOpen && width > 999 ? 6 : width < 1150 ? 6 : 3}
+          lg={isDrawerOpen && width < 1351 ? 6 : 3}
         >
           <Box
             sx={{
-              background: "#191919",
+              background: "#262626",
+              border: "1.2px solid #3F4341",
+              borderRadius: "4.8px",
               pt: 2,
               pl: 2,
-              borderRadius: 1,
-              minHeight: 350,
+              minHeight: 325,
             }}
           >
             <Typography
@@ -345,9 +414,27 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
-              First order size: {OrdersData[0]['firstOrderSize']}
+              First order size: {OrdersData[0]["firstOrderSize"]}
+            </Typography>
+            <Typography
+              sx={{
+                fontWeight: 400,
+                fontSize: "13px",
+                lineHeight: "16px",
+                fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
+              }}
+            >
+              Extra order size: {OrdersData[0]["extraOrderSize"]}
             </Typography>
             <Typography
               sx={{
@@ -357,7 +444,21 @@ const StrategyThreeBoxes = () => {
                 fontFamily: "Barlow, san-serif",
               }}
             >
-              Extra order size: {OrdersData[0]['extraOrderSize']}
+              Order type: {OrdersData[0]["orderType"]}
+            </Typography>
+            <Typography
+              sx={{
+                fontWeight: 400,
+                fontSize: "13px",
+                lineHeight: "16px",
+                fontFamily: "Barlow, san-serif",
+                width: 250,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
+              }}
+            >
+              Parameters: {ParametersData[0][0]["1"]}
             </Typography>
             <Typography
               sx={{
@@ -367,7 +468,7 @@ const StrategyThreeBoxes = () => {
                 fontFamily: "Barlow, san-serif",
               }}
             >
-              Order type: {OrdersData[0]['orderType']}
+              DCA Type: {DCAData[0]["dcaType"]}
             </Typography>
             <Typography
               sx={{
@@ -375,9 +476,13 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
-              Parameters: {ParametersData[0][0]['1']}
+              Volume multiplier: {DCAData[0]["volumeMultiplier"]}
             </Typography>
             <Typography
               sx={{
@@ -385,29 +490,13 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
-              DCA Type: {DCAData[0]['dcaType']}
-            </Typography>
-            <Typography
-              sx={{
-                fontWeight: 400,
-                fontSize: "13px",
-                lineHeight: "16px",
-                fontFamily: "Barlow, san-serif",
-              }}
-            >
-              Volume multiplier: {DCAData[0]['volumeMultiplier']}
-            </Typography>
-            <Typography
-              sx={{
-                fontWeight: 400,
-                fontSize: "13px",
-                lineHeight: "16px",
-                fontFamily: "Barlow, san-serif",
-              }}
-            >
-              Max. extra orders: {DCAData[0]['maxExtraOrders']}
+              Max. extra orders: {DCAData[0]["maxExtraOrders"]}
             </Typography>{" "}
             <Typography
               sx={{
@@ -415,9 +504,13 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
-              Min. dist. between orders: {DCAData[0]['minDistBetweenOrders']}
+              Min. dist. between orders: {DCAData[0]["minDistBetweenOrders"]}
             </Typography>{" "}
             <Typography
               sx={{
@@ -425,9 +518,13 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
-              Drop to start extra order: {DCAData[0]['startExtraOrder']}
+              Drop to start extra order: {DCAData[0]["startExtraOrder"]}
             </Typography>{" "}
             <Typography
               sx={{
@@ -435,9 +532,13 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
-              Step multiplier: {DCAData[0]['stepMultiplier']}
+              Step multiplier: {DCAData[0]["stepMultiplier"]}
             </Typography>{" "}
             <Typography
               sx={{
@@ -445,9 +546,13 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
-              Take Profit: {TakeProfitData[0]['takeProfit']}
+              Take Profit: {TakeProfitData[0]["takeProfit"]}
             </Typography>
             <Typography
               sx={{
@@ -455,10 +560,14 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               {" "}
-              Stop loss: {StopLossData[0]['stopLoss']}
+              Stop loss: {StopLossData[0]["stopLoss"]}
             </Typography>{" "}
             <Typography
               sx={{
@@ -466,6 +575,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               Advanced:{Setting.Advanced}{" "}
@@ -476,6 +589,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               {" "}

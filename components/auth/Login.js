@@ -1,26 +1,16 @@
 import React, { useEffect, useState } from "react";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
 import InputBase from "@mui/material/InputBase";
 import Link from "@mui/material/Link";
-import { alpha, styled } from "@mui/material/styles";
-import Grid from "@mui/material/Grid";
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-
 import { Alert } from "@mui/material";
 import { useRouter } from "next/router";
 import { signIn, getSession } from "next-auth/react";
-import { useSelector, useDispatch } from "react-redux";
-import { setExchange } from "../../slices/exchange-slice";
-import { setAssets } from "../../slices/asset-slice";
 import { Google } from "../../utils/icons";
-import "typeface-poppins";
-const ccxt = require("ccxt");
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -30,6 +20,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
     position: "relative",
     marginTop: "2rem",
     padding: "10px 5px",
+    fontFamily: "Barlow, san-serif",
     backgroundColor: "transparent",
     border: "none",
     borderBottom: "1px solid #fff",
@@ -40,9 +31,8 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
       "background-color",
       "box-shadow",
     ]),
+
     "&:focus": {
-      // boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
-      // borderColor: theme.palette.primary.main,
       boxShadow: "none",
       borderColor: "none",
     },
@@ -52,11 +42,9 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
 const Login = () => {
   const [error, setError] = useState("");
   const [width, setWidth] = useState(globalThis?.innerWidth);
-  console.log("Backend: ",process.env.NEXT_PUBLIC_BACKEND_URL)
+  console.log("Backend: ", process.env.NEXT_PUBLIC_BACKEND_URL);
 
   const router = useRouter();
-  const exchanges = useSelector((state) => state.exchanges.value);
-  const dispatch = useDispatch();
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -71,14 +59,11 @@ const Login = () => {
     if (!res.error) {
       const session = await getSession();
       if (session.user.accountVerified === false) {
-        // router.push({pathname: '/verify-token', query: {email: session.user.email}});
-        // router.push("/verify-token");
         router.push({
           pathname: "/verify-token",
           query: { email: session.user.email, password: session.user.password },
         });
       } else {
-        // fetchAssetsFromUserInfo(true);
         router.push("/dashboard?selected=0");
       }
     } else {
@@ -86,66 +71,6 @@ const Login = () => {
     }
   };
 
-  const fetchAssetsFromUserInfo = async (save) => {
-    const { user } = await getSession();
-    console.log(user);
-    const response = await fetch(`/api/user/get-user-info?id=${user.id}`, {
-      method: "GET",
-    });
-    const data = await response.json();
-    if (user?.exchanges[0]) {
-      const { USDMClient } = require("binance");
-      const baseUrl = "https://testnet.binancefuture.com";
-      const client = new USDMClient({
-        api_key: user.exchanges[0]?.apiKey,
-        api_secret: user.exchanges[0]?.apiSecret,
-        baseUrl,
-      });
-
-      let filteredAssets;
-
-      await client
-        .getBalance()
-        .then(async (result) => {
-          filteredAssets = result.filter(
-            (item) => parseFloat(item.balance) !== 0
-          );
-          setAssets(filteredAssets);
-        })
-        .catch((err) => {
-          console.error("getBalance error: ", err);
-        });
-
-      if (filteredAssets?.length > 0 && save) {
-        const binance = new ccxt.binance();
-        for (const asset of filteredAssets) {
-          if (asset.asset === "USDT") {
-            asset["usdtBal"] = +asset.balance;
-          } else {
-            // Get the USDT exchange rate for the asset
-            const symbol = `${asset.asset}/USDT`;
-            const ticker = await binance.fetchTicker(symbol);
-            const usdtPrice = ticker.last;
-            // Multiply the balance by the USDT exchange rate to get the balance in USDT
-            const usdtBalance = parseFloat(asset.balance) * usdtPrice;
-            asset["usdtBal"] = usdtBalance;
-          }
-        }
-        let reqBody = {
-          exchangeId: user.exchanges[0]._id,
-          userId: user.id,
-          assets: filteredAssets,
-        };
-        const response = await fetch("/api/wallet/create-wallet", {
-          method: "POST",
-          body: JSON.stringify(reqBody),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
-    }
-  };
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
@@ -153,14 +78,7 @@ const Login = () => {
   }, []);
   return (
     <>
-      <Container
-        sx={{
-          marginTop: width > 1600 ? "0%" : "-10%",
-          minHeight: "90vh",
-        }}
-        component="main"
-        // maxWidth="xs"
-      >
+      <Container component="main">
         <CssBaseline />
         <Box
           sx={{
@@ -171,20 +89,20 @@ const Login = () => {
         >
           <Box
             sx={{
-              marginTop: 8,
-              width: "50vw",
+              mt: 4,
+              width: width > 1300 ? "45vw" : width < 1000 ? "70vw" : "50vw",
+              height: "90vh",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              backgroundImage: "url(https://i.ibb.co/p3vmvzc/authBg.png)",
+              background: "#262626c4",
               backgroundSize: "cover",
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center",
-              borderRadius: 10,
               px: 11,
               py: 8,
-              border: "0px solid #666666",
+              borderRadius: 10,
               backdropFilter: "blur(5px)",
               WebkitBackdropFilter: "blur(10px)",
               boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
@@ -192,21 +110,21 @@ const Login = () => {
           >
             <Typography
               sx={{
-                mt: 1,
+                mt: 2,
                 fontSize: "50px",
                 color: "white",
-                fontWeight: "800",
+                fontWeight: 900,
                 lineHeight: 1,
                 whiteSpace: "nowrap",
+                fontFamily: "Barlow, san-serif",
               }}
               color="primary"
               component="h1"
             >
               Welcome Back
             </Typography>
-            {/* Log in to access your account */}
             <Typography
-              sx={{ mt: 1 }}
+              sx={{ mt: 1, fontFamily: "Barlow, san-serif" }}
               color="#cecece"
               variant="h6"
               fontSize="1rem"
@@ -214,14 +132,6 @@ const Login = () => {
               Log in to access your account
             </Typography>
             <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-              {/* <Typography
-              sx={{ marginBottom: 1, mt: 2 }}
-              color="#cecece"
-              variant="h6"
-              fontSize='1rem'
-            >
-              Email Address:
-            </Typography> */}
               <ValidationTextField
                 focused
                 margin="normal"
@@ -234,14 +144,7 @@ const Login = () => {
                 autoComplete="email"
                 autoFocus
               />
-              {/* <Typography
-              sx={{ marginBottom: 1, mt: 2 }}
-              color="#cecece"
-              variant="h6"
-              fontSize='1rem'
-            >
-              Password:
-            </Typography> */}
+
               <ValidationTextField
                 focused
                 margin="normal"
@@ -268,6 +171,7 @@ const Login = () => {
                     mt: 3,
                     mb: 2,
                     textTransform: "none",
+                    fontFamily: "Barlow, san-serif",
                     background:
                       "linear-gradient(90deg, #790D83 0%, #7A5CFF 100%)",
                     color: "white",
@@ -285,7 +189,10 @@ const Login = () => {
               </Box>
 
               {error && (
-                <Alert sx={{ mb: 1 }} severity="error">
+                <Alert
+                  sx={{ mb: 1, fontFamily: "Barlow, san-serif" }}
+                  severity="error"
+                >
                   {error}
                 </Alert>
               )}
@@ -300,30 +207,29 @@ const Login = () => {
                   mt: 3,
                 }}
               >
-                <Typography fontWeight={600}>Or Login with</Typography>
+                <Typography fontWeight={600} fontFamily={"Barlow, san-serif"}>
+                  Or Login with
+                </Typography>
                 <Google />
               </Box>
-              <Grid container>
-                <Grid item xs>
-                  {/* <Link href="#" color="#795BFF" variant="body2">
-                  Forgot password?
-                </Link> */}
-                </Grid>
-              </Grid>
             </Box>
           </Box>
           <Link
             href="register"
             color="#FFFFFF"
-            variant="body2"
             style={{
               display: "flex",
               alignItems: "center",
               marginTop: "1rem",
+              fontFamily: "Barlow, san-serif",
             }}
           >
-            Don't have an account?{" "}
-            <Typography sx={{ fontWeight: 800 }}> Sign Up</Typography>
+            Don't have an account?
+            <Typography
+              sx={{ fontWeight: 800, fontFamily: "Barlow, san-serif" }}
+            >
+              Sign Up
+            </Typography>
           </Link>
         </Box>
       </Container>

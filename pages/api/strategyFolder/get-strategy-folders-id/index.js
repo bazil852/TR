@@ -1,6 +1,5 @@
 import connectMongo from "../../../../utils/connectMongo";
 import StrategyFolders from "../../../../models/strategyFolder";
-import * as bcrypt from "bcrypt";
 import { Spot } from "@binance/connector";
 
 export default async function handler(req, res) {

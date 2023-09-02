@@ -14,11 +14,12 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "& .MuiInputBase-input": {
     position: "relative",
     height: 15,
-    backgroundColor: "#2A2A2A",
+    backgroundColor: "#3E3E3E",
     borderRadius: "6px",
     fontSize: 15,
     fontWeight: 400,
     padding: "8px 5px",
+
     color: "#FFFFFF",
     transition: theme.transitions.create([
       "border-color",
@@ -60,15 +61,11 @@ const GeneralSettings = (props) => {
     console.log(newData);
     setStrategyFolderOptions(newData.body);
   };
-  const ParametersOptions = [
-    { value: "Dummy1", label: "Dummy1" },
-    { value: "Dummy2", label: "Dummy2" },
-    { value: "Dummy3", label: "Dummy3" },
-  ];
+
   return (
     <Box
       sx={{
-        mt: 3,
+        mt: "23px",
         borderRadius: "5px",
         px:
           width > 1200 && width < 1300
@@ -138,7 +135,7 @@ const GeneralSettings = (props) => {
               alignItems: "center",
               mt: 1,
               mb: width < 900 ? 1 : 3,
-              gap: width < 900 ? 0 : 4.5,
+              gap: width < 900 ? 0 : 4.6,
               flexWrap: width < 900 ? "wrap" : "nowrap",
             }}
           >
@@ -171,7 +168,7 @@ const GeneralSettings = (props) => {
               alignItems: "center",
               mt: 1,
               mb: width < 900 && width > 600 ? 1 : width < 600 ? 0 : 3,
-              gap: width < 900 ? 0 : 10.7,
+              gap: width < 900 ? 0 : 10.9,
               flexWrap: width < 900 ? "wrap" : "nowrap",
             }}
           >
@@ -246,7 +243,7 @@ const GeneralSettings = (props) => {
           <Box
             sx={{
               display: "flex",
-              gap: width < 900 ? 0 : 14.7,
+              gap: width < 900 ? 0 : 14.75,
               flexWrap: width < 900 ? "wrap" : "nowrap",
             }}
           >

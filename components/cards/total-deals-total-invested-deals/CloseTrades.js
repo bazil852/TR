@@ -30,7 +30,6 @@ const CloseTrades = ({ data }) => {
             border: "1px solid #5C5A66",
             height: 17,
             minWidth: 9,
-            fontFamily: "Barlow, san-serif",
             fontWeight: 600,
             color: "#AFAFAF",
             fontSize: 8,
@@ -74,7 +73,7 @@ const CloseTrades = ({ data }) => {
             sx={{
               display: "flex",
               gap: 0.5,
-              mt: 1,
+              mt: 2,
               mb: -0.5,
             }}
           >
@@ -117,7 +116,7 @@ const CloseTrades = ({ data }) => {
               display: "flex",
               gap: 0.5,
               mt: 1,
-              mb: -2,
+              mb: -2.5,
             }}
           >
             <Box

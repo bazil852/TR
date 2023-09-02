@@ -1,7 +1,6 @@
 import connectMongo from "../../../../utils/connectMongo";
 import StrategyFolders from "../../../../models/strategyFolder";
 import Users from "../../../../models/users";
-import * as bcrypt from "bcrypt";
 export default async function handler(req, res) {
   const { method } = req;
 

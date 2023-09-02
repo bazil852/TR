@@ -156,7 +156,8 @@ export default function PrivateHeader({ Component }) {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
-  const [toggle, setToggle] = React.useState(false);
+  const [hovered, setHovered] = React.useState(false);
+  const [clicked, setClicked] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState();
   const [realAccountBalance, setRealAccountBalance] = React.useState(0);
   const router = useRouter();
@@ -238,9 +239,9 @@ export default function PrivateHeader({ Component }) {
     },
     {
       index: 3,
-      title: "Deals Library",
+      title: "Trades Library",
       icon: selectedItem === 3 ? BlueVgridBot : VgridBot,
-      path: "/DealsLibrary",
+      path: "/TradesLibrary",
     },
     {
       index: 4,
@@ -252,7 +253,7 @@ export default function PrivateHeader({ Component }) {
       index: 5,
       title: "Account",
       icon: selectedItem === 5 ? BlueTradingBotsIcon : TradingBotsIcon,
-      path: "/TradesLibrary",
+      path: "/Account",
     },
   ];
 
@@ -269,10 +270,12 @@ export default function PrivateHeader({ Component }) {
 
   const handleDrawerOpen = () => {
     setOpen(true);
+    setClicked(true);
   };
+
   const handleDrawerClose = () => {
     setOpen(false);
-    setToggle(false);
+    setClicked(false);
   };
 
   return (
@@ -288,6 +291,16 @@ export default function PrivateHeader({ Component }) {
               display: "none",
             },
             background: `${open ? "#131414" : "#050606)"}`,
+          },
+          onMouseEnter: () => {
+            if (!clicked) {
+              setHovered(true);
+            }
+          },
+          onMouseLeave: () => {
+            if (!clicked) {
+              setHovered(false);
+            }
           },
         }}
         variant="permanent"
@@ -326,6 +339,7 @@ export default function PrivateHeader({ Component }) {
             </>
           )}
         </DrawerHeader>
+
         <Box
           sx={{
             display: open ? "flex" : "none",
@@ -424,7 +438,7 @@ export default function PrivateHeader({ Component }) {
                     <ListItemIcon
                       sx={{
                         display: "flex",
-                        justifyContent: open ? "center" : "center",
+                        justifyContent: "center",
                         alignItems: "center",
                         pr: !open ? 3 : "",
                       }}
@@ -479,7 +493,7 @@ export default function PrivateHeader({ Component }) {
                     <ListItemIcon
                       sx={{
                         display: "flex",
-                        justifyContent: open ? "center" : "center",
+                        justifyContent: "center",
                         alignItems: "center",
                         pr: !open ? 3 : "",
                       }}
