@@ -63,7 +63,6 @@ const StrategyTabs = (props) => {
   const [botType, setBotType] = useState("");
   const [strategyType, setStrategyType] = useState("");
   const [strategyPair, setStrategyPair] = useState("");
-  const [chartData, setChartData] = useState("");
 
   const setBotSetting = async (values) => {
     let reqBody = {
@@ -105,6 +104,7 @@ const StrategyTabsComponent = (props) => {
   const [value, setvalue] = useState(["general"]);
   const [ANDToggle, setANDToggle] = useState([[true]]);
   const { GeneralSettingsData, setGeneralSettingsData } = useStrategy();
+  const [chartData, setChartData] = useState("");
   // console.log("general settings", GeneralSettingsData);
   const { OrdersData, setOrdersData } = useStrategy();
   const { DCAData, setDCAData } = useStrategy();
@@ -400,6 +400,11 @@ const StrategyTabsComponent = (props) => {
     }
     return selectedOptionTwo?.label || "Select an option";
   };
+  const [formData, setFormData] = useState({});
+
+  const addToForm = (key, value) => {
+    setFormData((prevState) => ({ ...prevState, [key]: value }));
+  };
 
   const open = Boolean(anchorEl);
 
@@ -640,8 +645,8 @@ const StrategyTabsComponent = (props) => {
       label: "Tom Demark Sell 13",
     },
     {
-      value: "Bollinger Bands",
-      label: "Bollinger Bands",
+      value: "Bollinger Bands upper",
+      label: "Bollinger Bands upper",
     },
   ];
 
@@ -882,7 +887,7 @@ const StrategyTabsComponent = (props) => {
     }
   };
 
-  const handleBacktest = async () => {
+  const handleBacktest = async (dropdownValues) => {
     const { user } = await getSession();
 
     console.log("ALL STRAT DATA: ", AllStrategyData);
@@ -896,6 +901,7 @@ const StrategyTabsComponent = (props) => {
         takeProfit: TakeProfitData[index],
         parameters: ParametersData[index],
         user,
+        dropdownValues,
       };
     });
     console.log(temp);
@@ -2805,7 +2811,6 @@ const StrategyTabsComponent = (props) => {
                                           ParametersIndex
                                         )
                                       }
-                                      // onClick={handlePopoverOpen}
                                       sx={{
                                         color: "white",
                                         background: "#2D2D2D",

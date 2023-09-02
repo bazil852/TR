@@ -7,7 +7,6 @@ import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-
 import { Alert } from "@mui/material";
 import { useRouter } from "next/router";
 import { signIn, getSession } from "next-auth/react";
@@ -32,6 +31,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
       "background-color",
       "box-shadow",
     ]),
+
     "&:focus": {
       boxShadow: "none",
       borderColor: "none",
@@ -100,9 +100,9 @@ const Login = () => {
               backgroundSize: "cover",
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center",
-              borderRadius: 10,
               px: 11,
               py: 8,
+              borderRadius: 10,
               backdropFilter: "blur(5px)",
               WebkitBackdropFilter: "blur(10px)",
               boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
