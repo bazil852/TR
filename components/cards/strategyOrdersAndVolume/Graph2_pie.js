@@ -1,99 +1,107 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as echarts from "echarts";
+import { Box } from "@mui/material";
+import { useSelector } from "react-redux";
 
-function Graph2_pie({ dataArray }) {
+const Graph2_pie = ({ data }) => {
   const chartRef = useRef(null);
-
   const colors = ["#3DFFDC", "#1ED6FF", "#5A3FFF", "#ADE1FF", "#268AFF"];
+  const [width, setWidth] = useState(globalThis?.innerWidth);
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
 
   useEffect(() => {
-    if (chartRef.current) {
-      const myChart = echarts.init(chartRef.current);
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
 
-      const option = {
-        tooltip: {
-          trigger: "item",
-          formatter: "{b} : {c} ({d}%)",
-          backgroundColor: "rgba(0, 0, 0, 0.8)",
-          borderWidth: 0,
-          textStyle: {
-            color: "#FFFFFF",
-            fontWeight: 500,
-            fontSize: 14,
-            fontFamily: "Barlow, san-serif",
-          },
+  useEffect(() => {
+    const dom = chartRef.current;
+    const myChart = echarts.init(dom);
+
+    const option = {
+      tooltip: {
+        show: true,
+        trigger: "item",
+        position: "top",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        borderWidth: 0,
+        textStyle: {
+          color: "#FFFFFF",
+          fontWeight: 500,
+          fontSize: 14,
+          fontFamily: "Barlow, san-serif",
         },
-        legend: {
-          itemGap: 8,
-          bottom: 0,
-          textStyle: {
-            fontFamily: "Barlow, san-serif",
-            color: "#8C8C8C",
-            fontWeight: 500,
-          },
-          itemStyle: {
-            borderColor: "transparent",
-          },
-        },
-        color: colors,
-        series: [
-          {
-            type: "pie",
-            radius: "50%",
-            data: dataArray,
+        formatter: "{b}: {c}",
+      },
+      series: [
+        {
+          type: "pie",
+          radius:
+            width < 1100 && width > 999 && !isDrawerOpen
+              ? "70%"
+              : width < 480 && width > 399 && !isDrawerOpen
+              ? "70%"
+              : width < 400 && !isDrawerOpen
+              ? "70%"
+              : isDrawerOpen && width > 999 && width < 1300
+              ? "60%"
+              : isDrawerOpen && width > 1299
+              ? "70%"
+              : width < 1000 && width > 899
+              ? "70%"
+              : "80%",
+          center: ["50%", "50%"],
+          data: data.map((item, idx) => ({
+            value: item.value,
+            name: item.name,
             itemStyle: {
+              color: colors[idx % colors.length],
               borderColor: "black",
-              borderWidth: 1.5,
+              borderWidth: 2,
             },
-            labelLine: {
-              show: true,
-              lineStyle: {
-                color: "#8C8C8C",
-              },
-            },
+          })),
+          label: { show: width < 600 ? false : false },
+          labelLine: { show: false },
+          emphasis: {
             label: {
-              show: false,
-              formatter: "{b}: {c} ({d}%)",
-              fontFamily: "Barlow, san-serif",
-              color: "#8C8C8C",
-              fontWeight: 500,
+              show: width < 600 ? false : true,
+              color: "#9A9A9A",
+              fontFamily: "Barlow, sans-serif",
             },
-            emphasis: {
-              label: {
-                show: true,
+
+            labelLine: {
+              show: width < 600 ? false : true,
+              lineStyle: {
+                color: "#9A9A9A",
               },
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)",
-              },
-              labelLine: {
-                show: true,
-                lineStyle: {
-                  color: "#8C8C8C",
-                },
-              },
+              smooth: 0.1,
+              length: width < 600 ? 4 : 8,
+              length2: width < 600 ? 2 : 6,
             },
           },
-        ],
-      };
+        },
+      ],
+    };
 
-      myChart.setOption(option);
-    }
-  }, [dataArray]);
+    myChart.setOption(option);
+    window.addEventListener("resize", myChart.resize);
+    return () => window.removeEventListener("resize", myChart.resize);
+  }, [data, width, isDrawerOpen]);
 
   return (
-    <div
-      ref={chartRef}
-      style={{
+    <Box
+      id="chart-container"
+      sx={{
+        height: 300,
+        width: width < 900 ? "100%" : 450,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        overflow: "auto",
-        height: "400px",
       }}
-    ></div>
+      ref={chartRef}
+    />
   );
-}
+};
 
 export default Graph2_pie;

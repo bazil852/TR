@@ -1,64 +1,63 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import * as echarts from "echarts";
+import { Box } from "@mui/material";
+import { useSelector } from "react-redux";
 
 function Graph1_bar({ data }) {
   const chartRef = useRef(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const [width, setWidth] = useState(globalThis?.innerWidth);
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
 
-  const colors = ["#5A3FFF", "#268AFF", "#1ED6FF", "#3DFFDC", "#ADE1FF"];
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
 
-  const seriesData = Object.entries(data).map(([key, value], index) => ({
-    maintainAspectRatio: false,
-    name: key,
-    type: "bar",
-    stack: "total",
-    label: { show: false },
-    emphasis: { focus: "series" },
-    data: value,
-    itemStyle: {
-      color: colors[index % colors.length],
-    },
-  }));
+  const updateWidth = () => {
+    if (chartRef.current) {
+      setContainerWidth(chartRef.current.offsetWidth);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", updateWidth);
+    updateWidth();
+
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
 
   const maxLength = Math.max(...Object.values(data).map((arr) => arr.length));
 
-  let barThickness;
-  if (maxLength === 1) {
-    barThickness = 90;
-  } else if (maxLength === 2) {
-    barThickness = 75;
-  } else if (maxLength === 3) {
-    barThickness = 65;
-  } else if (maxLength === 4) {
-    barThickness = 55;
-  } else if (maxLength === 5) {
-    barThickness = 45;
-  } else if (maxLength === 6) {
-    barThickness = 35;
-  } else if (maxLength === 7) {
-    barThickness = 35;
-  } else if (maxLength === 9) {
-    barThickness = 30;
-  } else if (maxLength === 10) {
-    barThickness = 30;
-  } else if (maxLength === 11) {
-    barThickness = 30;
-  } else if (maxLength === 12) {
-    barThickness = 25;
-  } else if (maxLength >= 13 && maxLength <= 17) {
-    barThickness = 20;
-  } else {
-    barThickness = 20;
-  }
-  console.log(barThickness);
-  const categories =
-    seriesData[0]?.data?.map((_, index) => (index + 1).toString()) || [];
-  const widthPerBar = barThickness;
-  const gap = maxLength > 20 ? 10 : 0;
-  const containerWidth = `${maxLength * (widthPerBar + gap)}px`;
-
   useEffect(() => {
+    const colors = ["#5A3FFF", "#268AFF", "#1ED6FF", "#3DFFDC", "#ADE1FF"];
+    const seriesData = Object.entries(data).map(([key, value], index) => ({
+      name: key,
+      type: "bar",
+      stack: "total",
+      label: { show: false },
+      emphasis: { focus: "series" },
+      data: value,
+      itemStyle: {
+        color: colors[index % colors.length],
+      },
+    }));
+
+    const categories =
+      seriesData[0]?.data?.map((_, index) => (index + 1).toString()) || [];
+
+    const barThickness = getBarThickness(maxLength);
+    const barGap = 6;
+    const barWidth = barThickness;
+    const requiredWidth = maxLength * (barWidth + barGap);
+
+    const dynamicWidth =
+      containerWidth >= requiredWidth ? containerWidth : requiredWidth;
+
     if (chartRef.current) {
       const myChart = echarts.init(chartRef.current);
+      myChart.resize({ width: dynamicWidth });
 
       const option = {
         tooltip: {
@@ -73,14 +72,14 @@ function Graph1_bar({ data }) {
             fontFamily: "Barlow, san-serif",
           },
         },
-        legend: {
-          bottom: 0,
-          textStyle: {
-            fontFamily: "Barlow, san-serif",
-            color: "#8C8C8C",
-            fontWeight: 500,
-          },
-        },
+        // legend: {
+        //   bottom: width < 337 ? -7 : 0,
+        //   textStyle: {
+        //     fontFamily: "Barlow, san-serif",
+        //     color: "#8C8C8C",
+        //     fontWeight: 500,
+        //   },
+        // },
         grid: {
           left: "3%",
           right: "4%",
@@ -116,25 +115,55 @@ function Graph1_bar({ data }) {
         },
         series: seriesData.map((series) => ({
           ...series,
-          barWidth: barThickness,
+          barWidth: barWidth,
+          barGap: barGap,
         })),
       };
 
       myChart.setOption(option);
     }
-  }, [data]);
+  }, [data, containerWidth]);
+  const getBarThickness = (maxLength) => {
+    if (maxLength === 1) return 90;
+    if (maxLength === 2) return 75;
+    if (maxLength === 3) return 65;
+    if (maxLength === 4) return 55;
+    if (maxLength === 5) return 45;
+    if (maxLength >= 6 && maxLength <= 8 && width > 399) return 35;
+    if (maxLength >= 6 && maxLength <= 8 && width < 400) return 25;
+    if (maxLength >= 9 && maxLength <= 11) return 30;
+    if (maxLength === 12) return 25;
+    return 17;
+  };
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "380px",
-        overflowX: "auto",
+    <Box
+      sx={{
+        height: 345,
+        mt: -5,
+        overflowX:
+          width < 1000 && width > 483 && maxLength < 22
+            ? "hidden"
+            : width < 483 && width > 435 && maxLength < 19
+            ? "hidden"
+            : width < 436 && width > 389 && maxLength < 17
+            ? "hidden"
+            : width < 390 && maxLength < 9
+            ? "hidden"
+            : width > 1305 && !isDrawerOpen && maxLength < 32
+            ? "hidden"
+            : width > 999 && !isDrawerOpen && maxLength < 24
+            ? "hidden"
+            : width < 1306 && width > 1100 && !isDrawerOpen && maxLength < 27
+            ? "hidden"
+            : "auto",
+        overflowY: "hidden",
         " ::-webkit-scrollbar": {
           height: 3,
         },
         "::-webkit-scrollbar-track": {
           background: "none",
+          mx: 2,
         },
         "::-webkit-scrollbar-thumb": {
           background: "#888",
@@ -142,14 +171,14 @@ function Graph1_bar({ data }) {
         },
       }}
     >
-      <div
+      <Box
         ref={chartRef}
-        style={{
-          width: maxLength > 17 ? containerWidth : "100%",
-          height: "100%",
+        sx={{
+          height: 370,
+          mb: 1,
         }}
       />
-    </div>
+    </Box>
   );
 }
 

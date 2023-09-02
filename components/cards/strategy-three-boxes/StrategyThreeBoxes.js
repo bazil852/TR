@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Checkbox,
@@ -87,28 +87,29 @@ const StrategyThreeBoxes = () => {
       />
     );
   }
-  const [AllToggles, setAllToggles] = useState({
-    "Strategy Name": false,
-    Pairs: false,
-    "First Order Size": false,
-    "Order Type": false,
-    Parameters: false,
-    "DCA Type": false,
-    "Volume Multiplier": false,
-    "Max. Extra Orders": false,
-    "Take Profit": false,
-  });
+  const [width, setWidth] = useState(globalThis?.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWidth(globalThis?.innerWidth);
+    globalThis?.addEventListener("resize", handleResize);
+    return () => globalThis?.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <Grid container spacing={"20px"}>
-      <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 3.5} lg={3.5}>
+    <Grid container spacing={"20px"} mt={"0px"}>
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={isDrawerOpen && width > 999 ? 6 : width < 1150 ? 4 : 3}
+        lg={isDrawerOpen && width < 1351 ? 6 : 3}
+      >
         <Box
           sx={{
             background: "#262626",
             border: "1.2px solid #3F4341",
             borderRadius: "4.8px",
             pt: 2,
-            minHeight: 350,
+            minHeight: 325,
           }}
         >
           <Typography
@@ -118,6 +119,7 @@ const StrategyThreeBoxes = () => {
               fontFamily: "Barlow, san-serif",
               pb: 2,
               pl: 2,
+              height: 50,
             }}
           >
             VOLUME REQUIRED VS VOLUME AVAILABLE
@@ -133,7 +135,52 @@ const StrategyThreeBoxes = () => {
           </Box>
         </Box>
       </Grid>
-      <Grid item xs={12} sm={6} md={isDrawerOpen ? 6 : 3.5} lg={3.5}>
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={isDrawerOpen && width > 999 ? 6 : width < 1150 ? 4 : 3}
+        lg={isDrawerOpen && width < 1351 ? 6 : 3}
+      >
+        <Box
+          sx={{
+            background: "#262626",
+            border: "1.2px solid #3F4341",
+            borderRadius: "4.8px",
+            pt: 2,
+            minHeight: 325,
+          }}
+        >
+          <Typography
+            sx={{
+              fontWeight: 600,
+              fontSize: 14,
+              fontFamily: "Barlow, san-serif",
+              pb: 2,
+              pl: 2,
+              height: 50,
+            }}
+          >
+            % OF AVAILABLE USDT
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <MeterChart />
+          </Box>
+        </Box>
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={isDrawerOpen && width > 999 ? 6 : width < 1150 ? 4 : 3}
+        lg={isDrawerOpen && width < 1351 ? 6 : 3}
+      >
         <Box
           sx={{
             background: "#262626",
@@ -141,7 +188,7 @@ const StrategyThreeBoxes = () => {
             borderRadius: "4.8px",
             pt: 2,
             pl: 2,
-            minHeight: 350,
+            minHeight: 325,
           }}
         >
           <Typography
@@ -327,9 +374,9 @@ const StrategyThreeBoxes = () => {
           item
           key={index}
           xs={12}
-          sm={12}
-          md={isDrawerOpen ? 12 : 5}
-          lg={5}
+          sm={6}
+          md={isDrawerOpen && width > 999 ? 6 : width < 1150 ? 6 : 3}
+          lg={isDrawerOpen && width < 1351 ? 6 : 3}
         >
           <Box
             sx={{
@@ -338,7 +385,7 @@ const StrategyThreeBoxes = () => {
               borderRadius: "4.8px",
               pt: 2,
               pl: 2,
-              minHeight: 350,
+              minHeight: 325,
             }}
           >
             <Typography
@@ -367,6 +414,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               First order size: {OrdersData[0]["firstOrderSize"]}
@@ -377,6 +428,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               Extra order size: {OrdersData[0]["extraOrderSize"]}
@@ -397,6 +452,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 250,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               Parameters: {ParametersData[0][0]["1"]}
@@ -417,6 +476,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               Volume multiplier: {DCAData[0]["volumeMultiplier"]}
@@ -427,6 +490,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               Max. extra orders: {DCAData[0]["maxExtraOrders"]}
@@ -437,6 +504,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               Min. dist. between orders: {DCAData[0]["minDistBetweenOrders"]}
@@ -447,6 +518,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               Drop to start extra order: {DCAData[0]["startExtraOrder"]}
@@ -457,6 +532,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               Step multiplier: {DCAData[0]["stepMultiplier"]}
@@ -467,6 +546,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               Take Profit: {TakeProfitData[0]["takeProfit"]}
@@ -477,6 +560,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               {" "}
@@ -488,6 +575,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               Advanced:{Setting.Advanced}{" "}
@@ -498,6 +589,10 @@ const StrategyThreeBoxes = () => {
                 fontSize: "13px",
                 lineHeight: "16px",
                 fontFamily: "Barlow, san-serif",
+                width: 200,
+                overflow: "hidden",
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
               {" "}

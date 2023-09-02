@@ -66,6 +66,9 @@ const Graph2 = ({ dataArray }) => {
       },
     },
   });
+
+  const nonZeroData = dataArray.filter((value) => value !== 0);
+  const labelsToShow = months.filter((_, index) => dataArray[index] !== 0);
   const maxVal = Math.max(...dataArray);
   const adjustedMax = Math.ceil((maxVal + 1) / 500) * 600;
   const stepSize = adjustedMax / 10 < 250 ? 50 : adjustedMax / 5;
@@ -77,19 +80,13 @@ const Graph2 = ({ dataArray }) => {
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
 
-  const lastNonZeroIndex = dataArray
-    .map((value, index) => (value !== 0 ? index : -1))
-    .reduce((maxIndex, curr, index) => (curr > -1 ? index : maxIndex), -1);
-
-  const labelsToShow = months.slice(0, lastNonZeroIndex + 1);
-
   const data = useMemo(
     () => ({
       labels: labelsToShow,
       datasets: [
         {
           label: "$ of Earnings",
-          data: dataArray,
+          data: nonZeroData,
           fill: false,
           borderColor: "#1ED6FF",
           pointBackgroundColor: "#1ED6FF",
@@ -157,24 +154,89 @@ const Graph2 = ({ dataArray }) => {
       },
     },
   };
-  const graphWidth = labelsToShow.length * 23;
+
+  let multiplier;
+  if (nonZeroData.length === 1) {
+    multiplier = 90;
+  } else if (nonZeroData.length === 2) {
+    multiplier = 75;
+  } else if (nonZeroData.length === 3) {
+    multiplier = 65;
+  } else if (nonZeroData.length === 4) {
+    multiplier = 55;
+  } else if (nonZeroData.length === 5) {
+    multiplier = 45;
+  } else if (nonZeroData.length === 6) {
+    multiplier = 35;
+  } else if (nonZeroData.length === 9) {
+    multiplier = 30;
+  } else if (nonZeroData.length === 10) {
+    multiplier = 30;
+  } else if (nonZeroData.length === 11) {
+    multiplier = 30;
+  } else if (nonZeroData.length === 12) {
+    multiplier = 30;
+  } else if (nonZeroData.length >= 13 && nonZeroData.length <= 24) {
+    multiplier = 30;
+  } else if (nonZeroData.length > 24) {
+    multiplier = 20;
+  } else {
+    multiplier = 30;
+  }
+
+  const graphWidth = labelsToShow.length * multiplier;
   const classes = useStyles();
   return (
     <Box
       className={classes.scrollContainer}
       style={{
         position: "relative",
-        width: `100%`,
-        height: "274.643px",
+        width: "100%",
+        paddingBottom: "0.5rem",
+        marginBottom: width > 900 ? "0.2rem" : "0rem",
         paddingTop: "1rem",
         marginLeft: "1rem",
+        marginRight:
+          width < 1400 && width > 899 && nonZeroData.length > 18
+            ? "1rem"
+            : width < 600
+            ? "1rem"
+            : width > 1399
+            ? "0.1rem"
+            : "0rem",
         overflowX: "auto",
+        "::-webkit-scrollbar": {
+          height: "3px",
+        },
+        "::-webkit-scrollbar-track": {
+          background: "none",
+        },
+        "::-webkit-scrollbar-thumb": {
+          background: "#888",
+          borderRadius: "4px",
+        },
       }}
     >
       <div
         style={{
-          width: labelsToShow.length > 11 ? `${graphWidth}px` : "100%",
-          height: "100%",
+          width:
+            nonZeroData.length > 18 && width < 1400 && width > 899
+              ? graphWidth
+              : width < 900 && width > 599
+              ? "100%"
+              : width < 600 && width > 420 && nonZeroData.length < 21
+              ? "100%"
+              : width < 600 && width > 420 && nonZeroData.length > 20
+              ? graphWidth
+              : width < 421 && nonZeroData.length < 13
+              ? "100%"
+              : width < 421 && nonZeroData.length > 12
+              ? graphWidth
+              : width > 1399
+              ? "100%"
+              : "100%",
+          height: "250px",
+          marginTop: "-0.15rem",
         }}
       >
         <Line data={data} options={options} />

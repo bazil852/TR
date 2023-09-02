@@ -9,7 +9,7 @@ const SelectInputParameters = (props) => {
       backgroundColor: "#3E3E3E",
       width: props.Width,
       marginLeft: props.keyName === "operation" && "auto",
-      minHeight: "30px",
+      minHeight: "28px",
       borderRadius: "6px",
     }),
     container: (provided) => ({
@@ -41,6 +41,16 @@ const SelectInputParameters = (props) => {
       ...provided,
       background: "#2B2B2B",
       color: "#FFFFFF",
+      width:
+        props.keyName === "orderType"
+          ? props.Width
+          : props.keyName === "dcaType"
+          ? props.Width
+          : props.keyName === "takeProfit"
+          ? props.Width
+          : props.keyName === "leverage"
+          ? props.Width
+          : "100%",
     }),
     valueContainer: (provided, state) => ({
       ...provided,

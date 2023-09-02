@@ -65,7 +65,6 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
             border: "1px solid #5C5A66",
             height: 17,
             minWidth: 9,
-            fontFamily: "Barlow, san-serif",
             fontWeight: 600,
             color: "#AFAFAF",
             fontSize: 8,
@@ -143,6 +142,38 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
               md={isDrawerOpen && width > 999 ? 12 : 5}
               lg={width > 1300 ? 5 : 6}
             >
+              <Typography
+                sx={{
+                  display:
+                    width < 1200 && width > 999 && isDrawerOpen
+                      ? "block"
+                      : width < 900
+                      ? "block"
+                      : "none",
+                  fontSize: 17,
+                  fontFamily: "Barlow, san-serif",
+                  color: "#ACB2B7",
+                  fontWeight: 500,
+                  mt:
+                    width < 1200 && width > 999 && isDrawerOpen
+                      ? 0
+                      : width < 600
+                      ? 0
+                      : width < 961 && width > 899
+                      ? 0
+                      : -3,
+                  textAlign:
+                    width < 1200 && width > 999 && isDrawerOpen
+                      ? "center"
+                      : width < 600
+                      ? "center"
+                      : "",
+                  pb: width < 961 ? 0 : 2,
+                  pl: width < 900 && width > 599 ? 2 : "",
+                }}
+              >
+                Top 3
+              </Typography>
               <Box
                 sx={{
                   display: "flex",
@@ -163,11 +194,37 @@ const ConsolidatedPortfolio = ({ totalAssets }) => {
                       ? "wrap"
                       : "nowrap",
                   float: width < 961 ? "left" : "right",
+                  px: width > 1200 ? 5 : 2,
                   gap: 1.5,
                   mt: width < 961 ? 2 : "",
-                  px: width > 1200 ? 5 : 2,
                 }}
               >
+                <Typography
+                  sx={{
+                    display:
+                      width < 1200 && width > 999 && isDrawerOpen
+                        ? "none"
+                        : width < 900
+                        ? "none"
+                        : "block",
+                    fontSize: 17,
+                    fontFamily: "Barlow, san-serif",
+                    color: "#ACB2B7",
+                    fontWeight: 500,
+                    mt:
+                      width < 1200 && width > 999 && isDrawerOpen
+                        ? 0
+                        : width < 600
+                        ? 0
+                        : width < 961 && width > 899
+                        ? 0
+                        : -3,
+
+                    pb: width < 961 ? 0 : 2,
+                  }}
+                >
+                  Top 3
+                </Typography>
                 {topThree.map((coin) => (
                   <Box>
                     <Typography

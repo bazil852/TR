@@ -46,7 +46,6 @@ const PortfolioByExchange = ({ coins, balanceHistory }) => {
             border: "1px solid #5C5A66",
             height: 17,
             minWidth: 9,
-            fontFamily: "Barlow, san-serif",
             fontWeight: 600,
             color: "#AFAFAF",
             fontSize: 8,

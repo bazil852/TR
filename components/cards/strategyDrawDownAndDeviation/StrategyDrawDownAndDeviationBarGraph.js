@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { useSelector } from "react-redux";
 import Graph1_Bar from "./Graph1_Bar";
 
 const StrategyDrawDownAndDeviationBarGraph = () => {
-  const [width, setWidth] = useState(globalThis?.innerWidth);
-  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
-
   const data = [
     {
       drawdown: [
@@ -19,35 +15,32 @@ const StrategyDrawDownAndDeviationBarGraph = () => {
         7,
         8,
         9,
-        7,
-        6,
-        5,
-        4,
-        6,
-        7,
-        8,
-        9,
-        7,
-        6,
-        5,
-        4,
-        6,
-        7,
-        8,
-        9,
-        4,
-        5,
-        6,
-        7,
-        8,
-        6,
-        7,
-        8,
-        9,
-        7,
-        6,
-        5,
-        4,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        22,
+        23,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        22,
+        23,
       ],
     },
     {
@@ -61,40 +54,37 @@ const StrategyDrawDownAndDeviationBarGraph = () => {
         7,
         8,
         9,
-        4,
-        5,
-        6,
-        7,
-        8,
-        6,
-        7,
-        8,
-        9,
-        7,
-        6,
-        5,
-        4,
-        6,
-        7,
-        8,
-        9,
-        4,
-        5,
-        6,
-        7,
-        8,
-        6,
-        7,
-        8,
-        9,
-        7,
-        6,
-        5,
-        4,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        22,
+        23,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        22,
+        23,
       ],
     },
   ];
 
+  const [width, setWidth] = useState(globalThis?.innerWidth);
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
@@ -107,8 +97,9 @@ const StrategyDrawDownAndDeviationBarGraph = () => {
         background: "#262626",
         border: "1.2px solid #3F4341",
         borderRadius: "4.8px",
-        height: 400,
-        minWidth: "100%",
+        height: width < 468 ? 420 : 390,
+        width: "100%",
+        mt: "20px",
       }}
     >
       <Box
@@ -130,28 +121,8 @@ const StrategyDrawDownAndDeviationBarGraph = () => {
           DRAWDOWN AND DEVIATION PER TRADE
         </Typography>
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          overflowX: "auto",
-          width: "100%",
-          mt: -5,
-          " ::-webkit-scrollbar": {
-            height: 3,
-          },
-          "::-webkit-scrollbar-track": {
-            background: "none",
-          },
-          "::-webkit-scrollbar-thumb": {
-            background: "#888",
-            borderRadius: "4px",
-          },
-        }}
-      >
-        <Graph1_Bar data={data} />
-      </Box>
+
+      <Graph1_Bar data={data} />
     </Box>
   );
 };

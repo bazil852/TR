@@ -31,7 +31,6 @@ const ActiveTrades = ({ data }) => {
             border: "1px solid #5C5A66",
             height: 17,
             minWidth: 9,
-            fontFamily: "Barlow, san-serif",
             fontWeight: 600,
             color: "#AFAFAF",
             fontSize: 8,
@@ -86,7 +85,7 @@ const ActiveTrades = ({ data }) => {
             sx={{
               display: "flex",
               gap: 0.5,
-              mt: 1,
+              mt: 2,
               mb: -0.5,
             }}
           >
@@ -129,7 +128,7 @@ const ActiveTrades = ({ data }) => {
               display: "flex",
               gap: 0.5,
               mt: 1,
-              mb: -3,
+              mb: -2.5,
             }}
           >
             <Box
