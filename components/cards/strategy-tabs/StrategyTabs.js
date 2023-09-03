@@ -230,9 +230,13 @@ const StrategyTabsComponent = (props) => {
 
   const [leverageSelectedOption, setLeverageSelectedOption] = useState("");
 
+  const [sliderValue, setSliderValue] = useState(0);
+
   const leverageHandleChange = (selectedOption) => {
+    console.log(selectedOption);
     setLeverageSelectedOption(selectedOption ? selectedOption.value : "");
   };
+  console.log(leverageSelectedOption, sliderValue);
 
   const handleInputChangeSimple = (event) => {
     const { name, value } = event.target;
@@ -461,7 +465,9 @@ const StrategyTabsComponent = (props) => {
     let uniqueDataArray = [...new Set(combinedAssetsSymbols)];
 
     console.log(uniqueDataArray);
-    setPairsOptions(uniqueDataArray);
+
+    const filteredUniqueDataArray = uniqueDataArray.filter(Boolean);
+    setPairsOptions(filteredUniqueDataArray);
   };
 
   const fetchStrategiesByUserId = async () => {
@@ -500,6 +506,8 @@ const StrategyTabsComponent = (props) => {
         extraOrderSize: "",
         orderType: "",
         pairs: "",
+        leverage: false,
+        leverageValue: "",
       },
     ]);
     setDCAData([
@@ -886,6 +894,7 @@ const StrategyTabsComponent = (props) => {
       alert("Strategy Not Saved");
     }
   };
+  console.log(OrdersData);
 
   const handleBacktest = async (dropdownValues) => {
     const { user } = await getSession();
@@ -1753,8 +1762,16 @@ const StrategyTabsComponent = (props) => {
                           Leverage
                         </Typography>
                         <SelectInputParameters
-                          value={leverageSelectedOption}
-                          onChange={leverageHandleChange}
+                          value={OrdersData[index]["leverage"] ? "Yes" : "No"}
+                          onChange={(selectedOption) => {
+                            setLeverageSelectedOption(
+                              selectedOption ? selectedOption.value : ""
+                            );
+                            const temp = [...OrdersData];
+                            temp[index].leverage =
+                              selectedOption.value === "Yes" ? true : false;
+                            setOrdersData(temp);
+                          }}
                           Width={width < 600 ? "100%" : "7rem"}
                           options={LeverageOptions}
                           keyName={"leverage"}
@@ -1785,7 +1802,15 @@ const StrategyTabsComponent = (props) => {
                               : "hidden",
                         }}
                       >
-                        <LeverageSlider />
+                        <LeverageSlider
+                          setSliderValue={(newInputValue) => {
+                            setSliderValue(newInputValue);
+                            const temp = [...OrdersData];
+                            temp[index].leverageValue = newInputValue;
+                            setOrdersData(temp);
+                          }}
+                          sliderValue={OrdersData[index]["leverageValue"]}
+                        />
                       </Box>
                     </Grid>
                   </Grid>

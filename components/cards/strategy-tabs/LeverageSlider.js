@@ -1,23 +1,25 @@
 import React, { useState } from "react";
 import { Box, Slider, Typography } from "@mui/material";
 
-const LeverageSlider = () => {
-  const [sliderValue, setSliderValue] = useState(0);
-  const [inputValue, setInputValue] = useState(sliderValue.toString());
+const LeverageSlider = (props) => {
+  // const [sliderValue, setSliderValue] = useState(0);
+  const [inputValue, setInputValue] = useState(props?.sliderValue?.toString());
+
+  console.log(props.sliderValue, inputValue);
 
   const handleSliderChange = (event, newValue) => {
     if (newValue % 10 <= 2 || newValue % 10 >= 8) {
       newValue = Math.round(newValue / 10) * 10;
     }
-    setSliderValue(newValue);
+    props.setSliderValue(newValue);
     setInputValue(newValue.toString());
   };
 
   const handleMouseUp = (event) => {
-    let newValue = sliderValue;
+    let newValue = props.sliderValue;
     if (newValue % 10 <= 2 || newValue % 10 >= 8) {
       newValue = Math.round(newValue / 10) * 10;
-      setSliderValue(newValue);
+      props.setSliderValue(newValue);
       setInputValue(newValue.toString());
     }
   };
@@ -27,7 +29,7 @@ const LeverageSlider = () => {
     setInputValue(event.target.value);
 
     if (value >= 1 && value <= backendValues[backendValues.length - 1]) {
-      setSliderValue(value);
+      props.setSliderValue(value);
     }
   };
 
@@ -52,7 +54,7 @@ const LeverageSlider = () => {
         Select Leverage
       </Typography>
       <Slider
-        value={sliderValue}
+        value={props.sliderValue}
         onChange={handleSliderChange}
         onMouseUp={handleMouseUp}
         step={1}
