@@ -64,12 +64,18 @@ const GraphSpotfuturePieChart = ({ data }) => {
 
     const option = {
       tooltip: {
+        show: true,
         trigger: "item",
         position: "top",
-        fontFamily: "Barlow, sans-serif",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        borderWidth: 0,
         textStyle: {
-          fontFamily: "Barlow, sans-serif",
+          color: "#FFFFFF",
+          fontWeight: 500,
+          fontSize: 14,
+          fontFamily: "Barlow, san-serif",
         },
+        formatter: "{b}: {c}",
       },
       series: [
         {

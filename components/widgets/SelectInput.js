@@ -1,10 +1,6 @@
 import React from "react";
-import Link from "@mui/material/Link";
-import Typography from "@mui/material/Typography";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
 import OutlinedInput from "@mui/material/OutlinedInput";
 
 const SelectInput = (props) => {
@@ -20,6 +16,7 @@ const SelectInput = (props) => {
         PaperProps: {
           sx: {
             backgroundColor: "#2B2B2B",
+            fontFamily: "Barlow,san-serif",
             mt: 0.5,
             "& .MuiMenuItem-root": {
               color: "white",
@@ -37,6 +34,7 @@ const SelectInput = (props) => {
             },
             "& .MuiMenu-paper": {
               marginTop: "8px",
+              
             },
             "& .MuiListItem-root": {
               paddingTop: "10px",

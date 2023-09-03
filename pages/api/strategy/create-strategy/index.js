@@ -2,7 +2,6 @@ import connectMongo from "../../../../utils/connectMongo";
 import Strategy from "../../../../models/strategy";
 import StrategyFolders from "../../../../models/strategyFolder";
 import Users from "../../../../models/users";
-import * as bcrypt from "bcrypt";
 import { Spot } from "@binance/connector";
 export default async function handler(req, res) {
   const { method } = req;
@@ -25,6 +24,7 @@ export default async function handler(req, res) {
 
         const strategies = await Promise.all(
           req.body.map(async (item) => {
+            console.log(item);
             let strategy;
             if (item._id) {
               strategy = await Strategy.findOneAndUpdate(
@@ -37,6 +37,7 @@ export default async function handler(req, res) {
                 }
               ).exec();
             } else {
+              console.log(item);
               strategy = await Strategy.create(item);
 
               // After creating a new strategy, if strategyFolder is not an empty string,

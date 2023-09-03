@@ -72,9 +72,9 @@ const Graph1 = ({ dataArray, valueType }) => {
   const maxVal = Math.max(...nonZeroData);
   const adjustedMax = Math.ceil((maxVal + 1) / 500) * 600;
   const stepSize = adjustedMax / 10 < 250 ? 50 : adjustedMax / 5;
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
 
   const [width, setWidth] = useState(globalThis?.innerWidth);
-  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
     globalThis?.addEventListener("resize", handleResize);
@@ -112,6 +112,8 @@ const Graph1 = ({ dataArray, valueType }) => {
         ? 25
         : width > 1399 && isDrawerOpen
         ? 22
+        : width < 650 && width > 599
+        ? 23
         : 25;
   }
 
@@ -148,7 +150,6 @@ const Graph1 = ({ dataArray, valueType }) => {
 
   const options = {
     maintainAspectRatio: false,
-
     scales: {
       y: {
         beginAtZero: true,
@@ -241,11 +242,17 @@ const Graph1 = ({ dataArray, valueType }) => {
               ? totalChartWidth
               : width < 900 && width > 599
               ? "100%"
-              : width < 600
+              : width < 600 && width > 420 && nonZeroData.length < 21
+              ? "100%"
+              : width < 600 && width > 420 && nonZeroData.length > 20
+              ? totalChartWidth
+              : width < 421 && nonZeroData.length < 10
+              ? "100%"
+              : width < 421 && nonZeroData.length > 9
               ? totalChartWidth
               : width > 1399
               ? "100%"
-              : "97%",
+              : "100%",
           height: "250px",
         }}
       >

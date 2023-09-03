@@ -64,7 +64,7 @@ const MainContainer = () => {
   return (
     <Grid container sx={{ mt: 0, minWidth: "100%" }} spacing={"20px"}>
       {Data.map((item, index) => (
-        <Grid key={index} item xs={12} sm={6} md={6} lg={4}>
+        <Grid key={index} item xs={12} sm={6} md={6} lg={width > 1220 ? 4 : 6}>
           <Box
             sx={{
               background: "#262626",
@@ -200,7 +200,7 @@ const MainContainer = () => {
                       ? 0
                       : width < 600 && width > 500
                       ? 10
-                      : width > 1080 && width < 1200 && !isDrawerOpen
+                      : width > 1080 && width < 1221 && !isDrawerOpen
                       ? 10
                       : width > 1199 && width < 1440 && isDrawerOpen
                       ? 0
@@ -298,14 +298,18 @@ const MainContainer = () => {
                   height:
                     isDrawerOpen && width > 999 && width < 1200
                       ? 36
-                      : width > 1199 && !isDrawerOpen && width < 1500
+                      : width > 1220 && !isDrawerOpen && width < 1500
                       ? 40
-                      : width > 1199 && isDrawerOpen && width < 1500
+                      : width > 1220 && isDrawerOpen && width < 1363
                       ? 60
-                      : width > 1499
+                      : width > 1499 && !isDrawerOpen
                       ? 40
                       : width > 754 && width < 943
                       ? 38
+                      : width > 1362 && isDrawerOpen
+                      ? 40
+                      : width > 1199 && width < 1221 && isDrawerOpen
+                      ? 30
                       : 30,
                   minWidth:
                     width < 475 ? 200 : width > 599 && width < 755 ? 200 : 75,
@@ -345,14 +349,18 @@ const MainContainer = () => {
                   height:
                     isDrawerOpen && width > 999 && width < 1200
                       ? 36
-                      : width > 1199 && !isDrawerOpen && width < 1500
+                      : width > 1220 && !isDrawerOpen && width < 1500
                       ? 40
-                      : width > 1199 && isDrawerOpen && width < 1500
+                      : width > 1220 && isDrawerOpen && width < 1363
                       ? 60
-                      : width > 1499
+                      : width > 1499 && !isDrawerOpen
                       ? 40
                       : width > 754 && width < 943
                       ? 38
+                      : width > 1362 && isDrawerOpen
+                      ? 40
+                      : width > 1199 && width < 1221 && isDrawerOpen
+                      ? 30
                       : 30,
                   minWidth:
                     width < 475
@@ -390,14 +398,18 @@ const MainContainer = () => {
                   height:
                     isDrawerOpen && width > 999 && width < 1200
                       ? 36
-                      : width > 1199 && !isDrawerOpen && width < 1500
+                      : width > 1220 && !isDrawerOpen && width < 1500
                       ? 40
-                      : width > 1199 && isDrawerOpen && width < 1500
+                      : width > 1220 && isDrawerOpen && width < 1363
                       ? 60
-                      : width > 1499
+                      : width > 1499 && !isDrawerOpen
                       ? 40
                       : width > 754 && width < 943
                       ? 38
+                      : width > 1362 && isDrawerOpen
+                      ? 40
+                      : width > 1199 && width < 1221 && isDrawerOpen
+                      ? 30
                       : 30,
                   minWidth:
                     width < 475
@@ -432,14 +444,18 @@ const MainContainer = () => {
                   height:
                     isDrawerOpen && width > 999 && width < 1200
                       ? 36
-                      : width > 1199 && !isDrawerOpen && width < 1500
+                      : width > 1220 && !isDrawerOpen && width < 1500
                       ? 40
-                      : width > 1199 && isDrawerOpen && width < 1500
+                      : width > 1220 && isDrawerOpen && width < 1363
                       ? 60
-                      : width > 1499
+                      : width > 1499 && !isDrawerOpen
                       ? 40
                       : width > 754 && width < 943
                       ? 38
+                      : width > 1362 && isDrawerOpen
+                      ? 40
+                      : width > 1199 && width < 1221 && isDrawerOpen
+                      ? 30
                       : 30,
                   minWidth:
                     width < 475 ? 200 : width > 599 && width < 755 ? 200 : 75,

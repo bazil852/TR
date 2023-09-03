@@ -16,31 +16,6 @@ import {
   Switch,
 } from "@mui/material";
 
-const ccxt = require("ccxt");
-
-const cryptoSymbols = [
-  "BTC",
-  "ETH",
-  "XRP",
-  "BCH",
-  "LTC",
-  "ADA",
-  "DOT",
-  "LINK",
-  "XLM",
-  "DOGE",
-  "USDT",
-  "BNB",
-  "XMR",
-  "UNI",
-  "EOS",
-  "TRX",
-  "XTZ",
-  "VET",
-  "DASH",
-  "ZEC",
-];
-
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   "label + &": {
     marginTop: theme.spacing(3),
@@ -92,7 +67,6 @@ const Draw = styled(Drawer)({
 const Wallet = () => {
   const [showDrawer, setShowDrawer] = useState(false);
   const [connected, setConnected] = useState(false);
-  const [connectionData, setConnectionData] = useState();
   const [loading, setLoading] = useState(true);
   const [selectedExchange, setSelectedExchange] = useState("Select Exchange");
   const [allExchange, setAllExchange] = useState([]);
@@ -191,115 +165,6 @@ const Wallet = () => {
     }
   };
 
-  const getExchangesAssets = async (data) => {
-    console.log(data);
-
-    let exchangeArray = [];
-    let client;
-    await Promise.all(
-      data.map(async (item) => {
-        if (item?.exchangeName === "Binance Futures Testnet") {
-          const { USDMClient } = require("binance");
-          console.log("Exchangee", item);
-          const baseUrl = "https://testnet.binancefuture.com";
-          client = new USDMClient({
-            api_key: item?.apiKey,
-            api_secret: item?.apiSecret,
-            baseUrl,
-            recvWindow: 10000,
-          });
-        }
-        if (item?.exchangeName === "Binance Futures") {
-          const { USDMClient } = require("binance");
-          console.log("Exchangee", item);
-          client = new USDMClient({
-            api_key: item?.apiKey,
-            api_secret: item?.apiSecret,
-            recvWindow: 10000,
-          });
-        }
-        if (item?.exchangeName === "Binance Spot") {
-          const { MainClient } = require("binance");
-          console.log("Exchangee", item);
-          client = new MainClient();
-        }
-
-        const binance = new ccxt.binance();
-        try {
-          let result;
-          if (item?.exchangeName === "Binance Spot") {
-            console.log("Testing new server.");
-            await fetch("https://binance1.herokuapp.com/api/binance/balances", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(item),
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                result = data.filter((item) =>
-                  cryptoSymbols.includes(item.coin)
-                );
-                console.log("Result from server: ", data);
-              })
-              .catch((error) => {
-                console.error("Error:", error);
-              });
-
-            console.log("getBalance result: ", result);
-          } else {
-            result = await client.getBalance();
-            console.log("getBalance result: ", result);
-          }
-          if (item?.exchangeName === "Binance Spot") {
-            console.log("spot is", result);
-            for (const asset of result) {
-              if (asset.coin === "USDT") {
-                asset["usdtBal"] = +asset.free;
-                asset["asset"] = asset.coin;
-              } else {
-                try {
-                  const symbol = `${asset.coin}/USDT`;
-
-                  const ticker = await binance.fetchTicker(symbol);
-                  const usdtPrice = ticker.last;
-                  const usdtBalance = parseFloat(asset.free) * usdtPrice;
-                  asset["usdtBal"] = usdtBalance;
-                  asset["asset"] = asset.coin;
-                } catch (err) {
-                  console.log(err);
-                }
-              }
-            }
-          } else {
-            for (const asset of result) {
-              if (asset.asset === "USDT") {
-                asset["usdtBal"] = asset.balance;
-              } else {
-                const symbol = `${asset.asset}/USDT`;
-                const ticker = await binance.fetchTicker(symbol);
-                const usdtPrice = ticker.last;
-                const usdtBalance = parseFloat(asset.balance) * usdtPrice;
-                asset["usdtBal"] = usdtBalance;
-              }
-            }
-          }
-
-          exchangeArray.push({
-            _id: item?._id,
-            exchangeName: item.name,
-            assets: result,
-          });
-        } catch (err) {
-          console.error("getBalance error: ", err);
-        }
-      })
-    );
-
-    return exchangeArray;
-  };
-
   const handleClose = () => {
     setShowDrawer(false);
   };
@@ -366,52 +231,6 @@ const Wallet = () => {
     if (response.ok) {
       setConnected(true);
       setShowDrawer(false);
-    }
-  };
-
-  const handleExchangeOnChange = (event) => {
-    console.log(event.target.value);
-
-    var ccxt = require("ccxt");
-    const { USDMClient } = require("binance");
-
-    const API_KEY = event.target.value.apiKey;
-    const API_SECRET = event.target.value.apiSecret;
-    const baseUrl = "https://testnet.binancefuture.com";
-    const client = new USDMClient({
-      api_key: API_KEY,
-      api_secret: API_SECRET,
-      baseUrl,
-    });
-
-    client
-      .getBalance()
-      .then((result) => {
-        console.log("getBalance result: handleExchange", result);
-        setConnectionData(result);
-        setConnected(true);
-        setShowDrawer(false);
-      })
-      .catch((err) => {
-        console.error("getBalance error: ", err);
-      });
-  };
-
-  const handleDeleteExchange = async (id) => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}exchanges/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (response.ok) {
-      const newExchanges = allExchange.filter(
-        (item) => item.exchange.id !== id
-      );
-      setAllExchange(newExchanges);
     }
   };
 

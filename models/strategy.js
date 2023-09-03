@@ -14,6 +14,8 @@ const strategySchema = new Schema({
     extraOrderSize: Number,
     orderType: String,
     pairs: String,
+    leverage: Boolean,
+    leverageValue: Number,
   },
   parameters: [Object],
   dca: {

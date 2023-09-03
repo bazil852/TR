@@ -73,29 +73,36 @@ const GraphOfConsolidatedPortfolio = ({ data }) => {
 
     const option = {
       tooltip: {
+        show: true,
         trigger: "item",
         position: "top",
-        fontFamily: "Barlow, sans-serif",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        borderWidth: 0,
         textStyle: {
-          fontFamily: "Barlow, sans-serif",
+          color: "#FFFFFF",
+          fontWeight: 500,
+          fontSize: 14,
+          fontFamily: "Barlow, san-serif",
         },
+        formatter: "{b}: {c}",
       },
       series: [
         {
-          name: "Access From",
           type: "pie",
           radius:
-            width > 1250 && !isDrawerOpen
-              ? "80%"
-              : width > 1250 && width < 1360 && isDrawerOpen
+            width < 1100 && width > 999 && !isDrawerOpen
               ? "70%"
-              : width < 1100 && width > 999
-              ? "75%"
+              : width < 480 && width > 399 && !isDrawerOpen
+              ? "70%"
+              : width < 400 && !isDrawerOpen
+              ? "70%"
+              : isDrawerOpen && width > 999 && width < 1300
+              ? "70%"
+              : isDrawerOpen && width > 1299
+              ? "70%"
               : width < 1000 && width > 899
-              ? "60%"
-              : width < 1250 && width > 1199 && isDrawerOpen
-              ? "65%"
-              : "70%",
+              ? "70%"
+              : "80%",
           center: ["50%", "50%"],
           data: adjustedDataWithWorth.map((item, idx) => ({
             value: item.worth,
@@ -106,22 +113,25 @@ const GraphOfConsolidatedPortfolio = ({ data }) => {
               borderWidth: 1.5,
             },
           })),
-          label: {
-            color: "#9A9A9A",
-            fontFamily: "Barlow, sans-serif",
-            overflow: "visible",
-          },
-          labelLine: {
-            lineStyle: {
+          label: { show: width < 600 ? false : false },
+          labelLine: { show: false },
+          emphasis: {
+            label: {
+              show: width < 600 ? false : true,
               color: "#9A9A9A",
+              fontFamily: "Barlow, sans-serif",
             },
-            smooth: 0.1,
-            length: 10,
-            length2: 8,
+
+            labelLine: {
+              show: width < 600 ? false : true,
+              lineStyle: {
+                color: "#9A9A9A",
+              },
+              smooth: 0.1,
+              length: width < 600 ? 4 : 8,
+              length2: width < 600 ? 2 : 6,
+            },
           },
-          animationType: "scale",
-          animationEasing: "elasticOut",
-          animationDelay: (idx) => Math.random() * 200,
         },
       ],
     };
@@ -133,18 +143,14 @@ const GraphOfConsolidatedPortfolio = ({ data }) => {
     window.addEventListener("resize", myChart.resize);
 
     return () => window.removeEventListener("resize", myChart.resize);
-  }, [dataWithWorth]);
+  }, [dataWithWorth, width, isDrawerOpen]);
 
   return (
     <Box
       id="chart-container"
       sx={{
-        position: "relative",
-        height: "230px",
-        width: "290px",
-        margin: 0,
-        padding: 0,
-        pt: 3,
+        height: 250,
+        width: width < 900 ? "100%" : 450,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

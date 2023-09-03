@@ -49,7 +49,6 @@ const TotalPortfolioAndInvestedDeals = ({ data, totalBalance }) => {
               border: "1px solid #5C5A66",
               height: 17,
               minWidth: 9,
-              fontFamily: "Barlow, san-serif",
               fontWeight: 600,
               color: "#AFAFAF",
               fontSize: 8,
@@ -88,7 +87,7 @@ const TotalPortfolioAndInvestedDeals = ({ data, totalBalance }) => {
                   display: "flex",
                   gap: 0.5,
                   flexDirection: "column",
-                  mt: 1.5,
+                  mt: 3,
                   mb: -2,
                 }}
               >

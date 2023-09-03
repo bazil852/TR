@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Login from "../components/auth/Login";
-import Header from "../components/layout/Header";
 import Copyright from "../components/Copyright";
 import { Auth, NavBarLogo } from "../utils/icons";
 
@@ -42,7 +41,6 @@ export default function LoginPage() {
       >
         <Auth />
       </div>
-      <Header />
       <div style={{ position: "absolute", right: 0 }}>
         <Login />
       </div>

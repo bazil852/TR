@@ -61,7 +61,6 @@ const InvestedPortfolio = ({ totalBalance }) => {
             border: "1px solid #5C5A66",
             height: 17,
             minWidth: 9,
-            fontFamily: "Barlow, san-serif",
             fontWeight: 600,
             color: "#AFAFAF",
             fontSize: 8,
@@ -115,6 +114,8 @@ const InvestedPortfolio = ({ totalBalance }) => {
                         ? "9%"
                         : width < 650 && width > 599
                         ? "7.5%"
+                        : isDrawerOpen && width > 999 && width < 1201
+                        ? "0%"
                         : "10%",
                   }}
                 >
@@ -123,7 +124,7 @@ const InvestedPortfolio = ({ totalBalance }) => {
                 <Box
                   sx={{
                     pr:
-                      width > 1250 ? 10 : width < 961 && width > 605 ? 10 : "",
+                      width > 1350 ? 10 : width < 961 && width > 605 ? 10 : "",
                   }}
                 >
                   <Typography

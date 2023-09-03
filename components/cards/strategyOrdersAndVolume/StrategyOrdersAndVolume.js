@@ -53,7 +53,7 @@ const StrategyOrdersAndVolume = () => {
               key={index}
               xs={12}
               sm={6}
-              md={isDrawerOpen ? 4 : 3}
+              md={isDrawerOpen&&width>999 ? 4 : 3}
               lg={
                 width < 1500 && width > 1299 && isDrawerOpen
                   ? 3
@@ -118,10 +118,10 @@ const StrategyOrdersAndVolume = () => {
         })}
       </Grid>
       <Grid container spacing={"20px"} mt={"0px"}>
-        <Grid item xs={12} sm={12} md={isDrawerOpen ? 12 : 7} lg={7} xl={7}>
+        <Grid item xs={12} sm={12} md={7} lg={7} xl={7}>
           <StragtegyOrdersAndVolumeBarGraph />
         </Grid>
-        <Grid item xs={12} sm={12} md={isDrawerOpen ? 12 : 5} lg={5} xl={5}>
+        <Grid item xs={12} sm={12} md={5} lg={5} xl={5}>
           <StrategyORdersAndVolumePieGraph />
         </Grid>
       </Grid>

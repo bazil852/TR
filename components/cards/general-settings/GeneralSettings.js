@@ -19,6 +19,7 @@ const ValidationTextField = styled(InputBase)(({ theme }) => ({
     fontSize: 15,
     fontWeight: 400,
     padding: "8px 5px",
+
     color: "#FFFFFF",
     transition: theme.transitions.create([
       "border-color",
@@ -134,7 +135,7 @@ const GeneralSettings = (props) => {
               alignItems: "center",
               mt: 1,
               mb: width < 900 ? 1 : 3,
-              gap: width < 900 ? 0 : 4.5,
+              gap: width < 900 ? 0 : 4.6,
               flexWrap: width < 900 ? "wrap" : "nowrap",
             }}
           >
@@ -167,7 +168,7 @@ const GeneralSettings = (props) => {
               alignItems: "center",
               mt: 1,
               mb: width < 900 && width > 600 ? 1 : width < 600 ? 0 : 3,
-              gap: width < 900 ? 0 : 10.7,
+              gap: width < 900 ? 0 : 10.9,
               flexWrap: width < 900 ? "wrap" : "nowrap",
             }}
           >
@@ -242,7 +243,7 @@ const GeneralSettings = (props) => {
           <Box
             sx={{
               display: "flex",
-              gap: width < 900 ? 0 : 14.7,
+              gap: width < 900 ? 0 : 14.75,
               flexWrap: width < 900 ? "wrap" : "nowrap",
             }}
           >

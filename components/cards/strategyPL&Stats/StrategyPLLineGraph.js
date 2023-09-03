@@ -33,12 +33,12 @@ const StrategyPLLineGraph = () => {
     20,
     20,
     20,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    30,
+    20,
+    30,
+    20,
+    30,
+    20,
   ];
   useEffect(() => {
     const handleResize = () => setWidth(globalThis?.innerWidth);
@@ -52,7 +52,7 @@ const StrategyPLLineGraph = () => {
         background: "#262626",
         border: "1.2px solid #3F4341",
         borderRadius: "4.8px",
-        height: width < 355 ? 440 : width > 1399 ? 370 : 385,
+        height: width < 395 ? 420 : width > 1399 ? 370 : 385,
         minWidth: "100%",
       }}
     >
@@ -64,7 +64,7 @@ const StrategyPLLineGraph = () => {
             fontWeight: 600,
             pt: 2,
             mb: 4,
-            // whiteSpace: "nowrap",
+            whiteSpace: width < 395 ? "normal" : "nowrap",
           }}
         >
           PROFIT BY TRADE CUMULATIVE $
@@ -76,17 +76,6 @@ const StrategyPLLineGraph = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          // pr: 2,
-          " ::-webkit-scrollbar": {
-            height: 3,
-          },
-          "::-webkit-scrollbar-track": {
-            background: "none",
-          },
-          "::-webkit-scrollbar-thumb": {
-            background: "#888",
-            borderRadius: "4px",
-          },
         }}
       >
         <Graph2 dataArray={dataArray} />
@@ -97,7 +86,7 @@ const StrategyPLLineGraph = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          mt: width > 1399 ? -1.5 : 0.4,
+          mt: width > 1399 ? -1.5 : "",
         }}
       >
         <Typography

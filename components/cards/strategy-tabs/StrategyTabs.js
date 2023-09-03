@@ -22,11 +22,13 @@ import SelectInputParameters from "../../widgets/SelectInputParameters";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
 import { useStrategy } from "../../../context/StrategyContext";
 import Chart from "../../charts/Chart";
+import { useSelector } from "react-redux";
+import StrategyThreeBoxes from "../strategy-three-boxes/StrategyThreeBoxes";
+import LeverageSlider from "./LeverageSlider";
 
 const ValidationTextField = styled(InputBase)(({ theme }) => ({
   backgroundColor: "#3E3E3E",
   borderRadius: "6px",
-
   "label + &": {
     marginTop: theme.spacing(3),
   },
@@ -225,6 +227,16 @@ const StrategyTabsComponent = (props) => {
   const [inputValuesTwoTom, setInputValuesTwoTom] = useState({
     tomDemarkValue: "",
   });
+
+  const [leverageSelectedOption, setLeverageSelectedOption] = useState("");
+
+  const [sliderValue, setSliderValue] = useState(0);
+
+  const leverageHandleChange = (selectedOption) => {
+    console.log(selectedOption);
+    setLeverageSelectedOption(selectedOption ? selectedOption.value : "");
+  };
+  console.log(leverageSelectedOption, sliderValue);
 
   const handleInputChangeSimple = (event) => {
     const { name, value } = event.target;
@@ -453,7 +465,9 @@ const StrategyTabsComponent = (props) => {
     let uniqueDataArray = [...new Set(combinedAssetsSymbols)];
 
     console.log(uniqueDataArray);
-    setPairsOptions(uniqueDataArray);
+
+    const filteredUniqueDataArray = uniqueDataArray.filter(Boolean);
+    setPairsOptions(filteredUniqueDataArray);
   };
 
   const fetchStrategiesByUserId = async () => {
@@ -492,6 +506,8 @@ const StrategyTabsComponent = (props) => {
         extraOrderSize: "",
         orderType: "",
         pairs: "",
+        leverage: false,
+        leverageValue: "",
       },
     ]);
     setDCAData([
@@ -786,6 +802,10 @@ const StrategyTabsComponent = (props) => {
     { value: "Market", label: "Market" },
     { value: "Limit", label: "Limit" },
   ];
+  const LeverageOptions = [
+    { value: "Yes", label: "Yes" },
+    { value: "No", label: "No" },
+  ];
   const handleAddParameter = (index) => {
     if (ParametersData[index].length <= 3) {
       var len = 0;
@@ -874,6 +894,7 @@ const StrategyTabsComponent = (props) => {
       alert("Strategy Not Saved");
     }
   };
+  console.log(OrdersData);
 
   const handleBacktest = async (dropdownValues) => {
     const { user } = await getSession();
@@ -978,6 +999,8 @@ const StrategyTabsComponent = (props) => {
     return false;
   };
 
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
+
   return (
     <>
       <Box
@@ -1015,17 +1038,24 @@ const StrategyTabsComponent = (props) => {
               <Tabs
                 value={0}
                 variant="scrollable"
-                scrollButtons="auto"
+                scrollButtons
                 sx={{
                   "& .MuiSvgIcon-root": arrowButtonStyle,
                   width: "100%",
                   pt: 1,
-
+                  mx: isDrawerOpen && width > 1399 && width < 1555 ? 0.6 : "",
                   "& .MuiTabs-indicator": {
                     display: "none",
                   },
                   "& .MuiButtonBase-root": {
-                    display: width > 1399 ? "none" : "block",
+                    display:
+                      width > 1399 && !isDrawerOpen
+                        ? "none"
+                        : isDrawerOpen && width > 1399 && width < 1555
+                        ? "block"
+                        : isDrawerOpen && width > 1554
+                        ? "none"
+                        : "block",
                   },
                 }}
               >
@@ -1035,6 +1065,7 @@ const StrategyTabsComponent = (props) => {
                     gap: 1,
                     alignItems: "center",
                     width: 400,
+                    ml: width > 1399 && !isDrawerOpen ? 1 : "",
                   }}
                 >
                   <Typography
@@ -1042,16 +1073,17 @@ const StrategyTabsComponent = (props) => {
                     sx={{
                       color: "white",
                       fontFamily: "Barlow, san-serif",
-                      fontWeight: 300,
+                      fontWeight: 400,
                       fontSize: width < 601 ? 15 : 20,
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
                       height: width < 601 ? 30 : 35,
-                      pt: 0.2,
+                      pt: width < 601 ? 0.5 : 0.3,
                       px: 2.5,
-                      pl: width > 1399 ? 1.2 : 2.5,
-                      pr: width > 1399 ? 1.2 : 2.5,
+                      pl: width > 1399 ? 1.1 : 2.5,
+                      pr: width > 1399 ? 1.1 : 2.5,
+
                       pointerEvents: index !== 0 ? "none" : "all",
                       background:
                         item === "general"
@@ -1068,16 +1100,16 @@ const StrategyTabsComponent = (props) => {
                     sx={{
                       color: "white",
                       fontFamily: "Barlow, san-serif",
-                      fontWeight: 300,
+                      fontWeight: 400,
                       fontSize: width < 601 ? 15 : 20,
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
                       height: width < 601 ? 30 : 35,
-                      pt: 0.2,
+                      pt: width < 601 ? 0.5 : 0.3,
                       px: 2.5,
-                      pl: width > 1399 ? 1.2 : 2.5,
-                      pr: width > 1399 ? 1.2 : 2.5,
+                      pl: width > 1399 ? 1.1 : 2.5,
+                      pr: width > 1399 ? 1.1 : 2.5,
                       background:
                         item === "orders"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -1092,16 +1124,16 @@ const StrategyTabsComponent = (props) => {
                     sx={{
                       color: "white",
                       fontFamily: "Barlow, san-serif",
-                      fontWeight: 300,
+                      fontWeight: 400,
                       fontSize: width < 601 ? 15 : 20,
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
                       height: width < 601 ? 30 : 35,
-                      pt: 0.2,
+                      pt: width < 601 ? 0.5 : 0.3,
                       px: 2.5,
-                      pl: width > 1399 ? 1.2 : 2.5,
-                      pr: width > 1399 ? 1.2 : 2.5,
+                      pl: width > 1399 ? 1.1 : 2.5,
+                      pr: width > 1399 ? 1.1 : 2.5,
                       background:
                         item === "parameters"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -1116,16 +1148,16 @@ const StrategyTabsComponent = (props) => {
                     sx={{
                       color: "white",
                       fontFamily: "Barlow, san-serif",
-                      fontWeight: 300,
+                      fontWeight: 400,
                       fontSize: width < 601 ? 15 : 20,
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
                       height: width < 601 ? 30 : 35,
-                      pt: 0.2,
+                      pt: width < 601 ? 0.5 : 0.3,
                       px: 2.5,
-                      pl: width > 1399 ? 1.2 : 2.5,
-                      pr: width > 1399 ? 1.2 : 2.5,
+                      pl: width > 1399 ? 1.1 : 2.5,
+                      pr: width > 1399 ? 1.1 : 2.5,
                       background:
                         item === "dca"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -1140,16 +1172,16 @@ const StrategyTabsComponent = (props) => {
                     sx={{
                       color: "white",
                       fontFamily: "Barlow, san-serif",
-                      fontWeight: 300,
+                      fontWeight: 400,
                       fontSize: width < 601 ? 15 : 20,
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
                       height: width < 601 ? 30 : 35,
-                      pt: 0.2,
+                      pt: width < 601 ? 0.5 : 0.3,
                       px: 2.5,
-                      pl: width > 1399 ? 1.2 : 2.5,
-                      pr: width > 1399 ? 1.2 : 2.5,
+                      pl: width > 1399 ? 1.1 : 2.5,
+                      pr: width > 1399 ? 1.1 : 2.5,
                       background:
                         item === "take profit"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -1165,16 +1197,16 @@ const StrategyTabsComponent = (props) => {
                     sx={{
                       color: "white",
                       fontFamily: "Barlow, san-serif",
-                      fontWeight: 300,
+                      fontWeight: 400,
                       fontSize: width < 601 ? 15 : 20,
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
                       height: width < 601 ? 30 : 35,
-                      pt: 0.2,
+                      pt: width < 601 ? 0.5 : 0.3,
                       px: 2.5,
-                      pl: width > 1399 ? 1.2 : 2.5,
-                      pr: width > 1399 ? 1.2 : 2.5,
+                      pl: width > 1399 ? 1.1 : 2.5,
+                      pr: width > 1399 ? 1.1 : 2.5,
                       background:
                         item === "stop loss"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -1189,16 +1221,16 @@ const StrategyTabsComponent = (props) => {
                     sx={{
                       color: "white",
                       fontFamily: "Barlow, san-serif",
-                      fontWeight: 300,
+                      fontWeight: 400,
                       fontSize: width < 601 ? 15 : 20,
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
                       height: width < 601 ? 30 : 35,
-                      pt: 0.2,
+                      pt: width < 601 ? 0.5 : 0.3,
                       px: 2.5,
-                      pl: width > 1399 ? 1.2 : 2.5,
-                      pr: width > 1399 ? 1.2 : 2.5,
+                      pl: width > 1399 ? 1.1 : 2.5,
+                      pr: width > 1399 ? 1.1 : 2.5,
                       background:
                         item === "advanced"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
@@ -1213,18 +1245,18 @@ const StrategyTabsComponent = (props) => {
                     sx={{
                       color: "white",
                       fontFamily: "Barlow, san-serif",
-                      fontWeight: 300,
+                      fontWeight: 400,
                       fontSize: width < 601 ? 15 : 20,
                       whiteSpace: "nowrap",
                       cursor: "pointer",
                       borderRadius: 2,
                       height: width < 601 ? 30 : 35,
-                      pt: 0.2,
+                      pt: width < 601 ? 0.5 : 0.3,
                       px: 2.5,
-                      pl: width > 1399 ? 1.2 : 2.5,
-                      pr: width > 1399 ? 1.2 : 2.5,
+                      pl: width > 1399 ? 1.1 : 2.5,
+                      pr: width > 1399 ? 1.1 : 2.5,
                       background:
-                        item === "stop  resume"
+                        item === "stop resume"
                           ? "linear-gradient(to right,#790F87,#794AE3)"
                           : "#363636",
                     }}
@@ -1336,7 +1368,29 @@ const StrategyTabsComponent = (props) => {
                   sx={{
                     mt: 3,
                     borderRadius: "5px",
-                    minHeight: 178,
+                    transition: "height 0.3s",
+                    height:
+                      width < 900 &&
+                      width > 768 &&
+                      leverageSelectedOption === "No"
+                        ? 196
+                        : width < 900 &&
+                          width > 768 &&
+                          leverageSelectedOption === "Yes"
+                        ? 250
+                        : width < 769 &&
+                          width > 599 &&
+                          leverageSelectedOption === "Yes"
+                        ? 300
+                        : width < 769 &&
+                          width > 599 &&
+                          leverageSelectedOption === "No"
+                        ? 196
+                        : width < 600 && leverageSelectedOption === "No"
+                        ? 320
+                        : width < 600 && leverageSelectedOption === "Yes"
+                        ? 440
+                        : 178,
                     px:
                       width > 1200 && width < 1300
                         ? 5
@@ -1347,24 +1401,54 @@ const StrategyTabsComponent = (props) => {
                         : "",
                   }}
                 >
-                  <Grid container spacing={width < 600 ? 0 : 1}>
+                  <Grid
+                    container
+                    spacing={
+                      width < 600 ? 0 : isDrawerOpen && width > 999 ? 0 : 1
+                    }
+                  >
                     <Grid
                       item
-                      xs={
-                        width < 600
-                          ? 0
-                          : width < 769 && width > 600
-                          ? 3
-                          : width < 900 && width > 769
-                          ? 2.5
-                          : width > 1100 && width < 1400
-                          ? 2
-                          : width > 1400
+                      xs={0}
+                      sm={width < 900 ? 2.5 : 0}
+                      md={
+                        leverageSelectedOption === "Yes" && !isDrawerOpen
                           ? 1
-                          : 2.5
+                          : isDrawerOpen && width > 999
+                          ? 0
+                          : width < 1000 && leverageSelectedOption === "Yes"
+                          ? 1
+                          : 2
                       }
+                      lg={
+                        !isDrawerOpen && leverageSelectedOption === "Yes"
+                          ? 1
+                          : width > 1400 && !isDrawerOpen
+                          ? 1
+                          : isDrawerOpen
+                          ? 0
+                          : 2
+                      }
+                      style={{
+                        transition:
+                          "flex-basis 0.3s, max-width 0.3s, width 0.3s",
+                      }}
                     ></Grid>
-                    <Grid item xs={12} sm={4} md={4} lg={4}>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={4}
+                      md={
+                        width < 1100 && !isDrawerOpen
+                          ? 3.5
+                          : isDrawerOpen && width > 999
+                          ? 4
+                          : width < 1000
+                          ? 3.5
+                          : 3
+                      }
+                      lg={isDrawerOpen ? 4 : 3}
+                    >
                       <Box
                         sx={{
                           display: "flex",
@@ -1376,7 +1460,7 @@ const StrategyTabsComponent = (props) => {
                               ? 3
                               : width < 769
                               ? 0
-                              : 5,
+                              : 5.1,
                           flexWrap: width < 900 ? "wrap" : "nowrap",
                         }}
                       >
@@ -1483,8 +1567,8 @@ const StrategyTabsComponent = (props) => {
                               ? 7
                               : width < 769
                               ? 0
-                              : 9.2,
-                          flexWrap: width < 900 ? "wrap" : "nowrap",
+                              : 8.9,
+                          flexWrap: width < 769 ? "wrap" : "nowrap",
                         }}
                       >
                         <Typography
@@ -1514,24 +1598,40 @@ const StrategyTabsComponent = (props) => {
                               ? "100%"
                               : "5rem"
                           }
+                          keyName={"orderType"}
                           options={OrderTypeOptions}
                         />
                       </Box>
                     </Grid>
-                    <Grid item xs={12} sm={5} md={4} lg={4}>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={4}
+                      md={
+                        width < 1100 && !isDrawerOpen
+                          ? 3.5
+                          : isDrawerOpen && width > 999
+                          ? 4
+                          : width < 1000
+                          ? 3.5
+                          : 3
+                      }
+                      lg={isDrawerOpen ? 4 : 3}
+                    >
                       <Box
                         sx={{
                           display: "flex",
-                          alignItems: "center",
+                          alignItems: width < 600 ? "" : "center",
                           mt: 1,
                           mb: width < 900 ? 1 : 1.5,
+                          flexWrap: width < 900 ? "wrap" : "nowrap",
+                          flexDirection: width < 600 ? "column" : "row",
                           gap:
-                            width < 900 && width > 769
-                              ? 3
+                            isDrawerOpen && width < 1045 && width > 999
+                              ? 2
                               : width < 769
                               ? 0
                               : 4,
-                          flexWrap: width < 900 ? "wrap" : "nowrap",
                         }}
                       >
                         <Typography
@@ -1542,23 +1642,18 @@ const StrategyTabsComponent = (props) => {
                             color: "#CCCCCC",
                             whiteSpace: "nowrap",
                             mr: width < 769 ? 15 : "",
+                            pl:
+                              isDrawerOpen && width < 1045 && width > 999
+                                ? 1
+                                : 0,
                           }}
                         >
                           Pairs
                         </Typography>
-                        {/* <SelectInputParameters
-                          placeHolder="BTC/USDT"
-                          value={OrdersData[index].pairs}
-                          Width={width < 600 ? "100%" : "10rem"}
-                          onChange={async (event) => {
-                            const temp = [...OrdersData];
-                            temp[index].pairs = event.value;
-                            setOrdersData(temp);
-                          }}
-                          options={ParametersOptions}
-                        /> */}
+
                         <Autocomplete
                           id="free-solo-demo"
+                          sx={{ ml: width < 769 ? 0 : "30px" }}
                           freeSolo
                           inputValue={OrdersData[index].pairs}
                           onInputChange={(event, newInputValue) => {
@@ -1567,7 +1662,6 @@ const StrategyTabsComponent = (props) => {
                             setOrdersData(temp);
                           }}
                           options={pairsOptions}
-                          sx={{}}
                           PaperComponent={({ children }) => (
                             <Paper
                               sx={{
@@ -1599,13 +1693,13 @@ const StrategyTabsComponent = (props) => {
                           renderInput={(params) => (
                             <TextField
                               {...params}
-                              label={""}
                               sx={{
-                                width: width < 600 ? "100%" : "10rem",
+                                width: width < 600 ? "100%" : "7rem",
                                 fontFamily: "Barlow, sans-serif",
                                 ".MuiOutlinedInput-root": {
                                   borderRadius: "7px",
                                   backgroundColor: "#3E3E3E",
+                                  height: "28px",
                                   "&:hover .MuiOutlinedInput-notchedOutline": {
                                     border: "none",
                                   },
@@ -1647,6 +1741,89 @@ const StrategyTabsComponent = (props) => {
                           }}
                         />
                       </Box>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: width < 600 ? "" : "center",
+                          mt: 1,
+                          mb: width < 900 ? 1 : 1.5,
+                          flexWrap: width < 769 ? "wrap" : "nowrap",
+                          flexDirection: width < 600 ? "column" : "row",
+                          gap:
+                            isDrawerOpen && width < 1045 && width > 999
+                              ? 2
+                              : width < 769
+                              ? 0
+                              : 4,
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            fontWeight: 500,
+                            fontSize: 16,
+                            fontFamily: "Barlow, san-serif",
+                            color: "#CCCCCC",
+                            whiteSpace: "nowrap",
+                            mr: width < 769 ? 15 : "",
+                            pl:
+                              isDrawerOpen && width < 1045 && width > 999
+                                ? 1
+                                : 0,
+                          }}
+                        >
+                          Leverage
+                        </Typography>
+                        <SelectInputParameters
+                          value={OrdersData[index]["leverage"] ? "Yes" : "No"}
+                          onChange={(selectedOption) => {
+                            setLeverageSelectedOption(
+                              selectedOption ? selectedOption.value : ""
+                            );
+                            const temp = [...OrdersData];
+                            temp[index].leverage =
+                              selectedOption.value === "Yes" ? true : false;
+                            setOrdersData(temp);
+                          }}
+                          Width={width < 600 ? "100%" : "7rem"}
+                          options={LeverageOptions}
+                          keyName={"leverage"}
+                        />
+                      </Box>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={12}
+                      md={
+                        width < 1100 && !isDrawerOpen && width > 999
+                          ? 3
+                          : width < 1000
+                          ? 3
+                          : 4
+                      }
+                      lg={4}
+                    >
+                      <Box
+                        sx={{
+                          transition:
+                            "opacity 0.5s ease-in-out, visibility 0.5s ease-in-out",
+                          opacity: leverageSelectedOption === "Yes" ? 1 : 0,
+                          visibility:
+                            leverageSelectedOption === "Yes"
+                              ? "visible"
+                              : "hidden",
+                        }}
+                      >
+                        <LeverageSlider
+                          setSliderValue={(newInputValue) => {
+                            setSliderValue(newInputValue);
+                            const temp = [...OrdersData];
+                            temp[index].leverageValue = newInputValue;
+                            setOrdersData(temp);
+                          }}
+                          sliderValue={OrdersData[index]["leverageValue"]}
+                        />
+                      </Box>
                     </Grid>
                   </Grid>
                 </Box>
@@ -1685,13 +1862,20 @@ const StrategyTabsComponent = (props) => {
                                 cursor: "pointer",
                                 height: 123,
                                 width: width < 601 ? 66 : 66,
-                                ml: width < 900 ? "45%" : "",
+                                ml:
+                                  width < 900
+                                    ? "45%"
+                                    : width > 1250
+                                    ? 2
+                                    : width < 1251 && width > 1099
+                                    ? 1
+                                    : 0,
                                 fontFamily: "Barlow, san-serif",
                                 fontSize: 20,
                                 fontWeight: 400,
                                 transition: "transform .01s ease-in-out",
                                 "&:hover": {
-                                  transform: "scale(0.98)",
+                                  transform: "scale(0.99)",
                                 },
                               }}
                               onClick={() => {
@@ -2200,6 +2384,8 @@ const StrategyTabsComponent = (props) => {
                                               alignItems: "center",
                                               gap: 1,
                                               px: 3,
+                                              flexDirection:
+                                                width < 437 ? "column" : "row",
                                             }}
                                           >
                                             <Box
@@ -2229,7 +2415,10 @@ const StrategyTabsComponent = (props) => {
                                                   handleInputChangeKeltner
                                                 }
                                                 style={{
-                                                  width: "65px",
+                                                  width:
+                                                    width < 437
+                                                      ? "100%"
+                                                      : "65px",
                                                   background: "#8F8F8F",
                                                   border: "none",
                                                   outline: "none",
@@ -2269,7 +2458,10 @@ const StrategyTabsComponent = (props) => {
                                                   handleInputChangeKeltner
                                                 }
                                                 style={{
-                                                  width: "65px",
+                                                  width:
+                                                    width < 437
+                                                      ? "100%"
+                                                      : "65px",
                                                   background: "#8F8F8F",
                                                   border: "none",
                                                   outline: "none",
@@ -2309,7 +2501,10 @@ const StrategyTabsComponent = (props) => {
                                                   handleInputChangeKeltner
                                                 }
                                                 style={{
-                                                  width: "65px",
+                                                  width:
+                                                    width < 437
+                                                      ? "100%"
+                                                      : "65px",
                                                   background: "#8F8F8F",
                                                   border: "none",
                                                   outline: "none",
@@ -2349,7 +2544,10 @@ const StrategyTabsComponent = (props) => {
                                                   handleInputChangeKeltner
                                                 }
                                                 style={{
-                                                  width: "65px",
+                                                  width:
+                                                    width < 437
+                                                      ? "100%"
+                                                      : "65px",
                                                   background: "#8F8F8F",
                                                   border: "none",
                                                   outline: "none",
@@ -2389,7 +2587,10 @@ const StrategyTabsComponent = (props) => {
                                                   handleInputChangeKeltner
                                                 }
                                                 style={{
-                                                  width: "65px",
+                                                  width:
+                                                    width < 437
+                                                      ? "100%"
+                                                      : "65px",
                                                   background: "#8F8F8F",
                                                   border: "none",
                                                   outline: "none",
@@ -2875,60 +3076,62 @@ const StrategyTabsComponent = (props) => {
                                 </Popover>
                               </>
                             )}
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                mt: width < 900 ? 0 : 2,
-                                gap: 2,
-                                flexWrap: width < 900 ? "wrap" : "nowrap",
-                              }}
-                            >
+
+                            <Box sx={{ display: "flex", gap: 2 }}>
                               <Typography
                                 sx={{
-                                  display: width < 900 ? "none" : "block",
-                                  visibility: "hidden",
+                                  display: width < 900 ? "none" : "",
                                   fontWeight: 500,
                                   fontSize: 16,
                                   fontFamily: "Barlow, san-serif",
                                   color: "#CCCCCC",
                                   whiteSpace: "nowrap",
+                                  width: "93.7px",
+                                  visibility: "hidden",
                                 }}
                               >
-                                Parameters {Object.keys(ParameterItem)[0]}
+                                Parameters {Object.keys(ParameterItem)[1]}
                               </Typography>
-
-                              <SelectInputParameters
-                                value={
-                                  ParametersData[index][ParametersIndex]
-                                    .operation
-                                }
-                                onChange={(selectedOption) => {
-                                  const temp = [...ParametersData];
-                                  temp[index][ParametersIndex].operation =
-                                    selectedOption.value;
-                                  setParametersData(temp);
+                              <Box
+                                sx={{
+                                  mx: width < 1000 ? "auto" : 0,
+                                  mt: width < 900 ? 1 : "",
                                 }}
-                                options={
-                                  ParametersData[index][ParametersIndex][
-                                    Object.keys(ParameterItem)[0]
-                                  ] === "Price"
-                                    ? priceParametersOperationsOptions
-                                    : ParametersData[index][ParametersIndex][
-                                        Object.keys(ParameterItem)[0]
-                                      ] === "High Volume Candlestick"
-                                    ? highVolumeParametersOperationsOptions
-                                    : parametersOperationsOptions
-                                }
-                                // options={parametersOperationsOptions}
-                                keyName={"operation"}
-                                placeHolder={"Operations"}
-                                margin={
-                                  width < 900 ? "0 auto 16px auto" : "auto"
-                                }
-                                Width={width < 900 ? "30%" : "135px"}
-                              />
+                              >
+                                <SelectInputParameters
+                                  value={
+                                    ParametersData[index][ParametersIndex]
+                                      .operation
+                                  }
+                                  onChange={(selectedOption) => {
+                                    const temp = [...ParametersData];
+                                    temp[index][ParametersIndex].operation =
+                                      selectedOption.value;
+                                    setParametersData(temp);
+                                  }}
+                                  options={
+                                    ParametersData[index][ParametersIndex][
+                                      Object.keys(ParameterItem)[0]
+                                    ] === "Price"
+                                      ? priceParametersOperationsOptions
+                                      : ParametersData[index][ParametersIndex][
+                                          Object.keys(ParameterItem)[0]
+                                        ] === "High Volume Candlestick"
+                                      ? highVolumeParametersOperationsOptions
+                                      : parametersOperationsOptions
+                                  }
+                                  // options={parametersOperationsOptions}
+                                  keyName={"operation"}
+                                  placeHolder={"Operations"}
+                                  Width={
+                                    width < 1150 && width > 999 && isDrawerOpen
+                                      ? "100%"
+                                      : "135px"
+                                  }
+                                />
+                              </Box>
                             </Box>
+
                             <Box
                               sx={{
                                 display: "flex",
@@ -3956,7 +4159,7 @@ const StrategyTabsComponent = (props) => {
                                       height: "15px",
                                       width: "15px",
                                       textAlign: "center",
-                                      lineHeight: "15px",
+                                      lineHeight: "16px",
                                     }}
                                   >
                                     -
@@ -3995,14 +4198,18 @@ const StrategyTabsComponent = (props) => {
                       width < 600
                         ? 0
                         : width < 769 && width > 600
-                        ? 3
+                        ? 2
                         : width < 900 && width > 769
                         ? 2.5
                         : width > 1100 && width < 1400
                         ? 2
                         : width > 1400
                         ? 1
-                        : 2.5
+                        : width < 1100 && width > 1050 && isDrawerOpen
+                        ? 1
+                        : width < 1051 && width > 999 && isDrawerOpen
+                        ? 0
+                        : 2
                     }
                   ></Grid>
                   <Grid item xs={12} sm={4} md={4} lg={4}>
@@ -4012,7 +4219,12 @@ const StrategyTabsComponent = (props) => {
                         alignItems: "center",
                         mt: 1,
                         mb: width < 900 ? 1 : 1.5,
-                        gap: width < 900 ? 0 : 11,
+                        gap:
+                          width < 900
+                            ? 0
+                            : width < 1051 && width > 999 && isDrawerOpen
+                            ? 0
+                            : 11.1,
                         flexWrap: width < 900 ? "wrap" : "nowrap",
                       }}
                     >
@@ -4024,6 +4236,10 @@ const StrategyTabsComponent = (props) => {
                           color: "#CCCCCC",
                           whiteSpace: "nowrap",
                           mr: width < 900 ? 15 : "",
+                          width:
+                            width < 1051 && width > 999 && isDrawerOpen
+                              ? "460px"
+                              : "auto",
                         }}
                       >
                         DCA Type
@@ -4031,8 +4247,8 @@ const StrategyTabsComponent = (props) => {
                       <SelectInputParameters
                         placeHolder="Signal"
                         Width={
-                          width < 900 && width > 600
-                            ? "7rem"
+                          width < 900 && width > 599
+                            ? "8rem"
                             : width < 600
                             ? "100%"
                             : "5rem"
@@ -4044,6 +4260,7 @@ const StrategyTabsComponent = (props) => {
                           setDCAData(temp);
                         }}
                         options={dcaTypeOptions}
+                        keyName={"dcaType"}
                       />
                     </Box>
                     <Box
@@ -4052,7 +4269,7 @@ const StrategyTabsComponent = (props) => {
                         alignItems: "center",
                         mt: 1,
                         mb: width < 900 ? 1 : 1.5,
-                        gap: width < 900 ? 0 : 4,
+                        // gap: width < 900 ? 0 : 4.2,
                         flexWrap: width < 900 ? "wrap" : "nowrap",
                       }}
                     >
@@ -4064,6 +4281,7 @@ const StrategyTabsComponent = (props) => {
                           color: "#CCCCCC",
                           whiteSpace: "nowrap",
                           mr: width < 900 ? 15 : "",
+                          width: 155,
                         }}
                       >
                         Volume multiplier
@@ -4075,8 +4293,8 @@ const StrategyTabsComponent = (props) => {
                         // placeholder="1.05"
                         sx={{
                           width:
-                            width < 900 && width > 600
-                              ? "7rem"
+                            width < 900 && width > 599
+                              ? "8rem"
                               : width < 600
                               ? "100%"
                               : "5rem",
@@ -4097,12 +4315,12 @@ const StrategyTabsComponent = (props) => {
                         alignItems: "center",
                         mt: 1,
                         mb:
-                          width < 900 && width > 600
+                          width < 900 && width > 599
                             ? 1
                             : width < 600
                             ? 0
                             : 1.5,
-                        gap: width < 900 ? 0 : 5,
+                        // gap: width < 900 ? 0 : 4.95,
                         flexWrap: width < 900 ? "wrap" : "nowrap",
                       }}
                     >
@@ -4114,6 +4332,7 @@ const StrategyTabsComponent = (props) => {
                           color: "#CCCCCC",
                           whiteSpace: "nowrap",
                           mr: width < 900 ? 15 : "",
+                          width: 155,
                         }}
                       >
                         Max extra orders
@@ -4126,8 +4345,8 @@ const StrategyTabsComponent = (props) => {
                         // placeholder="10"
                         sx={{
                           width:
-                            width < 900 && width > 600
-                              ? "7rem"
+                            width < 900 && width > 599
+                              ? "8rem"
                               : width < 600
                               ? "100%"
                               : "5rem",
@@ -4149,7 +4368,7 @@ const StrategyTabsComponent = (props) => {
                         alignItems: "center",
                         mt: 1,
                         mb: width < 900 ? 1 : 1.5,
-                        gap: width < 900 ? 0 : 4,
+                        // gap: width < 900 ? 0 : 4.1,
                         flexWrap: width < 900 ? "wrap" : "nowrap",
                       }}
                     >
@@ -4161,21 +4380,17 @@ const StrategyTabsComponent = (props) => {
                           color: "#CCCCCC",
                           whiteSpace: "nowrap",
                           mr: width < 900 ? 15 : "",
+                          width: 210,
                         }}
                       >
                         Min. dist. between orders
                       </Typography>
                       <ValidationTextField
-                        startAdornment={
+                        endAdornment={
                           <InputAdornment
-                            position="start"
                             sx={{
-                              "& .MuiTypography-root": {
-                                background: "#3E3E3E",
-                                padding: "1.5px 5px",
-                                borderTopLeftRadius: "6px",
-                                borderBottomLeftRadius: "6px",
-                              },
+                              position: "absolute",
+                              right: 5,
                             }}
                           >
                             %
@@ -4187,12 +4402,14 @@ const StrategyTabsComponent = (props) => {
                         type="number"
                         // placeholder="1.5%"
                         sx={{
+                          position: "relative",
                           width:
-                            width < 900 && width > 600
-                              ? "7rem"
+                            width < 900 && width > 599
+                              ? "12rem"
                               : width < 600
                               ? "100%"
                               : "5rem",
+                          pr: 2.5,
                           fontFamily: "Barlow, san-serif",
                           "&:focus": {
                             boxShadow: "none",
@@ -4214,7 +4431,7 @@ const StrategyTabsComponent = (props) => {
                         alignItems: "center",
                         mt: 1,
                         mb: width < 900 ? 1 : 1.5,
-                        gap: width < 900 ? 0 : 4.85,
+                        // gap: width < 900 ? 0 : 4.95,
                         flexWrap: width < 900 ? "wrap" : "nowrap",
                       }}
                     >
@@ -4226,6 +4443,7 @@ const StrategyTabsComponent = (props) => {
                           color: "#CCCCCC",
                           whiteSpace: "nowrap",
                           mr: width < 900 ? 15 : "",
+                          width: 210,
                         }}
                       >
                         Drop to start extra order
@@ -4235,14 +4453,25 @@ const StrategyTabsComponent = (props) => {
                         id="extraorder"
                         name="extraOrder"
                         type="number"
+                        endAdornment={
+                          <InputAdornment
+                            sx={{
+                              position: "absolute",
+                              right: 5,
+                            }}
+                          >
+                            %
+                          </InputAdornment>
+                        }
                         // placeholder="1.05%"
                         sx={{
                           width:
-                            width < 900 && width > 600
-                              ? "7rem"
+                            width < 900 && width > 599
+                              ? "12rem"
                               : width < 600
                               ? "100%"
                               : "5rem",
+                          pr: 2.5,
                           fontFamily: "Barlow, san-serif",
                         }}
                         value={DCAData[index]["startExtraOrder"]}
@@ -4259,7 +4488,7 @@ const StrategyTabsComponent = (props) => {
                         alignItems: "center",
                         mt: 1,
                         mb: width < 900 ? 1 : 1.5,
-                        gap: width < 900 ? 0 : 13.1,
+                        // gap: width < 900 ? 0 : 13.2,
                         flexWrap: width < 900 ? "wrap" : "nowrap",
                       }}
                     >
@@ -4271,6 +4500,7 @@ const StrategyTabsComponent = (props) => {
                           color: "#CCCCCC",
                           whiteSpace: "nowrap",
                           mr: width < 900 ? 15 : "",
+                          width: 210,
                         }}
                       >
                         Step multiplier
@@ -4283,8 +4513,8 @@ const StrategyTabsComponent = (props) => {
                         // placeholder="1.05"
                         sx={{
                           width:
-                            width < 900 && width > 600
-                              ? "7rem"
+                            width < 900 && width > 599
+                              ? "12rem"
                               : width < 600
                               ? "100%"
                               : "5rem",
@@ -4307,7 +4537,7 @@ const StrategyTabsComponent = (props) => {
                 sx={{
                   mt: 3,
                   borderRadius: "5px",
-                  minHeight: 178,
+                  minHeight: width < 900 ? 196 : 178,
                   px:
                     width > 1200 && width < 1300
                       ? 5
@@ -4332,7 +4562,7 @@ const StrategyTabsComponent = (props) => {
                         ? 2
                         : width > 1400
                         ? 1
-                        : 2.5
+                        : 2
                     }
                   ></Grid>
                   <Grid item xs={12} sm={4} md={4} lg={4}>
@@ -4342,7 +4572,7 @@ const StrategyTabsComponent = (props) => {
                         alignItems: "center",
                         mt: 1,
                         mb: width < 900 ? 1 : 1.5,
-                        gap: width < 900 ? 0 : 11,
+                        gap: width < 900 ? 0 : 11.1,
                         flexWrap: width < 900 ? "wrap" : "nowrap",
                       }}
                     >
@@ -4366,13 +4596,14 @@ const StrategyTabsComponent = (props) => {
                             ? "7rem"
                             : width < 600
                             ? "100%"
-                            : "5rem"
+                            : "7rem"
                         }
                         onChange={async (event) => {
                           const temp = [...TakeProfitData];
                           temp[index]["takeProfit"] = event.value;
                           setTakeProfitData(temp);
                         }}
+                        keyName={"takeProfit"}
                         options={
                           containsHighVolumeCandlestick(ParametersData[index])
                             ? // ParametersData[index].some(
@@ -4406,16 +4637,11 @@ const StrategyTabsComponent = (props) => {
                         Min. Take Profit
                       </Typography>
                       <ValidationTextField
-                        startAdornment={
+                        endAdornment={
                           <InputAdornment
-                            position="start"
                             sx={{
-                              "& .MuiTypography-root": {
-                                background: "#3E3E3E",
-                                padding: "1.5px 5px",
-                                borderTopLeftRadius: "6px",
-                                borderBottomLeftRadius: "6px",
-                              },
+                              position: "absolute",
+                              right: 5,
                             }}
                           >
                             %
@@ -4433,7 +4659,8 @@ const StrategyTabsComponent = (props) => {
                               ? "7rem"
                               : width < 600
                               ? "100%"
-                              : "5rem",
+                              : "7rem",
+                          pr: 2.5,
                           fontFamily: "Barlow, san-serif",
                         }}
                         onChange={async (event) => {
@@ -4452,7 +4679,7 @@ const StrategyTabsComponent = (props) => {
                 sx={{
                   mt: 3,
                   borderRadius: "5px",
-                  minHeight: 178,
+                  minHeight: width < 900 ? 196 : 178,
                   px:
                     width > 1200 && width < 1300
                       ? 5
@@ -4477,7 +4704,7 @@ const StrategyTabsComponent = (props) => {
                         ? 2
                         : width > 1400
                         ? 1
-                        : 2.5
+                        : 2
                     }
                   ></Grid>
                   <Grid item xs={12} sm={4} md={4} lg={4}>
@@ -4508,6 +4735,16 @@ const StrategyTabsComponent = (props) => {
                         id="stoploss"
                         name="stopLoss"
                         type="number"
+                        endAdornment={
+                          <InputAdornment
+                            sx={{
+                              position: "absolute",
+                              right: 5,
+                            }}
+                          >
+                            %
+                          </InputAdornment>
+                        }
                         // placeholder="1.5%"
                         value={StopLossData[index]["stopLoss"]}
                         sx={{
@@ -4517,6 +4754,7 @@ const StrategyTabsComponent = (props) => {
                               : width < 600
                               ? "100%"
                               : "5rem",
+                          pr: 2.5,
                           fontFamily: "Barlow, san-serif",
                         }}
                         onChange={async (event) => {
@@ -4531,7 +4769,7 @@ const StrategyTabsComponent = (props) => {
               </Box>
             )}
             {index + 1 === value.length && (
-              <Box sx={{ display: "flex" }}>
+              <Box sx={{ display: "flex", mt: width < 900 ? 1 : "" }}>
                 <Button
                   sx={{
                     background: "linear-gradient(to right,#790F87,#794AE3)",
@@ -4556,8 +4794,9 @@ const StrategyTabsComponent = (props) => {
           </Box>
         ))}
       </Box>
-
-      <Chart data={chartData} func={handleBacktest} />
+      <StrategyThreeBoxes />
+      <Chart data={AllStrategyData} func={handleBacktest} />
+      {/* // <Chart data={chartData} func={handleBacktest} /> */}
       {/* <CandleStickGraph /> */}
     </>
   );

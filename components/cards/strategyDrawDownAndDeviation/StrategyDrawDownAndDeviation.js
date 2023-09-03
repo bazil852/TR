@@ -51,7 +51,7 @@ const StrategyDrawDownAndDeviation = () => {
               key={index}
               xs={12}
               sm={6}
-              md={isDrawerOpen ? 4 : 3}
+              md={isDrawerOpen && width > 999 ? 4 : 3}
               lg={
                 width < 1500 && width > 1299 && isDrawerOpen
                   ? 3
@@ -115,11 +115,7 @@ const StrategyDrawDownAndDeviation = () => {
           );
         })}
       </Grid>
-      <Grid container spacing={"20px"} mt={"0px"}>
-        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-          <StrategyDrawDownAndDeviationBarGraph />
-        </Grid>
-      </Grid>
+      <StrategyDrawDownAndDeviationBarGraph />
     </Box>
   );
 };

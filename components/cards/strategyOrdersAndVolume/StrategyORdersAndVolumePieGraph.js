@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Box, Typography } from "@mui/material";
-import { useSelector } from "react-redux";
 import Graph2_pie from "./Graph2_pie";
 
 const StrategyORdersAndVolumePieGraph = () => {
-  const [width, setWidth] = useState(globalThis?.innerWidth);
-  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
-
   const data = [
     { value: 1048, name: "Base Order" },
     { value: 735, name: "Extra Order 1" },
@@ -14,11 +10,6 @@ const StrategyORdersAndVolumePieGraph = () => {
     { value: 335, name: "Extra Order 3" },
     { value: 235, name: "Extra Order 4" },
   ];
-  useEffect(() => {
-    const handleResize = () => setWidth(globalThis?.innerWidth);
-    globalThis?.addEventListener("resize", handleResize);
-    return () => globalThis?.removeEventListener("resize", handleResize);
-  }, []);
 
   return (
     <Box
@@ -26,8 +17,10 @@ const StrategyORdersAndVolumePieGraph = () => {
         background: "#262626",
         border: "1.2px solid #3F4341",
         borderRadius: "4.8px",
-        height: 400,
+        height: 360,
         minWidth: "100%",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
       <Box
@@ -51,20 +44,12 @@ const StrategyORdersAndVolumePieGraph = () => {
       </Box>
       <Box
         sx={{
-          mt: -8.7,
-          " ::-webkit-scrollbar": {
-            height: 3,
-          },
-          "::-webkit-scrollbar-track": {
-            background: "none",
-          },
-          "::-webkit-scrollbar-thumb": {
-            background: "#888",
-            borderRadius: "4px",
-          },
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        <Graph2_pie dataArray={data} />
+        <Graph2_pie data={data} />
       </Box>
     </Box>
   );

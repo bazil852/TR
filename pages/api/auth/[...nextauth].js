@@ -4,7 +4,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import connectMongo from "../../../utils/connectMongo";
 import Users from "../../../models/users";
 import * as AWS from "aws-sdk";
-import * as bcrypt from "bcrypt";
 
 const options = {
   accessKeyId: "AKIA6Q4YWN4JX6XKJE4T",

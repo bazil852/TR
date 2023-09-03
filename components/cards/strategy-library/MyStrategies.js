@@ -88,7 +88,8 @@ const MyStrategies = (props) => {
                 key={index}
                 sx={{
                   display: "flex",
-                  pt: 6,
+                  pt: 6.5,
+                  pb: 1,
                   gap:
                     width < 600 && width > 400
                       ? "1rem"
@@ -111,7 +112,12 @@ const MyStrategies = (props) => {
                   <Typography
                     sx={{
                       fontFamily: "Barlow, san-serif",
-                      fontSize: width < 670 && width > 599 ? 14 : width>1535?15:16,
+                      fontSize:
+                        width < 670 && width > 599
+                          ? 14
+                          : width > 1535
+                          ? 15
+                          : 16,
                       fontWeight: 300,
                       color: "#ACB2B7",
                     }}
@@ -141,7 +147,12 @@ const MyStrategies = (props) => {
                   <Typography
                     sx={{
                       fontFamily: "Barlow, san-serif",
-                      fontSize: width < 670 && width > 599 ? 14 : width>1535?15:16,
+                      fontSize:
+                        width < 670 && width > 599
+                          ? 14
+                          : width > 1535
+                          ? 15
+                          : 16,
                       fontWeight: 300,
                       color: "#ACB2B7",
                     }}
@@ -172,7 +183,12 @@ const MyStrategies = (props) => {
                   <Typography
                     sx={{
                       fontFamily: "Barlow, san-serif",
-                      fontSize: width < 670 && width > 599 ? 14 : width>1535?15:16,
+                      fontSize:
+                        width < 670 && width > 599
+                          ? 14
+                          : width > 1535
+                          ? 15
+                          : 16,
                       fontWeight: 300,
                       color: "#ACB2B7",
                       minWidth: "fit-content",
@@ -204,7 +220,12 @@ const MyStrategies = (props) => {
                   <Typography
                     sx={{
                       fontFamily: "Barlow, san-serif",
-                      fontSize: width < 670 && width > 599 ? 14 : width>1535?15:16,
+                      fontSize:
+                        width < 670 && width > 599
+                          ? 14
+                          : width > 1535
+                          ? 15
+                          : 16,
                       fontWeight: 300,
                       color: "#ACB2B7",
                     }}
@@ -224,20 +245,6 @@ const MyStrategies = (props) => {
                   </Typography>
                 </Box>
               </Box>
-              <Button
-                sx={{
-                  background:
-                    "linear-gradient(93.46deg, #790D83 -12.4%, #7A5CFF 105.26%)",
-                  fontSize: "20px",
-                  fontWeight: 300,
-                  color: "#FFFFFF",
-                  fontFamily: "Barlow, san-serif",
-                  textTransform: "none",
-                  height: 35,
-                }}
-              >
-                Backtester
-              </Button>
             </Paper>
           </Grid>
         ))}

@@ -1,127 +1,265 @@
-import React, { useRef, useEffect, useState } from "react";
-import * as echarts from "echarts";
+import React, { useEffect, useState, useRef } from "react";
+import { Box, Typography } from "@mui/material";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { useSelector } from "react-redux";
 
-function Graph1_Bar({ data }) {
-  const chartRef = useRef(null);
-  const drawdownData = data.find((item) => item.drawdown)?.drawdown || [];
-  const deviationData = data.find((item) => item.deviation)?.deviation || [];
-  const totalBars = drawdownData.length || deviationData.length;
-
-  const computedWidth = totalBars * (50 + 10);
-  const containerWidth = `${computedWidth}px`;
-  useEffect(() => {
-    if (chartRef.current) {
-      const myChart = echarts.init(chartRef.current);
-
-      const drawdownData = data.find((item) => item.drawdown)?.drawdown || [];
-      const deviationData =
-        data.find((item) => item.deviation)?.deviation || [];
-
-      const xAxisData = Array.from(
-        { length: drawdownData.length || deviationData.length },
-        (_, i) => i + 1
-      );
-
-      const option = {
-        tooltip: {
-          trigger: "axis",
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div
+        style={{
           backgroundColor: "rgba(0, 0, 0, 0.8)",
-          borderWidth: 0,
-          textStyle: {
-            color: "#FFFFFF",
-            fontWeight: 500,
-            fontSize: 14,
-            fontFamily: "Barlow, san-serif",
-          },
-        },
-        legend: {
-          data: ["Drawdown", "Deviation"],
-          bottom: 0,
-          textStyle: {
-            fontFamily: "Barlow, san-serif",
-            color: "#8C8C8C",
-            fontWeight: 500,
-          },
-        },
-        toolbox: {
-          show: false,
-          feature: {
-            dataView: { show: true, readOnly: false },
-            magicType: { show: true, type: ["line", "bar"] },
-            restore: { show: true },
-            saveAsImage: { show: true },
-          },
-        },
-        calculable: true,
-        xAxis: [
-          {
-            type: "category",
-            data: xAxisData,
-            axisTick: { show: false },
-            axisLabel: {
-              color: "#8C8C8C",
-              fontFamily: "Barlow, san-serif",
-            },
-            axisPointer: {
-              type: "none",
-            },
-          },
-        ],
-        yAxis: {
-          type: "value",
-          position: "right",
-          axisLabel: {
-            color: "#8C8C8C",
-            fontFamily: "Barlow, san-serif",
-            rotate: 90,
-          },
-          splitLine: {
-            lineStyle: {
-              type: "dashed",
-              color: "#8C8C8C",
-              width: 0.6,
-              opacity: 0.6,
-            },
-          },
-        },
-        series: [
-          {
-            name: "Drawdown",
-            type: "bar",
-            data: drawdownData,
-            itemStyle: {
-              color: "#36F097",
-            },
-          },
-          {
-            name: "Deviation",
-            type: "bar",
-            data: deviationData,
-            itemStyle: {
-              color: "#268AFF",
-            },
-          },
-        ],
-      };
+          padding: "1px 15px",
+          borderRadius: "5px",
+          fontWeight: 500,
+          color: "white",
+          fontFamily: "Barlow, sans-serif",
+          fontSize: "14px",
+        }}
+      >
+        <p> {label}</p>
+        {payload[0]?.dataKey === "drawdown" && (
+          <p
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              marginTop: "-10px",
+            }}
+          >
+            <div
+              style={{
+                borderRadius: "50%",
+                height: "10px",
+                width: "10px",
+                background: "#36F097",
+              }}
+            />
+            Drawdown: {payload[0]?.value}%
+          </p>
+        )}
+        {payload[0]?.dataKey === "deviation" && (
+          <p
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              marginTop: "-10px",
+            }}
+          >
+            <div
+              style={{
+                borderRadius: "50%",
+                height: "10px",
+                width: "10px",
+                background: "#268AFF",
+              }}
+            />
+            Deviation: {payload[0]?.value}%
+          </p>
+        )}
+        {payload[1]?.dataKey === "deviation" && (
+          <p
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              marginTop: "-10px",
+            }}
+          >
+            <div
+              style={{
+                borderRadius: "50%",
+                height: "10px",
+                width: "10px",
+                background: "#268AFF",
+              }}
+            />
+            Deviation: {payload[1]?.value}%
+          </p>
+        )}
+      </div>
+    );
+  }
+  return null;
+};
 
-      myChart.setOption(option);
-    }
-  }, [data]);
+const Graph1_Bar = ({ data }) => {
+  const [width, setWidth] = useState(0);
+  const [barsVisibility, setBarsVisibility] = useState({
+    drawdown: { visible: true },
+    deviation: { visible: true },
+  });
+  const ref = useRef(null);
+  const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
+
+  const chartData = data[0].drawdown.map((drawdown, index) => ({
+    index: (index + 1).toString().padStart(2),
+    drawdown: drawdown,
+    deviation: data[1].deviation[index] || null,
+  }));
+
+  const handleBarToggle = (key) => {
+    setBarsVisibility((prev) => ({
+      ...prev,
+      [key]: { ...prev[key], visible: !prev[key].visible },
+    }));
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (ref.current) {
+        setWidth(ref.current.clientWidth);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const totalBars = chartData.length;
+  const barGap = 10;
+  const minBarWidth = 50;
+  let calculatedBarWidth = (width - barGap * (totalBars - 1)) / totalBars;
+  calculatedBarWidth = Math.max(calculatedBarWidth, minBarWidth);
+  const chartWidth = (calculatedBarWidth + barGap) * totalBars - barGap - 15;
+  const shouldShowScroll = chartWidth > width;
 
   return (
-    <div style={{ width: "100%", height: "370px", overflowX: "auto" }}>
-      <div
-        ref={chartRef}
-        style={{
-          width: containerWidth,
-          height: "100%",
+    <Box
+      ref={ref}
+      sx={{
+        transition: "max-width 0.3s ease-in-out",
+        maxWidth:
+          isDrawerOpen && width > 1130
+            ? "75vw"
+            : isDrawerOpen && width < 1131 && width > 999
+            ? "65vw"
+            : "90vw",
+        height: 330,
+        py: 3,
+        pl: 2,
+        position: "relative",
+        overflowX: shouldShowScroll ? "auto" : "hidden",
+        overflowY: "hidden",
+        "&::-webkit-scrollbar": {
+          height: "3px",
+        },
+        "&::-webkit-scrollbar-track": {
+          background: "none",
+          mx: 2,
+        },
+        "&::-webkit-scrollbar-thumb": {
+          background: "#888",
+          borderRadius: "4px",
+        },
+      }}
+    >
+      <Box
+        sx={{
+          position: "absolute",
           display: "flex",
-          justifyContent: "center",
           alignItems: "center",
+          justifyContent: "center",
+          gap: width < 350 ? 5 : 10,
+          bottom: 8,
+          zIndex: 10,
+          left: 0,
+          right: 0,
         }}
-      />
-    </div>
+      >
+        <Box
+          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          onClick={() => handleBarToggle("drawdown")}
+        >
+          <Box
+            sx={{
+              height: 14,
+              width: 20,
+              borderRadius: 0.5,
+              background: "#36F097",
+            }}
+          />
+          <Typography
+            sx={{
+              cursor: "pointer",
+              color: "#A8A8A8",
+              fontFamily: "Barlow, san-serif",
+              opacity: 0.6,
+              textDecoration: barsVisibility.drawdown.visible
+                ? "none"
+                : "line-through",
+            }}
+          >
+            Drawdown
+          </Typography>
+        </Box>
+        <Box
+          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          onClick={() => handleBarToggle("deviation")}
+        >
+          <Box
+            sx={{
+              height: 14,
+              width: 20,
+              borderRadius: 0.5,
+              background: "#268AFF",
+            }}
+          />
+          <Typography
+            sx={{
+              cursor: "pointer",
+              color: "#A8A8A8",
+              fontFamily: "Barlow, san-serif",
+              opacity: 0.6,
+              textDecoration: barsVisibility.deviation.visible
+                ? "none"
+                : "line-through",
+            }}
+          >
+            Deviation
+          </Typography>
+        </Box>
+      </Box>
+      <BarChart
+        width={chartWidth}
+        height={300}
+        data={chartData}
+        barCategoryGap={barGap}
+        style={{
+          fontFamily: "Barlow, sans-serif",
+        }}
+        margin={{
+          top: 5,
+          right: -22,
+          bottom: 30,
+          left: 5,
+        }}
+      >
+        <CartesianGrid
+          stroke="#A8A8A8"
+          strokeDasharray="2 2"
+          opacity={0.3}
+          vertical={false}
+        />
+        <XAxis dataKey="index" />
+        <YAxis yAxisId="right" orientation="right" axisLine={false} />
+        <Tooltip content={<CustomTooltip />} cursor={false} />
+        <Bar
+          yAxisId="right"
+          dataKey="drawdown"
+          fill="#36F097"
+          hide={!barsVisibility.drawdown.visible}
+        />
+        <Bar
+          yAxisId="right"
+          dataKey="deviation"
+          fill="#268AFF"
+          hide={!barsVisibility.deviation.visible}
+        />
+      </BarChart>
+    </Box>
   );
-}
+};
 
 export default Graph1_Bar;
