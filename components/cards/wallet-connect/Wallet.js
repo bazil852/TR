@@ -44,6 +44,7 @@ const exchangeTypes = [
   "Binance Futures Testnet",
   "Binance Futures",
   "Binance Spot",
+  "Bybit Spot",
 ];
 import { useSelector } from "react-redux";
 import WalletPieChrat from "./WalletPieChrat";

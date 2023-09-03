@@ -1,18 +1,22 @@
 import connectMongo from "../../../../utils/connectMongo";
 import Bot from "../../../../models/bot";
+import Users from "../../../../models/users";
+import * as bcrypt from "bcrypt";
 
 export default async function handler(req, res) {
-  const { method, query } = req;
+  const { method, query, body } = req;
   const { id } = query;
 
   switch (method) {
-    case "PATCH":
+    case "PUT":
       try {
-        console.log("api-state", req.body);
         await connectMongo();
-        const updatedBot = await Bot.findByIdAndUpdate(id, {
-          state: req?.body,
-        });
+        const updatedBot = await Bot.findOneAndUpdate(
+          { _id: id },
+          { $set: body },
+          { new: true }
+        ).populate("strategyId");
+        console.log(updatedBot, id, body);
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}exchanges/single/${updatedBot?.exchange}`,
           {
@@ -21,10 +25,11 @@ export default async function handler(req, res) {
         );
         const data = await response.json();
         console.log(data);
-        let botWithExchange = updatedBot.toObject();
-        botWithExchange.exchange = data;
-        // return itemObj;
-        res.status(200).json({ status: 200, body: botWithExchange });
+        let updatedBotObj = updatedBot.toObject();
+        updatedBotObj.exchange = data;
+
+        res.status(200).json({ status: 200, body: updatedBotObj });
+        // res.status(200).json({ status: 200, body: updatedBot });
       } catch (error) {
         res.status(500).json({
           status: 500,
@@ -33,7 +38,7 @@ export default async function handler(req, res) {
       }
       break;
     default:
-      res.setHeader("Allow", ["PATCH"]);
+      res.setHeader("Allow", ["PUT"]);
       res.status(405).end(`Method ${method} Not Allowed`);
       break;
   }

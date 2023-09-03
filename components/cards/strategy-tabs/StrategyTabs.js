@@ -582,10 +582,10 @@ const StrategyTabsComponent = (props) => {
 
   const takeProfitOptions = [
     { value: "Fixed", label: "Fixed" },
-    { value: "Trailing SL", label: "Trailing SL" },
+    { value: "At Candle Body", label: "At Candle Body" },
     {
-      value: "All candle body w % up or down",
-      label: "All candle body w % up or down",
+      value: "At Candle Wick",
+      label: "At Candle Wick",
     },
   ];
   const parametersOneOptions = [
@@ -918,7 +918,7 @@ const StrategyTabsComponent = (props) => {
     console.log("all the data", AllStrategyData);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/backtest", {
+      const response = await fetch("https://dcabot1.herokuapp.com/backtest", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -985,6 +985,18 @@ const StrategyTabsComponent = (props) => {
     newParameterData[index][ParameterIndex].middleOne = inputs;
     setParametersData(newParameterData);
     setAnchorEl(null);
+  };
+  console.log(ParametersData);
+
+  const containsHighVolumeCandlestick = (arr) => {
+    for (let obj of arr) {
+      for (let key in obj) {
+        if (parseInt(key) % 2 !== 0 && obj[key] === "High Volume Candlestick") {
+          return true;
+        }
+      }
+    }
+    return false;
   };
 
   const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
@@ -4592,7 +4604,14 @@ const StrategyTabsComponent = (props) => {
                           setTakeProfitData(temp);
                         }}
                         keyName={"takeProfit"}
-                        options={takeProfitOptions}
+                        options={
+                          containsHighVolumeCandlestick(ParametersData[index])
+                            ? // ParametersData[index].some(
+                              //   (item) => item["1"] === "High Volume Candlestick"
+                              // )
+                              takeProfitOptions
+                            : [{ value: "Fixed", label: "Fixed" }]
+                        }
                       />
                     </Box>
                     <Box
@@ -4777,6 +4796,7 @@ const StrategyTabsComponent = (props) => {
       </Box>
       <StrategyThreeBoxes />
       <Chart data={AllStrategyData} func={handleBacktest} />
+      {/* // <Chart data={chartData} func={handleBacktest} /> */}
       {/* <CandleStickGraph /> */}
     </>
   );
