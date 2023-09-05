@@ -66,6 +66,142 @@ li:hover {
   /* color: #262626c4; */
 }
 
+.mobile {
+  position: absolute;
+  background-image: url(./mobile.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: left;
+  height: 90vh;
+  width: 50vw;
+  z-index: 1;
+}
+
+.laptop {
+  position: relative;
+  background-image: url(./Device.png);
+  background-repeat: no-repeat;
+  background-size: 103% 126%;
+  background-position: right;
+  width: 50vw;
+  height: 65vh;
+  z-index: 2;
+  margin-top: 10vh;
+  padding-top: 4.4vh;
+  padding-left: 15.6%;
+}
+.laptopImage {
+  width: 34vw;
+  height: 57vh;
+}
+
+.slide-left {
+  transform: translateX(0);
+  transition: transform 1s ease-in-out;
+}
+.slide-right {
+  transform: translateX(0);
+  transition: transform 1s ease-in-out;
+}
+
+.sliding-boxes {
+  animation: slideIn 1s ease-in-out;
+}
+.slide-left {
+  animation: slideLeft 1s ease-in-out;
+}
+.slide-right {
+  animation: slideRight 2s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(600%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.tablet {
+  position: relative;
+  background-image: url(./smallTablet.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: right;
+  height: 80vh;
+  width: 67vw;
+  z-index: 20;
+  filter: drop-shadow(1px 1px 12px rgba(128, 128, 128, 0.393));
+  overflow: hidden;
+  margin-top: 15px;
+  padding-left: 5.5%;
+  padding-right: 2%;
+}
+
+.tabletImage {
+  z-index: 0;
+  height: 75vh;
+  width: 62vw;
+}
+
+.tablet2 {
+  position: relative;
+  background-image: url(./bigTablet.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: right;
+  height: 90vh;
+  width: 68vw;
+  z-index: 20;
+  filter: drop-shadow(1px 1px 12px rgba(128, 128, 128, 0.393));
+  overflow: hidden;
+  margin-top: 15px;
+  padding-left: 5.8%;
+  padding-right: 1.9%;
+  padding-top: 2vh;
+}
+
+.tablet2Image {
+  height: 79vh;
+  width: 63vw;
+}
+
+.tablet3 {
+  position: relative;
+  background-image: url(./bigTablet.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: right;
+  height: 90vh;
+  width: 68vw;
+  z-index: 20;
+  filter: drop-shadow(1px 1px 12px rgba(128, 128, 128, 0.393));
+  overflow: hidden;
+  margin-top: 15px;
+  padding-left: 5.6%;
+  padding-right: 1.9%;
+  padding-top: 2vh;
+  margin-right: 5vh;
+}
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
