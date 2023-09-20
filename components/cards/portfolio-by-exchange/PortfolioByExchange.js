@@ -12,8 +12,9 @@ import { useEffect } from "react";
 import { useState } from "react";
 
 const PortfolioByExchange = ({ coins, balanceHistory }) => {
+  console.log("PORTFOLIO HISTORY", coins, balanceHistory);
   const [width, setWidth] = useState(globalThis?.innerWidth);
-  const [activeButton, setActiveButton] = useState("Day");
+  const [activeButton, setActiveButton] = useState("Year");
 
   const handleButtonClick = (button) => {
     setActiveButton(button);

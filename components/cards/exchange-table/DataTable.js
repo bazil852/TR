@@ -425,7 +425,7 @@ const DataTable = ({ data, columns, rowsPerPage = 10 }) => {
                               >
                                 {parseFloat(row["usdt_price"]).toFixed(4)}
                               </Box>
-                            ) : column.field === "change" ? (
+                            ) : column.field === "change_24h" ? (
                               <Box
                                 sx={{
                                   textAlign: "center",

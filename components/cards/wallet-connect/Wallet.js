@@ -76,10 +76,31 @@ const Wallet = () => {
   );
   const isDrawerOpen = useSelector((state) => state.dashboardWidth.value);
 
-  const handleChange = (index) => {
-    const newSwitchStates = [...switchStates];
-    newSwitchStates[index] = !newSwitchStates[index];
-    setSwitchStates(newSwitchStates);
+  const handleChange = async (e, index) => {
+    console.log(e, index);
+    const checked = e.target.checked;
+    console.log(allExchange[index].exchange.id, checked);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}exchanges/add-to-portfolio/${allExchange[index].exchange.id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ addToPortfolio: checked }),
+      }
+    );
+    if (response.ok) {
+      const updatedData = [...allExchange];
+      updatedData[index].exchange.add_to_portfolio = checked;
+      setAllExchange(updatedData);
+      console.log("Successfully updated add_to_portfolio status");
+    } else {
+      console.log("Failed to update add_to_portfolio status");
+    }
+    // const newSwitchStates = [...switchStates];
+    // newSwitchStates[index] = !newSwitchStates[index];
+    // setSwitchStates(newSwitchStates);
   };
 
   const handleAssetChange = (selectedOption, exchangeName) => {
@@ -504,20 +525,20 @@ const Wallet = () => {
                           Add to Portfolio
                         </Typography>
                         <Switch
-                          checked={switchStates[index]}
-                          onChange={() => handleChange(index)}
+                          checked={data.exchange.add_to_portfolio}
+                          onChange={(e) => handleChange(e, index)}
                           name={`switch-${index}`}
                           inputProps={{
                             "aria-label": `controlled switch ${index}`,
                           }}
                           sx={{
                             "& .MuiSwitch-track": {
-                              background: switchStates[index]
+                              background: data.exchange.add_to_portfolio
                                 ? "#7A5CFF"
                                 : "#FFFFFF",
                             },
                             "& .MuiSwitch-thumb": {
-                              background: switchStates[index]
+                              background: data.exchange.add_to_portfolio
                                 ? "#FFFFFF"
                                 : "#ACB2B7",
                             },

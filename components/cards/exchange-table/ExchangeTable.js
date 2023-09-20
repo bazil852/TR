@@ -33,7 +33,7 @@ const ExchangeTable = ({ data, loading }) => {
       // sortable: true,
     },
 
-    { field: "change", title: "CHANGE" },
+    { field: "change_24h", title: "CHANGE" },
     {
       field: "usdt_price",
       title: "VALUE",

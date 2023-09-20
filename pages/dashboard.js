@@ -93,11 +93,62 @@ const DashboardComponent = () => {
       const currentMonth = moment().format("MM");
       let totalBalance = 0;
 
-      data.forEach((item) => {
-        const month = moment(item.balanceHistory.date).format("MM");
-        if (month === currentMonth) {
-          totalBalance += item.balanceHistory.balance;
+      const newExchanges = data.map((item) => {
+        let percentageChange;
+        console.log("MAP FUNCTION", item);
+        // Step 1: Sort the balanceHistory array by date in descending order
+        item.balanceHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        // Step 2: Get the latest balance
+        const latestBalance = item.balanceHistory[0].balance;
+
+        // Step 3: Find the latest balance from one month ago
+        const oneMonthAgo = new Date(item.balanceHistory[0].date);
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+        // Filter all the records from the last month
+        const lastMonthRecords = item.balanceHistory.filter((record) => {
+          const recordDate = new Date(record.date);
+          return recordDate <= oneMonthAgo;
+        });
+
+        // Sort the records from last month to find the latest
+        lastMonthRecords.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        // If there's no data from one month ago, we can't calculate the percentage change.
+        if (lastMonthRecords.length === 0) {
+          console.log(
+            "No data from one month ago to calculate percentage change."
+          );
+        } else {
+          const lastMonthBalance = lastMonthRecords[0].balance;
+
+          // Step 4: Calculate the percentage change
+          percentageChange =
+            ((latestBalance - lastMonthBalance) / lastMonthBalance) * 100;
+
+          console.log(
+            `The change in balance over the last month is ${percentageChange.toFixed(
+              2
+            )}%`
+          );
         }
+        return {
+          exchange_type: item.exchange.exchange_type,
+          profitOrLoss: percentageChange.toFixed(2),
+        };
+      });
+      console.log("exchange", newExchanges);
+      setExchangeList(newExchanges);
+
+      data.forEach((item) => {
+        item.balanceHistory.forEach((entity) => {
+          const month = moment(entity.date).format("MM");
+          if (month === currentMonth) {
+            console.log(month, currentMonth);
+            totalBalance += entity.balance;
+          }
+        });
       });
 
       console.log(totalBalance);
@@ -113,7 +164,42 @@ const DashboardComponent = () => {
       }
 
       console.log(balanceArray);
-      setBalanceHistoryList(balanceArray);
+
+      const monthlyBalances = new Array(12).fill(0);
+
+      data.forEach((portfolio) => {
+        const latestMonthlyEntries = {};
+
+        portfolio.balanceHistory.forEach((entry) => {
+          const date = new Date(entry.date);
+          const monthIndex = date.getUTCMonth();
+
+          // Check if there's already an entry for this month
+          if (!latestMonthlyEntries[monthIndex]) {
+            latestMonthlyEntries[monthIndex] = entry;
+          } else {
+            const existingDate = new Date(
+              latestMonthlyEntries[monthIndex].date
+            );
+
+            // Replace if the new entry is more recent
+            if (date > existingDate) {
+              latestMonthlyEntries[monthIndex] = entry;
+            }
+          }
+        });
+
+        // Add up the latest monthly balances from this portfolio to the overall balances
+        for (const [monthIndex, entry] of Object.entries(
+          latestMonthlyEntries
+        )) {
+          monthlyBalances[monthIndex] += entry.balance;
+        }
+      });
+
+      console.log(monthlyBalances);
+
+      setBalanceHistoryList(monthlyBalances);
     }
   };
   const fetchPortfoliosFromUserId = async () => {
@@ -141,11 +227,6 @@ const DashboardComponent = () => {
 
       console.log("total PortFolio", totalBalance);
       setTotalPortfolioValue(totalBalance);
-      const newExchanges = data.map((item) => {
-        return { exchange_type: item.exchange.exchange_type, profitOrLoss: 0 };
-      });
-      console.log("exchange", newExchanges);
-      setExchangeList(newExchanges);
       console.log("data", data);
       const newArray = data.map((item) => {
         return [...item.assets];
