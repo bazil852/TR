@@ -379,7 +379,7 @@ const BotsLibraryTabs = () => {
     }
     if (tempStateText[botState] === 'on'){
       try { 
-        const response = await fetch("https://dcabot1.herokuapp.com/start", {
+        const response = await fetch("https://trading-candle-riders-6a7b3bdb3b71.herokuapp.com/start", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
