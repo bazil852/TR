@@ -17,6 +17,8 @@ export default function Home() {
     translateX: [50, -50],
   });
 
+  console.log("URL: ",process.env.NEXT_PUBLIC_BACKEND_URL);
+
   return (
     <Box>
       <Header />
