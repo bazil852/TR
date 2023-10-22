@@ -263,6 +263,26 @@ const Wallet = () => {
     globalThis?.addEventListener("resize", handleResize);
     return () => globalThis?.removeEventListener("resize", handleResize);
   }, []);
+  console.log(allExchange);
+
+  const handleDeleteExchange = async (id) => {
+    console.log(id);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}exchanges/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(response);
+    if (response.ok) {
+      const temp = allExchange.filter((item) => item.exchange.id !== id);
+
+      setAllExchange([...temp]);
+    }
+  };
 
   return (
     <Box mt={0.8}>
