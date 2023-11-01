@@ -456,7 +456,7 @@ const BotsTable = () => {
     setTableRow(newData);
 
     try {
-      const response = await fetch("https://dcabot1.herokuapp.com/" + url, {
+      const response = await fetch("https://trading-candle-riders-b2f01d4db9dd.herokuapp.com/" + url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

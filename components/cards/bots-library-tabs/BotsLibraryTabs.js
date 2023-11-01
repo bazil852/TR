@@ -379,7 +379,7 @@ const BotsLibraryTabs = () => {
     }
     if (tempStateText[botState] === 'on'){
       try { 
-        const response = await fetch("https://trading-candle-riders-6a7b3bdb3b71.herokuapp.com/start", {
+        const response = await fetch("https://trading-candle-riders-b2f01d4db9dd.herokuapp.com/start", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -392,10 +392,10 @@ const BotsLibraryTabs = () => {
           const data = await response.json();
           console.log("Success:", data);
         } else {
-          console.error("Error:", response.status, response.statusText);
+          console.error("Errorrsarasr:", response.status, response.statusText);
         }
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Errorrrr:", error);
       }
     }
   };
